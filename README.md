@@ -1,6 +1,6 @@
 # CricketLens — Men’s IPL Analytics & Prediction
 
-**IT462 Exploratory Data Analysis college project.** Development **Stage 1: Dataset screening and cleaning (COMPLETE FOR EDA WITH DISCLOSED EXCEPTIONS)**. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
+**IT462 Exploratory Data Analysis college project.** Development **Stage 2: Systematic EDA (IN PROGRESS)**; Stage 1 dataset screening and cleaning is complete for EDA with documented exceptions. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
 
 ## Agreed scope
 - Men's IPL matches 2008–2026; Cricsheet ball-by-ball JSON as source.
@@ -14,7 +14,7 @@
 | Stage | Work | Status |
 |---|---|---|
 | **1** | Screen, clean, standardize and audit IPL data | **Complete for EDA; candidate ML labels require Stage 3 selection** |
-| **2** | Systematic EDA, descriptive statistics, plots and interpretations | Not formally complete; early exploratory charts exist |
+| **2** | Systematic EDA, descriptive statistics, plots and interpretations | **In progress**; Session 01 generated 11 evidence-based charts and numeric tables |
 | **3** | Train/validate/test both ML models | Not formally complete; early next-over baseline validated on 2025 |
 | **4** | Build six-tab React dashboard | Not started |
 | **5** | FastAPI integration, tracker and historical replay | Not started |
@@ -71,3 +71,14 @@ pytest -q
 ```
 
 Details, exclusions and limits: `docs/STAGE_01_STATUS.md` and `docs/STAGE_01_SESSION_03_FINDINGS.md`. The `data/processed` outputs are local and ignored by Git. No final trained model is claimed.
+
+## Stage 2 / Session 01 - Run reproducible EDA
+
+Following the completed Stage 1 audit, ensure the seven CSV files are stored locally in `data/processed/`. Then run:
+
+```bash
+python -m cricketlens.stage02_eda --data data/processed --output reports/stage_02/session_01 --figures reports/figures/stage_02
+pytest -q
+```
+
+The results are 11 real-data figures, comparison tables, and statistical summaries for 2008-2025; **2026 is intentionally kept out of development EDA** so it can remain the final ML test season. No ML model was retrained in this session. See `docs/STAGE_02_SESSION_01_FINDINGS.md` and `docs/STAGE_02_STATUS.md`.

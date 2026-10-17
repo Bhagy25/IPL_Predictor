@@ -87,3 +87,20 @@ Source: Cricsheet JSON. Source code/scripts, raw match records and generated rep
 ## Stage 1 / Session 03 - Source quality audit (2026-10-17)
 
 We inspected the original Cricsheet men's IPL archive of 1,243 matches (2008-2026), producing 2,480 ordinary innings and 295,557 delivery records. All ball-level team runs/wickets/legal deliveries reconciled with innings summaries. No duplicate match IDs or negative ball-run fields were found. Venue names were standardized conservatively from 60 raw labels to 38 canonical labels, preserving raw strings. The source contains 51 missing `city` values (33 Dubai, 18 Sharjah), 16 ties and 9 no-results (hence missing winner), and 23 D/L match outcomes. Missingness is described by pattern, not unproven MCAR/MAR/MNAR labels. Four seven-legal-ball overs are retained as anomalies and affected downstream checkpoint rows excluded; four zero-legal-ball final overs are consistent with successful chases ending on wides. Player identities use Cricsheet IDs because "Harmeet Singh" maps to two IDs. Data preprocessing is complete for EDA, but final ML training eligibility remains to be established in Stage 3. The recalculated candidate next-over dataset has 44,706 rows; 608 of those occur in D/L matches. No 2026 data has been used for training or tuning. Figures and data-quality evidence are in `reports/stage_01/`.
+
+
+## Stage 2 / Session 01 - Systematic EDA findings (2026-10-18)
+
+All numbers below come from `python -m cricketlens.stage02_eda` applied to the audited IPL data, **excluding 2026 (reserved for final ML testing)**. Full numerical summaries and supporting plots are in `reports/stage_02/session_01/` and `reports/figures/stage_02/`.
+
+- First-innings score distribution, 2018-2025 (n=533): mean 175.80, median 175, sample standard deviation 33.93, Q1 155, Q3 199, IQR 44, median absolute deviation 22. Tukey's fences are <89 and >265: 11 statistical outliers, which remain valid match observations unless separately investigated.
+- First-innings seasonal means rise in the historical sample. A simple unweighted 2008-2025 linear trend on annual means gives +1.71 runs/season and R² 0.663. This is an observational pattern, not proof of a cause.
+- From 2018-2025 deliveries, the observed Powerplay, middle and death phase scoring rates were 8.49, 8.32 and 10.73 runs per six legal balls respectively. Death overs only occur in innings that reach that phase.
+- For 2022-2025 matches with winners, Gujarat Titans won 37/60 (61.67%); Mumbai Indians won 26/60 (43.33%). Exclude tied and no-result matches in these denominators.
+- On grounds with >=20 recorded first innings in 2018-2025, Eden Gardens averaged 191.31 (n=39) and Chepauk 161.47 (n=43), but the different teams/seasons/rain conditions confound any causal venue comparison.
+- Among 8,123 observed batter appearances from 2018-2025, 27.03% scored 30+ and 12.22% scored 50+. These **are not** future-game predicted probabilities.
+- Among 19,290 Stage 1 candidate complete next-over windows from 2018-2025, 27.85% contained at least one wicket. Window exclusions may introduce selection bias; final model cohort is deferred to Stage 3.
+- First-innings runs correlated with final wickets lost (Pearson r=-0.507) and final legal balls (r=+0.337) in 2018-2025. A descriptive multiple regression using final innings quantities and season achieved in-sample R²~0.398; **it is not a forecasting model** and the final quantities cannot be used as known inputs before the innings ends.
+- Match-level missing `city` records (51/1169) and structurally absent `winner`/`outcome_method` are documented; no MCAR/MAR/MNAR mechanism is claimed as proven.
+
+This is the **first EDA session, not Stage 2 completion**. Subsequent sessions will deepen bivariate tests, confounding/stratification and interpretation.

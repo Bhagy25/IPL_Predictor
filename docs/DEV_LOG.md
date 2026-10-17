@@ -59,3 +59,13 @@ Canonical development stages: Stage 1 = cleaning; Stage 2 = systematic EDA; Stag
 - Kept four legitimate 0-legal-ball final overs (winning wides) as observed.
 - **Stage 1 signed off for EDA with exceptions.** Important model eligibility rules (D/L and censored windows) are deferred to Stage 3.
 - Next: Stage 2 systematic statistical EDA. Prior experimental model metrics are superseded, not final results.
+
+
+## Stage 2 / Session 01 - First systematic EDA (18 Oct 2026)
+
+- Loaded Stage 1 audited local CSV tables; no raw-data cleaning changes.
+- Enforced seasons <=2025 for development-stage findings to preserve 2026 ML test outcomes.
+- Added `src/cricketlens/stage02_eda.py` and unit tests; generated 11 analytical charts and CSV/JSON data evidence.
+- Recorded real results and caveats in `docs/STAGE_02_SESSION_01_FINDINGS.md` and `docs/STAGE_02_STATUS.md`.
+- No ML retraining or 2026 holdout assessment performed.
+- Stage 2 remains in progress. Next: stratified EDA, missingness mechanism reasoning, cross-tab/hypothesis work, finalize academic EDA chapter.
