@@ -1,11 +1,11 @@
-team,total_matches,decided_matches,wins,win_pct_of_decided,excluded_ties_no_results
+team,total_matches,decided_matches,wins,win_pct_of_decided,unresolved_or_no_result
 Gujarat Titans,60,60,37,61.67,0
 Royal Challengers Bengaluru,60,60,34,56.67,0
 Lucknow Super Giants,58,57,30,52.63,1
 Kolkata Knight Riders,55,54,28,51.85,1
-Rajasthan Royals,60,59,30,50.85,1
+Rajasthan Royals,60,60,30,50.0,0
 Punjab Kings,60,58,28,48.28,2
-Delhi Capitals,57,54,25,46.3,3
+Delhi Capitals,57,55,26,47.27,2
 Chennai Super Kings,58,57,25,43.86,1
 Sunrisers Hyderabad,58,57,25,43.86,1
 Mumbai Indians,60,60,26,43.33,0

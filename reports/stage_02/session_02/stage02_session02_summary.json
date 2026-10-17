@@ -41,20 +41,20 @@
   "toss_table": [
     {
       "toss_decision": "bat",
-      "toss_winner_lost": 67,
-      "toss_winner_won": 60,
-      "matches_with_result": 127,
-      "win_rate_toss_winner": 0.47244094488188976
+      "toss_winner_lost": 68,
+      "toss_winner_won": 62,
+      "matches_with_result": 130,
+      "win_rate_toss_winner": 0.47692307692307695
     },
     {
       "toss_decision": "field",
-      "toss_winner_lost": 184,
-      "toss_winner_won": 209,
-      "matches_with_result": 393,
-      "win_rate_toss_winner": 0.5318066157760815
+      "toss_winner_lost": 188,
+      "toss_winner_won": 210,
+      "matches_with_result": 398,
+      "win_rate_toss_winner": 0.5276381909547738
     }
   ],
-  "toss_decision_fisher_p_exploratory": 0.262072511303711,
+  "toss_decision_fisher_p_exploratory": 0.3630784658810333,
   "missing_city_matches_pre2026": 51,
   "missing_city_venues": [
     {

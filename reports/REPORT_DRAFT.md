@@ -108,3 +108,12 @@ This is the **first EDA session, not Stage 2 completion**. Subsequent sessions w
 ## Stage 2 / Session 02 — Stratified and bivariate EDA (2026-10-18)
 
 See `docs/STAGE_02_SESSION_02_FINDINGS.md` for exact reproducible tables, definitions, limitations and chart index. Primary results are: 2018–2025 all first innings mean 175.80 (n=533); 120-legal-ball innings mean 178.88 (n=501) vs shortened innings 127.50 (n=32). Paired Powerplay/death-over rate difference within 937 qualifying innings: +2.26 runs per 6 legal deliveries, approximate 95% match-clustered bootstrap interval [2.02, 2.51]. Season-centered full-length venue comparisons: Eden Gardens +10.34 (n=37), Chepauk -13.71 (n=38); none should be interpreted as causal. Toss winners prevailed in 60/127 choosing bat vs 209/393 choosing field; Fisher p≈0.262 and no evidence of causal advantage. Of 1,169 pre-2026 matches, 51 missing cities occur at Dubai/Sharjah venues. Measurement scales, sampling and missingness mechanisms are discussed explicitly in the Session 02 findings. 2026 remains held out. Figure interpretations and sample-selection caveats are essential parts of the report.
+
+
+## Stage 2 / Session 03 — Corrected match outcomes and final synthesis
+
+**Important erratum:** Previous Session 01/02 team win percentages and toss aggregates excluded Super Over winners; these are superseded by the corrected values in `docs/STAGE_02_SESSION_03_FINDINGS.md` and `reports/stage_02/session_03/`. In 2022–2025, Delhi Capitals had **26/55 wins (47.27%)**, not 25/54. In 2018–2025 the toss-winning side also won **62/130** choose-bat cases and **210/398** choose-field cases (Fisher p≈0.363).
+
+In our development EDA window (2008–2025), 1,169 matches comprised 1,146 regulation wins, 15 ties decided by Super Over and 8 no-results; 22 were labelled D/L. The original source record is preserved, while the final winner is obtained from the Super Over eliminator on regulation ties. Super Over innings are separated from regular-innings batting and bowling. D/L match annotation is **not** the same as shortened first innings; 2018–2025 included 6 D/L-marked first innings, 4 of which lasted 120 legal deliveries. Detailed methods/limitations and charts are in the consolidated PDF.
+
+**Stage 2 signed off internally for EDA.** Stage 3 will independently establish ML eligibility, interrupted-game handling and unobserved/censored next-over labels. The 2026 test season remains unseen by model-development analytics.

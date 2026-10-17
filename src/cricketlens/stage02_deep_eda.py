@@ -113,9 +113,11 @@ def paired_innings_phase(deliveries: pd.DataFrame, min_powerplay_balls: int = 30
 
 def toss_decision_crosstab(matches: pd.DataFrame) -> pd.DataFrame:
     """Descriptive association, not an effect of choosing to bat/field."""
+    if 'final_winner' not in matches:
+        raise ValueError('Regenerate Stage 1 match table with final_winner field')
     m = matches.loc[(matches.season >= 2018) & (matches.season <= CUTOFF) &
-                    (matches.outcome_type == 'win') & matches.winner.notna()].copy()
-    m['toss_winner_won_match'] = m.toss_winner == m.winner
+                    matches.final_winner.notna()].copy()
+    m['toss_winner_won_match'] = m.toss_winner == m.final_winner
     c = (m.groupby(['toss_decision', 'toss_winner_won_match'])
          .size().unstack(fill_value=0))
     c = c.reindex(index=['bat', 'field'], columns=[False, True], fill_value=0)

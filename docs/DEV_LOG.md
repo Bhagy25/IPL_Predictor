@@ -78,3 +78,13 @@ Canonical development stages: Stage 1 = cleaning; Stage 2 = systematic EDA; Stag
 - These analyses are exploratory/associational, not a third ML model or a causal experiment.
 - Tests: see automated `pytest` run (synthetic edge cases added) and accompanying Session 02 report.
 - Stage 2 remains in progress pending synthesis and academic review.
+
+
+## Stage 2 / Session 03 — Exceptional outcomes and EDA consolidation (2026-10-18)
+
+- Audited the raw Cricsheet `outcome.eliminator`, `outcome.result`, `outcome.winner`, and D/L outcome.method fields. Verified 16 Super Over ties and 9 no-results in 2008–2026 (counts for input integrity only).
+- Updated `pipeline.py` match schema with `regulation_result`, `final_winner`, `super_over_winner`, `super_over_innings`, `decided_by`, retaining original `winner`/`outcome_type`. Kept Super Over deliveries out of ordinary innings.
+- Re-ran cleaned table extraction and regenerated affected Stage 2 Session 01 and Session 02 team/toss tables. Corrected 2022–2025 DC wins from 25 to 26 and the pre-2026 toss table.
+- Added `stage02_final_eda.py`, exceptional-match summary outputs, 3 charts, and synthetic match tests.
+- Consolidated core descriptive EDA and remaining ML limitations; no 2026 model evaluation or final model fitting.
+- **Next:** Stage 2 feature branch review and PR; then Stage 3 model design (one-over censoring + batter 30/50 milestones).

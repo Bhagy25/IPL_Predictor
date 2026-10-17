@@ -42,6 +42,7 @@ def test_toss_crosstab_excludes_no_result_and_2026():
     df=pd.DataFrame({'season':[2024,2025,2025,2026],
                      'outcome_type':['win','win','no result','win'],
                      'winner':['A','B',None,'A'],
+                     'final_winner':['A','B',None,'A'],
                      'toss_winner':['A','A','A','A'],
                      'toss_decision':['bat','field','bat','bat']})
     t=toss_decision_crosstab(df)

@@ -1,6 +1,6 @@
 # CricketLens — Men’s IPL Analytics & Prediction
 
-**IT462 Exploratory Data Analysis college project.** Development **Stage 2: Systematic EDA (IN PROGRESS)**; Stage 1 dataset screening and cleaning is complete for EDA with documented exceptions. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
+**IT462 Exploratory Data Analysis college project.** Development **Stage 2: Systematic EDA (INTERNALLY COMPLETE)**; Stage 1 dataset screening and cleaning is complete for EDA with documented exceptions. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
 
 ## Agreed scope
 - Men's IPL matches 2008–2026; Cricsheet ball-by-ball JSON as source.
@@ -14,7 +14,7 @@
 | Stage | Work | Status |
 |---|---|---|
 | **1** | Screen, clean, standardize and audit IPL data | **Complete for EDA; candidate ML labels require Stage 3 selection** |
-| **2** | Systematic EDA, descriptive statistics, plots and interpretations | **In progress**; Session 01 generated 11 evidence-based charts and numeric tables |
+| **2** | Systematic EDA, descriptive statistics, plots and interpretations | **Internally complete**; Sessions 01–03, 20 figures, corrected Super Over outcomes; professor review pending |
 | **3** | Train/validate/test both ML models | Not formally complete; early next-over baseline validated on 2025 |
 | **4** | Build six-tab React dashboard | Not started |
 | **5** | FastAPI integration, tracker and historical replay | Not started |
@@ -93,3 +93,14 @@ pytest -q
 ```
 
 This module reports full vs shortened first-innings scores, within-innings phase comparisons, venue associations adjusted for observed season means, toss-result cross-tabulations and missingness patterns. It never includes the 2026 holdout. Results are **exploratory**, not causal. Read `docs/STAGE_02_SESSION_02_FINDINGS.md` for interpretation and limitations. Session 02 is not yet Stage 2 completion.
+
+### Stage 2 / Session 03 — Outcome corrections + consolidated EDA
+
+On **`feature/stage-02-eda`**, rerun the source parser on `data/raw/ipl_json.zip` to add `final_winner` and related fields to local `data/processed/matches.csv`, then regenerate Session 01/02 EDA and run:
+
+```bash
+python -m cricketlens.stage02_final_eda --data data/processed --output reports/stage_02/session_03 --figures reports/figures/stage_02
+pytest -q
+```
+
+The corrections now credit Super Over winners in team/toss statistics while retaining the regulation tie, preserve no-results and D/L markers, and exclude Super Over innings from ordinary batting/bowling. **Earlier Session 02 toss counts are superseded.** The canonical academic synthesis is `reports/Stage_02_Consolidated_EDA_Report.pdf`. No 2026 ML holdout data was used for analytical model development. Stage 3 can begin after this branch is reviewed and merged into main.

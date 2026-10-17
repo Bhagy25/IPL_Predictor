@@ -11,6 +11,11 @@ event,0,1169,0.0
 gender,0,1169,0.0
 winner,23,1169,1.9674935842600514
 outcome_type,0,1169,0.0
+regulation_result,0,1169,0.0
+final_winner,8,1169,0.6843455945252352
+super_over_winner,1154,1169,98.71685201026519
+super_over_innings,0,1169,0.0
+decided_by,0,1169,0.0
 outcome_method,1147,1169,98.1180496150556
 toss_winner,0,1169,0.0
 toss_decision,0,1169,0.0

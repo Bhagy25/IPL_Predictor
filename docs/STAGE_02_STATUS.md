@@ -1,23 +1,12 @@
-# Stage 2 - Exploratory Data Analysis
+# Stage 2 — Exploratory Data Analysis — Internally complete
 
-**Current stage:** Stage 2 in progress. Stage 1 data quality is signed off for descriptive EDA; Stage 3 model training sample filtering is pending.
+**Sessions 01–03 completed.** Stage 2's code, statistics and exceptions have been consolidated and verified for development seasons **2008–2025**; academic review by the professor remains external. Do not claim predictive-model accuracy or 2026 holdout findings from this stage.
 
-**Session 01 completed:**
-- Verified data imports and enforced `season <= 2025` to protect the held-out 2026 ML test.
-- Computed five-number summaries, mean, median, mode, sample variance, SD, IQR, median absolute deviation, CV and Tukey outliers.
-- Investigated season trends, innings distributions, batting phase patterns, venue and team comparisons, player performance, and next-over outcome frequencies.
-- Produced Pearson and Spearman matrices, descriptive multiple regression, explanatory VIF values and missingness table.
-- Generated 11 reproducible charts, CSV aggregates, a JSON summary, Session 01 EDA report, and documented caveats.
-- Expanded automated unit tests.
+- **Session 01:** classical descriptive statistics, 11 plots, correlation/regression, player/team/venue trends.
+- **Session 02:** duration-stratified scores, paired scoring-phase uncertainty, adjusted-venue comparisons, toss associations and missingness, 6 additional figures.
+- **Session 03:** corrected Super Over final winner attribution, D/L-stratified sensitivity checks, no-result accounting, 3 additional figures, integrated EDA narrative and corrected previously stated toss/team metrics.
 
-**Stage 2 NOT yet completed:** deeper stratified/bivariate analysis, written advanced EDA interpretation, integration into a complete chapter, professor review.
+**Canonical EDA narrative:** `docs/STAGE_02_SESSION_03_FINDINGS.md` and `reports/Stage_02_Consolidated_EDA_Report.pdf`.
+Earlier Session 02 PDF toss figures are superseded because those calculations previously excluded Super Over winners. New CSV summaries and consolidated PDF contain corrected outcomes. The match parser must be rerun to add `final_winner` and other outcome columns.
 
-**Next:** Stage 2 / Session 02, then formal Stage 2 sign-off. No final ML algorithm or test result yet.
-
-**Run:** `python -m cricketlens.stage02_eda --data data/processed --output reports/stage_02/session_01 --figures reports/figures/stage_02`
-
-**Session 02 completed:** length-stratified scores, outlier sensitivity, within-innings paired Powerplay vs death-over scoring, season-centered venue associations, toss-outcome crosstabs, venue-linked city missingness, measurement scale/sampling interpretation, six additional charts and tested code.
-
-**Next:** combine Session 01 and 02 into a coherent final EDA chapter, select key figures for the dashboard and complete Stage 2 review. Continue on `feature/stage-02-eda`; do NOT merge this branch until Stage 2 is reviewed.
-
-**Session 02 run:** `python -m cricketlens.stage02_deep_eda --data data/processed --output reports/stage_02/session_02 --figures reports/figures/stage_02`
+Run `pytest -q` and all three EDA modules before merging `feature/stage-02-eda` into `main`. **Next development stage:** Stage 3 ML with temporal splits, proper censored-window handling and two probabilistic predictors. No automatic retraining from feedback.

@@ -146,12 +146,14 @@ def generate(data: Path, output: Path, figures: Path) -> dict:
     match_sides = pd.concat([recent_m.assign(team=recent_m.team1),
                              recent_m.assign(team=recent_m.team2)], ignore_index=True)
     match_sides = match_sides.loc[match_sides.team.isin(CURRENT_TEAMS)].copy()
-    match_sides["decided"] = (match_sides.outcome_type == "win") & match_sides.winner.notna()
-    match_sides["win"] = match_sides.decided & (match_sides.winner == match_sides.team)
+    if 'final_winner' not in match_sides:
+        raise ValueError('Regenerate Stage 1 match table with final_winner field')
+    match_sides["decided"] = match_sides.final_winner.notna()
+    match_sides["win"] = match_sides.decided & (match_sides.final_winner == match_sides.team)
     teams = (match_sides.groupby("team", as_index=False)
               .agg(total_matches=("match_id", "nunique"), decided_matches=("decided", "sum"), wins=("win", "sum")))
     teams["win_pct_of_decided"] = 100 * teams.wins / teams.decided_matches.replace(0, np.nan)
-    teams["excluded_ties_no_results"] = teams.total_matches - teams.decided_matches
+    teams["unresolved_or_no_result"] = teams.total_matches - teams.decided_matches
     teams = teams.sort_values("win_pct_of_decided", ascending=False)
     _write(teams.round(2), output, "current_teams_win_rates_2022_2025")
 
@@ -286,7 +288,7 @@ def generate(data: Path, output: Path, figures: Path) -> dict:
         "batter_30plus_frequency_2018_2025":float(recent_b.reached_30.mean()),
         "batter_50plus_frequency_2018_2025":float(recent_b.reached_50.mean()),
         "recent_batting_top":batters_recent.head(5)[["name","batter_id","innings","total_runs"]].to_dict(orient="records"),
-        "team_window_2022_2025_decided_matches":int(recent_m.outcome_type.eq('win').sum()),
+        "team_window_2022_2025_decided_matches":int(recent_m.final_winner.notna().sum()),
         "venue_minimum_n":20,
         "eligible_checkpoint_2018_2025_n":int(len(checkpoint_phase)),
         "eligible_checkpoint_2018_2025_wicket_frequency":float(checkpoint_phase.wicket_next_over.mean()),
