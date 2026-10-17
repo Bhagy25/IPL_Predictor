@@ -69,3 +69,12 @@ Canonical development stages: Stage 1 = cleaning; Stage 2 = systematic EDA; Stag
 - Recorded real results and caveats in `docs/STAGE_02_SESSION_01_FINDINGS.md` and `docs/STAGE_02_STATUS.md`.
 - No ML retraining or 2026 holdout assessment performed.
 - Stage 2 remains in progress. Next: stratified EDA, missingness mechanism reasoning, cross-tab/hypothesis work, finalize academic EDA chapter.
+
+## Stage 2 / Session 02 — Deeper EDA (2026-10-18)
+
+- Added `stage02_deep_eda.py`: length-stratified first-innings distributions, 5% trimmed mean and Tukey outlier review, within-innings Powerplay/death paired analysis, season-centered full-innings venue comparisons with bootstrap bands, toss-decision/outcome crosstab, and observed-field missingness review.
+- Reproducible figures `12`–`17`, data tables under `reports/stage_02/session_02/`, markdown findings and PDF report.
+- Preserved all 2026 matches as future test-set data (not queried for statistics or model fitting).
+- These analyses are exploratory/associational, not a third ML model or a causal experiment.
+- Tests: see automated `pytest` run (synthetic edge cases added) and accompanying Session 02 report.
+- Stage 2 remains in progress pending synthesis and academic review.

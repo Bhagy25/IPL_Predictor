@@ -82,3 +82,14 @@ pytest -q
 ```
 
 The results are 11 real-data figures, comparison tables, and statistical summaries for 2008-2025; **2026 is intentionally kept out of development EDA** so it can remain the final ML test season. No ML model was retrained in this session. See `docs/STAGE_02_SESSION_01_FINDINGS.md` and `docs/STAGE_02_STATUS.md`.
+
+### Stage 2 - Session 02: deeper EDA
+
+With the audited local CSVs in `data/processed/`, run:
+
+```bash
+python -m cricketlens.stage02_deep_eda --data data/processed --output reports/stage_02/session_02 --figures reports/figures/stage_02
+pytest -q
+```
+
+This module reports full vs shortened first-innings scores, within-innings phase comparisons, venue associations adjusted for observed season means, toss-result cross-tabulations and missingness patterns. It never includes the 2026 holdout. Results are **exploratory**, not causal. Read `docs/STAGE_02_SESSION_02_FINDINGS.md` for interpretation and limitations. Session 02 is not yet Stage 2 completion.

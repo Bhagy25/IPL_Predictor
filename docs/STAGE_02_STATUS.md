@@ -15,3 +15,9 @@
 **Next:** Stage 2 / Session 02, then formal Stage 2 sign-off. No final ML algorithm or test result yet.
 
 **Run:** `python -m cricketlens.stage02_eda --data data/processed --output reports/stage_02/session_01 --figures reports/figures/stage_02`
+
+**Session 02 completed:** length-stratified scores, outlier sensitivity, within-innings paired Powerplay vs death-over scoring, season-centered venue associations, toss-outcome crosstabs, venue-linked city missingness, measurement scale/sampling interpretation, six additional charts and tested code.
+
+**Next:** combine Session 01 and 02 into a coherent final EDA chapter, select key figures for the dashboard and complete Stage 2 review. Continue on `feature/stage-02-eda`; do NOT merge this branch until Stage 2 is reviewed.
+
+**Session 02 run:** `python -m cricketlens.stage02_deep_eda --data data/processed --output reports/stage_02/session_02 --figures reports/figures/stage_02`

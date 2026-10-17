@@ -1,0 +1,79 @@
+{
+  "status": "Stage 2 Session 02 complete; Stage 2 sign-off pending research narrative/review",
+  "data_cutoff": 2025,
+  "development_matches": 1169,
+  "recent_2018_2025_first_innings": 533,
+  "full_first_innings_120_balls": 501,
+  "shorter_first_innings": 32,
+  "all_innings_mean_runs": 175.79924953095684,
+  "full_first_innings_mean_runs": 178.88423153692614,
+  "shorter_first_innings_mean_runs": 127.5,
+  "all_innings_5pct_trimmed_mean_runs": 175.9085239085239,
+  "tukey_bounds": [
+    89.0,
+    265.0
+  ],
+  "n_tukey_outliers": 11,
+  "venue_comparison_min_n": 20,
+  "n_venues_full_innings": 12,
+  "venue_extremes": [
+    {
+      "venue_canonical": "Eden Gardens",
+      "n_full_first_innings": 37,
+      "season_adjusted_difference_runs": 10.336472123679693
+    },
+    {
+      "venue_canonical": "Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",
+      "n_full_first_innings": 21,
+      "season_adjusted_difference_runs": -14.322266778604796
+    }
+  ],
+  "paired_phase_sample_innings": 937,
+  "paired_phase_mean_powerplay": 8.411063678406261,
+  "paired_phase_mean_death": 10.673069379015052,
+  "paired_phase_difference_mean": 2.2620057006087917,
+  "paired_phase_difference_ci95_match_clustered": [
+    2.018992207106895,
+    2.505569002008763
+  ],
+  "paired_t_statistic_exploratory": 18.68446958303753,
+  "paired_t_p_exploratory": 1.86669129660141e-66,
+  "toss_table": [
+    {
+      "toss_decision": "bat",
+      "toss_winner_lost": 67,
+      "toss_winner_won": 60,
+      "matches_with_result": 127,
+      "win_rate_toss_winner": 0.47244094488188976
+    },
+    {
+      "toss_decision": "field",
+      "toss_winner_lost": 184,
+      "toss_winner_won": 209,
+      "matches_with_result": 393,
+      "win_rate_toss_winner": 0.5318066157760815
+    }
+  ],
+  "toss_decision_fisher_p_exploratory": 0.262072511303711,
+  "missing_city_matches_pre2026": 51,
+  "missing_city_venues": [
+    {
+      "venue_canonical": "Dubai International Cricket Stadium",
+      "missing_city": 33
+    },
+    {
+      "venue_canonical": "Sharjah Cricket Stadium",
+      "missing_city": 18
+    }
+  ],
+  "interpretation_notes": [
+    "Full vs shorter is observational: fewer than 120 legal balls may mean all-out, chase/rain truncation or other situations; score comparisons are not causal.",
+    "Venue year-centering removes each year overall mean but cannot account for team, pitch, toss, weather, calendar composition, or all other confounders.",
+    "Bootstrap uncertainty intervals are descriptive and conditional on these samples; they do not fix confounding or sampling bias.",
+    "Paired phase analysis selects innings that reach at least 12 death-over legal balls; cannot generalize to early-ending innings.",
+    "Bootstrap phase-difference uncertainty resamples whole matches; paired t-test separately treats innings as independent and its p-value is exploratory only.",
+    "Toss choice vs toss-winner victory is an association in completed result matches, not evidence of a causal advantage.",
+    "2026 held out completely. Do not use any of these statistical summaries as future-match features without computing historical snapshots.",
+    "Missing city is concentrated by observed venue; MCAR/MAR/MNAR cannot be proven from observed data alone."
+  ]
+}

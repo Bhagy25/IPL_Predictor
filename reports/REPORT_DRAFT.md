@@ -104,3 +104,7 @@ All numbers below come from `python -m cricketlens.stage02_eda` applied to the a
 - Match-level missing `city` records (51/1169) and structurally absent `winner`/`outcome_method` are documented; no MCAR/MAR/MNAR mechanism is claimed as proven.
 
 This is the **first EDA session, not Stage 2 completion**. Subsequent sessions will deepen bivariate tests, confounding/stratification and interpretation.
+
+## Stage 2 / Session 02 — Stratified and bivariate EDA (2026-10-18)
+
+See `docs/STAGE_02_SESSION_02_FINDINGS.md` for exact reproducible tables, definitions, limitations and chart index. Primary results are: 2018–2025 all first innings mean 175.80 (n=533); 120-legal-ball innings mean 178.88 (n=501) vs shortened innings 127.50 (n=32). Paired Powerplay/death-over rate difference within 937 qualifying innings: +2.26 runs per 6 legal deliveries, approximate 95% match-clustered bootstrap interval [2.02, 2.51]. Season-centered full-length venue comparisons: Eden Gardens +10.34 (n=37), Chepauk -13.71 (n=38); none should be interpreted as causal. Toss winners prevailed in 60/127 choosing bat vs 209/393 choosing field; Fisher p≈0.262 and no evidence of causal advantage. Of 1,169 pre-2026 matches, 51 missing cities occur at Dubai/Sharjah venues. Measurement scales, sampling and missingness mechanisms are discussed explicitly in the Session 02 findings. 2026 remains held out. Figure interpretations and sample-selection caveats are essential parts of the report.
