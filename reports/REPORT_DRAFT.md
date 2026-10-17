@@ -1,58 +1,85 @@
-# CricketLens — Living EDA project report
+# CricketLens — Living IT462 EDA project report
 
-**Status:** working academic report, not a completed results report. Add *measured* numerical results and figures as soon as IPL JSON extraction is available.
+**Status as of 17 October 2026:** real Cricsheet dataset imported and development Stage 1 screening begun. All numbers below were computed from the supplied men's IPL JSON ZIP. Sections for advanced EDA, both final ML models and website are incomplete. No IPL 2026 held-out ML test has been performed.
 
-## Stage I — Problem and scope
+## 1. Project definition and scope (agreed)
 
-Men's Indian Premier League match and delivery data. Objectives: (a) descriptive/univariate/bivariate/multivariate IPL EDA, (b) pre-match batter milestone probabilities of 30+ and 50+ runs, and (c) in-match probability at least one wicket falls in the next completed over. User-facing dashboard has six tabs; feedback is evaluated but never auto-trains models.
+Analyze men's Indian Premier League data, season-by-season and across players/venues/teams, using statistical EDA. Provide two eventual ML tools: (A) pre-match probability of 30+ and 50+ batter runs, and (B) the probability at least one batting-team wicket falls during the next six-legal-delivery over. The final website will present six sections (Overview, Teams, Players, Statistics & EDA Lab, Prediction Arena, Prediction Tracker), with no login and no automatic retraining.
 
-**Dataset candidate:** Cricsheet's IPL JSON archive, nominal coverage 2008–2026; the precise number of usable matches, seasons and files will be documented after import. The data source must be credited. Ask the instructor if the syllabus note about data.gov.in collection is a strict requirement.
+**Data source:** [Cricsheet](https://cricsheet.org/), match-by-match structured JSON, supplied locally as `ipl_json (1).zip`, 1,243 match files, 2008–2026. Cite Cricsheet according to its dataset license; see `LICENSE_NOTES.md`. Confirm with the professor how the syllabus's `data.gov.in` collection clause applies to a Cricsheet-based project.
 
-## Stage II — Screening / cleaning (work started)
+## 2. Stage 1 — Dataset screening and cleaning: measured findings (provisional)
 
-The extractor builds four primary tables: `matches.csv`, `deliveries.csv`, `next_over_samples.csv`, `batter_innings.csv`, plus `screening_issues.csv`. Relevant definitions:
-- Nominal: team, opposition, batter, venue. Ratio/discrete: runs and wickets. Ordered time: dates, overs.
-- Wides and no-balls are *not legal deliveries*. Batter balls faced exclude wides but include no-balls.
-- Exclude a non-wicket retirement (`retired hurt`) from the batting side's team wicket count.
-- Maintain franchise rename mappings, not unrelated franchise mergers.
-- Super overs excluded from base innings modeling.
-- A next-over outcome after an interrupted or prematurely completed over can be censored; labels are admitted only when the next over is complete or a known wicket-driven all-out ends early.
+### 2.1 Data structure and dimensions
 
-**Pending actual data inspection:** match count/date range, duplicates, missingness by field, unusual innings, venue variations, team rename counts, outliers and censoring counts; distinguish structural missingness from data errors; discuss MCAR/MAR/MNAR carefully.
+| Cleaned table | Rows | Meaning |
+|---|---:|---|
+| `matches.csv` | 1,243 | One men's IPL match each |
+| `innings.csv` | 2,480 | Ordinary team batting innings (not Super Overs) |
+| `overs.csv` | 47,756 | Recorded regular innings overs, including partial overs |
+| `deliveries.csv` | 295,557 | Recorded ball events including wides and no-balls |
+| `batter_innings.csv` | 18,768 | One player batting appearance per innings |
+| `next_over_samples.csv` | 44,714 | Eligible checkpoint-known next-over outcomes |
+| `screening_issues.csv` | 562 | Issue *records*, including censored windows and anomalies |
 
-## Stage III — EDA and statistical investigation (planned)
+Date coverage is 2008-04-18 to 2026-05-31. The JSON is entirely labeled `male` and `Indian Premier League`. Runs are ratio/discrete; team/venue are nominal; over number is an ordered match-progress variable. Match/date and season are necessary to enforce chronological ML training.
 
-- Descriptives: five-number summary, mean, median, mode, variance, SD, MAD, IQR, CV.
-- Univariate: innings totals and player runs histograms/densities/boxplots.
-- Bivariate: team comparison, phases vs run rate, venue vs totals; scatterplot, crosstab, covariance and heatmap.
-- Pearson/Spearman comparisons, multicollinearity and an interpretable linear/multiple-regression analysis with goodness-of-fit.
-- Advanced EDA: season trends, time drift, optional profiling and PCA experiment where suitable.
-- Explain *why* the visible patterns matter, data limitations and confounders. No invented findings.
+### 2.2 Cricket-specific cleaning decisions
 
-## Stage IV — ML design and evaluation (code started)
+1. Standardize genuine franchise renames: Delhi Daredevils -> Delhi Capitals, Kings XI Punjab -> Punjab Kings, Royal Challengers Bangalore -> Royal Challengers Bengaluru, and Rising Pune Supergiants -> Rising Pune Supergiant. Do not falsely merge unrelated discontinued teams with current ones.
+2. A wide or no-ball is an *illegal* delivery; a no-ball can still count as a ball faced by the batter, while a wide does not. Batting runs differ from total innings runs because of extras.
+3. Wickets count batting-team losses, excluding `retired hurt`; `retired out` counts as a wicket. Ordinary innings exclude Super Overs.
+4. Eligible next-over samples require a full 6-legal-ball **current** over. Label the next over only if it has exactly six legal balls, or if it finishes early with a confirmed all-out causing a known positive. Other shortened future overs are censored and omitted. Anomalous future overs with >6 legal balls are excluded.
+5. The archive has 550 censored next-over windows, 4 over records with >6 legal balls, 4 with zero legal balls, and 4 rejected future-over windows; these issue categories overlap. Further investigation into anomalies and D/L matches is needed before a final dataset is frozen.
+6. Aggregated per-innings team runs, wickets and legal-ball counts reconcile perfectly to delivery-level sums for all 2,480 ordinary innings.
 
-Model A: batter innings -> 30+/50+ milestone probabilities from rolling, past-only statistics (not yet built).
+### 2.3 Missingness and limitations
 
-Model B: situation after completed over -> next-over team wicket yes/no, scored with Brier and log loss. Logistic regression baseline is coded but not trained on real IPL data yet.
+`city` is missing in 51 matches (4.10%). `winner` is empty in 25 records because 16 matches are ties and 9 are no-results—not all missing values indicate error. `outcome_method` is ordinarily blank except for the 23 recorded D/L outcomes and is structurally optional. All records include a venue, though venue aliases are not fully standardized yet. The MCAR/MAR/MNAR mechanisms cannot be established merely from these counts; they require careful contextual investigation and remain unproven.
 
-Development train <=2024, validation 2025; holdout 2026 for one unbiased final evaluation; planned later refit through 2026 for prospective forecasts. No leakage from future data.
+**Sampling:** The dataset is an archive of available historical IPL matches, not a random sample of all possible future IPL match situations. Historical eras, changing franchise composition, venue conditions, and censored innings may bias conclusions.
 
-## Stage V — Dashboard and evidence (planned)
+## 3. Preliminary Stage 2 — First descriptive EDA (measured, not inferential)
 
-1. IPL Overview; 2. Team Analysis; 3. Player Explorer; 4. Statistics & EDA Lab; 5. Prediction Arena; 6. Prediction Tracker.
+- **401,423** total team runs and **14,655** batting-team wickets appear in ordinary delivery records; **284,465** legal deliveries.
+- Recorded first-innings totals have **mean 168.57 runs** and **median 168 runs** across archive history. This is descriptive, not adjusted for changing eras, reduced overs, venues or D/L.
+- Among **18,768 observed batting appearances**, **25.53%** scored 30+ and **11.27%** scored 50+. These are historical frequencies, not calibrated pre-match forecasts.
+- Of **44,714** eligible next-over windows, roughly **27.70%** include at least one team wicket. The conditional definition excludes censored future overs, and is not necessarily representative of all match states.
+- Early EDA figures: `figures/matches_by_season.png`, `figures/average_first_innings_runs.png`, `figures/first_innings_distribution.png`, `figures/wicket_next_over_by_checkpoint.png`. Supporting CSVs and audit JSON are in `reports/stage_01/`.
 
-No login. Browser-local saving of forecasts and actual results, with model version, event probability, match context and time. Tracker shows all predictions, proper scores and calibration over many events. No auto-retraining. Historical replay from held-out matches for demonstration.
+**Interpretation pending:** Add exact distribution summary (IQR, MAD, SD, outliers), team/venue differences, uncertainty and season-trend controls before making substantive cricket claims.
 
-## Academic integrity and limitations
+## 4. Preliminary Stage 3 — First next-over wicket ML baseline (2025 validation only)
 
-Use official Cricsheet attribution, attribute Python libraries and disclose AI assistance in coursework according to IT462 rules. The user must review any generated material, run experiments and write genuine interpretations. The accuracy of all future ML models is unknown until evaluated.
+Initial logistic-regression classifier uses checkpoint-known runs, wickets, completed overs, run rate, innings number, batting team and bowling team. Training uses match seasons **2008–2024** (39,503 windows) and development validation uses **2025** (2,596 windows). It does not use 2026 outcomes for training, tuning, or model performance assessment.
 
-## Results table (fill only after execution)
+| Evaluation on 2025 | Logistic regression | Constant historical event-rate baseline |
+|---|---:|---:|
+| Brier Score (lower better) | 0.19831 | 0.20319 |
+| Log loss (lower better) | 0.58561 | 0.59638 |
+| ROC-AUC | 0.59223 | 0.50000 |
 
-| Item | Observed result | Evidence |
-|---|---|---|
-| Match count and seasonal coverage | Not yet measured | `matches.csv` |
-| Screening issues | Not yet measured | `screening_issues.csv` |
-| Next-over eligible training cases | Not yet measured | `next_over_samples.csv` |
-| 2025 validation Brier (baseline/model) | Not yet measured | model metrics JSON |
-| 2026 held-out Brier | Not yet measured | final one-time evaluation |
+The model shows **only a modest improvement** on this validation year. These metrics do not imply accurate forecasts for every over, and no final algorithm has yet been selected. Further feature engineering must use information known only before each corresponding checkpoint. The **2026 holdout** will be scored once after model design is fixed; only afterward may the selected model be refitted through 2026 for future use. The batter milestone model has not been developed yet.
+
+## 5. Syllabus alignment and planned EDA (not yet completed)
+
+- Explicit measurement scales, sampling biases, missingness and MCAR/MAR/MNAR treatment.
+- Five-number summaries, central tendency, variance, standard deviation, IQR, MAD and coefficient of variation.
+- Histograms, box/violin plots, team comparisons, wicket phase trends, venue effects, crosstabs, heatmaps.
+- Pearson/Spearman correlations, multiple linear regression/goodness of fit, potential multicollinearity/VIF, time trends and optional PCA/profiling.
+- Statistical interpretations and caveats in both report and dashboard, not just charts.
+
+## 6. Dashboard plan (not yet implemented)
+
+1. **IPL Overview** — totals, scoring distributions, season trends, filters.
+2. **Teams** — selected-franchise performance, opposition head-to-head, venue/phase comparisons.
+3. **Players** — batting/bowling explorer, milestones and recent form.
+4. **Statistics & EDA Lab** — IPL-wide distributions with team/venue/season filters, correlations and variability.
+5. **Prediction Arena** — two model forms and probability outputs.
+6. **Prediction Tracker** — store original probability, context, model version and actual outcome; Brier/calibration across both successful and unsuccessful events; manual optional later retraining of verified data.
+
+## 7. Integrity, attribution and next actions
+
+Source: Cricsheet JSON. Source code/scripts, raw match records and generated reports must not be confused. Cite external libraries and disclose AI assistance in coursework per IT462 requirements. Manual actual-result submissions are unverified until checked against authoritative match data and must not blindly retrain a model.
+
+**Next:** finish Stage 1 venue/roster/data audit; then systematic Stage 2 EDA notebook and plots, improved wicket model features and calibration; then pre-match batter model; only then FastAPI and six-tab website.

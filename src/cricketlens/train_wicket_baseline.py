@@ -30,6 +30,7 @@ def metrics(actual, probabilities):
 
 
 def run(input_csv: Path, output_dir: Path, evaluate_test: bool = False):
+    output_dir.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(input_csv)
     df = df.dropna(subset=NUMERICAL + CATEGORICAL + [TARGET, 'season'])
     train = df[df.season <= 2024]

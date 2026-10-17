@@ -1,4 +1,4 @@
-# Initial data dictionary (Stage II)
+# Initial data dictionary (Stage 1 - preliminary)
 
 ## `matches.csv`
 
@@ -6,6 +6,7 @@
 - `date` ISO date and `season` calendar year (audit any competition-specific season anomaly).
 - `team1`, `team2`: normalized franchise strings; rename-only normalization.
 - `venue`, `city`, `event`: strings as supplied or blank if missing.
+- `gender`, `winner`, `outcome_type`, `outcome_method`, `toss_winner`, `toss_decision`: match metadata for descriptive analysis, **not eligible** as pre-match model features when only known afterward (e.g. winner).
 
 ## `deliveries.csv`
 
@@ -37,3 +38,22 @@ One eligible snapshot immediately after an over is fully completed, *before the 
 ## `screening_issues.csv`
 
 - `match_id`, `issue`: entries excluded/skipped due to malformed dates/teams or unusual overs. If empty, the CSV is empty with no header. Later data audit will add structured counts and treatment notes.
+
+
+## `innings.csv`
+
+- One regular batting innings per row, excluding Super Overs. Includes date, season, team/opposition/venue, team runs, team wickets, legal-ball count, and number of recorded overs.
+
+## `overs.csv`
+
+- One recorded regular-innings over per row (including partial last overs).
+- `legal_balls`, `runs_after`, `wickets_after`: legal deliveries within that over and cumulative innings totals at its end.
+- `complete_standard_over`: 1 exactly when there are six legal deliveries; >6 or 0 triggers screening issues.
+
+## `reports/stage_01/` and `reports/figures/`
+
+- `audit_summary.json`: computed archive counts, date coverage, missingness, reconciliation and screening summaries.
+- `season_summary.csv`: match/inning counts, first-inning means and eligible wicket-event frequencies by season.
+- `missingness.csv`: fields with blank or NA counts; absence may be *structural* rather than corrupted data.
+- `wickets_by_over.csv` and `wicket_event_by_checkpoint.csv`: descriptive event rates; affected by the selection of eligible windows.
+- Visualizations are descriptive (not causal, not proof of ML calibration).

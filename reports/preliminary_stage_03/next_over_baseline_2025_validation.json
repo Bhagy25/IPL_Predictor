@@ -1,0 +1,22 @@
+{
+  "status": "validation_only",
+  "development_seasons": "<=2024",
+  "validation_season": 2025,
+  "holdout_season": 2026,
+  "training_rows": 39503,
+  "validation_model": {
+    "n": 2596,
+    "event_rate": 0.28351,
+    "brier": 0.19831,
+    "log_loss": 0.58561,
+    "roc_auc": 0.59223
+  },
+  "validation_constant_baseline": {
+    "n": 2596,
+    "event_rate": 0.28351,
+    "brier": 0.20319,
+    "log_loss": 0.59638,
+    "roc_auc": 0.5
+  },
+  "note": "Do not tune repeatedly on the 2026 holdout. Features are checkpoint-known only."
+}

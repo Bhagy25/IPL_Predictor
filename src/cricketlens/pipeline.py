@@ -17,6 +17,7 @@ RENAMES = {
     'Delhi Daredevils': 'Delhi Capitals',
     'Kings XI Punjab': 'Punjab Kings',
     'Royal Challengers Bangalore': 'Royal Challengers Bengaluru',
+    'Rising Pune Supergiants': 'Rising Pune Supergiant',  # Same discontinued franchise, genuine name change.
 }
 NO_TEAM_WICKET = {'retired hurt', 'retired not out'}
 
@@ -47,6 +48,7 @@ def read_matches(source: Path):
 
 def extract(source: Path):
     matches, deliveries, checkpoints, batters, issues = [], [], [], [], []
+    innings_rows, over_rows_all = [], []
     seen_ids = set()
     for filename, match in read_matches(source):
         info = match.get('info', {})
@@ -71,11 +73,20 @@ def extract(source: Path):
             continue
         teams = list(map(franchise, raw_teams))
         player_registry = ((info.get('registry') or {}).get('people') or {})
+        outcome = info.get('outcome') or {}
         matches.append({
             'match_id': match_id, 'date': match_date.isoformat(),
             'season': match_date.year, 'team1': teams[0], 'team2': teams[1],
             'venue': info.get('venue') or '', 'city': info.get('city') or '',
             'event': (info.get('event') or {}).get('name', ''),
+            'gender': info.get('gender', ''),
+            'winner': franchise(outcome.get('winner', '')) if outcome.get('winner') else '',
+            'outcome_type': ('tie' if 'eliminator' in outcome or outcome.get('result') == 'tie'
+                             else outcome.get('result', 'win' if outcome.get('winner') else 'unknown')),
+            'outcome_method': outcome.get('method', ''),
+            'toss_winner': franchise((info.get('toss') or {}).get('winner', ''))
+                           if (info.get('toss') or {}).get('winner') else '',
+            'toss_decision': (info.get('toss') or {}).get('decision', ''),
         })
         for innings_pos, innings in enumerate(match.get('innings') or [], start=1):
             if innings.get('super_over') is True:
@@ -89,7 +100,7 @@ def extract(source: Path):
                 issues.append({'match_id': match_id, 'issue': 'innings_team_not_in_match'})
                 continue
             bowling_team = teams[1] if batting_team == teams[0] else teams[0]
-            total_runs, wickets = 0, 0
+            total_runs, wickets, innings_legal = 0, 0, 0
             batter_runs = defaultdict(int)
             batter_balls = defaultdict(int)
             batter_dismissed = defaultdict(int)
@@ -105,6 +116,7 @@ def extract(source: Path):
                     extras = ball.get('extras') or {}
                     is_legal = 'wides' not in extras and 'noballs' not in extras
                     legal += int(is_legal)
+                    innings_legal += int(is_legal)
                     total_runs += int(r.get('total', 0))
                     batter_name = ball.get('batter', '')
                     if batter_name:
@@ -134,6 +146,23 @@ def extract(source: Path):
                     'over_index': over_number, 'legal_balls': legal, 'runs_after': total_runs,
                     'wickets_after': wickets,
                 })
+                over_rows_all.append({
+                    'match_id': match_id, 'date': match_date.isoformat(), 'season': match_date.year,
+                    'innings': innings_pos, 'batting_team': batting_team,
+                    'bowling_team': bowling_team, 'over_index': over_number,
+                    'legal_balls': legal, 'runs_after': total_runs, 'wickets_after': wickets,
+                    'complete_standard_over': int(legal == 6),
+                })
+                if legal > 6:
+                    issues.append({'match_id': match_id, 'issue': 'more_than_six_legal_balls'})
+                elif legal == 0:
+                    issues.append({'match_id': match_id, 'issue': 'zero_legal_balls_in_recorded_over'})
+            innings_rows.append({
+                'match_id': match_id, 'date': match_date.isoformat(), 'season': match_date.year,
+                'innings': innings_pos, 'batting_team': batting_team, 'bowling_team': bowling_team,
+                'venue': info.get('venue') or '', 'runs': total_runs, 'wickets': wickets,
+                'legal_balls': innings_legal, 'overs_recorded': len(over_rows),
+            })
             for bname, bruns in batter_runs.items():
                 batters.append({
                     'match_id': match_id, 'date': match_date.isoformat(), 'season': match_date.year,
@@ -148,13 +177,16 @@ def extract(source: Path):
             # If the following over ends early because all 10 wickets fell, outcome is
             # known to be positive; otherwise the shortened horizon is censored.
             for current, future in zip(over_rows, over_rows[1:]):
-                if current['legal_balls'] < 6:
+                if current['legal_balls'] != 6:
                     continue
                 if future['over_index'] != current['over_index'] + 1:
                     issues.append({'match_id': match_id, 'issue': 'nonconsecutive_overs'})
                     continue
+                if future['legal_balls'] > 6:
+                    issues.append({'match_id': match_id, 'issue': 'invalid_next_over_length'})
+                    continue
                 positive = int(future['wickets_after'] > current['wickets_after'])
-                full_horizon = future['legal_balls'] >= 6
+                full_horizon = future['legal_balls'] == 6
                 terminal_all_out = future['wickets_after'] >= 10 and positive
                 if not full_horizon and not terminal_all_out:
                     issues.append({'match_id': match_id, 'issue': 'censored_next_over'})
@@ -170,7 +202,8 @@ def extract(source: Path):
                     'wicket_next_over': positive,
                     'next_over_legal_balls': future['legal_balls'],
                 })
-    return {'matches': matches, 'deliveries': deliveries,
+    return {'matches': matches, 'innings': innings_rows, 'overs': over_rows_all,
+            'deliveries': deliveries,
             'next_over_samples': checkpoints, 'batter_innings': batters,
             'screening_issues': issues}
 
@@ -179,8 +212,9 @@ def write_csvs(tables: dict, output: Path):
     output.mkdir(parents=True, exist_ok=True)
     for name, records in tables.items():
         if not records:
-            # An empty CSV is allowed; never make up columns from non-existent data.
-            (output / f'{name}.csv').write_text('', encoding='utf-8')
+            # Keep issue table readable when the source has zero flagged records.
+            schema = ['match_id', 'issue'] if name == 'screening_issues' else []
+            (output / f'{name}.csv').write_text(','.join(schema) + ('\n' if schema else ''), encoding='utf-8')
             continue
         with (output / f'{name}.csv').open('w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=list(records[0]))
@@ -190,7 +224,7 @@ def write_csvs(tables: dict, output: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='CricketLens Stage II: parse Cricsheet IPL JSON')
+    parser = argparse.ArgumentParser(description='CricketLens Stage 1: parse Cricsheet IPL JSON')
     parser.add_argument('source', type=Path, help='Cricsheet IPL JSON ZIP or directory')
     parser.add_argument('--output', type=Path, default=Path('data/processed'))
     args = parser.parse_args()

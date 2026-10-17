@@ -1,0 +1,107 @@
+{
+  "coverage": {
+    "first_match_date": "2008-04-18",
+    "last_match_date": "2026-05-31",
+    "seasons": [
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "matches_by_season": {
+      "2008": 58,
+      "2009": 57,
+      "2010": 60,
+      "2011": 73,
+      "2012": 74,
+      "2013": 76,
+      "2014": 60,
+      "2015": 59,
+      "2016": 60,
+      "2017": 59,
+      "2018": 60,
+      "2019": 60,
+      "2020": 60,
+      "2021": 60,
+      "2022": 74,
+      "2023": 74,
+      "2024": 71,
+      "2025": 74,
+      "2026": 74
+    }
+  },
+  "counts": {
+    "matches": 1243,
+    "innings": 2480,
+    "overs": 47756,
+    "deliveries": 295557,
+    "batter_innings": 18768,
+    "next_over_samples": 44714,
+    "screening_issues": 562
+  },
+  "totals": {
+    "team_runs": 401423,
+    "team_wickets": 14655,
+    "legal_deliveries": 284465,
+    "wide_events": 9871,
+    "noball_events": 1221
+  },
+  "screening_issue_counts": {
+    "censored_next_over": 550,
+    "more_than_six_legal_balls": 4,
+    "invalid_next_over_length": 4,
+    "zero_legal_balls_in_recorded_over": 4
+  },
+  "gender_values": {
+    "male": 1243
+  },
+  "event_values": {
+    "Indian Premier League": 1243
+  },
+  "teams_in_archive": [
+    "Chennai Super Kings",
+    "Deccan Chargers",
+    "Delhi Capitals",
+    "Gujarat Lions",
+    "Gujarat Titans",
+    "Kochi Tuskers Kerala",
+    "Kolkata Knight Riders",
+    "Lucknow Super Giants",
+    "Mumbai Indians",
+    "Pune Warriors",
+    "Punjab Kings",
+    "Rajasthan Royals",
+    "Rising Pune Supergiant",
+    "Royal Challengers Bengaluru",
+    "Sunrisers Hyderabad"
+  ],
+  "distinct_teams": 15,
+  "reconciliation_failures": 0,
+  "first_innings_mean": 168.57,
+  "first_innings_median": 168.0,
+  "batter_milestone_30_rate": 0.2553,
+  "batter_milestone_50_rate": 0.1127,
+  "next_over_event_rate": 0.277,
+  "notices": [
+    "Recorded batter milestone rates are conditional on batting appearances; pre-match features must be past-only.",
+    "Retired hurt is excluded from team wickets; super overs are not part of ordinary innings tables.",
+    "Next-over examples exclude non-wicket incomplete horizons; truncated chases create censoring.",
+    "Matches involving discontinued franchises are kept distinct; dashboard selectors will focus on current franchises.",
+    "2026 data included in EDA descriptions but reserved from model fitting/tuning until final holdout evaluation."
+  ]
+}

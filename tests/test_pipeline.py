@@ -6,6 +6,7 @@ FIXTURE = Path(__file__).parent / 'fixtures'
 
 def test_franchise_names_do_not_merge_unrelated_clubs():
     assert franchise('Delhi Daredevils') == 'Delhi Capitals'
+    assert franchise('Rising Pune Supergiants') == 'Rising Pune Supergiant'
     assert franchise('Gujarat Lions') == 'Gujarat Lions'
     assert franchise('Gujarat Titans') == 'Gujarat Titans'
 
