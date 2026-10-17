@@ -1,0 +1,16 @@
+# Data may be too large, mutable, or not redistributeable; fetch from Cricsheet.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+.env.*
+.ipynb_checkpoints/
+.DS_Store
+*.log

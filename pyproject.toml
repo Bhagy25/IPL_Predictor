@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cricketlens"
+version = "0.1.0"
+description = "EDA-first men's IPL analytics and probability prediction"
+requires-python = ">=3.10"
+dependencies = ["pandas>=2.0,<3", "scikit-learn>=1.2,<2", "joblib>=1.2,<2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7,<10", "matplotlib>=3.7,<4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
