@@ -1,31 +1,46 @@
-# Stage 01 — Dataset Screening & Cleaning
+# Stage 1 - Dataset Screening & Cleaning
 
-**Status: IN PROGRESS** | Last updated: 2026-10-17 | Source: user-supplied Cricsheet men's IPL JSON archive.
+**Status: COMPLETE FOR EDA (with documented exceptions)**  
+**Reviewed:** 2026-10-17  
+**Dataset:** User-supplied Cricsheet men's IPL JSON archive, 1,243 matches / 2008-2026.
 
-## Stage 1 scope
-Understand raw data, parse JSON correctly, standardize identities, define legal deliveries, count runs and team wickets, inspect missing fields and anomalies, and build reproducible analysis tables. Stage 1 does **not** mean EDA or model development is complete.
+## What passed
 
-### Completed initial implementation
-- Checked ZIP and parsed 1,243 men's IPL match JSON files (2008–2026).
-- Created 7 CSV tables: matches, innings, overs, deliveries, batter_innings, next_over_samples, screening_issues.
-- Reconciled runs, wickets and legal deliveries for 2,480 ordinary innings.
-- Identified 51 missing `city` fields, 25 matches without declared winner (including ties/no-results), 550 censored windows, and other anomalous overs.
-- Created tests for parsing and cricket-specific accounting (6 synthetic tests previously passed).
-- Produced an initial data dictionary, audit tables and documented decisions.
+- All 1,243 matches are men's Indian Premier League; dates, events and teams parsed.
+- 2,480 regular innings; Super Overs remain excluded from ordinary innings/ML samples.
+- 295,557 regular delivery records reconcile exactly with innings runs, wickets and legal balls.
+- Zero duplicate match IDs, negative run fields or ball-level total-run mismatches in raw inspection.
+- 9 automated tests passed against synthetic edge cases; real-data screening is separate.
+- Venue names are now standardized conservatively: 60 raw strings -> 38 canonical strings, original preserved.
+- Person IDs are retained, including the two distinct IDs associated with the name "Harmeet Singh".
+- Structural missingness, weird overs, and rain interruptions are documented in audit CSVs.
 
-### Still required before Stage 1 sign-off
-- Investigate anomalous overs and rain/DLS/shortened innings, not just count them.
-- Resolve/flag venue naming aliases; re-check player identities/transfers and franchise renames.
-- Create final missingness table, justified treatment and limits on MCAR/MAR/MNAR claims.
-- Check duplicate/invalid entries and file/record consistency; record exclusions clearly.
-- Check wicket target selection bias due to censored innings and define final eligibility.
-- Rerun parser, tests, reconciliation and data dictionary; review Stage 1 audit report.
+## Decisions, not silent 'fixes'
 
-### Stage 1 outputs / separation from later stages
-- `data/processed/*.csv` — derived outputs, local and **gitignored**, NOT final audited data.
-- `reports/stage_01/*` — data quality summaries and counts.
-- `reports/figures/*` — exploratory plots made early (preliminary **Stage 2**, not stage completion).
-- `reports/preliminary_stage_03/*` — experimental wicket validation record (preliminary **Stage 3**, not final model).
-- `reports/archive/` — older session reports whose historical labels should not be mistaken for current development stages.
+- `city`: 51 blanks, all at Dubai International Cricket Stadium (33) or Sharjah Cricket Stadium (18). Left blank in source table; no unsupported inference or statistical imputation.
+- `winner`: 25 blanks correspond to 16 tied and 9 no-result matches. Retain their outcomes instead of imputing a winner.
+- `outcome_method`: 1,220 blanks mean no D/L method was recorded, rather than necessarily damaged data; 23 explicit D/L cases.
+- Four 7-legal-ball overs in original source: flagged as anomalous, left unmodified. Training checkpoint samples at/after the flawed over in those innings are excluded.
+- Four 0-legal-ball final overs ended with a wide during successful chases. The zero legal-ball count is explainable, not a reason to invent an extra ball.
+- Six matches have only one regular innings; this is a source property, not automatically a parse failure.
+- 34 Super Over innings excluded from standard innings records.
+- Source penalty extras are retained in team totals; only named extras selected in delivery CSV are separate columns.
 
-**GitHub Desktop commit suggestion:** `Stage 1: IPL parsing and initial data quality audit`.
+## Scope boundary: not yet final ML-ready
+
+- **44,706 next-over rows are candidate snapshots, not a final training cohort.**
+- **608 candidate snapshots** belong to the 23 matches with D/L outcome method, so Stage 3 should establish an explicit exclusion/handling rule.
+- Incomplete future overs with no team all-out are excluded (censored). This can change the population whose wicket probabilities are calibrated; assess selection bias in Stage 3.
+- Player milestone features still require past-only aggregates and clear eligibility (announced lineup / batting appearance).
+- Pre-existing 2025 validation numbers in `reports/preliminary_stage_03` predate this revised pipeline and must **not** be presented as final model performance.
+- The IPL 2026 season remains unseen for ML development; descriptive data-quality summaries across all seasons are permitted.
+
+## Outputs
+
+Source code: `src/cricketlens/pipeline.py`, `venues.py`, `stage01_review.py`, `data_audit.py`  
+Quality outputs: `reports/stage_01/source_audit_summary.json`, `venue_alias_review.csv`, `missing_city_cases.csv`, `raw_over_anomalies.csv`, `player_name_id_collisions.csv`, `missingness.csv`, `audit_summary.json`  
+Derived local tables: `data/processed/*.csv` (gitignored)
+
+## Stage 1 -> Stage 2 hand-off
+
+EDA can begin on these curated tables. Report the known limitations alongside any statistics. Keep predictive feature construction and final eligibility decisions for Stage 3.

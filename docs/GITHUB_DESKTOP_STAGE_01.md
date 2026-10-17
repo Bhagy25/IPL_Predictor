@@ -7,4 +7,4 @@
 5. **Do not commit** `data/raw/`, `data/processed/`, model `.joblib` files or ZIP datasets. These are ignored by `.gitignore`.
 6. Commit as `Stage 1: IPL parsing and initial data quality audit`. Click **Push origin**.
 
-**Current phase remains Stage 1 (in progress).** The word Session in prior filenames does not mean Stage.
+**Stage 1 was completed for EDA in Session 03.** The word Session in prior filenames does not mean Stage. The next phase is Stage 2 (EDA).

@@ -1,0 +1,9 @@
+match_id,innings,over_index,issue,detail
+1136564,2,11,over_six_legal_balls,legal=7; deliveries=7
+335988,2,13,zero_legal_balls,legal=0; deliveries=1
+335994,2,10,over_six_legal_balls,legal=7; deliveries=8
+392198,2,10,over_six_legal_balls,legal=7; deliveries=7
+419155,1,18,over_six_legal_balls,legal=7; deliveries=9
+548335,2,19,zero_legal_balls,legal=0; deliveries=1
+548377,2,18,zero_legal_balls,legal=0; deliveries=1
+980911,2,18,zero_legal_balls,legal=0; deliveries=1

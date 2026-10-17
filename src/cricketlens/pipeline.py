@@ -11,6 +11,7 @@ from collections import defaultdict
 from datetime import date
 from pathlib import Path
 from zipfile import ZipFile
+from cricketlens.venues import canonical_venue
 
 # Only genuine franchise renames; DO NOT merge Gujarat Lions with Gujarat Titans.
 RENAMES = {
@@ -77,7 +78,7 @@ def extract(source: Path):
         matches.append({
             'match_id': match_id, 'date': match_date.isoformat(),
             'season': match_date.year, 'team1': teams[0], 'team2': teams[1],
-            'venue': info.get('venue') or '', 'city': info.get('city') or '',
+            'venue': info.get('venue') or '', 'venue_canonical': canonical_venue(info.get('venue') or ''), 'city': info.get('city') or '',
             'event': (info.get('event') or {}).get('name', ''),
             'gender': info.get('gender', ''),
             'winner': franchise(outcome.get('winner', '')) if outcome.get('winner') else '',
@@ -160,7 +161,7 @@ def extract(source: Path):
             innings_rows.append({
                 'match_id': match_id, 'date': match_date.isoformat(), 'season': match_date.year,
                 'innings': innings_pos, 'batting_team': batting_team, 'bowling_team': bowling_team,
-                'venue': info.get('venue') or '', 'runs': total_runs, 'wickets': wickets,
+                'venue': info.get('venue') or '', 'venue_canonical': canonical_venue(info.get('venue') or ''), 'runs': total_runs, 'wickets': wickets,
                 'legal_balls': innings_legal, 'overs_recorded': len(over_rows),
             })
             for bname, bruns in batter_runs.items():
@@ -168,6 +169,7 @@ def extract(source: Path):
                     'match_id': match_id, 'date': match_date.isoformat(), 'season': match_date.year,
                     'innings': innings_pos, 'batting_team': batting_team,
                     'bowling_team': bowling_team, 'venue': info.get('venue') or '',
+                    'venue_canonical': canonical_venue(info.get('venue') or ''),
                     'batter': bname, 'batter_id': player_registry.get(bname, ''),
                     'runs': bruns, 'balls_faced': batter_balls[bname],
                     'dismissed': int(bool(batter_dismissed[bname])),
@@ -176,7 +178,15 @@ def extract(source: Path):
             # Training snapshots are produced only at FULLY COMPLETED overs.
             # If the following over ends early because all 10 wickets fell, outcome is
             # known to be positive; otherwise the shortened horizon is censored.
+            invalid_prior_over = False
             for current, future in zip(over_rows, over_rows[1:]):
+                if current['legal_balls'] > 6:
+                    invalid_prior_over = True
+                if invalid_prior_over:
+                    # Once a recorded over contains >6 legal balls, later score/time
+                    # checkpoints in this innings are potentially corrupted.
+                    issues.append({'match_id': match_id, 'issue': 'checkpoint_after_invalid_over'})
+                    continue
                 if current['legal_balls'] != 6:
                     continue
                 if future['over_index'] != current['over_index'] + 1:
@@ -196,6 +206,7 @@ def extract(source: Path):
                     'match_id': match_id, 'date': match_date.isoformat(), 'season': match_date.year,
                     'innings': innings_pos, 'batting_team': batting_team,
                     'bowling_team': bowling_team, 'venue': info.get('venue') or '',
+                    'venue_canonical': canonical_venue(info.get('venue') or ''),
                     'completed_overs': completed_overs,
                     'runs': current['runs_after'], 'wickets': current['wickets_after'],
                     'run_rate': round(current['runs_after'] / completed_overs, 4),

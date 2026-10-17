@@ -57,3 +57,12 @@ One eligible snapshot immediately after an over is fully completed, *before the 
 - `missingness.csv`: fields with blank or NA counts; absence may be *structural* rather than corrupted data.
 - `wickets_by_over.csv` and `wicket_event_by_checkpoint.csv`: descriptive event rates; affected by the selection of eligible windows.
 - Visualizations are descriptive (not causal, not proof of ML calibration).
+
+## Stage 1 / Session 03 audited additions
+
+- `venue` is the exact raw string from the source, **not overwritten**.
+- `venue_canonical` is an additional, conservative canonical label in `matches.csv`, `innings.csv`, `batter_innings.csv` and `next_over_samples.csv`; specific mappings live in `src/cricketlens/venues.py` and are reviewable in `reports/stage_01/venue_alias_review.csv`.
+- `reports/stage_01/source_audit_summary.json` summarizes raw-source exception classes, distinct player-ID name collisions, rain methods, tie/no-results, and Super Over innings.
+- `reports/stage_01/raw_over_anomalies.csv` records four seven-legal-ball and four zero-legal-ball over records; zero-legal-ball innings endings are preserved as observed.
+- `next_over_samples.csv` remains a *candidate* ML table: Stage 3 must apply policy for D/L matches and event censoring and reconstruct all pre-checkpoint features without leakage. Known over-length anomalies contaminate later runs and wickets; checkpoint rows after the anomaly are excluded.
+- ML 2026 holdout rule is unchanged. CSVs contain 2026 rows for EDA, **not for training/tuning**.

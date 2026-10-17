@@ -1,6 +1,6 @@
 # CricketLens — Men’s IPL Analytics & Prediction
 
-**IT462 Exploratory Data Analysis college project.** Development **Stage 1: Dataset screening and cleaning (IN PROGRESS)**. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
+**IT462 Exploratory Data Analysis college project.** Development **Stage 1: Dataset screening and cleaning (COMPLETE FOR EDA WITH DISCLOSED EXCEPTIONS)**. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
 
 ## Agreed scope
 - Men's IPL matches 2008–2026; Cricsheet ball-by-ball JSON as source.
@@ -13,7 +13,7 @@
 ## Stage definitions
 | Stage | Work | Status |
 |---|---|---|
-| **1** | Screen, clean, standardize and audit IPL data | **In progress; initial data tables generated** |
+| **1** | Screen, clean, standardize and audit IPL data | **Complete for EDA; candidate ML labels require Stage 3 selection** |
 | **2** | Systematic EDA, descriptive statistics, plots and interpretations | Not formally complete; early exploratory charts exist |
 | **3** | Train/validate/test both ML models | Not formally complete; early next-over baseline validated on 2025 |
 | **4** | Build six-tab React dashboard | Not started |
@@ -48,13 +48,26 @@ python -m cricketlens.train_wicket_baseline --input data/processed/next_over_sam
 
 Do **not** evaluate or tune on the 2026 holdout while still selecting models. Code, tests, and reproducible summaries may go to GitHub; `data/raw/`, `data/processed/`, and `models/` are ignored.
 
-## Evidence so far (initial processing, not Stage 1 sign-off)
+## Stage 1 audited evidence (2026-10-17)
 
 - 1,243 men’s IPL JSON matches, dates 2008–2026.
 - 295,557 recorded delivery events; 18,768 batter-innings records.
-- 44,714 eligible provisional next-over samples; 550 censored next-over windows.
+- 44,706 **candidate** next-over windows; 548 flagged censored windows under the revised anomaly policy. Final ML eligibility is not yet decided.
 - 2,480 ordinary innings reconciled against delivery-level runs, wickets and legal-ball counts.
-- 6 synthetic-fixture software tests previously passed. Run `pytest` again after updating the code.
+- 9 synthetic-fixture software tests passed; raw source audit also completed.
 - **Preliminary** 2025-only wicket baseline: Brier score 0.19831 versus 0.20319 for a constant-rate baseline. No held-out 2026 results.
 
-Data source: [Cricsheet](https://cricsheet.org/). Credit Cricsheet and disclose any AI assistance in assessed work, consistent with your syllabus. Further data auditing is required before the cleaned dataset is frozen.
+Data source: [Cricsheet](https://cricsheet.org/). Credit Cricsheet and disclose any AI assistance in assessed work, consistent with your syllabus. Data is signed off for descriptive EDA; ML eligibility and leakage-safe player features remain Stage 3 work.
+
+### Stage 1 source-quality audit (completed for EDA)
+
+From project root after `pip install -e '.[dev]'`:
+
+```bash
+python -m cricketlens.stage01_review "data/raw/ipl_json.zip" --output reports/stage_01
+python -m cricketlens.pipeline "data/raw/ipl_json.zip" --output data/processed
+python -m cricketlens.data_audit --data data/processed --output reports/stage_01 --figures reports/figures
+pytest -q
+```
+
+Details, exclusions and limits: `docs/STAGE_01_STATUS.md` and `docs/STAGE_01_SESSION_03_FINDINGS.md`. The `data/processed` outputs are local and ignored by Git. No final trained model is claimed.

@@ -48,3 +48,14 @@
 ## 2026-10-17 — Stage labeling clarification (documentation only)
 
 Canonical development stages: Stage 1 = cleaning; Stage 2 = systematic EDA; Stage 3 = two prediction models; Stage 4 = dashboard; Stage 5 = integration; Stage 6 = final report. Prior use of “Stage II” in generated code and report paths referred to academic screening conventions and did not mean our development Stage 2 was finished. The original sessions are preserved for audit; this package labels datasets and audit as Stage 1, with charts and baseline clearly identified as preliminary later-stage experiments. No new IPL data cleaning or ML evaluation is claimed by this documentation correction.
+
+## 2026-10-17 - Stage 1 / Session 03: final source audit
+
+- Audited all 1,243 original men's IPL match JSON files, not just processed CSVs.
+- Confirmed 0 team-runs/innings reconciliation discrepancies, 0 duplicate IDs and 0 negative ball run fields.
+- Added source-level anomaly reporting, venue alias maps, identifier collision reporting, and 3 new tests (9 passing in total).
+- Preserved 51 missing city fields (Dubai/Sharjah); documented 16 tied and 9 no-result games and 23 D/L matches.
+- Flagged four 7-legal-ball overs; corrected candidate next-over sample selection to exclude contaminated future checkpoints (44,706 rows now).
+- Kept four legitimate 0-legal-ball final overs (winning wides) as observed.
+- **Stage 1 signed off for EDA with exceptions.** Important model eligibility rules (D/L and censored windows) are deferred to Stage 3.
+- Next: Stage 2 systematic statistical EDA. Prior experimental model metrics are superseded, not final results.

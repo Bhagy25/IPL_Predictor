@@ -1,0 +1,4 @@
+table,column,missing_count,total_rows,missing_pct
+matches,city,51,1243,4.103
+matches,winner,25,1243,2.011
+matches,outcome_method,1220,1243,98.15

@@ -13,4 +13,6 @@
 
 **Important:** Early charts in `reports/figures` belong to **preliminary Stage 2**. Early wicket model training is a **preliminary Stage 3 experiment**, not Stage 3 completion. Neither changes the current status of Stage 1.
 
-**Next work:** complete Stage 1 missingness analysis, anomalous overs/DLS checks, venue standardization, player/innings accounting, and archive completeness; rerun all tests; write acceptance summary; only then mark Stage 1 done.
+**Stage 1 closure:** Source missingness, anomalous overs/D/L exceptions, conservative venue standardization, and player/innings accounting reviewed; 9 tests passed. See `docs/STAGE_01_STATUS.md` for the full sign-off and deferred ML sample policy.
+
+**Stage 1 hand-off (2026-10-17):** Data inspection, conservative normalization, and exception logging completed for EDA. Read `docs/STAGE_01_STATUS.md`. Next is Stage 2: systematic descriptive, missingness, univariate, bivariate, time-trend and correlation analysis. Stage 3 will revisit candidate ML sample eligibility and temporal model validation.

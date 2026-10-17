@@ -1,0 +1,77 @@
+{
+  "archive_matches": 1243,
+  "gender": {
+    "male": 1243
+  },
+  "competition": {
+    "Indian Premier League": 1243
+  },
+  "ordinary_innings_by_match": {
+    "1": 6,
+    "2": 1237
+  },
+  "super_over_innings": 34,
+  "match_outcome_types": {
+    "winner_recorded": 1218,
+    "tie": 16,
+    "no_result": 9
+  },
+  "matches_with_DLS_or_DL": 23,
+  "distinct_raw_venue_strings": 60,
+  "distinct_canonical_venue_strings": 38,
+  "raw_venue_aliases_rewritten": 22,
+  "matches_with_venue_aliases": 461,
+  "missing_city_match_count": 51,
+  "missing_city_by_venue": {
+    "Dubai International Cricket Stadium": 33,
+    "Sharjah Cricket Stadium": 18
+  },
+  "overs_with_zero_legal_balls": 4,
+  "overs_with_more_than_six_legal_balls": 4,
+  "duplicate_match_ids": 0,
+  "nonconsecutive_over_sequences": 0,
+  "delivery_run_total_mismatches": 0,
+  "negative_run_fields": 0,
+  "extra_runs_by_type": {
+    "wides": 11790,
+    "legbyes": 5745,
+    "noballs": 1256,
+    "byes": 1387,
+    "penalty": 10
+  },
+  "extra_events_by_type": {
+    "wides": 9871,
+    "legbyes": 4398,
+    "noballs": 1221,
+    "byes": 743,
+    "penalty": 2
+  },
+  "dismissal_kinds": {
+    "caught": 9310,
+    "bowled": 2451,
+    "run out": 1185,
+    "lbw": 881,
+    "caught and bowled": 410,
+    "stumped": 388,
+    "retired hurt": 19,
+    "hit wicket": 20,
+    "obstructing the field": 4,
+    "retired out": 6
+  },
+  "player_names_with_multiple_ids": [
+    {
+      "name": "Harmeet Singh",
+      "id_count": 2,
+      "ids": "0bf15e52 | 2a72fd4f"
+    }
+  ],
+  "notes": [
+    "Source missing city for Dubai and Sharjah is not filled without evidence. Treat as source missingness, not automatically MCAR.",
+    "A seven-legal-ball over indicates a source coding anomaly requiring investigation; do not force it to six.",
+    "Zero-legal-ball final over can legitimately occur when a chase ends on a wide.",
+    "Canonical venue aliases use exact documented mappings while raw values are preserved.",
+    "Name ambiguity requires batter_id (person registry) for consistent player features.",
+    "DLS matches and censored over horizons need explicit eligibility decisions before final ML training.",
+    "This report is a source-quality review; no attempt to claim missingness mechanisms are identifiable from data alone."
+  ]
+}

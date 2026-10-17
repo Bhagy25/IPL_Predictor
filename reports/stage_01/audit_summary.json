@@ -51,8 +51,8 @@
     "overs": 47756,
     "deliveries": 295557,
     "batter_innings": 18768,
-    "next_over_samples": 44714,
-    "screening_issues": 562
+    "next_over_samples": 44706,
+    "screening_issues": 574
   },
   "totals": {
     "team_runs": 401423,
@@ -62,7 +62,8 @@
     "noball_events": 1221
   },
   "screening_issue_counts": {
-    "censored_next_over": 550,
+    "censored_next_over": 548,
+    "checkpoint_after_invalid_over": 14,
     "more_than_six_legal_balls": 4,
     "invalid_next_over_length": 4,
     "zero_legal_balls_in_recorded_over": 4
@@ -96,7 +97,7 @@
   "first_innings_median": 168.0,
   "batter_milestone_30_rate": 0.2553,
   "batter_milestone_50_rate": 0.1127,
-  "next_over_event_rate": 0.277,
+  "next_over_event_rate": 0.2771,
   "notices": [
     "Recorded batter milestone rates are conditional on batting appearances; pre-match features must be past-only.",
     "Retired hurt is excluded from team wickets; super overs are not part of ordinary innings tables.",
