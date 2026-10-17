@@ -7,7 +7,7 @@ name = "cricketlens"
 version = "0.1.0"
 description = "EDA-first men's IPL analytics and probability prediction"
 requires-python = ">=3.10"
-dependencies = ["pandas>=2.0,<3", "scikit-learn>=1.2,<2", "joblib>=1.2,<2"]
+dependencies = ["pandas>=2.0,<3", "scikit-learn>=1.2,<2", "joblib>=1.2,<2", "numpy>=1.24,<3", "scipy>=1.10,<2", "matplotlib>=3.7,<4"]
 
 [project.optional-dependencies]
 dev = ["pytest>=7,<10", "matplotlib>=3.7,<4"]

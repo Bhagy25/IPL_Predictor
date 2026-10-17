@@ -1,0 +1,58 @@
+{
+  "status": "Stage 2 Session 03 complete: numerical review ready; professor review remains external",
+  "analysis_season_cutoff": 2025,
+  "all_archive_quality_audit_only": {
+    "matches": 1243,
+    "regulation_wins": 1218,
+    "regulation_ties": 16,
+    "super_over_matches": 16,
+    "super_over_innings": 34,
+    "no_results": 9,
+    "dl_method_matches": 23,
+    "decided_matches": 1234
+  },
+  "eda_development_period": {
+    "matches": 1169,
+    "regulation_wins": 1146,
+    "regulation_ties": 15,
+    "super_over_matches": 15,
+    "super_over_innings": 32,
+    "no_results": 8,
+    "dl_method_matches": 22,
+    "decided_matches": 1161
+  },
+  "dl_flag_pre2026_match_count": 22,
+  "dl_2018_2025_first_innings_count": 6,
+  "recent_first_innings_n": 533,
+  "team_win_rate_corrections": [
+    {
+      "team": "Delhi Capitals",
+      "wins_regulation_only": 25,
+      "wins_including_super_overs": 26,
+      "old_win_pct": 46.2962962962963,
+      "corrected_win_pct": 47.27272727272727
+    }
+  ],
+  "toss_results": [
+    {
+      "toss_decision": "bat",
+      "matches": 130,
+      "toss_winner_wins": 62,
+      "pct": 47.69230769230769
+    },
+    {
+      "toss_decision": "field",
+      "matches": 398,
+      "toss_winner_wins": 210,
+      "pct": 52.76381909547739
+    }
+  ],
+  "method_limitations": [
+    "D/L identifies a match outcome method, not precisely the shortened innings or interruption timing.",
+    "Super Over innings excluded from ordinary batting, bowling, scoring-phase and wicket samples.",
+    "Regulation ties and final Super Over winners are separately recorded.",
+    "No-result matches are retained; no winner is imputed.",
+    "Only season<=2025 used for descriptive development; 2026 left for unseen ML test.",
+    "Preliminary next-over candidate cohort still needs interrupted-innings/censoring rules in Stage 3."
+  ]
+}

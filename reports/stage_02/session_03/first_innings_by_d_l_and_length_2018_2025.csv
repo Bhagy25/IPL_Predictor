@@ -1,0 +1,5 @@
+d_l_annotated,full_120_legal,innings,mean_recorded_runs,median_recorded_runs,mean_legal_balls
+False,False,30,124.36666666666666,121.0,103.53333333333333
+False,True,497,178.8128772635815,176.0,120.0
+True,False,2,174.5,174.5,105.0
+True,True,4,187.75,191.0,120.0

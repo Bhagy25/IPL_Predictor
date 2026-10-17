@@ -1,0 +1,122 @@
+{
+  "status": "Stage 2 Session 01: initial EDA complete; full Stage 2 not yet signed off",
+  "training_holdout_protection": "Only seasons 2008-2025 were analyzed; 2026 reserved for ML testing",
+  "full_archive_matches_including_2026": 1243,
+  "development_matches_2008_2025": 1169,
+  "recent_matches_2018_2025": 533,
+  "recent_first_innings_count": 533,
+  "first_innings_2008_2025": {
+    "count": 1169,
+    "mean": 167.02138579982892,
+    "median": 167.0,
+    "mode_smallest": 171.0,
+    "min": 56.0,
+    "q1": 147.0,
+    "q3": 188.0,
+    "max": 287.0,
+    "range": 231.0,
+    "variance_sample": 1085.5980011601064,
+    "sd_sample": 32.94841424348228,
+    "iqr": 41.0,
+    "median_abs_deviation": 21.0,
+    "cv_pct": 19.727063145656185
+  },
+  "first_innings_2018_2025": {
+    "count": 533,
+    "mean": 175.79924953095684,
+    "median": 175.0,
+    "mode_smallest": 162.0,
+    "min": 62.0,
+    "q1": 155.0,
+    "q3": 199.0,
+    "max": 287.0,
+    "range": 225.0,
+    "variance_sample": 1151.3261648492714,
+    "sd_sample": 33.93119751569743,
+    "iqr": 44.0,
+    "median_abs_deviation": 22.0,
+    "cv_pct": 19.301104871737472
+  },
+  "recent_batter_appearances": 8123,
+  "batter_30plus_frequency_2018_2025": 0.2703434691616398,
+  "batter_50plus_frequency_2018_2025": 0.12224547580943002,
+  "recent_batting_top": [
+    {
+      "name": "KL Rahul",
+      "batter_id": "b17e2f24",
+      "innings": 105,
+      "total_runs": 4497
+    },
+    {
+      "name": "V Kohli",
+      "batter_id": "ba607b88",
+      "innings": 118,
+      "total_runs": 4243
+    },
+    {
+      "name": "Shubman Gill",
+      "batter_id": "b4b99816",
+      "innings": 114,
+      "total_runs": 3866
+    },
+    {
+      "name": "SA Yadav",
+      "batter_id": "271f83cd",
+      "innings": 109,
+      "total_runs": 3703
+    },
+    {
+      "name": "JC Buttler",
+      "batter_id": "99b75528",
+      "innings": 95,
+      "total_runs": 3593
+    }
+  ],
+  "team_window_2022_2025_decided_matches": 289,
+  "venue_minimum_n": 20,
+  "eligible_checkpoint_2018_2025_n": 19290,
+  "eligible_checkpoint_2018_2025_wicket_frequency": 0.2784862623120788,
+  "phase_run_rates": {
+    "Powerplay (1-6)": 8.488329495499267,
+    "Middle (7-16)": 8.324552731447524,
+    "Death (17-20)": 10.726325014991467
+  },
+  "season_mean_trend_2008_2025": {
+    "slope_runs_per_year": 1.7076368201464833,
+    "r_squared": 0.6633015262953398,
+    "p_value": 3.8780281793544944e-05,
+    "method": "Unweighted line fitted to 18 annual means; descriptive, not causal"
+  },
+  "descriptive_multiple_linear_regression_2018_2025": {
+    "meaning": "In-sample explanatory association ONLY, not a future-score predictor",
+    "n_first_innings": 533,
+    "target": "final first-innings runs (observed outcome)",
+    "predictors": [
+      "final wickets lost",
+      "final legal balls recorded",
+      "season - 2018"
+    ],
+    "intercept": 22.54980251133574,
+    "coefficients": {
+      "wickets": -7.785826349212405,
+      "legal_balls": 1.5701054744450975,
+      "season": 3.926417363052652
+    },
+    "in_sample_r2": 0.3977780410277161,
+    "in_sample_mae": 20.466085585452834,
+    "vif": {
+      "wickets": 1.0229083456326689,
+      "legal_balls": 1.0211943808142299,
+      "season": 1.003136340051918
+    },
+    "important_warning": "Uses END-OF-INNINGS quantities; invalid to use as a pre-match score predictor"
+  },
+  "limitations": [
+    "Score and venue comparisons include all recorded first innings, even shortened or all-out innings; not controlled for era, pitch, or weather.",
+    "Team win rates exclude ties/no-results and cover only 2022-2025, for franchise overlap.",
+    "Players' 30+/50+ frequencies are conditional on a recorded batting appearance, not playing-XI selection.",
+    "Next-over event frequencies are conditional on Stage 1 eligible full-over windows and may have censoring/selection bias.",
+    "2026 outcomes must not be used to tune features, models, or thresholds before final held-out evaluation.",
+    "Unweighted season trend and linear-regression associations are observational, not causal."
+  ]
+}

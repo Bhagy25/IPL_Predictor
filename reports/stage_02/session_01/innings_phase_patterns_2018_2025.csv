@@ -1,0 +1,4 @@
+phase,total_runs,legal_balls,team_wickets,deliveries_recorded,runs_per_six_legal_balls,wickets_per_six_legal_balls
+Powerplay (1-6),54065,38216,1506,39596,8.4883,0.2364
+Middle (7-16),87011,62714,2904,64913,8.3246,0.2778
+Death (17-20),38756,21679,1952,23146,10.7263,0.5402
