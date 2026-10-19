@@ -1,6 +1,6 @@
 # CricketLens — Men’s IPL Analytics & Prediction
 
-**IT462 Exploratory Data Analysis college project.** Development **Stage 1: Dataset screening and cleaning (COMPLETE FOR EDA WITH DISCLOSED EXCEPTIONS)**. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
+**IT462 Exploratory Data Analysis college project.** Development **Stage 3: Machine Learning (IN PROGRESS)**; Stage 1 data cleaning and Stage 2 EDA are complete for development, subject to academic review. The next-over wicket model has 2025 validation results; the batter milestone model, final 2026 testing, and website are still pending.
 
 ## Agreed scope
 - Men's IPL matches 2008–2026; Cricsheet ball-by-ball JSON as source.
@@ -14,8 +14,8 @@
 | Stage | Work | Status |
 |---|---|---|
 | **1** | Screen, clean, standardize and audit IPL data | **Complete for EDA; candidate ML labels require Stage 3 selection** |
-| **2** | Systematic EDA, descriptive statistics, plots and interpretations | Not formally complete; early exploratory charts exist |
-| **3** | Train/validate/test both ML models | Not formally complete; early next-over baseline validated on 2025 |
+| **2** | Systematic EDA, descriptive statistics, plots and interpretations | **Internally complete**; Sessions 01–03, 20 figures, corrected Super Over outcomes; professor review pending |
+| **3** | Train/validate/test both ML models | **In progress**; wicket model trained and validated on 2025, batter model pending; 2026 untouched |
 | **4** | Build six-tab React dashboard | Not started |
 | **5** | FastAPI integration, tracker and historical replay | Not started |
 | **6** | Consolidate final academic report and demonstrate | Ongoing notes; final report not complete |
@@ -71,3 +71,53 @@ pytest -q
 ```
 
 Details, exclusions and limits: `docs/STAGE_01_STATUS.md` and `docs/STAGE_01_SESSION_03_FINDINGS.md`. The `data/processed` outputs are local and ignored by Git. No final trained model is claimed.
+
+## Stage 2 / Session 01 - Run reproducible EDA
+
+Following the completed Stage 1 audit, ensure the seven CSV files are stored locally in `data/processed/`. Then run:
+
+```bash
+python -m cricketlens.stage02_eda --data data/processed --output reports/stage_02/session_01 --figures reports/figures/stage_02
+pytest -q
+```
+
+The results are 11 real-data figures, comparison tables, and statistical summaries for 2008-2025; **2026 is intentionally kept out of development EDA** so it can remain the final ML test season. No ML model was retrained in this session. See `docs/STAGE_02_SESSION_01_FINDINGS.md` and `docs/STAGE_02_STATUS.md`.
+
+### Stage 2 - Session 02: deeper EDA
+
+With the audited local CSVs in `data/processed/`, run:
+
+```bash
+python -m cricketlens.stage02_deep_eda --data data/processed --output reports/stage_02/session_02 --figures reports/figures/stage_02
+pytest -q
+```
+
+This module reports full vs shortened first-innings scores, within-innings phase comparisons, venue associations adjusted for observed season means, toss-result cross-tabulations and missingness patterns. It never includes the 2026 holdout. Results are **exploratory**, not causal. Read `docs/STAGE_02_SESSION_02_FINDINGS.md` for interpretation and limitations. Session 02 is not yet Stage 2 completion.
+
+### Stage 2 / Session 03 — Outcome corrections + consolidated EDA
+
+On **`feature/stage-02-eda`**, rerun the source parser on `data/raw/ipl_json.zip` to add `final_winner` and related fields to local `data/processed/matches.csv`, then regenerate Session 01/02 EDA and run:
+
+```bash
+python -m cricketlens.stage02_final_eda --data data/processed --output reports/stage_02/session_03 --figures reports/figures/stage_02
+pytest -q
+```
+
+The corrections now credit Super Over winners in team/toss statistics while retaining the regulation tie, preserve no-results and D/L markers, and exclude Super Over innings from ordinary batting/bowling. **Earlier Session 02 toss counts are superseded.** The canonical academic synthesis is `reports/Stage_02_Consolidated_EDA_Report.pdf`. No 2026 ML holdout data was used for analytical model development. Stage 3 can begin after this branch is reviewed and merged into main.
+
+## Stage 3 / Session 01 - Next-over wicket classifier
+
+See `docs/STAGE_03_STATUS.md` for exact eligibility rules, validation measurements, limitations and model inputs. The saved model is **development-only**, trained through 2024 and assessed on 2025. No 2026 outcome is used to select it.
+
+```bash
+# Run after building Stage 1 local data/processed/matches.csv and overs.csv
+python -m cricketlens.wicket_training_data
+python -m cricketlens.fit_wicket_models
+python -m cricketlens.stage03_diagnostics
+pytest -q
+
+# Optional, hypothetical example - not a real upcoming match forecast
+python -m cricketlens.predict_wicket --batting-team "Mumbai Indians" --bowling-team "Chennai Super Kings" --venue "Wankhede Stadium" --innings 1 --completed-overs 13 --runs 108 --wickets 3 --last-over-runs 8 --last-over-wickets 0
+```
+
+`data/processed/*.csv` and `models/*.joblib` are excluded from GitHub; use locally. Stage 3 figures, concise model-comparison summaries, scripts and tests belong in the `feature/stage-03-ml` branch **created from merged Stage 2 main**.

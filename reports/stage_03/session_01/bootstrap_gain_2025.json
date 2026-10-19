@@ -1,0 +1,11 @@
+{
+  "comparison": "positive values mean model beats constant-rate reference",
+  "validation_matches": 73,
+  "bootstrap_samples": 2000,
+  "point_brier_improvement": 0.005601,
+  "cluster_bootstrap_95_percent_interval": [
+    0.002358,
+    0.008731
+  ],
+  "caution": "Descriptive uncertainty on validation data used for model selection; not an independent test or guarantee."
+}

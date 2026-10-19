@@ -1,0 +1,4 @@
+scope,n,mean_runs,median_runs,sd_runs,boot_mean_ci95_low,boot_mean_ci95_high
+all_recorded,533,175.799,175.0,33.931,172.861,178.816
+full_120_legal_balls,501,178.884,176.0,31.471,175.987,181.701
+fewer_than_120_legal_balls,32,127.5,123.5,34.956,115.529,139.47

@@ -66,3 +66,14 @@ One eligible snapshot immediately after an over is fully completed, *before the 
 - `reports/stage_01/raw_over_anomalies.csv` records four seven-legal-ball and four zero-legal-ball over records; zero-legal-ball innings endings are preserved as observed.
 - `next_over_samples.csv` remains a *candidate* ML table: Stage 3 must apply policy for D/L matches and event censoring and reconstruct all pre-checkpoint features without leakage. Known over-length anomalies contaminate later runs and wickets; checkpoint rows after the anomaly are excluded.
 - ML 2026 holdout rule is unchanged. CSVs contain 2026 rows for EDA, **not for training/tuning**.
+
+
+### Stage 2 / Session 03 correction — match outcomes
+
+- `winner`: ordinary source `outcome.winner`, blank on regulation ties decided by Super Over. Retained for provenance.
+- `outcome_type`, `regulation_result`: ordinary regulation outcome, `win`, `tie` or `no result`.
+- `super_over_winner`: normalized Cricsheet `outcome.eliminator` for tied games; otherwise blank.
+- `final_winner`: ordinary winner or, if tied, Super Over winner. Blank for no-result matches. **Use this for final match win rate and winner-based toss statistics**.
+- `decided_by`: `regulation`, `super_over` or `no_result`.
+- `super_over_innings`: number of extra innings recorded as `super_over: true`. Excluded from normal innings/ball/player tables.
+- `outcome_method`: raw method string such as `D/L`; denotes match-result annotation, not reliable shortened-innings indicator.

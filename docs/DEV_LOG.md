@@ -59,3 +59,43 @@ Canonical development stages: Stage 1 = cleaning; Stage 2 = systematic EDA; Stag
 - Kept four legitimate 0-legal-ball final overs (winning wides) as observed.
 - **Stage 1 signed off for EDA with exceptions.** Important model eligibility rules (D/L and censored windows) are deferred to Stage 3.
 - Next: Stage 2 systematic statistical EDA. Prior experimental model metrics are superseded, not final results.
+
+
+## Stage 2 / Session 01 - First systematic EDA (18 Oct 2026)
+
+- Loaded Stage 1 audited local CSV tables; no raw-data cleaning changes.
+- Enforced seasons <=2025 for development-stage findings to preserve 2026 ML test outcomes.
+- Added `src/cricketlens/stage02_eda.py` and unit tests; generated 11 analytical charts and CSV/JSON data evidence.
+- Recorded real results and caveats in `docs/STAGE_02_SESSION_01_FINDINGS.md` and `docs/STAGE_02_STATUS.md`.
+- No ML retraining or 2026 holdout assessment performed.
+- Stage 2 remains in progress. Next: stratified EDA, missingness mechanism reasoning, cross-tab/hypothesis work, finalize academic EDA chapter.
+
+## Stage 2 / Session 02 — Deeper EDA (2026-10-18)
+
+- Added `stage02_deep_eda.py`: length-stratified first-innings distributions, 5% trimmed mean and Tukey outlier review, within-innings Powerplay/death paired analysis, season-centered full-innings venue comparisons with bootstrap bands, toss-decision/outcome crosstab, and observed-field missingness review.
+- Reproducible figures `12`–`17`, data tables under `reports/stage_02/session_02/`, markdown findings and PDF report.
+- Preserved all 2026 matches as future test-set data (not queried for statistics or model fitting).
+- These analyses are exploratory/associational, not a third ML model or a causal experiment.
+- Tests: see automated `pytest` run (synthetic edge cases added) and accompanying Session 02 report.
+- Stage 2 remains in progress pending synthesis and academic review.
+
+
+## Stage 2 / Session 03 — Exceptional outcomes and EDA consolidation (2026-10-18)
+
+- Audited the raw Cricsheet `outcome.eliminator`, `outcome.result`, `outcome.winner`, and D/L outcome.method fields. Verified 16 Super Over ties and 9 no-results in 2008–2026 (counts for input integrity only).
+- Updated `pipeline.py` match schema with `regulation_result`, `final_winner`, `super_over_winner`, `super_over_innings`, `decided_by`, retaining original `winner`/`outcome_type`. Kept Super Over deliveries out of ordinary innings.
+- Re-ran cleaned table extraction and regenerated affected Stage 2 Session 01 and Session 02 team/toss tables. Corrected 2022–2025 DC wins from 25 to 26 and the pre-2026 toss table.
+- Added `stage02_final_eda.py`, exceptional-match summary outputs, 3 charts, and synthetic match tests.
+- Consolidated core descriptive EDA and remaining ML limitations; no 2026 model evaluation or final model fitting.
+- **Next:** Stage 2 feature branch review and PR; then Stage 3 model design (one-over censoring + batter 30/50 milestones).
+
+## Stage 3 / Session 01 — First full wicket-risk model experiment (2026-10-18)
+
+- Branch target: `feature/stage-03-ml` (create from **updated main** after Stage 2 PR is merged).
+- Added `wicket_training_data.py`: reconstruct next-over event labels only from observable outcomes, exclude D/L for initial model, retain partial-over witnessed positives, and discard censored negative windows. Normal regular innings from Super Over-decided matches remain in scope.
+- Added `fit_wicket_models.py`: compare simple and expanded Logistic Regression with all-history vs recent-history windows and prior-rate baselines using **2025 validation only**; 2026 excluded from all model choice, score, and diagnostic calculations.
+- Added `predict_wicket.py` for local example inference and `stage03_diagnostics.py` for calibration, stage-wise performance, model comparisons and clustered bootstrap context.
+- Initial eligibility: 44,161 candidate rows (41,580 from years through 2025), after D/L/anomaly/censoring policy. Training 39,019 rows (through 2024); validation 2,561 rows (2025).
+- Selected from evaluated candidates: Logistic Regression with contextual features trained on 2018–2024; Brier 0.197195 vs recent constant rate baseline 0.202796 on 2025. Improvement is **small** and not final holdout evidence.
+- Added tests and Stage 3 documentation and PDF progress report; do not commit raw archives, processed ML data, or serialized trained model.
+- **2026 remains unseen** for model evaluation. Next: player milestone predictor with match-prior rolling features, then freeze and evaluate.

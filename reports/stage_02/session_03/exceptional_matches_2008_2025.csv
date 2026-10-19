@@ -1,0 +1,46 @@
+match_id,date,season,team1,team2,regulation_result,final_winner,super_over_winner,super_over_innings,decided_by,outcome_method,venue_canonical
+1082625,2017-04-29,2017,Gujarat Lions,Mumbai Indians,tie,Mumbai Indians,Mumbai Indians,2,super_over,,Saurashtra Cricket Association Stadium
+1082648,2017-05-17,2017,Sunrisers Hyderabad,Kolkata Knight Riders,win,Kolkata Knight Riders,,0,regulation,D/L,M Chinnaswamy Stadium
+1136566,2018-04-11,2018,Rajasthan Royals,Delhi Capitals,win,Rajasthan Royals,,0,regulation,D/L,Sawai Mansingh Stadium
+1136578,2018-04-21,2018,Kolkata Knight Riders,Punjab Kings,win,Punjab Kings,,0,regulation,D/L,Eden Gardens
+1136592,2018-05-02,2018,Delhi Capitals,Rajasthan Royals,win,Delhi Capitals,,0,regulation,D/L,Arun Jaitley Stadium
+1175365,2019-03-30,2019,Kolkata Knight Riders,Delhi Capitals,tie,Delhi Capitals,Delhi Capitals,2,super_over,,Arun Jaitley Stadium
+1178424,2019-04-30,2019,Royal Challengers Bengaluru,Rajasthan Royals,no result,,,0,no_result,,M Chinnaswamy Stadium
+1178426,2019-05-02,2019,Mumbai Indians,Sunrisers Hyderabad,tie,Mumbai Indians,Mumbai Indians,2,super_over,,Wankhede Stadium
+1216493,2020-09-20,2020,Delhi Capitals,Punjab Kings,tie,Delhi Capitals,Delhi Capitals,2,super_over,,Dubai International Cricket Stadium
+1216512,2020-10-18,2020,Kolkata Knight Riders,Sunrisers Hyderabad,tie,Kolkata Knight Riders,Kolkata Knight Riders,2,super_over,,Sheikh Zayed Stadium
+1216517,2020-10-18,2020,Mumbai Indians,Punjab Kings,tie,Punjab Kings,Punjab Kings,4,super_over,,Dubai International Cricket Stadium
+1216547,2020-09-28,2020,Royal Challengers Bengaluru,Mumbai Indians,tie,Royal Challengers Bengaluru,Royal Challengers Bengaluru,2,super_over,,Dubai International Cricket Stadium
+1254077,2021-04-25,2021,Delhi Capitals,Sunrisers Hyderabad,tie,Delhi Capitals,Delhi Capitals,2,super_over,,"MA Chidambaram Stadium, Chepauk"
+1359476,2023-04-01,2023,Punjab Kings,Kolkata Knight Riders,win,Punjab Kings,,0,regulation,D/L,"Punjab Cricket Association IS Bindra Stadium, Mohali"
+1359519,2023-05-03,2023,Lucknow Super Giants,Chennai Super Kings,no result,,,0,no_result,,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow"
+1370353,2023-05-29,2023,Gujarat Titans,Chennai Super Kings,win,Chennai Super Kings,,0,regulation,D/L,"Narendra Modi Stadium, Ahmedabad"
+1473469,2025-04-16,2025,Delhi Capitals,Rajasthan Royals,tie,Delhi Capitals,Delhi Capitals,2,super_over,,Arun Jaitley Stadium
+1473481,2025-04-26,2025,Punjab Kings,Kolkata Knight Riders,no result,,,0,no_result,,Eden Gardens
+1473492,2025-05-05,2025,Delhi Capitals,Sunrisers Hyderabad,no result,,,0,no_result,,"Rajiv Gandhi International Stadium, Uppal"
+1473493,2025-05-06,2025,Mumbai Indians,Gujarat Titans,win,Gujarat Titans,,0,regulation,D/L,Wankhede Stadium
+1473495,2025-05-08,2025,Punjab Kings,Delhi Capitals,no result,,,0,no_result,,Himachal Pradesh Cricket Association Stadium
+336022,2008-05-17,2008,Delhi Capitals,Punjab Kings,win,Punjab Kings,,0,regulation,D/L,Arun Jaitley Stadium
+336025,2008-05-18,2008,Kolkata Knight Riders,Chennai Super Kings,win,Chennai Super Kings,,0,regulation,D/L,Eden Gardens
+392183,2009-04-19,2009,Delhi Capitals,Punjab Kings,win,Delhi Capitals,,0,regulation,D/L,Newlands
+392186,2009-04-21,2009,Punjab Kings,Kolkata Knight Riders,win,Kolkata Knight Riders,,0,regulation,D/L,Kingsmead
+392190,2009-04-23,2009,Kolkata Knight Riders,Rajasthan Royals,tie,Rajasthan Royals,Rajasthan Royals,2,super_over,,Newlands
+392214,2009-05-07,2009,Chennai Super Kings,Punjab Kings,win,Chennai Super Kings,,0,regulation,D/L,SuperSport Park
+419121,2010-03-21,2010,Chennai Super Kings,Punjab Kings,tie,Punjab Kings,Punjab Kings,2,super_over,,"MA Chidambaram Stadium, Chepauk"
+501215,2011-04-18,2011,Kochi Tuskers Kerala,Chennai Super Kings,win,Kochi Tuskers Kerala,,0,regulation,D/L,Nehru Stadium
+501245,2011-05-07,2011,Kolkata Knight Riders,Chennai Super Kings,win,Kolkata Knight Riders,,0,regulation,D/L,Eden Gardens
+501255,2011-05-14,2011,Royal Challengers Bengaluru,Kolkata Knight Riders,win,Royal Challengers Bengaluru,,0,regulation,D/L,M Chinnaswamy Stadium
+501265,2011-05-21,2011,Delhi Capitals,Pune Warriors,no result,,,0,no_result,,Arun Jaitley Stadium
+598004,2013-04-07,2013,Sunrisers Hyderabad,Royal Challengers Bengaluru,tie,Sunrisers Hyderabad,Sunrisers Hyderabad,2,super_over,,"Rajiv Gandhi International Stadium, Uppal"
+598017,2013-04-16,2013,Royal Challengers Bengaluru,Delhi Capitals,tie,Royal Challengers Bengaluru,Royal Challengers Bengaluru,2,super_over,,M Chinnaswamy Stadium
+729315,2014-04-29,2014,Kolkata Knight Riders,Rajasthan Royals,tie,Rajasthan Royals,Rajasthan Royals,2,super_over,,Sheikh Zayed Stadium
+733993,2014-05-10,2014,Delhi Capitals,Sunrisers Hyderabad,win,Sunrisers Hyderabad,,0,regulation,D/L,Arun Jaitley Stadium
+829741,2015-04-21,2015,Rajasthan Royals,Punjab Kings,tie,Punjab Kings,Punjab Kings,2,super_over,,"Sardar Patel Stadium, Motera"
+829743,2015-04-22,2015,Sunrisers Hyderabad,Kolkata Knight Riders,win,Sunrisers Hyderabad,,0,regulation,D/L,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium
+829763,2015-04-29,2015,Royal Challengers Bengaluru,Rajasthan Royals,no result,,,0,no_result,,M Chinnaswamy Stadium
+829807,2015-05-15,2015,Sunrisers Hyderabad,Royal Challengers Bengaluru,win,Royal Challengers Bengaluru,,0,regulation,D/L,"Rajiv Gandhi International Stadium, Uppal"
+829813,2015-05-17,2015,Royal Challengers Bengaluru,Delhi Capitals,no result,,,0,no_result,,M Chinnaswamy Stadium
+980943,2016-04-26,2016,Sunrisers Hyderabad,Rising Pune Supergiant,win,Rising Pune Supergiant,,0,regulation,D/L,"Rajiv Gandhi International Stadium, Uppal"
+980989,2016-05-14,2016,Kolkata Knight Riders,Rising Pune Supergiant,win,Kolkata Knight Riders,,0,regulation,D/L,Eden Gardens
+980997,2016-05-17,2016,Rising Pune Supergiant,Delhi Capitals,win,Rising Pune Supergiant,,0,regulation,D/L,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium
+980999,2016-05-18,2016,Royal Challengers Bengaluru,Punjab Kings,win,Royal Challengers Bengaluru,,0,regulation,D/L,M Chinnaswamy Stadium

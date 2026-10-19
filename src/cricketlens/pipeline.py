@@ -75,15 +75,34 @@ def extract(source: Path):
         teams = list(map(franchise, raw_teams))
         player_registry = ((info.get('registry') or {}).get('people') or {})
         outcome = info.get('outcome') or {}
+        # The recorded ordinary innings may end tied, but the Super Over
+        # eliminator identifies the eventual match winner. Keep BOTH facts.
+        eliminator = franchise(outcome['eliminator']) if outcome.get('eliminator') else ''
+        recorded_winner = franchise(outcome['winner']) if outcome.get('winner') else ''
+        final_winner = recorded_winner or eliminator
+        regulation_result = ('tie' if outcome.get('result') == 'tie' or eliminator
+                             else outcome.get('result', 'win' if recorded_winner else 'unknown'))
+        super_over_innings = sum(inn.get('super_over') is True for inn in (match.get('innings') or []))
+        if final_winner and final_winner not in teams:
+            issues.append({'match_id': match_id, 'issue': 'final_winner_not_in_match'})
+        if eliminator and not super_over_innings:
+            issues.append({'match_id': match_id, 'issue': 'eliminator_without_super_over_records'})
         matches.append({
             'match_id': match_id, 'date': match_date.isoformat(),
             'season': match_date.year, 'team1': teams[0], 'team2': teams[1],
             'venue': info.get('venue') or '', 'venue_canonical': canonical_venue(info.get('venue') or ''), 'city': info.get('city') or '',
             'event': (info.get('event') or {}).get('name', ''),
             'gender': info.get('gender', ''),
-            'winner': franchise(outcome.get('winner', '')) if outcome.get('winner') else '',
-            'outcome_type': ('tie' if 'eliminator' in outcome or outcome.get('result') == 'tie'
-                             else outcome.get('result', 'win' if outcome.get('winner') else 'unknown')),
+            # Retain original/legacy winner and outcome_type fields for auditability.
+            # Use final_winner for team win statistics; outcome_type for regulation ties.
+            'winner': recorded_winner,
+            'outcome_type': regulation_result,
+            'regulation_result': regulation_result,
+            'final_winner': final_winner,
+            'super_over_winner': eliminator,
+            'super_over_innings': super_over_innings,
+            'decided_by': ('super_over' if eliminator else
+                           'regulation' if recorded_winner else 'no_result'),
             'outcome_method': outcome.get('method', ''),
             'toss_winner': franchise((info.get('toss') or {}).get('winner', ''))
                            if (info.get('toss') or {}).get('winner') else '',

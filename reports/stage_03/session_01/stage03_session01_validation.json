@@ -1,0 +1,83 @@
+{
+  "stage": "3, session 1",
+  "status": "validation_only",
+  "train_end_year": 2024,
+  "validation_year": 2025,
+  "holdout_year_unopened": 2026,
+  "training_matches": 1074,
+  "validation_matches": 73,
+  "training_eligible_rows": 39019,
+  "validation_eligible_rows": 2561,
+  "selected_candidate": "logistic_context_since_2018",
+  "features": [
+    "innings",
+    "completed_overs",
+    "runs",
+    "wickets",
+    "run_rate",
+    "last_over_runs",
+    "last_over_wickets",
+    "batting_team",
+    "bowling_team",
+    "phase",
+    "venue_canonical"
+  ],
+  "candidate_ranking": [
+    {
+      "model": "logistic_context_since_2018",
+      "trained_rows": 16575,
+      "validation_year": 2025,
+      "rows": 2561,
+      "event_rate": 0.282702,
+      "brier_score": 0.197195,
+      "log_loss": 0.582958,
+      "roc_auc": 0.596101
+    },
+    {
+      "model": "logistic_basic_all_history",
+      "trained_rows": 39019,
+      "validation_year": 2025,
+      "rows": 2561,
+      "event_rate": 0.282702,
+      "brier_score": 0.198138,
+      "log_loss": 0.585367,
+      "roc_auc": 0.590603
+    },
+    {
+      "model": "logistic_basic_since_2018",
+      "trained_rows": 16575,
+      "validation_year": 2025,
+      "rows": 2561,
+      "event_rate": 0.282702,
+      "brier_score": 0.198169,
+      "log_loss": 0.585416,
+      "roc_auc": 0.590405
+    },
+    {
+      "model": "constant_rate_since_2018",
+      "trained_rows": 16575,
+      "validation_year": 2025,
+      "rows": 2561,
+      "event_rate": 0.282702,
+      "brier_score": 0.202796,
+      "log_loss": 0.595524,
+      "roc_auc": 0.5
+    },
+    {
+      "model": "constant_rate_all_history",
+      "trained_rows": 39019,
+      "validation_year": 2025,
+      "rows": 2561,
+      "event_rate": 0.282702,
+      "brier_score": 0.202811,
+      "log_loss": 0.595561,
+      "roc_auc": 0.5
+    }
+  ],
+  "notes": [
+    "All match checkpoints remain grouped by season.",
+    "D/L-marked matches excluded from initial cohort.",
+    "Validation improvements may be small. No 2026 results inspected.",
+    "No player milestone model trained yet."
+  ]
+}
