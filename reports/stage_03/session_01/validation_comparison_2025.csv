@@ -1,0 +1,6 @@
+model,trained_rows,validation_year,rows,event_rate,brier_score,log_loss,roc_auc
+logistic_context_since_2018,16575,2025,2561,0.282702,0.197195,0.582958,0.596101
+logistic_basic_all_history,39019,2025,2561,0.282702,0.198138,0.585367,0.590603
+logistic_basic_since_2018,16575,2025,2561,0.282702,0.198169,0.585416,0.590405
+constant_rate_since_2018,16575,2025,2561,0.282702,0.202796,0.595524,0.5
+constant_rate_all_history,39019,2025,2561,0.282702,0.202811,0.595561,0.5

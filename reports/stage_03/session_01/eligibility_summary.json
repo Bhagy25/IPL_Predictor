@@ -1,0 +1,12 @@
+{
+  "innings_seen": 2480,
+  "considered_completed_checkpoints": 45268,
+  "excluded_dls_checkpoints": 619,
+  "excluded_anomalous_or_gapped": 14,
+  "censored_no_wicket_short_next_over": 474,
+  "witnessed_wicket_short_next_over": 237,
+  "full_next_over_examples": 43924,
+  "eligible_rows": 44161,
+  "eligible_before_2026": 41580,
+  "policy": "exclude D/L-marked matches; observed short-over positives retained; censored negatives excluded"
+}
