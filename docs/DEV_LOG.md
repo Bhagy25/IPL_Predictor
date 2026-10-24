@@ -88,3 +88,33 @@ Canonical development stages: Stage 1 = cleaning; Stage 2 = systematic EDA; Stag
 - Added `stage02_final_eda.py`, exceptional-match summary outputs, 3 charts, and synthetic match tests.
 - Consolidated core descriptive EDA and remaining ML limitations; no 2026 model evaluation or final model fitting.
 - **Next:** Stage 2 feature branch review and PR; then Stage 3 model design (one-over censoring + batter 30/50 milestones).
+
+## Stage 3 / Session 01 — First full wicket-risk model experiment (2026-10-18)
+
+- Branch target: `feature/stage-03-ml` (create from **updated main** after Stage 2 PR is merged).
+- Added `wicket_training_data.py`: reconstruct next-over event labels only from observable outcomes, exclude D/L for initial model, retain partial-over witnessed positives, and discard censored negative windows. Normal regular innings from Super Over-decided matches remain in scope.
+- Added `fit_wicket_models.py`: compare simple and expanded Logistic Regression with all-history vs recent-history windows and prior-rate baselines using **2025 validation only**; 2026 excluded from all model choice, score, and diagnostic calculations.
+- Added `predict_wicket.py` for local example inference and `stage03_diagnostics.py` for calibration, stage-wise performance, model comparisons and clustered bootstrap context.
+- Initial eligibility: 44,161 candidate rows (41,580 from years through 2025), after D/L/anomaly/censoring policy. Training 39,019 rows (through 2024); validation 2,561 rows (2025).
+- Selected from evaluated candidates: Logistic Regression with contextual features trained on 2018–2024; Brier 0.197195 vs recent constant rate baseline 0.202796 on 2025. Improvement is **small** and not final holdout evidence.
+- Added tests and Stage 3 documentation and PDF progress report; do not commit raw archives, processed ML data, or serialized trained model.
+- **2026 remains unseen** for model evaluation. Next: player milestone predictor with match-prior rolling features, then freeze and evaluate.
+
+
+## Stage 3 / Session 02 — Batter milestone model (2026-10-20)
+
+- Implemented `batter_training_data.py` to compute **strictly prior-calendar-day** historical features (career, recent-five/ten, venue and opposition), keyed by stable Cricsheet batter IDs. Excluded 2026 before creating features.
+- Excluded flagged D/L and no-result matches from this initial ML cohort, without altering the source or EDA results; normal batting in Super Over-decided games remains eligible, Super Over deliveries excluded.
+- Built one coherent 3-class predictor (`<30`, `30–49`, `50+`), yielding both milestone probabilities and guaranteeing `P50 <= P30`.
+- Trained multiple Logistics / Random Forest variants through 2024; validated on 2025 (1,085 eligible batter innings), compared with player-specific and constant baselines. Selected a regularized Random Forest on 2025 validation; Brier(30+) 0.194459, Brier(50+) 0.109510. These are preliminary development metrics, NOT 2026 holdout results.
+- Generated calibration plots, per-experience support, match-cluster bootstrap comparison, validation samples, CLI historical replay, automated leakage and ordering tests, and development/viva notes.
+- Models predict **conditional on a recorded batting innings**: playing XI, DNB, current match batting slot, toss not modeled. This limitation must be shown in the app.
+- **Next** Stage 3/Session 03: final feature/metric freeze, 2026 one-time evaluation and later final model refit.
+
+
+## Stage 3 Session 03 — full history / one-time 2026 test (2026-10-20)
+- Honored request to use eligible 2008–2025 records for both models. Selected full-history algorithm configurations by 2025 validation only, then held out 2026 for a single independent evaluation.
+- Test Brier: wicket 0.200519 vs constant 0.204936; batter 30+ 0.185299 vs constant 0.209614; batter 50+ 0.117947 vs constant 0.129097.
+- Refit selected frozen specifications using eligible full history through 2026; saved two deployment copies separately from pre-2026 holdout artifacts.
+- Added future-date manual batter and next-over prediction functions, calibration charts, tests, updated Stage 3 documentation, and viva questions.
+- 2026 refitted models must NOT be reported as having an independent 2026 test; those metrics come from the pre-2026 versions.

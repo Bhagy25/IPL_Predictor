@@ -117,3 +117,32 @@ See `docs/STAGE_02_SESSION_02_FINDINGS.md` for exact reproducible tables, defini
 In our development EDA window (2008–2025), 1,169 matches comprised 1,146 regulation wins, 15 ties decided by Super Over and 8 no-results; 22 were labelled D/L. The original source record is preserved, while the final winner is obtained from the Super Over eliminator on regulation ties. Super Over innings are separated from regular-innings batting and bowling. D/L match annotation is **not** the same as shortened first innings; 2018–2025 included 6 D/L-marked first innings, 4 of which lasted 120 legal deliveries. Detailed methods/limitations and charts are in the consolidated PDF.
 
 **Stage 2 signed off internally for EDA.** Stage 3 will independently establish ML eligibility, interrupted-game handling and unobserved/censored next-over labels. The 2026 test season remains unseen by model-development analytics.
+
+## Stage 3 / Session 01 — Next-over wicket prediction (model-development validation)
+
+**Research question:** Given the end-of-over situation of an ordinary IPL innings, how reliably can we estimate the probability that at least one batting-team wicket will fall during the upcoming over?
+
+**Unit of analysis:** A completed-over checkpoint with an *observed* outcome for the following over, using match-season chronological splits. Model inputs include only current/past score state, innings, teams, venue, phase and last-over form. The wicket label is constructed from future deliveries but is never an input feature. Eligibility and censoring are documented in `docs/STAGE_03_STATUS.md`.
+
+**Exceptional events:** Exclude D/L-marked matches from the *first* model cohort. Preserve Super Over-decided games' ordinary innings but exclude all Super Over deliveries. If the following over stops before six legal balls without a wicket, its six-ball event status is censored: do not treat it as No. If a wicket occurred before a shortened over ended, the outcome is known to be Yes.
+
+**Temporal split and baselines:** Train on eligible checkpoints through 2024, validate on 2025; compare logistic models with all eligible history vs 2018-onward and compare against constant historical event rates. All checkpoints belonging to a match are in the same season, preventing match-level random-split leakage. No 2026 outcomes used for training/validation or choosing the model.
+
+**Validation result:** The best 2025 candidate has Brier Score **0.197195**, log loss **0.582958**, ROC-AUC **0.596101**, based on **2,561 observations from 73 matches**; a recent constant-rate baseline has Brier **0.202796**, log loss **0.595524**. Improvement is modest and should not be described as excellent predictive accuracy. Phase-level rates and the model's reliability chart are included in `reports/stage_03/session_01/` and `reports/figures/stage_03/`.
+
+**Next tasks:** Build batter 30+/50+ classifier with temporally valid historical form, freeze both models, then evaluate the 2026 holdout once. Use a separate model retrained through 2026 only after that evaluation to simulate 2027 deployment. Report limitations, uncertainty, historical era shift and feedback verification needs.
+
+
+## Stage 3 / Session 02 — Batter milestone model (2026-10-20)
+
+- Implemented `batter_training_data.py` to compute **strictly prior-calendar-day** historical features (career, recent-five/ten, venue and opposition), keyed by stable Cricsheet batter IDs. Excluded 2026 before creating features.
+- Excluded flagged D/L and no-result matches from this initial ML cohort, without altering the source or EDA results; normal batting in Super Over-decided games remains eligible, Super Over deliveries excluded.
+- Built one coherent 3-class predictor (`<30`, `30–49`, `50+`), yielding both milestone probabilities and guaranteeing `P50 <= P30`.
+- Trained multiple Logistics / Random Forest variants through 2024; validated on 2025 (1,085 eligible batter innings), compared with player-specific and constant baselines. Selected a regularized Random Forest on 2025 validation; Brier(30+) 0.194459, Brier(50+) 0.109510. These are preliminary development metrics, NOT 2026 holdout results.
+- Generated calibration plots, per-experience support, match-cluster bootstrap comparison, validation samples, CLI historical replay, automated leakage and ordering tests, and development/viva notes.
+- Models predict **conditional on a recorded batting innings**: playing XI, DNB, current match batting slot, toss not modeled. This limitation must be shown in the app.
+- **Next** Stage 3/Session 03: final feature/metric freeze, 2026 one-time evaluation and later final model refit.
+
+
+## Stage 3 / Session 03 — final temporal evaluation (2008–2026)
+Training windows: 2008–2024 train, 2025 validate, 2008–2025 holdout model refit, 2026 one-time unseen test, then 2008–2026 deployment refit. Full details and measured scores are in `docs/STAGE_03_SESSION_03_FULL_HISTORY.md` and `reports/stage_03/session_03/stage03_session03_final_results.json`. The held-out 2026 performance is specific to models trained through 2025; models refitted on 2026 require 2027 or later independent validation. D/L matches were excluded from ML training; Super Over innings were excluded, not normal innings of matches settled by Super Over.

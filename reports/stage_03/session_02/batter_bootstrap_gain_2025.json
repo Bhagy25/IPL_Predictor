@@ -1,0 +1,12 @@
+{
+  "validation_year": 2025,
+  "validation_examples": 1085,
+  "validation_matches": 70,
+  "brier_gain_over_smoothed_player_baseline": 0.002241,
+  "match_cluster_bootstrap_95_percentile_interval": [
+    0.000397,
+    0.003978
+  ],
+  "bootstrap_resamples": 1200,
+  "caution": "Descriptive interval, optimistic for selection: best candidate selected on same 2025 validation season, NOT independent confirmation."
+}

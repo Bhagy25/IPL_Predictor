@@ -6,7 +6,7 @@
 |---|---|---|---|
 | **1: Dataset screening & cleaning** | Load Cricsheet IPL archive; create correct reproducible tables; audit exceptions | **COMPLETE FOR EDA** | Clean matches/innings/overs/deliveries/batting files; data dictionary; complete missingness + anomalies + venue/identity checks; reconciliation; signed-off Stage 1 report |
 | **2: Systematic EDA** | Analyze IPL, team, venue, player patterns | **INTERNALLY COMPLETE (Sessions 01–03; professor review pending)** | Notebooks, descriptive stats, missingness, 20 EDA figures, regression/correlation, corrected outcome analysis and consolidated 7-page PDF |
-| **3: Two ML models** | Develop and evaluate both probabilistic predictors | Preliminary wicket-baseline only | Past-only features, train through 2024, validation on 2025, once-only held-out test on 2026; Brier/log loss/calibration; trained models and documentation |
+| **3: Two ML models** | Develop and evaluate both probabilistic predictors | **Holdout evaluated on 2026; final models refitted through 2026** | Past-only features, train through 2024, validation on 2025, once-only held-out test on 2026; Brier/log loss/calibration; trained models and documentation |
 | **4: Dashboard website** | Six interactive tabs; no login | Not started | Responsive UI, filtering, real-data charts, player/team searches, forms |
 | **5: Integrate & test** | Connect FastAPI, predictions, local tracker, replay | Not started | Real model inference, original prediction saved, outcomes recorded, evaluation & historical replay; test cases |
 | **6: Final report & presentation** | Integrate evidence from all stages | Ongoing notes, not complete | Reproducible academic PDF, graphs, data quality decisions, results, limitations, screenshots, walkthrough |

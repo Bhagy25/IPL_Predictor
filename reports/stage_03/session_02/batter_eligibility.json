@@ -1,0 +1,17 @@
+{
+  "all_rows_in_pre2026_raw": 17638,
+  "excluded_dls_batter_innings": 263,
+  "excluded_no_result_batter_innings": 59,
+  "eligible_pre2026_batter_innings": 17316,
+  "development_train_rows_through_2024": 16231,
+  "development_validation_rows_2025": 1085,
+  "cold_start_rows_no_prior_innings": 702,
+  "unique_batters": 702,
+  "target_class_counts": {
+    "0": 12940,
+    "1": 2463,
+    "2": 1913
+  },
+  "policy": "exclude D/L and no-result matches in this first model cohort; same-date history excluded; batting appearance conditioned",
+  "holdout": "2026 never accessed for feature building, tuning or validation"
+}
