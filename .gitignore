@@ -5,6 +5,10 @@ data/processed/*
 !data/processed/.gitkeep
 models/*
 !models/.gitkeep
+!models/wicket_deployment_through_2026.joblib
+!models/wicket_holdout_train_through_2025.joblib
+!models/batter_deployment_through_2026.joblib
+!models/batter_holdout_train_through_2025.joblib
 __pycache__/
 *.py[cod]
 .pytest_cache/
