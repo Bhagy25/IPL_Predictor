@@ -1,8 +1,7 @@
 # Data may be too large, mutable, or not redistributeable; fetch from Cricsheet.
-data/raw/*
-!data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
+# Allow raw and processed IPL datasets
+!data/raw/
+!data/processed/
 models/*
 !models/.gitkeep
 !models/wicket_deployment_through_2026.joblib
