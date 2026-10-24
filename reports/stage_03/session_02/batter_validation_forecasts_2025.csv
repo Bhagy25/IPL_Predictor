@@ -1,0 +1,1086 @@
+match_id,date,season,batter_id,batter,batting_team,bowling_team,venue_canonical,milestone_class,actual_runs,prior_innings,predicted_30,predicted_50,actual_30,actual_50
+1473438,2025-03-22,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,0,12,39,0.2377381262908419,0.08769934762909685,0,0
+1473438,2025-03-22,2025,29e95537,AM Rahane,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,2,56,166,0.37483008590861927,0.15104980623249864,1,1
+1473438,2025-03-22,2025,372455c4,Q de Kock,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,0,4,104,0.39085813604954767,0.18826609637919728,0,0
+1473438,2025-03-22,2025,77b1aa15,Harshit Rana,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,0,5,3,0.06623225518296083,0.01967942606071054,0,0
+1473438,2025-03-22,2025,83c3e8e3,SH Johnson,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,0,1,3,0.06026804124655598,0.01926665913684548,0,0
+1473438,2025-03-22,2025,9d430b40,SP Narine,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,1,44,104,0.25077230090449554,0.11421748411816532,1,0
+1473438,2025-03-22,2025,a24be938,VR Iyer,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,0,6,48,0.39356697955185893,0.1811000465924426,0,0
+1473438,2025-03-22,2025,bbd41817,AD Russell,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,0,4,101,0.3355014186278372,0.14544588093600147,0,0
+1473438,2025-03-22,2025,be24ead0,Ramandeep Singh,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,0,6,13,0.1479676508161567,0.05104822405951427,0,0
+1473438,2025-03-22,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Royal Challengers Bengaluru,Eden Gardens,1,30,7,0.32922771302431375,0.13228289624964923,1,0
+1473438,2025-03-22,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Kolkata Knight Riders,Eden Gardens,0,10,64,0.2807413400135625,0.12876575215177816,0,0
+1473438,2025-03-22,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Kolkata Knight Riders,Eden Gardens,2,56,21,0.45905040262030594,0.24935981310956984,1,1
+1473438,2025-03-22,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Kolkata Knight Riders,Eden Gardens,0,15,38,0.30876693903276287,0.13168990858499768,0,0
+1473438,2025-03-22,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Kolkata Knight Riders,Eden Gardens,2,59,238,0.4562182104488071,0.2590986275978474,1,1
+1473438,2025-03-22,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Kolkata Knight Riders,Eden Gardens,1,34,24,0.4466005448787219,0.24575841627176284,1,0
+1473439,2025-03-23,2025,0890552f,A Manohar,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",0,0,15,0.13853107799571618,0.04835307842755976,0,0
+1473439,2025-03-23,2025,12b610c2,TM Head,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",2,67,25,0.46302279740982216,0.2379014869346041,1,1
+1473439,2025-03-23,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",1,34,31,0.46529397674152806,0.24412938849775884,1,0
+1473439,2025-03-23,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",2,106,99,0.3963064972251744,0.18355247593002422,1,1
+1473439,2025-03-23,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",0,7,0,0.07218439273594172,0.024377943136147488,0,0
+1473439,2025-03-23,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",1,30,11,0.4217316795956226,0.18466853971000474,1,0
+1473439,2025-03-23,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",0,0,39,0.2516488735169756,0.09002481707541479,0,0
+1473439,2025-03-23,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Rajasthan Royals,"Rajiv Gandhi International Stadium, Uppal",0,24,61,0.3581993304271495,0.15827386977032393,0,0
+1473439,2025-03-23,2025,04a418e8,R Parag,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,4,58,0.3660807899704999,0.17551262105224044,0,0
+1473439,2025-03-23,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,42,65,0.19885926202713378,0.06524973447387726,1,0
+1473439,2025-03-23,2025,5574750c,JC Archer,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,1,23,0.05940840297292553,0.020371794978039825,0,0
+1473439,2025-03-23,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,34,3,0.12722819511274716,0.04361703582554838,1,0
+1473439,2025-03-23,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,1,52,0.4385691040061851,0.24890962414123513,0,0
+1473439,2025-03-23,2025,a4cc73aa,SV Samson,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",2,66,158,0.4059256264751982,0.1996484536350672,1,1
+1473439,2025-03-23,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",2,70,22,0.22567513936150446,0.09956624681550934,1,1
+1473439,2025-03-23,2025,fb2d1dda,N Rana,Rajasthan Royals,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,11,99,0.3807465992902379,0.16939039546966525,0,0
+1473440,2025-03-23,2025,23eeb873,DL Chahar,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,28,12,0.04943008369241829,0.010165220978036012,0,0
+1473440,2025-03-23,2025,271f83cd,SA Yadav,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,29,134,0.3828942018626954,0.18011772450275704,0,0
+1473440,2025-03-23,2025,740742ef,RG Sharma,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,0,251,0.36388936563265084,0.1571085769421008,0,0
+1473440,2025-03-23,2025,9caf69a1,WG Jacks,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,11,8,0.36188245540672787,0.162300674771187,0,0
+1473440,2025-03-23,2025,a818c1be,TA Boult,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,1,22,0.02269901223341503,0.0068423037742642995,0,0
+1473440,2025-03-23,2025,b0482a1d,Tilak Varma,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",1,31,38,0.391283936891592,0.18276424551100812,1,0
+1473440,2025-03-23,2025,bafd0398,R Minz,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,3,0,0.05935981939401372,0.018973390977150038,0,0
+1473440,2025-03-23,2025,c27b5a0e,PVSN Raju,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,1,0,0.05935981939401372,0.018973390977150038,0,0
+1473440,2025-03-23,2025,e4a0deae,MJ Santner,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,11,11,0.041203519676823425,0.011567470978813974,0,0
+1473440,2025-03-23,2025,e66732f8,RD Rickelton,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,13,0,0.05935981939401372,0.018973390977150038,0,0
+1473440,2025-03-23,2025,fffa744b,Naman Dhir,Mumbai Indians,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,17,7,0.3018964867650088,0.1310496995061348,0,0
+1473440,2025-03-23,2025,45a43fe2,RD Gaikwad,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",2,53,64,0.5048103660504938,0.31573424123034166,1,1
+1473440,2025-03-23,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",0,0,223,0.2295457476588647,0.08139174048328453,0,0
+1473440,2025-03-23,2025,73ad96ed,DJ Hooda,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",0,3,95,0.16079371723470837,0.06269438401367614,0,0
+1473440,2025-03-23,2025,77255a9e,RA Tripathi,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",0,2,91,0.3647108509412593,0.15892563319578018,0,0
+1473440,2025-03-23,2025,a4e37e47,S Dube,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",0,9,60,0.3489529710805351,0.14554219791836276,0,0
+1473440,2025-03-23,2025,ba5e1069,R Ravindra,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",2,65,10,0.30540732025035444,0.13315637301312042,1,1
+1473440,2025-03-23,2025,e94915e6,SM Curran,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",0,4,47,0.22624536622154673,0.10036433263600879,0,0
+1473440,2025-03-23,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Mumbai Indians,"MA Chidambaram Stadium, Chepauk",0,17,178,0.22754790308973583,0.09244111018980387,0,0
+1473441,2025-03-24,2025,1abb78f8,SN Thakur,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,0,34,0.07429357023107375,0.02947901958634729,0,0
+1473441,2025-03-24,2025,3241e3fd,N Pooran,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,2,75,71,0.3668866143993822,0.16915705129375788,1,1
+1473441,2025-03-24,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,2,72,36,0.2022664281582649,0.07668263720127419,1,1
+1473441,2025-03-24,2025,6a26221c,AK Markram,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,15,42,0.3351181796513112,0.14251690139917533,0,0
+1473441,2025-03-24,2025,872b03f7,A Badoni,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,4,34,0.23573723782999378,0.10919556287332573,0,0
+1473441,2025-03-24,2025,919a3be2,RR Pant,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,0,107,0.4210363056379526,0.22230708341254438,0,0
+1473441,2025-03-24,2025,d67d5f00,DA Miller,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,27,122,0.32406459531061543,0.1393759944324175,0,0
+1473441,2025-03-24,2025,df064e1a,Ravi Bishnoi,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,0,14,0.03946157160241625,0.01748545619512635,0,0
+1473441,2025-03-24,2025,f9e6e7ef,Shahbaz Ahmed,Lucknow Super Giants,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,9,37,0.1489850578260499,0.057842512940754744,0,0
+1473441,2025-03-24,2025,2e171977,AR Patel,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,22,111,0.23580502207585635,0.10193691812770578,0,0
+1473441,2025-03-24,2025,3355b542,F du Plessis,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,29,137,0.4603461768906717,0.26001129765046793,0,0
+1473441,2025-03-24,2025,3fb19989,MA Starc,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,2,16,0.050697364955226504,0.014530901304590196,0,0
+1473441,2025-03-24,2025,5ffc0565,V Nigam,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,1,39,0,0.0856071121037465,0.029251315043689597,1,0
+1473441,2025-03-24,2025,759ac88f,MM Sharma,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,1,27,0.04889541641490273,0.015124301003913205,0,0
+1473441,2025-03-24,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,2,66,9,0.3033689002068556,0.10537439921127227,1,1
+1473441,2025-03-24,2025,85b3fab2,T Stubbs,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,1,34,17,0.380299340336282,0.16967920257909302,1,0
+1473441,2025-03-24,2025,8d2c70ad,Kuldeep Yadav,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,5,32,0.07300251297871398,0.02401862108606491,0,0
+1473441,2025-03-24,2025,9b6e1b3f,J Fraser-McGurk,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,1,9,0.39500006564566265,0.21137608348824943,0,0
+1473441,2025-03-24,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,0,16,0.31631553867765116,0.1314458843623581,0,0
+1473441,2025-03-24,2025,f89d3b11,Sameer Rizvi,Delhi Capitals,Lucknow Super Giants,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,4,5,0.10390556321575373,0.030927794937172636,0,0
+1473442,2025-03-25,2025,26989d80,Shashank Singh,Punjab Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,44,19,0.34401996043658245,0.17130751541391398,1,0
+1473442,2025-03-25,2025,85ec8e33,SS Iyer,Punjab Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",2,97,111,0.41155772010754554,0.19708632895918332,1,1
+1473442,2025-03-25,2025,8f6dd463,Azmatullah Omarzai,Punjab Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,16,4,0.11713221564067412,0.034451784707918084,0,0
+1473442,2025-03-25,2025,9418198b,P Simran Singh,Punjab Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,5,33,0.2896797947520188,0.12237838040349516,0,0
+1473442,2025-03-25,2025,b5797845,Priyansh Arya,Punjab Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,47,0,0.08374308643021394,0.026408059881612357,1,0
+1473442,2025-03-25,2025,b681e71e,GJ Maxwell,Punjab Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,0,126,0.22356626542292204,0.0871919135057081,0,0
+1473442,2025-03-25,2025,d9273ee7,MP Stoinis,Punjab Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,20,86,0.29267297858275154,0.13092740126727737,0,0
+1473442,2025-03-25,2025,12314277,Arshad Khan,Gujarat Titans,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,1,7,0.18243415728861687,0.06783577685523509,0,0
+1473442,2025-03-25,2025,39a2dfa8,R Tewatia,Gujarat Titans,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,6,65,0.2282178109606588,0.09115440586766331,0,0
+1473442,2025-03-25,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,6,36,0.2328925362815381,0.08304031677261116,0,0
+1473442,2025-03-25,2025,99b75528,JC Buttler,Gujarat Titans,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",2,54,104,0.4682188620163597,0.2558570382165809,1,1
+1473442,2025-03-25,2025,b4b99816,Shubman Gill,Gujarat Titans,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",1,33,97,0.4750426391390049,0.27524060464084443,1,0
+1473442,2025-03-25,2025,d014d5ac,SE Rutherford,Gujarat Titans,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",1,46,9,0.12523704759288407,0.033633968775984895,1,0
+1473442,2025-03-25,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",2,74,24,0.47512962354733496,0.2575390018987088,1,1
+1473443,2025-03-26,2025,04a418e8,R Parag,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,25,59,0.3022747743588371,0.1321574359583406,0,0
+1473443,2025-03-26,2025,46a9bea1,TU Deshpande,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,2,4,0.04729454417192043,0.01570915813066087,0,0
+1473443,2025-03-26,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,7,66,0.2334099543546998,0.0856681862105042,0,0
+1473443,2025-03-26,2025,5574750c,JC Archer,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,16,24,0.06519585568558564,0.025306789688317198,0,0
+1473443,2025-03-26,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,9,4,0.2487782117687878,0.08038978246099879,0,0
+1473443,2025-03-26,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,29,53,0.42100973652352125,0.21419115572395114,0,0
+1473443,2025-03-26,2025,a4cc73aa,SV Samson,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,13,159,0.3466979404334103,0.1628046377102865,0,0
+1473443,2025-03-26,2025,a97c8ec2,PWH de Silva,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,4,14,0.04608488483311442,0.012546467266712904,0,0
+1473443,2025-03-26,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",1,33,23,0.3026945838352341,0.13276884951143164,1,0
+1473443,2025-03-26,2025,f24c6701,M Theekshana,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,1,2,0.06196137764789824,0.019645507449227724,0,0
+1473443,2025-03-26,2025,fb2d1dda,N Rana,Rajasthan Royals,Kolkata Knight Riders,"Barsapara Cricket Stadium, Guwahati",0,8,100,0.3677848328502671,0.16390650117644295,0,0
+1473443,2025-03-26,2025,29e95537,AM Rahane,Kolkata Knight Riders,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,18,167,0.35244615871152385,0.16240932665926583,0,0
+1473443,2025-03-26,2025,372455c4,Q de Kock,Kolkata Knight Riders,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",2,97,105,0.3791395335087261,0.18410526680631487,1,1
+1473443,2025-03-26,2025,bb351c23,MM Ali,Kolkata Knight Riders,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,5,57,0.2994105740139008,0.14190595605344264,0,0
+1473443,2025-03-26,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,22,8,0.3042242847390051,0.13210432066460984,0,0
+1473444,2025-03-27,2025,0890552f,A Manohar,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,2,16,0.17441383905110214,0.053164490220583394,0,0
+1473444,2025-03-27,2025,12b610c2,TM Head,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",1,47,26,0.4697188169449121,0.2530007631872711,1,0
+1473444,2025-03-27,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,26,32,0.4630772851525834,0.23907748295592812,0,0
+1473444,2025-03-27,2025,30df8c66,Simarjeet Singh,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,3,3,0.052339352481350424,0.01841073909020083,0,0
+1473444,2025-03-27,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,0,100,0.3926003357970155,0.18602387519449898,0,0
+1473444,2025-03-27,2025,8cf9814c,Mohammed Shami,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,1,23,0.04396305731793929,0.013243885784404325,0,0
+1473444,2025-03-27,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",1,36,1,0.0878431096988915,0.02773760948142718,1,0
+1473444,2025-03-27,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",1,32,12,0.4107077149969355,0.18892327149935803,1,0
+1473444,2025-03-27,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,18,40,0.26098551868679204,0.0854959513544963,0,0
+1473444,2025-03-27,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,6,62,0.35516806459093186,0.15077425408164086,0,0
+1473444,2025-03-27,2025,f986ca1a,HV Patel,Sunrisers Hyderabad,Lucknow Super Giants,"Rajiv Gandhi International Stadium, Uppal",0,12,36,0.047597405639841904,0.01314337405900729,0,0
+1473444,2025-03-27,2025,3241e3fd,N Pooran,Lucknow Super Giants,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",2,70,72,0.40310392291867897,0.20575523303121587,1,1
+1473444,2025-03-27,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",2,52,37,0.2884980712981996,0.1315163789956118,1,1
+1473444,2025-03-27,2025,6a26221c,AK Markram,Lucknow Super Giants,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,1,43,0.2999760083599754,0.11675990737220869,0,0
+1473444,2025-03-27,2025,872b03f7,A Badoni,Lucknow Super Giants,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,6,35,0.25420806280286345,0.11352502215849555,0,0
+1473444,2025-03-27,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,22,39,0.1459532903312632,0.0396499661454975,0,0
+1473444,2025-03-27,2025,919a3be2,RR Pant,Lucknow Super Giants,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,15,108,0.4102739770960354,0.2100807859168794,0,0
+1473444,2025-03-27,2025,d67d5f00,DA Miller,Lucknow Super Giants,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,13,123,0.3079322681788879,0.14152656772273214,0,0
+1473445,2025-03-28,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,27,65,0.2469823228654163,0.09902216167931602,0,0
+1473445,2025-03-28,2025,2e81a32d,B Kumar,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,0,64,0.029974185242156313,0.009290619053944908,0,0
+1473445,2025-03-28,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",1,32,22,0.40736556145723823,0.21217361070903235,1,0
+1473445,2025-03-28,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,10,39,0.32227824118837356,0.13949540306458638,0,0
+1473445,2025-03-28,2025,5b8c830e,KH Pandya,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,0,106,0.11708464064109349,0.03801597651725783,0,0
+1473445,2025-03-28,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,12,35,0.19000947881662908,0.06280401459291526,0,0
+1473445,2025-03-28,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",1,31,239,0.46868994477763104,0.278443479903244,1,0
+1473445,2025-03-28,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",2,51,25,0.4150484974564742,0.22167106870233547,1,1
+1473445,2025-03-28,2025,f1f99156,TH David,Royal Challengers Bengaluru,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,22,35,0.2909521001607973,0.11531545890296693,0,0
+1473445,2025-03-28,2025,45a43fe2,RD Gaikwad,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,0,65,0.5240627755099826,0.3324749136180903,0,0
+1473445,2025-03-28,2025,495d42a5,R Ashwin,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,11,88,0.06839095042542126,0.02370410762150519,0,0
+1473445,2025-03-28,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",1,30,224,0.20451130939398227,0.07346324498085764,1,0
+1473445,2025-03-28,2025,73ad96ed,DJ Hooda,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,4,96,0.11580248424902675,0.043758737639137894,0,0
+1473445,2025-03-28,2025,77255a9e,RA Tripathi,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,5,92,0.3624175663991839,0.15386992122754845,0,0
+1473445,2025-03-28,2025,a4e37e47,S Dube,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,19,61,0.3292722420413398,0.1284701133687105,0,0
+1473445,2025-03-28,2025,ba5e1069,R Ravindra,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",1,41,11,0.4073904739535761,0.17327756754349072,1,0
+1473445,2025-03-28,2025,e94915e6,SM Curran,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,8,48,0.21786857716672692,0.08708919700752418,0,0
+1473445,2025-03-28,2025,efc04be7,Noor Ahmad,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,0,5,0.058440304738789826,0.018970190842686925,0,0
+1473445,2025-03-28,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Royal Challengers Bengaluru,"MA Chidambaram Stadium, Chepauk",0,25,179,0.24279426941613955,0.10034217690712646,0,0
+1473446,2025-03-29,2025,5f547c8b,Rashid Khan,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,6,57,0.15654632339783636,0.050700850592938496,0,0
+1473446,2025-03-29,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,9,37,0.23513279044894742,0.09413020594857475,0,0
+1473446,2025-03-29,2025,99b75528,JC Buttler,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",1,39,105,0.46333489311276954,0.26529821321610425,1,0
+1473446,2025-03-29,2025,b4b99816,Shubman Gill,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",1,38,98,0.45498833405597744,0.27624921026221216,1,0
+1473446,2025-03-29,2025,c7a995d3,R Sai Kishore,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,1,1,0.13117799418959927,0.03453824785365434,0,0
+1473446,2025-03-29,2025,d014d5ac,SE Rutherford,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,18,10,0.20666196867260722,0.0494855177665592,0,0
+1473446,2025-03-29,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",2,63,25,0.48702995565431073,0.28128515138370125,1,1
+1473446,2025-03-29,2025,e62dd25d,K Rabada,Gujarat Titans,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,7,28,0.05988022445633339,0.020706570586165915,0,0
+1473446,2025-03-29,2025,271f83cd,SA Yadav,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,48,135,0.4241292826532488,0.1926080002281153,1,0
+1473446,2025-03-29,2025,740742ef,RG Sharma,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,8,252,0.3626290537843425,0.15288807384943862,0,0
+1473446,2025-03-29,2025,b0482a1d,Tilak Varma,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,39,39,0.4129096691318933,0.19189860241514514,1,0
+1473446,2025-03-29,2025,bafd0398,R Minz,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,3,1,0.06641351739153596,0.02061537392273419,0,0
+1473446,2025-03-29,2025,dbe50b21,HH Pandya,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,11,127,0.22809537996508056,0.08170271201668448,0,0
+1473446,2025-03-29,2025,e4a0deae,MJ Santner,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,18,12,0.04575042127618538,0.012344464827192673,0,0
+1473446,2025-03-29,2025,e66732f8,RD Rickelton,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,6,1,0.12593128462381364,0.03908094731934407,0,0
+1473446,2025-03-29,2025,fffa744b,Naman Dhir,Mumbai Indians,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,18,8,0.29933449301134274,0.13995050876067466,0,0
+1473447,2025-03-30,2025,0890552f,A Manohar,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,4,17,0.15787195192542988,0.049894461329754065,0,0
+1473447,2025-03-30,2025,12b610c2,TM Head,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,22,27,0.40751479833871496,0.22086755386981943,0,0
+1473447,2025-03-30,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,1,32,33,0.38870732236098504,0.19221339731242543,1,0
+1473447,2025-03-30,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,2,101,0.37674521688894624,0.1627389924132306,0,0
+1473447,2025-03-30,2025,8cf9814c,Mohammed Shami,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,1,24,0.052479696136781745,0.015861466827375784,0,0
+1473447,2025-03-30,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,2,74,2,0.2822434929040284,0.09838683108783888,1,1
+1473447,2025-03-30,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,0,13,0.3433142344432974,0.15718885691028467,0,0
+1473447,2025-03-30,2025,c96f6ac5,PWA Mulder,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,9,0,0.07882717795872074,0.02693389541527439,0,0
+1473447,2025-03-30,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,2,41,0.21649326570614946,0.07666661851277796,0,0
+1473447,2025-03-30,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,1,63,0.29113228718328044,0.12821085886807598,0,0
+1473447,2025-03-30,2025,f986ca1a,HV Patel,Sunrisers Hyderabad,Delhi Capitals,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,5,37,0.052354695128237844,0.015153387653578636,0,0
+1473447,2025-03-30,2025,3355b542,F du Plessis,Delhi Capitals,Sunrisers Hyderabad,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,2,50,138,0.4679541381270649,0.2570470088480896,1,1
+1473447,2025-03-30,2025,85b3fab2,T Stubbs,Delhi Capitals,Sunrisers Hyderabad,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,21,18,0.3933391429468563,0.1735069659768187,0,0
+1473447,2025-03-30,2025,9b6e1b3f,J Fraser-McGurk,Delhi Capitals,Sunrisers Hyderabad,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,1,38,10,0.4069033175946676,0.22417565406265924,1,0
+1473447,2025-03-30,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Sunrisers Hyderabad,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,1,34,17,0.3232029483173271,0.13010402078578773,1,0
+1473447,2025-03-30,2025,b17e2f24,KL Rahul,Delhi Capitals,Sunrisers Hyderabad,Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium,0,15,119,0.4407161286383473,0.25162905441654565,0,0
+1473448,2025-03-30,2025,04a418e8,R Parag,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",1,37,60,0.308955558376831,0.13665208334240844,1,0
+1473448,2025-03-30,2025,46a9bea1,TU Deshpande,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,1,5,0.06448285996606416,0.01918835270227975,0,0
+1473448,2025-03-30,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,19,67,0.23671351190597653,0.08872197116165584,0,0
+1473448,2025-03-30,2025,5574750c,JC Archer,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,0,25,0.07684407677359796,0.029842661168987327,0,0
+1473448,2025-03-30,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,4,54,0.4014743307766435,0.20397610008222972,0,0
+1473448,2025-03-30,2025,a4cc73aa,SV Samson,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,20,160,0.34458113685087155,0.1664124350219852,0,0
+1473448,2025-03-30,2025,a97c8ec2,PWH de Silva,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,4,15,0.048306292772798985,0.01598261047196909,0,0
+1473448,2025-03-30,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,3,24,0.33288016401488996,0.14620529665197896,0,0
+1473448,2025-03-30,2025,f24c6701,M Theekshana,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,2,3,0.06557211370779067,0.01988112932350731,0,0
+1473448,2025-03-30,2025,f6d8a7ab,K Kartikeya,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",0,1,2,0.05872676387632886,0.016847064172529517,0,0
+1473448,2025-03-30,2025,fb2d1dda,N Rana,Rajasthan Royals,Chennai Super Kings,"Barsapara Cricket Stadium, Guwahati",2,81,101,0.353170073879037,0.16245361163864588,1,1
+1473448,2025-03-30,2025,0994d0ae,V Shankar,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,9,55,0.21578986608609413,0.0900209511477809,0,0
+1473448,2025-03-30,2025,45a43fe2,RD Gaikwad,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",2,63,66,0.4318139631266473,0.24814731232923498,1,1
+1473448,2025-03-30,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,16,225,0.2045842417616316,0.08522204046499539,0,0
+1473448,2025-03-30,2025,59559bc2,J Overton,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,11,0,0.07885660728424665,0.026124097323363286,0,0
+1473448,2025-03-30,2025,77255a9e,RA Tripathi,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,23,93,0.36325948400953634,0.1597314052143357,0,0
+1473448,2025-03-30,2025,a4e37e47,S Dube,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,18,62,0.2905977464916142,0.12826513160905056,0,0
+1473448,2025-03-30,2025,ba5e1069,R Ravindra,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",0,0,12,0.33831623812893735,0.14884227824840984,0,0
+1473448,2025-03-30,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Rajasthan Royals,"Barsapara Cricket Stadium, Guwahati",1,32,180,0.24478501006417183,0.10318719325180128,1,0
+1473449,2025-03-31,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,17,40,0.23432463645718488,0.08669145082407761,0,0
+1473449,2025-03-31,2025,29e95537,AM Rahane,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,11,168,0.36641633939674517,0.17134101240539804,0,0
+1473449,2025-03-31,2025,372455c4,Q de Kock,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,1,106,0.4119398940921131,0.21383283845690326,0,0
+1473449,2025-03-31,2025,77b1aa15,Harshit Rana,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,4,4,0.050959649423964984,0.016243664189713014,0,0
+1473449,2025-03-31,2025,83c3e8e3,SH Johnson,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,1,4,0.052229996901603966,0.017141530696980337,0,0
+1473449,2025-03-31,2025,93b4fc78,MK Pandey,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,19,156,0.365002975942338,0.14538355889306112,0,0
+1473449,2025-03-31,2025,9d430b40,SP Narine,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,0,105,0.2641726554268377,0.10763120768433913,0,0
+1473449,2025-03-31,2025,a24be938,VR Iyer,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,3,49,0.41107101140213054,0.18840347870964835,0,0
+1473449,2025-03-31,2025,bbd41817,AD Russell,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,5,102,0.28994821037160956,0.11485560094091421,0,0
+1473449,2025-03-31,2025,be24ead0,Ramandeep Singh,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,22,14,0.1301836299777957,0.046819900072927335,0,0
+1473449,2025-03-31,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Mumbai Indians,Wankhede Stadium,0,26,9,0.31821465342476896,0.13080033343120487,0,0
+1473449,2025-03-31,2025,271f83cd,SA Yadav,Mumbai Indians,Kolkata Knight Riders,Wankhede Stadium,0,27,136,0.4033802999135525,0.2049601833004006,0,0
+1473449,2025-03-31,2025,740742ef,RG Sharma,Mumbai Indians,Kolkata Knight Riders,Wankhede Stadium,0,13,253,0.34454307933299355,0.1571556961400578,0,0
+1473449,2025-03-31,2025,9caf69a1,WG Jacks,Mumbai Indians,Kolkata Knight Riders,Wankhede Stadium,0,16,9,0.35544946204914096,0.1541463995613154,0,0
+1473449,2025-03-31,2025,e66732f8,RD Rickelton,Mumbai Indians,Kolkata Knight Riders,Wankhede Stadium,2,62,2,0.11855973588604882,0.03646968008472374,1,1
+1473450,2025-04-01,2025,1abb78f8,SN Thakur,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,3,35,0.08780380755632494,0.03974417530505968,0,0
+1473450,2025-04-01,2025,3241e3fd,N Pooran,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,44,73,0.3935523563742901,0.19290162466428698,1,0
+1473450,2025-04-01,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,38,0.3317900860751065,0.1456684929549953,0,0
+1473450,2025-04-01,2025,6a26221c,AK Markram,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,28,44,0.26421073574795195,0.11379521768844254,0,0
+1473450,2025-04-01,2025,872b03f7,A Badoni,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,41,36,0.2432024614443687,0.10591687000592542,1,0
+1473450,2025-04-01,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,27,40,0.13724653529241215,0.05104558302150186,0,0
+1473450,2025-04-01,2025,919a3be2,RR Pant,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,2,109,0.448405202481342,0.23737225588101823,0,0
+1473450,2025-04-01,2025,d67d5f00,DA Miller,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,19,124,0.3299841596682791,0.14234891841598113,0,0
+1473450,2025-04-01,2025,eef2536f,Avesh Khan,Lucknow Super Giants,Punjab Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,9,0.04659248198165103,0.019003164236537147,0,0
+1473450,2025-04-01,2025,85ec8e33,SS Iyer,Punjab Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,52,112,0.3772485203617989,0.17055638407333829,1,1
+1473450,2025-04-01,2025,9418198b,P Simran Singh,Punjab Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,69,34,0.30741265761274084,0.1323509719677798,1,1
+1473450,2025-04-01,2025,b5797845,Priyansh Arya,Punjab Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,8,1,0.34006260284581086,0.13455976343707116,0,0
+1473450,2025-04-01,2025,d1a60072,N Wadhera,Punjab Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,43,16,0.2879999711909254,0.12250625273213864,1,0
+1473451,2025-04-02,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,0,4,66,0.2805992128721466,0.11673793435386037,0,0
+1473451,2025-04-02,2025,2e81a32d,B Kumar,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,0,1,65,0.06944059992619857,0.025439622904482106,0,0
+1473451,2025-04-02,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,0,14,23,0.4600986867661472,0.2574305104403443,0,0
+1473451,2025-04-02,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,2,54,40,0.27319100518238715,0.1109624178634178,1,1
+1473451,2025-04-02,2025,5b8c830e,KH Pandya,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,0,5,107,0.164867504756393,0.048842846857211464,0,0
+1473451,2025-04-02,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,1,33,36,0.20238992359052116,0.06977105819328906,1,0
+1473451,2025-04-02,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,0,7,240,0.49284856452868436,0.2832090221943392,0,0
+1473451,2025-04-02,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,0,12,26,0.45504097788493675,0.24619761518894273,0,0
+1473451,2025-04-02,2025,f1f99156,TH David,Royal Challengers Bengaluru,Gujarat Titans,M Chinnaswamy Stadium,1,32,36,0.30536955759194345,0.1182633580287116,1,0
+1473451,2025-04-02,2025,99b75528,JC Buttler,Gujarat Titans,Royal Challengers Bengaluru,M Chinnaswamy Stadium,2,73,106,0.4208713361277985,0.23964309249609114,1,1
+1473451,2025-04-02,2025,b4b99816,Shubman Gill,Gujarat Titans,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,14,99,0.4350675974920847,0.22857722559506724,0,0
+1473451,2025-04-02,2025,d014d5ac,SE Rutherford,Gujarat Titans,Royal Challengers Bengaluru,M Chinnaswamy Stadium,1,30,11,0.18032833540409487,0.0662718252354129,1,0
+1473451,2025-04-02,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Royal Challengers Bengaluru,M Chinnaswamy Stadium,1,49,26,0.45041261485416995,0.2652872097561521,1,0
+1473452,2025-04-03,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Sunrisers Hyderabad,Eden Gardens,1,32,41,0.2367521927496822,0.0847476473893867,1,0
+1473452,2025-04-03,2025,29e95537,AM Rahane,Kolkata Knight Riders,Sunrisers Hyderabad,Eden Gardens,1,38,169,0.36429649659930746,0.16703903283100174,1,0
+1473452,2025-04-03,2025,372455c4,Q de Kock,Kolkata Knight Riders,Sunrisers Hyderabad,Eden Gardens,0,1,107,0.3977689449104493,0.19917281330185993,0,0
+1473452,2025-04-03,2025,9d430b40,SP Narine,Kolkata Knight Riders,Sunrisers Hyderabad,Eden Gardens,0,7,106,0.23348183870326278,0.08941136938953244,0,0
+1473452,2025-04-03,2025,a24be938,VR Iyer,Kolkata Knight Riders,Sunrisers Hyderabad,Eden Gardens,2,60,50,0.37392523448905113,0.17462390249349694,1,1
+1473452,2025-04-03,2025,bbd41817,AD Russell,Kolkata Knight Riders,Sunrisers Hyderabad,Eden Gardens,0,1,103,0.2585258386839832,0.11029899700849555,0,0
+1473452,2025-04-03,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Sunrisers Hyderabad,Eden Gardens,2,50,10,0.32303579757730305,0.13415947387011926,1,1
+1473452,2025-04-03,2025,08548b13,PHKD Mendis,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,27,0,0.08152527639858936,0.028324342599334723,0,0
+1473452,2025-04-03,2025,12b610c2,TM Head,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,4,28,0.4056093894271847,0.20477805527261994,0,0
+1473452,2025-04-03,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,1,33,34,0.4346870999461775,0.21480880476474634,1,0
+1473452,2025-04-03,2025,30df8c66,Simarjeet Singh,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,0,4,0.059194299152031754,0.020657037350892162,0,0
+1473452,2025-04-03,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,2,102,0.3965919408200085,0.18197514328198366,0,0
+1473452,2025-04-03,2025,8cf9814c,Mohammed Shami,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,2,25,0.05331623376455299,0.020036956850595138,0,0
+1473452,2025-04-03,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,6,3,0.381858171852942,0.19596422484804837,0,0
+1473452,2025-04-03,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,19,14,0.3479931877779665,0.15542676305699596,0,0
+1473452,2025-04-03,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,14,42,0.16904607396686008,0.06931603557241336,0,0
+1473452,2025-04-03,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,2,64,0.32191492280581085,0.14684286374022137,0,0
+1473452,2025-04-03,2025,f986ca1a,HV Patel,Sunrisers Hyderabad,Kolkata Knight Riders,Eden Gardens,0,3,38,0.05391111435716575,0.020414934922552804,0,0
+1473453,2025-04-04,2025,0a67aec0,Akash Deep,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,3,0.07455643696081829,0.027397590295465596,0,0
+1473453,2025-04-04,2025,1abb78f8,SN Thakur,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,5,36,0.0797318850303301,0.03374560605326567,0,0
+1473453,2025-04-04,2025,3241e3fd,N Pooran,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,12,74,0.405628304527746,0.20854635721606232,0,0
+1473453,2025-04-04,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,60,39,0.30208452982433415,0.1434142066805473,1,1
+1473453,2025-04-04,2025,6a26221c,AK Markram,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,53,45,0.24718564710063462,0.1050586733937624,1,1
+1473453,2025-04-04,2025,872b03f7,A Badoni,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,30,37,0.22299709217702582,0.08435822915216021,1,0
+1473453,2025-04-04,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,4,41,0.14027118711677383,0.044418292063004045,0,0
+1473453,2025-04-04,2025,919a3be2,RR Pant,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,2,110,0.4419954517613797,0.22968069463798502,0,0
+1473453,2025-04-04,2025,d67d5f00,DA Miller,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,27,125,0.30860044032352996,0.13366799810198968,0,0
+1473453,2025-04-04,2025,eef2536f,Avesh Khan,Lucknow Super Giants,Mumbai Indians,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,2,10,0.06454378761620241,0.022240940883969988,0,0
+1473453,2025-04-04,2025,271f83cd,SA Yadav,Mumbai Indians,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,67,137,0.3702251470126805,0.16553688692907856,1,1
+1473453,2025-04-04,2025,9caf69a1,WG Jacks,Mumbai Indians,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,5,10,0.35579129411764976,0.14221979240820304,0,0
+1473453,2025-04-04,2025,b0482a1d,Tilak Varma,Mumbai Indians,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,25,40,0.40385010048036485,0.16833639241079806,0,0
+1473453,2025-04-04,2025,dbe50b21,HH Pandya,Mumbai Indians,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,28,128,0.21496356404618228,0.07783394427784061,0,0
+1473453,2025-04-04,2025,e4a0deae,MJ Santner,Mumbai Indians,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,2,13,0.07033251193195134,0.02276626628832385,0,0
+1473453,2025-04-04,2025,e66732f8,RD Rickelton,Mumbai Indians,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,10,3,0.3470282033827712,0.14866849054097633,0,0
+1473453,2025-04-04,2025,fffa744b,Naman Dhir,Mumbai Indians,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,46,9,0.32243317986151443,0.14054219389878223,1,0
+1473454,2025-04-05,2025,2e171977,AR Patel,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,21,112,0.21929261660524024,0.08678664030290034,0,0
+1473454,2025-04-05,2025,5ffc0565,V Nigam,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,1,1,0.3170788727909545,0.11806531349841287,0,0
+1473454,2025-04-05,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,1,10,0.33472975748030565,0.14441233092446162,0,0
+1473454,2025-04-05,2025,85b3fab2,T Stubbs,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,24,19,0.3271756841398694,0.14182745673847352,0,0
+1473454,2025-04-05,2025,9b6e1b3f,J Fraser-McGurk,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,0,11,0.37751064054675487,0.18791446552785085,0,0
+1473454,2025-04-05,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",1,33,18,0.3084971755575441,0.1340111967820013,1,0
+1473454,2025-04-05,2025,b17e2f24,KL Rahul,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",2,77,120,0.4579317017223078,0.2544431896744174,1,1
+1473454,2025-04-05,2025,f89d3b11,Sameer Rizvi,Delhi Capitals,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,20,6,0.09165773126616125,0.02569906163683311,0,0
+1473454,2025-04-05,2025,0994d0ae,V Shankar,Chennai Super Kings,Delhi Capitals,"MA Chidambaram Stadium, Chepauk",2,69,56,0.15612621241398547,0.06422656251804926,1,1
+1473454,2025-04-05,2025,45a43fe2,RD Gaikwad,Chennai Super Kings,Delhi Capitals,"MA Chidambaram Stadium, Chepauk",0,5,67,0.5221915876284551,0.33138063463194994,0,0
+1473454,2025-04-05,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Delhi Capitals,"MA Chidambaram Stadium, Chepauk",1,30,226,0.21059256233258478,0.08321670175848091,1,0
+1473454,2025-04-05,2025,a4e37e47,S Dube,Chennai Super Kings,Delhi Capitals,"MA Chidambaram Stadium, Chepauk",0,18,63,0.28920635233507586,0.12412772796610697,0,0
+1473454,2025-04-05,2025,ba5e1069,R Ravindra,Chennai Super Kings,Delhi Capitals,"MA Chidambaram Stadium, Chepauk",0,3,13,0.38591163866742406,0.16394547716814678,0,0
+1473454,2025-04-05,2025,df5a6881,DP Conway,Chennai Super Kings,Delhi Capitals,"MA Chidambaram Stadium, Chepauk",0,13,21,0.4850998991812342,0.2571084040803732,0,0
+1473454,2025-04-05,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Delhi Capitals,"MA Chidambaram Stadium, Chepauk",0,2,181,0.2289577799225639,0.09670582315389689,0,0
+1473455,2025-04-05,2025,04a418e8,R Parag,Rajasthan Royals,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,43,61,0.31854891146599423,0.14104980286882804,1,0
+1473455,2025-04-05,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,20,68,0.21145855835120542,0.08392098167177621,0,0
+1473455,2025-04-05,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,67,55,0.442848214597436,0.22556858206031719,1,1
+1473455,2025-04-05,2025,a4cc73aa,SV Samson,Rajasthan Royals,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,38,161,0.3455945520757387,0.15808976008903464,1,0
+1473455,2025-04-05,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,13,25,0.319816190782075,0.137116476716255,0,0
+1473455,2025-04-05,2025,fb2d1dda,N Rana,Rajasthan Royals,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,12,102,0.38018943567864727,0.17795171050608533,0,0
+1473455,2025-04-05,2025,244048f6,Arshdeep Singh,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,11,0.044198258745646715,0.013224221806530828,0,0
+1473455,2025-04-05,2025,26989d80,Shashank Singh,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,10,20,0.32884601456942203,0.1320379152645768,0,0
+1473455,2025-04-05,2025,2f9d0389,LH Ferguson,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,4,7,0.10638205151224653,0.030167880667456376,0,0
+1473455,2025-04-05,2025,81c36ee9,M Jansen,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,3,12,0.04666245355585062,0.01445160899487358,0,0
+1473455,2025-04-05,2025,85ec8e33,SS Iyer,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,10,113,0.38389284346527086,0.19916055061225563,0,0
+1473455,2025-04-05,2025,9418198b,P Simran Singh,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,17,35,0.32714035941708886,0.14578103162464756,0,0
+1473455,2025-04-05,2025,970ddd24,Suryansh Shedge,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,2,0,0.07827543136774354,0.02566261345036764,0,0
+1473455,2025-04-05,2025,b5797845,Priyansh Arya,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,2,0.2999427352071732,0.11385500238591813,0,0
+1473455,2025-04-05,2025,b681e71e,GJ Maxwell,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,30,127,0.22463640897442178,0.08012206156466474,1,0
+1473455,2025-04-05,2025,d1a60072,N Wadhera,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,62,17,0.3152417357939221,0.13233873513297212,1,1
+1473455,2025-04-05,2025,d9273ee7,MP Stoinis,Punjab Kings,Rajasthan Royals,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,87,0.31539116238697007,0.13833162054654544,0,0
+1473457,2025-04-06,2025,08548b13,PHKD Mendis,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,1,1,0.25564002285307297,0.08780602483431317,0,0
+1473457,2025-04-06,2025,12b610c2,TM Head,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,8,29,0.45766443780844906,0.2526610611144155,0,0
+1473457,2025-04-06,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,27,35,0.46670286569511954,0.2589150915832623,0,0
+1473457,2025-04-06,2025,30df8c66,Simarjeet Singh,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,0,5,0.06535289976067207,0.020140081481529896,0,0
+1473457,2025-04-06,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,17,103,0.3948775674484566,0.1879264043349259,0,0
+1473457,2025-04-06,2025,8cf9814c,Mohammed Shami,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,6,26,0.05574811928107348,0.014851800279413897,0,0
+1473457,2025-04-06,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,18,4,0.4217244932827914,0.21933840152231135,0,0
+1473457,2025-04-06,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",1,31,15,0.3792016914619023,0.1670487107764474,1,0
+1473457,2025-04-06,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,22,43,0.18625744285854223,0.053431091349434204,0,0
+1473457,2025-04-06,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Gujarat Titans,"Rajiv Gandhi International Stadium, Uppal",0,18,65,0.2894802207928775,0.11163180230333425,0,0
+1473457,2025-04-06,2025,99b75528,JC Buttler,Gujarat Titans,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,0,107,0.40706412436768125,0.23004036270702474,0,0
+1473457,2025-04-06,2025,b4b99816,Shubman Gill,Gujarat Titans,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",2,61,100,0.39758971736684323,0.2059797669270726,1,1
+1473457,2025-04-06,2025,d014d5ac,SE Rutherford,Gujarat Titans,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,35,12,0.24911859476052672,0.08840709514079234,1,0
+1473457,2025-04-06,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,5,27,0.4478906422931893,0.25581313192049066,0,0
+1473457,2025-04-06,2025,f19ccfad,Washington Sundar,Gujarat Titans,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,49,38,0.10154572365363916,0.031228905969491978,1,0
+1473458,2025-04-07,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Mumbai Indians,Wankhede Stadium,1,37,67,0.29125935618659976,0.11940789178186502,1,0
+1473458,2025-04-07,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Mumbai Indians,Wankhede Stadium,0,4,24,0.4089336490683758,0.21388233194081052,0,0
+1473458,2025-04-07,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Mumbai Indians,Wankhede Stadium,0,0,41,0.332629829815701,0.1530829514703816,0,0
+1473458,2025-04-07,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Mumbai Indians,Wankhede Stadium,1,40,37,0.2723557632936193,0.10790317696208643,1,0
+1473458,2025-04-07,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Mumbai Indians,Wankhede Stadium,2,67,241,0.49399000269855614,0.3065942460986336,1,1
+1473458,2025-04-07,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Mumbai Indians,Wankhede Stadium,2,64,27,0.4573808697812689,0.25787141691371745,1,1
+1473458,2025-04-07,2025,f1f99156,TH David,Royal Challengers Bengaluru,Mumbai Indians,Wankhede Stadium,0,1,37,0.33668920193153745,0.11182003868940678,0,0
+1473458,2025-04-07,2025,23eeb873,DL Chahar,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,0,13,0.07241286017469338,0.022399099295142277,0,0
+1473458,2025-04-07,2025,271f83cd,SA Yadav,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,28,138,0.4022138340520012,0.2101847397677667,0,0
+1473458,2025-04-07,2025,462411b3,JJ Bumrah,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,0,26,0.03298982439517768,0.012333473206468208,0,0
+1473458,2025-04-07,2025,740742ef,RG Sharma,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,17,254,0.32436873604556254,0.15155251486860824,0,0
+1473458,2025-04-07,2025,9caf69a1,WG Jacks,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,22,11,0.34839369887251415,0.14206193779094342,0,0
+1473458,2025-04-07,2025,a818c1be,TA Boult,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,1,23,0.026118190875678342,0.00897244674557585,0,0
+1473458,2025-04-07,2025,b0482a1d,Tilak Varma,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,2,56,41,0.4211268971341591,0.2045076782091745,1,1
+1473458,2025-04-07,2025,dbe50b21,HH Pandya,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,1,42,129,0.21328128517406858,0.07637882556504746,1,0
+1473458,2025-04-07,2025,e4a0deae,MJ Santner,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,8,14,0.05122015912204467,0.013940269598613938,0,0
+1473458,2025-04-07,2025,e66732f8,RD Rickelton,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,17,4,0.33230142868077517,0.16273970836213497,0,0
+1473458,2025-04-07,2025,fffa744b,Naman Dhir,Mumbai Indians,Royal Challengers Bengaluru,Wankhede Stadium,0,11,10,0.28707912798742774,0.11423441312077451,0,0
+1473456,2025-04-08,2025,3241e3fd,N Pooran,Lucknow Super Giants,Kolkata Knight Riders,Eden Gardens,2,87,75,0.4193168883777738,0.21574638914166613,1,1
+1473456,2025-04-08,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Kolkata Knight Riders,Eden Gardens,2,81,40,0.3212590051391585,0.15098221724052815,1,1
+1473456,2025-04-08,2025,6a26221c,AK Markram,Lucknow Super Giants,Kolkata Knight Riders,Eden Gardens,1,47,46,0.37715471536966394,0.16260395578506198,1,0
+1473456,2025-04-08,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Kolkata Knight Riders,Eden Gardens,0,6,42,0.11572815318866451,0.047195378612432906,0,0
+1473456,2025-04-08,2025,d67d5f00,DA Miller,Lucknow Super Giants,Kolkata Knight Riders,Eden Gardens,0,4,126,0.2918486594851807,0.13319590055707248,0,0
+1473456,2025-04-08,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,1,38,42,0.2460970419489165,0.09348845620283971,1,0
+1473456,2025-04-08,2025,29e95537,AM Rahane,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,2,61,170,0.3816390393969675,0.16045613803500186,1,1
+1473456,2025-04-08,2025,372455c4,Q de Kock,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,0,15,108,0.3980378334651776,0.18013731680109063,0,0
+1473456,2025-04-08,2025,77b1aa15,Harshit Rana,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,0,10,5,0.05816123712896154,0.02165238480676785,0,0
+1473456,2025-04-08,2025,9d430b40,SP Narine,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,1,30,107,0.2522930511900474,0.10634318157687166,1,0
+1473456,2025-04-08,2025,a24be938,VR Iyer,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,1,45,51,0.38796084479242765,0.18094513345651303,1,0
+1473456,2025-04-08,2025,bbd41817,AD Russell,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,0,7,104,0.2654643319113421,0.10235911318573092,0,0
+1473456,2025-04-08,2025,be24ead0,Ramandeep Singh,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,0,1,15,0.13829827619227797,0.04849152238991046,0,0
+1473456,2025-04-08,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Lucknow Super Giants,Eden Gardens,0,5,11,0.39543522268221243,0.17747453435936428,0,0
+1473459,2025-04-08,2025,26989d80,Shashank Singh,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,52,21,0.30614695483177434,0.13190745736908088,1,1
+1473459,2025-04-08,2025,81c36ee9,M Jansen,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,34,13,0.060656866381358324,0.02347192426046561,1,0
+1473459,2025-04-08,2025,85ec8e33,SS Iyer,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,9,114,0.3632536547383777,0.18551068680982116,0,0
+1473459,2025-04-08,2025,9418198b,P Simran Singh,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,36,0.33670929408657435,0.1489536180318459,0,0
+1473459,2025-04-08,2025,b5797845,Priyansh Arya,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,103,3,0.2839951134161558,0.09044099356481766,1,1
+1473459,2025-04-08,2025,b681e71e,GJ Maxwell,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,128,0.24670509425995818,0.09355754393404432,0,0
+1473459,2025-04-08,2025,d1a60072,N Wadhera,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,9,18,0.3698106716177988,0.16600101001546527,0,0
+1473459,2025-04-08,2025,d9273ee7,MP Stoinis,Punjab Kings,Chennai Super Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,4,88,0.28724177995345246,0.12479099655231715,0,0
+1473459,2025-04-08,2025,0994d0ae,V Shankar,Chennai Super Kings,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,2,57,0.2530636579723614,0.11915195115363302,0,0
+1473459,2025-04-08,2025,45a43fe2,RD Gaikwad,Chennai Super Kings,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,68,0.4290959710080835,0.23773554679620829,0,0
+1473459,2025-04-08,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,27,227,0.247868155648451,0.11132990650561318,0,0
+1473459,2025-04-08,2025,a4e37e47,S Dube,Chennai Super Kings,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,42,64,0.25507405917543935,0.11296256394543261,1,0
+1473459,2025-04-08,2025,ba5e1069,R Ravindra,Chennai Super Kings,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,36,14,0.3215106153281787,0.13668564065142316,1,0
+1473459,2025-04-08,2025,df5a6881,DP Conway,Chennai Super Kings,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,69,22,0.44164983398322344,0.2502439488734133,1,1
+1473459,2025-04-08,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,9,182,0.23031101311811514,0.1003717243717589,0,0
+1473460,2025-04-09,2025,39a2dfa8,R Tewatia,Gujarat Titans,Rajasthan Royals,"Narendra Modi Stadium, Ahmedabad",0,24,66,0.24576115527166445,0.08843984971345506,0,0
+1473460,2025-04-09,2025,5f547c8b,Rashid Khan,Gujarat Titans,Rajasthan Royals,"Narendra Modi Stadium, Ahmedabad",0,12,58,0.11561041769428698,0.039972066777753376,0,0
+1473460,2025-04-09,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Rajasthan Royals,"Narendra Modi Stadium, Ahmedabad",1,36,38,0.23643608961379045,0.09733931883020347,1,0
+1473460,2025-04-09,2025,99b75528,JC Buttler,Gujarat Titans,Rajasthan Royals,"Narendra Modi Stadium, Ahmedabad",1,36,108,0.4557803255311586,0.25876643776276975,1,0
+1473460,2025-04-09,2025,b4b99816,Shubman Gill,Gujarat Titans,Rajasthan Royals,"Narendra Modi Stadium, Ahmedabad",0,2,101,0.4599698616825973,0.2572985289416524,0,0
+1473460,2025-04-09,2025,d014d5ac,SE Rutherford,Gujarat Titans,Rajasthan Royals,"Narendra Modi Stadium, Ahmedabad",0,7,13,0.3061011074745999,0.11037882949565032,0,0
+1473460,2025-04-09,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Rajasthan Royals,"Narendra Modi Stadium, Ahmedabad",2,82,28,0.4906178231402173,0.29057743388549456,1,1
+1473460,2025-04-09,2025,04a418e8,R Parag,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,26,62,0.3019995310801541,0.12541230667947767,0,0
+1473460,2025-04-09,2025,46a9bea1,TU Deshpande,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,3,6,0.05795207457492447,0.01691388643841924,0,0
+1473460,2025-04-09,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",2,52,69,0.19989169708677243,0.0800943801801558,1,1
+1473460,2025-04-09,2025,5574750c,JC Archer,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,4,26,0.06342838385267603,0.016413290904906893,0,0
+1473460,2025-04-09,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,1,5,0.18497356791611197,0.04489259319920523,0,0
+1473460,2025-04-09,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,6,56,0.40448259672099063,0.20268129272110028,0,0
+1473460,2025-04-09,2025,a4cc73aa,SV Samson,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,41,162,0.3829887464002173,0.17642985888377843,1,0
+1473460,2025-04-09,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,5,26,0.28425930552996337,0.12862465539508827,0,0
+1473460,2025-04-09,2025,ce820073,Sandeep Sharma,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,6,24,0.042710676469800965,0.012446925324490054,0,0
+1473460,2025-04-09,2025,f24c6701,M Theekshana,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,5,4,0.05561954259615444,0.01662407564990052,0,0
+1473460,2025-04-09,2025,fb2d1dda,N Rana,Rajasthan Royals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,1,103,0.372466048502016,0.17397551906124925,0,0
+1473461,2025-04-10,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,0,1,68,0.2732842175712279,0.11750832880920674,0,0
+1473461,2025-04-10,2025,2e81a32d,B Kumar,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,0,1,66,0.03992851513106674,0.014288318063239222,0,0
+1473461,2025-04-10,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,1,37,25,0.42203907947696595,0.22209282975505512,1,0
+1473461,2025-04-10,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,0,4,42,0.3128477783675314,0.14877024647975656,0,0
+1473461,2025-04-10,2025,5b8c830e,KH Pandya,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,0,18,108,0.15534182194982218,0.05292311365034752,0,0
+1473461,2025-04-10,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,0,3,38,0.31721824773962515,0.12374109814088055,0,0
+1473461,2025-04-10,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,0,22,242,0.47235362735525355,0.2986446528736987,0,0
+1473461,2025-04-10,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,0,25,28,0.4397580777175321,0.24336586376167135,0,0
+1473461,2025-04-10,2025,f1f99156,TH David,Royal Challengers Bengaluru,Delhi Capitals,M Chinnaswamy Stadium,1,37,38,0.28832593940586615,0.10596649034598009,1,0
+1473461,2025-04-10,2025,2e171977,AR Patel,Delhi Capitals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,15,113,0.2405248981844169,0.09841089186278205,0,0
+1473461,2025-04-10,2025,3355b542,F du Plessis,Delhi Capitals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,2,139,0.4566036471078082,0.2619132026770106,0,0
+1473461,2025-04-10,2025,85b3fab2,T Stubbs,Delhi Capitals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,1,38,20,0.34327621450829965,0.144051222870997,1,0
+1473461,2025-04-10,2025,9b6e1b3f,J Fraser-McGurk,Delhi Capitals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,7,12,0.4002924594016405,0.20614731974472242,0,0
+1473461,2025-04-10,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,7,19,0.3315103877084312,0.14451757073783195,0,0
+1473461,2025-04-10,2025,b17e2f24,KL Rahul,Delhi Capitals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,2,93,121,0.4764542093026468,0.27754468676526556,1,1
+1473462,2025-04-11,2025,0994d0ae,V Shankar,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,29,58,0.22030173164539646,0.09654293046944361,0,0
+1473462,2025-04-11,2025,495d42a5,R Ashwin,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,1,89,0.06837877289079969,0.02736124715488039,0,0
+1473462,2025-04-11,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,1,228,0.2359171241132441,0.10357022439093166,0,0
+1473462,2025-04-11,2025,73ad96ed,DJ Hooda,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,0,97,0.11572099098744693,0.04375880182554802,0,0
+1473462,2025-04-11,2025,77255a9e,RA Tripathi,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,16,94,0.3427580709304962,0.14153203414337798,0,0
+1473462,2025-04-11,2025,a4e37e47,S Dube,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",1,31,65,0.271139136783201,0.11062847554180495,1,0
+1473462,2025-04-11,2025,ba5e1069,R Ravindra,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,4,15,0.37422048644775574,0.16440775840286329,0,0
+1473462,2025-04-11,2025,df5a6881,DP Conway,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,12,23,0.48206311480603437,0.26709869237274,0,0
+1473462,2025-04-11,2025,efc04be7,Noor Ahmad,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,1,6,0.04601323160105909,0.016822364713731837,0,0
+1473462,2025-04-11,2025,fcc21ace,A Kamboj,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,3,1,0.04577374108912914,0.016086730823889707,0,0
+1473462,2025-04-11,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Kolkata Knight Riders,"MA Chidambaram Stadium, Chepauk",0,0,183,0.19959245550473467,0.08334407692545251,0,0
+1473462,2025-04-11,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,15,43,0.28989869166400084,0.12073699899247188,0,0
+1473462,2025-04-11,2025,29e95537,AM Rahane,Kolkata Knight Riders,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,20,171,0.32345709007538304,0.15159559638040276,0,0
+1473462,2025-04-11,2025,372455c4,Q de Kock,Kolkata Knight Riders,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,23,109,0.3790479843191704,0.18926246561772922,0,0
+1473462,2025-04-11,2025,9d430b40,SP Narine,Kolkata Knight Riders,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",1,44,108,0.2429663781402204,0.09568535559223976,1,0
+1473463,2025-04-12,2025,39a2dfa8,R Tewatia,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,67,0.235059333538864,0.09020026547174302,0,0
+1473463,2025-04-12,2025,5f547c8b,Rashid Khan,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,4,59,0.13438232006058798,0.04304949204843159,0,0
+1473463,2025-04-12,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,11,39,0.2387360618838179,0.07894726164273962,0,0
+1473463,2025-04-12,2025,99b75528,JC Buttler,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,16,109,0.4375936091050564,0.23007402416176803,0,0
+1473463,2025-04-12,2025,b4b99816,Shubman Gill,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,60,102,0.4036861726469232,0.1976193721635232,1,1
+1473463,2025-04-12,2025,d014d5ac,SE Rutherford,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,22,14,0.26757118140018166,0.09649008382902466,0,0
+1473463,2025-04-12,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,56,29,0.42960894080627704,0.22592335064227664,1,1
+1473463,2025-04-12,2025,f19ccfad,Washington Sundar,Gujarat Titans,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,2,39,0.17796796860127734,0.056528662087051526,0,0
+1473463,2025-04-12,2025,3241e3fd,N Pooran,Lucknow Super Giants,Gujarat Titans,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,61,76,0.39537816390140745,0.21571590504057955,1,1
+1473463,2025-04-12,2025,6a26221c,AK Markram,Lucknow Super Giants,Gujarat Titans,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,58,47,0.3571509956708586,0.15226172166310037,1,1
+1473463,2025-04-12,2025,872b03f7,A Badoni,Lucknow Super Giants,Gujarat Titans,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,28,38,0.24569896428738874,0.09943384002018073,0,0
+1473463,2025-04-12,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Gujarat Titans,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,2,43,0.13236034698230859,0.05032016940219349,0,0
+1473463,2025-04-12,2025,919a3be2,RR Pant,Lucknow Super Giants,Gujarat Titans,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,21,111,0.3938462632070191,0.18535129955742802,0,0
+1473463,2025-04-12,2025,d67d5f00,DA Miller,Lucknow Super Giants,Gujarat Titans,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,7,127,0.29364746524203866,0.11723542162911971,0,0
+1473464,2025-04-12,2025,26989d80,Shashank Singh,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,2,22,0.31295810141774993,0.13653477941639156,0,0
+1473464,2025-04-12,2025,81c36ee9,M Jansen,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,5,14,0.10632812120821189,0.02801771632777881,0,0
+1473464,2025-04-12,2025,85ec8e33,SS Iyer,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",2,82,115,0.39743280123019376,0.2059171317793881,1,1
+1473464,2025-04-12,2025,9418198b,P Simran Singh,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,42,37,0.33755973037889886,0.15279151585656206,1,0
+1473464,2025-04-12,2025,b5797845,Priyansh Arya,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,36,4,0.35374387060816287,0.1793669332704212,1,0
+1473464,2025-04-12,2025,b681e71e,GJ Maxwell,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,3,129,0.2129249393164915,0.08156503221130226,0,0
+1473464,2025-04-12,2025,d1a60072,N Wadhera,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,27,19,0.321691742234829,0.13943785297232955,0,0
+1473464,2025-04-12,2025,d9273ee7,MP Stoinis,Punjab Kings,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,34,89,0.3216743852758305,0.1257791020610452,1,0
+1473464,2025-04-12,2025,12b610c2,TM Head,Sunrisers Hyderabad,Punjab Kings,"Rajiv Gandhi International Stadium, Uppal",2,66,30,0.4776805053205852,0.25283634993176757,1,1
+1473464,2025-04-12,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Punjab Kings,"Rajiv Gandhi International Stadium, Uppal",0,21,36,0.4838815413985034,0.2600505662420583,0,0
+1473464,2025-04-12,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Punjab Kings,"Rajiv Gandhi International Stadium, Uppal",0,9,104,0.3974944287350055,0.1844799901098863,0,0
+1473464,2025-04-12,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Punjab Kings,"Rajiv Gandhi International Stadium, Uppal",2,141,66,0.30076822898879385,0.11706513021059384,1,1
+1473465,2025-04-13,2025,04a418e8,R Parag,Rajasthan Royals,Royal Challengers Bengaluru,Sawai Mansingh Stadium,1,30,63,0.32717340601805744,0.14744320724738255,1,0
+1473465,2025-04-13,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Royal Challengers Bengaluru,Sawai Mansingh Stadium,0,9,70,0.2915387704680681,0.1301667285524492,0,0
+1473465,2025-04-13,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Royal Challengers Bengaluru,Sawai Mansingh Stadium,2,75,57,0.4489818052753103,0.2276925765565075,1,1
+1473465,2025-04-13,2025,a4cc73aa,SV Samson,Rajasthan Royals,Royal Challengers Bengaluru,Sawai Mansingh Stadium,0,15,163,0.3828145864542759,0.19130359181422585,0,0
+1473465,2025-04-13,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Royal Challengers Bengaluru,Sawai Mansingh Stadium,1,35,27,0.3125870054340826,0.1388126225650627,1,0
+1473465,2025-04-13,2025,fb2d1dda,N Rana,Rajasthan Royals,Royal Challengers Bengaluru,Sawai Mansingh Stadium,0,4,104,0.38952596418261487,0.1882991907847693,0,0
+1473465,2025-04-13,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Rajasthan Royals,Sawai Mansingh Stadium,1,40,69,0.2595757269289438,0.11240815164046643,1,0
+1473465,2025-04-13,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Rajasthan Royals,Sawai Mansingh Stadium,2,65,26,0.41165365365982487,0.21703329036371444,1,1
+1473465,2025-04-13,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Rajasthan Royals,Sawai Mansingh Stadium,2,62,243,0.46142867290253703,0.2798576947445012,1,1
+1473466,2025-04-13,2025,271f83cd,SA Yadav,Mumbai Indians,Delhi Capitals,Arun Jaitley Stadium,1,40,139,0.3733207558948932,0.18254592666757508,1,0
+1473466,2025-04-13,2025,740742ef,RG Sharma,Mumbai Indians,Delhi Capitals,Arun Jaitley Stadium,0,18,255,0.3309425846465466,0.14693711270336135,0,0
+1473466,2025-04-13,2025,9caf69a1,WG Jacks,Mumbai Indians,Delhi Capitals,Arun Jaitley Stadium,0,1,12,0.35751085448886,0.1454146593939375,0,0
+1473466,2025-04-13,2025,b0482a1d,Tilak Varma,Mumbai Indians,Delhi Capitals,Arun Jaitley Stadium,2,59,42,0.45388206046369717,0.24689706352498053,1,1
+1473466,2025-04-13,2025,dbe50b21,HH Pandya,Mumbai Indians,Delhi Capitals,Arun Jaitley Stadium,0,2,130,0.24331599794326553,0.09511285307592988,0,0
+1473466,2025-04-13,2025,e66732f8,RD Rickelton,Mumbai Indians,Delhi Capitals,Arun Jaitley Stadium,1,41,5,0.3122511826967223,0.14811217370586066,1,0
+1473466,2025-04-13,2025,fffa744b,Naman Dhir,Mumbai Indians,Delhi Capitals,Arun Jaitley Stadium,1,38,11,0.31840065135504936,0.12844661912520228,1,0
+1473466,2025-04-13,2025,2e171977,AR Patel,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,9,114,0.23940169578261858,0.1024691288320436,0,0
+1473466,2025-04-13,2025,3fb19989,MA Starc,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,1,17,0.03612370085450144,0.012472058294711123,0,0
+1473466,2025-04-13,2025,5ffc0565,V Nigam,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,14,2,0.2856859664304755,0.09922507078170181,0,0
+1473466,2025-04-13,2025,759ac88f,MM Sharma,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,0,28,0.04333104819944951,0.015704698770953134,0,0
+1473466,2025-04-13,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,17,11,0.3427566650071302,0.14812869145653548,0,0
+1473466,2025-04-13,2025,85b3fab2,T Stubbs,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,1,21,0.3667346142802682,0.16834352849204642,0,0
+1473466,2025-04-13,2025,8d2c70ad,Kuldeep Yadav,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,1,33,0.06345226497934914,0.01989484814192389,0,0
+1473466,2025-04-13,2025,944533a5,KK Nair,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,2,89,67,0.25758516403367304,0.09813794273167978,1,1
+1473466,2025-04-13,2025,9b6e1b3f,J Fraser-McGurk,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,0,13,0.43823076306286135,0.22371641254432112,0,0
+1473466,2025-04-13,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,1,33,20,0.36223629913017286,0.17111823296577086,1,0
+1473466,2025-04-13,2025,b17e2f24,KL Rahul,Delhi Capitals,Mumbai Indians,Arun Jaitley Stadium,0,15,122,0.4660080804459865,0.28006818155916624,0,0
+1473467,2025-04-14,2025,1abb78f8,SN Thakur,Lucknow Super Giants,Chennai Super Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,6,37,0.08236424003662277,0.03371498208553474,0,0
+1473467,2025-04-14,2025,3241e3fd,N Pooran,Lucknow Super Giants,Chennai Super Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,8,77,0.41793306354862,0.23425256455602494,0,0
+1473467,2025-04-14,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Chennai Super Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,30,41,0.3512822233989621,0.15562232101652343,1,0
+1473467,2025-04-14,2025,6a26221c,AK Markram,Lucknow Super Giants,Chennai Super Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,6,48,0.3649621460441466,0.1639425283289549,0,0
+1473467,2025-04-14,2025,872b03f7,A Badoni,Lucknow Super Giants,Chennai Super Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,22,39,0.2527380548839713,0.09887986977894384,0,0
+1473467,2025-04-14,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Chennai Super Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,20,44,0.11613139105967787,0.044735423722242956,0,0
+1473467,2025-04-14,2025,919a3be2,RR Pant,Lucknow Super Giants,Chennai Super Kings,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,63,112,0.3713825120751789,0.17533416751073333,1,1
+1473467,2025-04-14,2025,0994d0ae,V Shankar,Chennai Super Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,9,59,0.2572146927537351,0.10586777476065293,0,0
+1473467,2025-04-14,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,26,229,0.27405080884711364,0.11805067886449064,0,0
+1473467,2025-04-14,2025,77255a9e,RA Tripathi,Chennai Super Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,9,95,0.3337423462270759,0.1447074992457237,0,0
+1473467,2025-04-14,2025,a4e37e47,S Dube,Chennai Super Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,43,66,0.35560249965383117,0.1541713835936957,1,0
+1473467,2025-04-14,2025,ba5e1069,R Ravindra,Chennai Super Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,37,16,0.3434931755384897,0.1386284546824688,1,0
+1473467,2025-04-14,2025,cbf58a86,SK Rasheed,Chennai Super Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,27,0,0.08768833244991131,0.0318150122036822,0,0
+1473467,2025-04-14,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,7,184,0.24244965732277113,0.10247949564801166,0,0
+1473468,2025-04-15,2025,244048f6,Arshdeep Singh,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,12,0.03571267580948545,0.011854741643774924,0,0
+1473468,2025-04-15,2025,26989d80,Shashank Singh,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,18,23,0.34387527871568496,0.1499463940715769,0,0
+1473468,2025-04-15,2025,3b53243a,XC Bartlett,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,11,0,0.08057833885952917,0.02764241501190585,0,0
+1473468,2025-04-15,2025,81c36ee9,M Jansen,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,15,0.10729914932880318,0.033290329958278866,0,0
+1473468,2025-04-15,2025,85ec8e33,SS Iyer,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,116,0.38130044156953513,0.20215139683198896,0,0
+1473468,2025-04-15,2025,9418198b,P Simran Singh,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,30,38,0.32261835243905523,0.14396825681773234,1,0
+1473468,2025-04-15,2025,970ddd24,Suryansh Shedge,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,4,1,0.057105681562492905,0.019728287271215634,0,0
+1473468,2025-04-15,2025,989889ff,JP Inglis,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,2,0,0.08057833885952917,0.02764241501190585,0,0
+1473468,2025-04-15,2025,b5797845,Priyansh Arya,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,22,5,0.4185236877936874,0.23431967395425732,0,0
+1473468,2025-04-15,2025,b681e71e,GJ Maxwell,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,7,130,0.22717584577584388,0.08514302810832075,0,0
+1473468,2025-04-15,2025,d1a60072,N Wadhera,Punjab Kings,Kolkata Knight Riders,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,10,20,0.35668315954506924,0.15700944167261432,0,0
+1473468,2025-04-15,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,2,44,0.2939297481887272,0.1343707369628055,0,0
+1473468,2025-04-15,2025,29e95537,AM Rahane,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,17,172,0.3494512177179361,0.15818312373235147,0,0
+1473468,2025-04-15,2025,372455c4,Q de Kock,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,2,110,0.35815267441430204,0.17988984715487044,0,0
+1473468,2025-04-15,2025,77b1aa15,Harshit Rana,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,3,6,0.058693224806678455,0.018377034122397252,0,0
+1473468,2025-04-15,2025,7c3b3b78,VG Arora,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,7,0.046370891251042504,0.014180592652100771,0,0
+1473468,2025-04-15,2025,9d430b40,SP Narine,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,5,109,0.28076360623114055,0.12326913930547112,0,0
+1473468,2025-04-15,2025,a24be938,VR Iyer,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,7,52,0.36150000897612067,0.1697517942982592,0,0
+1473468,2025-04-15,2025,bbd41817,AD Russell,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,17,105,0.2553313985963448,0.09386628570966113,0,0
+1473468,2025-04-15,2025,be24ead0,Ramandeep Singh,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,16,0.12405480463959272,0.037011838827902335,0,0
+1473468,2025-04-15,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,37,12,0.3429938618079834,0.13693701879798464,1,0
+1473469,2025-04-16,2025,2e171977,AR Patel,Delhi Capitals,Rajasthan Royals,Arun Jaitley Stadium,1,34,115,0.21786187648287408,0.080846010367291,1,0
+1473469,2025-04-16,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Rajasthan Royals,Arun Jaitley Stadium,0,15,12,0.33549692458412594,0.15672365889161335,0,0
+1473469,2025-04-16,2025,85b3fab2,T Stubbs,Delhi Capitals,Rajasthan Royals,Arun Jaitley Stadium,1,34,22,0.35902679801009507,0.163757326639339,1,0
+1473469,2025-04-16,2025,944533a5,KK Nair,Delhi Capitals,Rajasthan Royals,Arun Jaitley Stadium,0,0,68,0.31927387754806824,0.15512353620350056,0,0
+1473469,2025-04-16,2025,9b6e1b3f,J Fraser-McGurk,Delhi Capitals,Rajasthan Royals,Arun Jaitley Stadium,0,9,14,0.38944480826864947,0.17973274697611194,0,0
+1473469,2025-04-16,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Rajasthan Royals,Arun Jaitley Stadium,1,49,21,0.37070661648359116,0.17986838930570143,1,0
+1473469,2025-04-16,2025,b17e2f24,KL Rahul,Delhi Capitals,Rajasthan Royals,Arun Jaitley Stadium,1,38,123,0.4698135071625356,0.2791611390630313,1,0
+1473469,2025-04-16,2025,04a418e8,R Parag,Rajasthan Royals,Delhi Capitals,Arun Jaitley Stadium,0,8,64,0.33475131773473127,0.15033804899970274,0,0
+1473469,2025-04-16,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Delhi Capitals,Arun Jaitley Stadium,0,15,71,0.28392670171205137,0.122214960754821,0,0
+1473469,2025-04-16,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Delhi Capitals,Arun Jaitley Stadium,2,51,58,0.4039612921678068,0.20812672744988805,1,1
+1473469,2025-04-16,2025,a4cc73aa,SV Samson,Rajasthan Royals,Delhi Capitals,Arun Jaitley Stadium,1,31,164,0.391178913857833,0.18388257110943024,1,0
+1473469,2025-04-16,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Delhi Capitals,Arun Jaitley Stadium,0,26,28,0.3262137257924311,0.134949252041569,0,0
+1473469,2025-04-16,2025,fb2d1dda,N Rana,Rajasthan Royals,Delhi Capitals,Arun Jaitley Stadium,2,51,105,0.36769768601216646,0.162125381097372,1,1
+1473470,2025-04-17,2025,12b610c2,TM Head,Sunrisers Hyderabad,Mumbai Indians,Wankhede Stadium,0,28,31,0.4621269067469091,0.23526613976327004,0,0
+1473470,2025-04-17,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Mumbai Indians,Wankhede Stadium,1,37,37,0.3887767608070353,0.18408232520022694,1,0
+1473470,2025-04-17,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Mumbai Indians,Wankhede Stadium,0,2,105,0.3780428261772061,0.15355637351725598,0,0
+1473470,2025-04-17,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Mumbai Indians,Wankhede Stadium,0,18,5,0.3383924173005136,0.15229624357827007,0,0
+1473470,2025-04-17,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Mumbai Indians,Wankhede Stadium,0,19,16,0.3374495765124704,0.1447748747973801,0,0
+1473470,2025-04-17,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Mumbai Indians,Wankhede Stadium,0,8,44,0.18042039702074236,0.0726063408221491,0,0
+1473470,2025-04-17,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Mumbai Indians,Wankhede Stadium,1,40,67,0.3482827619839082,0.15860799680845494,1,0
+1473470,2025-04-17,2025,271f83cd,SA Yadav,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,0,26,140,0.4149050126036207,0.2201910353367666,0,0
+1473470,2025-04-17,2025,740742ef,RG Sharma,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,0,26,256,0.32249267981835694,0.1532556328245986,0,0
+1473470,2025-04-17,2025,9caf69a1,WG Jacks,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,1,36,13,0.2868635215116594,0.10503141000929586,1,0
+1473470,2025-04-17,2025,b0482a1d,Tilak Varma,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,0,21,43,0.450980785548257,0.2335391849574326,0,0
+1473470,2025-04-17,2025,dbe50b21,HH Pandya,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,0,21,131,0.24217639653598869,0.10172865238915654,0,0
+1473470,2025-04-17,2025,e4a0deae,MJ Santner,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,0,0,15,0.05674304691913328,0.01746391818547679,0,0
+1473470,2025-04-17,2025,e66732f8,RD Rickelton,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,1,31,6,0.37666462843323445,0.16106151230085797,1,0
+1473470,2025-04-17,2025,fffa744b,Naman Dhir,Mumbai Indians,Sunrisers Hyderabad,Wankhede Stadium,0,0,12,0.2826377256207487,0.12204715784244731,0,0
+1473471,2025-04-18,2025,03806cf8,JR Hazlewood,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,0,6,0.044557595361509744,0.016008269358214262,0,0
+1473471,2025-04-18,2025,2e81a32d,B Kumar,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,8,67,0.03898617592539838,0.012847334058130596,0,0
+1473471,2025-04-18,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,4,27,0.4516567542140273,0.2349373886049176,0,0
+1473471,2025-04-18,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,4,43,0.2894071443086693,0.12647127109915973,0,0
+1473471,2025-04-18,2025,5b8c830e,KH Pandya,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,1,109,0.15307084595961556,0.054492323552201995,0,0
+1473471,2025-04-18,2025,7210d461,Yash Dayal,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,0,1,0.06363993439483176,0.019599290882430273,0,0
+1473471,2025-04-18,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,2,39,0.2897410576451286,0.09735903719700054,0,0
+1473471,2025-04-18,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,1,244,0.5038271507413596,0.3212356216715194,0,0
+1473471,2025-04-18,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,23,29,0.45693816267735743,0.24438175024422146,0,0
+1473471,2025-04-18,2025,e96801ea,MS Bhandage,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,0,1,0,0.07940554869027905,0.025718277998851763,0,0
+1473471,2025-04-18,2025,f1f99156,TH David,Royal Challengers Bengaluru,Punjab Kings,M Chinnaswamy Stadium,2,50,39,0.3380309223405372,0.12606944100889908,1,1
+1473471,2025-04-18,2025,26989d80,Shashank Singh,Punjab Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,1,24,0.3167587293367134,0.1362302128385663,0,0
+1473471,2025-04-18,2025,85ec8e33,SS Iyer,Punjab Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,7,117,0.38670330501451367,0.2056358199370575,0,0
+1473471,2025-04-18,2025,9418198b,P Simran Singh,Punjab Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,13,39,0.3468289537148862,0.1530242409652531,0,0
+1473471,2025-04-18,2025,989889ff,JP Inglis,Punjab Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,14,1,0.07051845452072458,0.022775564883547275,0,0
+1473471,2025-04-18,2025,b5797845,Priyansh Arya,Punjab Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,16,6,0.35097019939850627,0.1703910822084921,0,0
+1473471,2025-04-18,2025,d1a60072,N Wadhera,Punjab Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,1,33,21,0.3340898954597774,0.1433215205859525,1,0
+1473471,2025-04-18,2025,d9273ee7,MP Stoinis,Punjab Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,7,90,0.3073061492484218,0.13266062376764737,0,0
+1473472,2025-04-19,2025,2e171977,AR Patel,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,39,116,0.2227647773388953,0.08647320327966182,1,0
+1473472,2025-04-19,2025,3fb19989,MA Starc,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,2,18,0.06324620062762534,0.01848010594571915,0,0
+1473472,2025-04-19,2025,5ffc0565,V Nigam,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,0,3,0.2746444786722978,0.08841640132473365,0,0
+1473472,2025-04-19,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,37,13,0.34563664844454633,0.15818000688552641,1,0
+1473472,2025-04-19,2025,85b3fab2,T Stubbs,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,31,23,0.32688324709591,0.13887119854458654,1,0
+1473472,2025-04-19,2025,8d2c70ad,Kuldeep Yadav,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,4,34,0.07613382072017688,0.02342705837513403,0,0
+1473472,2025-04-19,2025,944533a5,KK Nair,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,31,69,0.31721298555160404,0.1527449049328408,1,0
+1473472,2025-04-19,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,18,22,0.3119983244266545,0.13967913469197543,0,0
+1473472,2025-04-19,2025,b17e2f24,KL Rahul,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,28,124,0.45473189539331954,0.26220276373419443,0,0
+1473472,2025-04-19,2025,f0af99a7,D Ferreira,Delhi Capitals,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,1,2,0.06800242376951426,0.020082224417561252,0,0
+1473472,2025-04-19,2025,39a2dfa8,R Tewatia,Gujarat Titans,Delhi Capitals,"Narendra Modi Stadium, Ahmedabad",0,11,68,0.19154991981667446,0.070176163407741,0,0
+1473472,2025-04-19,2025,99b75528,JC Buttler,Gujarat Titans,Delhi Capitals,"Narendra Modi Stadium, Ahmedabad",2,97,110,0.44310985068635056,0.25125016407183426,1,1
+1473472,2025-04-19,2025,b4b99816,Shubman Gill,Gujarat Titans,Delhi Capitals,"Narendra Modi Stadium, Ahmedabad",0,7,103,0.4640959492265262,0.26481759522283194,0,0
+1473472,2025-04-19,2025,d014d5ac,SE Rutherford,Gujarat Titans,Delhi Capitals,"Narendra Modi Stadium, Ahmedabad",1,43,15,0.27536280786940087,0.08616068740430005,1,0
+1473472,2025-04-19,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Delhi Capitals,"Narendra Modi Stadium, Ahmedabad",1,36,30,0.4890533729532738,0.27046850299339714,1,0
+1473473,2025-04-19,2025,3241e3fd,N Pooran,Lucknow Super Giants,Rajasthan Royals,Sawai Mansingh Stadium,0,11,78,0.4438860054074633,0.243734747549682,0,0
+1473473,2025-04-19,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Rajasthan Royals,Sawai Mansingh Stadium,0,4,42,0.4139443362305525,0.18862116755567,0,0
+1473473,2025-04-19,2025,6a26221c,AK Markram,Lucknow Super Giants,Rajasthan Royals,Sawai Mansingh Stadium,2,66,49,0.3607105247228841,0.16073951097450168,1,1
+1473473,2025-04-19,2025,872b03f7,A Badoni,Lucknow Super Giants,Rajasthan Royals,Sawai Mansingh Stadium,2,50,40,0.29778205970009153,0.12494435795031253,1,1
+1473473,2025-04-19,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Rajasthan Royals,Sawai Mansingh Stadium,1,30,45,0.1182360558586501,0.045832014896838164,1,0
+1473473,2025-04-19,2025,919a3be2,RR Pant,Lucknow Super Giants,Rajasthan Royals,Sawai Mansingh Stadium,0,3,113,0.42724176264850044,0.22216763485391203,0,0
+1473473,2025-04-19,2025,d67d5f00,DA Miller,Lucknow Super Giants,Rajasthan Royals,Sawai Mansingh Stadium,0,7,128,0.3019913686702637,0.12799538807459626,0,0
+1473473,2025-04-19,2025,04a418e8,R Parag,Rajasthan Royals,Lucknow Super Giants,Sawai Mansingh Stadium,1,39,65,0.35378054027008254,0.1563305403148893,1,0
+1473473,2025-04-19,2025,470f446b,V Suryavanshi,Rajasthan Royals,Lucknow Super Giants,Sawai Mansingh Stadium,1,34,0,0.0860470750529439,0.027805526356740256,1,0
+1473473,2025-04-19,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Lucknow Super Giants,Sawai Mansingh Stadium,0,12,72,0.27815745222684723,0.11973820746904747,0,0
+1473473,2025-04-19,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Lucknow Super Giants,Sawai Mansingh Stadium,0,3,6,0.16219460520972728,0.042681151321909375,0,0
+1473473,2025-04-19,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Lucknow Super Giants,Sawai Mansingh Stadium,2,74,59,0.4267867276935058,0.2281272722432278,1,1
+1473473,2025-04-19,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Lucknow Super Giants,Sawai Mansingh Stadium,0,6,29,0.313552858033199,0.13165114545099726,0,0
+1473473,2025-04-19,2025,fb2d1dda,N Rana,Rajasthan Royals,Lucknow Super Giants,Sawai Mansingh Stadium,0,8,106,0.3703465395817587,0.17103739991226857,0,0
+1473474,2025-04-20,2025,26989d80,Shashank Singh,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,31,25,0.29285838535817044,0.13103086621230248,1,0
+1473474,2025-04-20,2025,81c36ee9,M Jansen,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,25,16,0.09343959951521305,0.026347262316189272,0,0
+1473474,2025-04-20,2025,85ec8e33,SS Iyer,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,6,118,0.3492472755236908,0.17582847356535147,0,0
+1473474,2025-04-20,2025,9418198b,P Simran Singh,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,33,40,0.3243448072341341,0.1374810754459861,1,0
+1473474,2025-04-20,2025,989889ff,JP Inglis,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,29,2,0.0811417428293951,0.029555817821556273,0,0
+1473474,2025-04-20,2025,b5797845,Priyansh Arya,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,22,7,0.38859977941287904,0.19989515711921135,0,0
+1473474,2025-04-20,2025,d1a60072,N Wadhera,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,5,22,0.3388660576385923,0.14328192657682834,0,0
+1473474,2025-04-20,2025,d9273ee7,MP Stoinis,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,91,0.27495387381201436,0.11537840832491737,0,0
+1473474,2025-04-20,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,61,70,0.3177512150812551,0.15065550015234064,1,1
+1473474,2025-04-20,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,28,0.3920645354714861,0.20217735686918767,0,0
+1473474,2025-04-20,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,11,40,0.2862975093882632,0.09342622425291268,0,0
+1473474,2025-04-20,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,73,245,0.4239803864113053,0.24599008635254896,1,1
+1473474,2025-04-20,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,12,30,0.4203017334305804,0.23382539983008446,0,0
+1473475,2025-04-20,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Mumbai Indians,Wankhede Stadium,0,4,230,0.23514350969836562,0.105091581563641,0,0
+1473475,2025-04-20,2025,59559bc2,J Overton,Chennai Super Kings,Mumbai Indians,Wankhede Stadium,0,4,1,0.12921866231179913,0.042453716123021325,0,0
+1473475,2025-04-20,2025,a4e37e47,S Dube,Chennai Super Kings,Mumbai Indians,Wankhede Stadium,2,50,67,0.33379338106682,0.1467394881049649,1,1
+1473475,2025-04-20,2025,b2b4f545,A Mhatre,Chennai Super Kings,Mumbai Indians,Wankhede Stadium,1,32,0,0.07747186143234325,0.027517127967244998,1,0
+1473475,2025-04-20,2025,ba5e1069,R Ravindra,Chennai Super Kings,Mumbai Indians,Wankhede Stadium,0,5,17,0.3349289744859144,0.140893007235452,0,0
+1473475,2025-04-20,2025,cbf58a86,SK Rasheed,Chennai Super Kings,Mumbai Indians,Wankhede Stadium,0,19,1,0.2587173054403449,0.08580276311435404,0,0
+1473475,2025-04-20,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Mumbai Indians,Wankhede Stadium,2,53,185,0.1525469084320572,0.059106682262880586,1,1
+1473475,2025-04-20,2025,271f83cd,SA Yadav,Mumbai Indians,Chennai Super Kings,Wankhede Stadium,2,68,141,0.38323900118984455,0.19965947275091406,1,1
+1473475,2025-04-20,2025,740742ef,RG Sharma,Mumbai Indians,Chennai Super Kings,Wankhede Stadium,2,76,257,0.31886371519091306,0.14764120809114556,1,1
+1473475,2025-04-20,2025,e66732f8,RD Rickelton,Mumbai Indians,Chennai Super Kings,Wankhede Stadium,0,24,7,0.3879754651975107,0.17592802262578708,0,0
+1473476,2025-04-21,2025,39a2dfa8,R Tewatia,Gujarat Titans,Kolkata Knight Riders,Eden Gardens,0,0,69,0.1772162710645659,0.06607260865777978,0,0
+1473476,2025-04-21,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Kolkata Knight Riders,Eden Gardens,0,11,40,0.196578762052656,0.0699367180215572,0,0
+1473476,2025-04-21,2025,99b75528,JC Buttler,Gujarat Titans,Kolkata Knight Riders,Eden Gardens,1,41,111,0.4303208190877235,0.24982561637323225,1,0
+1473476,2025-04-21,2025,b4b99816,Shubman Gill,Gujarat Titans,Kolkata Knight Riders,Eden Gardens,2,90,104,0.44972558821807296,0.24164256733454853,1,1
+1473476,2025-04-21,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Kolkata Knight Riders,Eden Gardens,2,52,31,0.439066825267749,0.25483889135898224,1,1
+1473476,2025-04-21,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,17,45,0.27062704261718246,0.10984315541333523,0,0
+1473476,2025-04-21,2025,0bacade8,Rahmanullah Gurbaz,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,1,12,0.3281260542063605,0.14171057861818218,0,0
+1473476,2025-04-21,2025,29e95537,AM Rahane,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,2,50,173,0.38635111008519984,0.16862561312213137,1,1
+1473476,2025-04-21,2025,77b1aa15,Harshit Rana,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,1,7,0.06640535804068737,0.022213025069082286,0,0
+1473476,2025-04-21,2025,9d430b40,SP Narine,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,17,110,0.24736599052719116,0.0876889624958114,0,0
+1473476,2025-04-21,2025,a24be938,VR Iyer,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,14,53,0.39638825785433,0.18124777832887598,0,0
+1473476,2025-04-21,2025,bb351c23,MM Ali,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,0,58,0.2636229750321798,0.12021856268366485,0,0
+1473476,2025-04-21,2025,bbd41817,AD Russell,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,21,106,0.2512367650773461,0.09340753042925232,0,0
+1473476,2025-04-21,2025,be24ead0,Ramandeep Singh,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,1,17,0.11191099203110762,0.04118825467434806,0,0
+1473476,2025-04-21,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Gujarat Titans,Eden Gardens,0,27,13,0.3799712351790525,0.1594450433268973,0,0
+1473477,2025-04-22,2025,3241e3fd,N Pooran,Lucknow Super Giants,Delhi Capitals,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,9,79,0.3950913546786498,0.21234654250533755,0,0
+1473477,2025-04-22,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Delhi Capitals,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,45,43,0.3546795547442628,0.15729234754539184,1,0
+1473477,2025-04-22,2025,6a26221c,AK Markram,Lucknow Super Giants,Delhi Capitals,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,52,50,0.3977957477839058,0.19404890923151236,1,1
+1473477,2025-04-22,2025,872b03f7,A Badoni,Lucknow Super Giants,Delhi Capitals,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,36,41,0.28737945320060854,0.1287274199296145,1,0
+1473477,2025-04-22,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Delhi Capitals,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,2,46,0.12379203915671606,0.04980793739961019,0,0
+1473477,2025-04-22,2025,919a3be2,RR Pant,Lucknow Super Giants,Delhi Capitals,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,114,0.398249055318395,0.19238094398185313,0,0
+1473477,2025-04-22,2025,d67d5f00,DA Miller,Lucknow Super Giants,Delhi Capitals,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,14,129,0.22426935410540058,0.0915818294809864,0,0
+1473477,2025-04-22,2025,2e171977,AR Patel,Delhi Capitals,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,34,117,0.23757485543914963,0.0922495954347036,1,0
+1473477,2025-04-22,2025,944533a5,KK Nair,Delhi Capitals,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,15,70,0.33524223361130545,0.1449145959444622,0,0
+1473477,2025-04-22,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,51,23,0.3170506432812521,0.13906934691916176,1,1
+1473477,2025-04-22,2025,b17e2f24,KL Rahul,Delhi Capitals,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,57,125,0.4588690557039473,0.27764868524430186,1,1
+1473478,2025-04-23,2025,0890552f,A Manohar,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",1,43,18,0.11147556991462784,0.0386978148379668,1,0
+1473478,2025-04-23,2025,12b610c2,TM Head,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",0,0,32,0.47872010583441155,0.2644377055444471,0,0
+1473478,2025-04-23,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",2,71,38,0.47168780787489384,0.2593399599148134,1,1
+1473478,2025-04-23,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",0,1,106,0.3913076813429827,0.18116585249104544,0,0
+1473478,2025-04-23,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",0,12,6,0.3619496525218727,0.1527007682110723,0,0
+1473478,2025-04-23,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",0,2,17,0.38051312454001185,0.161616699570221,0,0
+1473478,2025-04-23,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",0,1,45,0.16127475864915403,0.06428968910890395,0,0
+1473478,2025-04-23,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",0,8,68,0.36418070793399837,0.16502287410620198,0,0
+1473478,2025-04-23,2025,f986ca1a,HV Patel,Sunrisers Hyderabad,Mumbai Indians,"Rajiv Gandhi International Stadium, Uppal",0,1,39,0.03662839217193069,0.012734775410844293,0,0
+1473478,2025-04-23,2025,271f83cd,SA Yadav,Mumbai Indians,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",1,40,142,0.3682260809229248,0.16831222163742215,1,0
+1473478,2025-04-23,2025,740742ef,RG Sharma,Mumbai Indians,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",2,70,258,0.36117289929985696,0.17238051158132506,1,1
+1473478,2025-04-23,2025,9caf69a1,WG Jacks,Mumbai Indians,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,22,14,0.3291244920808166,0.13977271280197073,0,0
+1473478,2025-04-23,2025,b0482a1d,Tilak Varma,Mumbai Indians,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,2,44,0.4558602723149072,0.2391036132815639,0,0
+1473478,2025-04-23,2025,e66732f8,RD Rickelton,Mumbai Indians,Sunrisers Hyderabad,"Rajiv Gandhi International Stadium, Uppal",0,11,8,0.3189377887281285,0.13487451222730015,0,0
+1473479,2025-04-24,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Rajasthan Royals,M Chinnaswamy Stadium,2,50,71,0.3605490555146189,0.15899459370566443,1,1
+1473479,2025-04-24,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Rajasthan Royals,M Chinnaswamy Stadium,0,26,29,0.43635371152374147,0.219615575622167,0,0
+1473479,2025-04-24,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Rajasthan Royals,M Chinnaswamy Stadium,0,20,41,0.24124480326139794,0.08520906791200014,0,0
+1473479,2025-04-24,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Rajasthan Royals,M Chinnaswamy Stadium,2,70,246,0.494655227524256,0.31470660258495137,1,1
+1473479,2025-04-24,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Rajasthan Royals,M Chinnaswamy Stadium,0,1,31,0.4462199017129608,0.24594036579767123,0,0
+1473479,2025-04-24,2025,f1f99156,TH David,Royal Challengers Bengaluru,Rajasthan Royals,M Chinnaswamy Stadium,0,23,40,0.3790165155235362,0.16549041217893826,0,0
+1473479,2025-04-24,2025,04a418e8,R Parag,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,22,66,0.3231183454068371,0.13831769082331158,0,0
+1473479,2025-04-24,2025,46a9bea1,TU Deshpande,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,1,7,0.04549947690874463,0.01387081943505486,0,0
+1473479,2025-04-24,2025,470f446b,V Suryavanshi,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,16,1,0.3193614472004192,0.12055861441307121,0,0
+1473479,2025-04-24,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,11,73,0.26546226825299635,0.11534454357921545,0,0
+1473479,2025-04-24,2025,5574750c,JC Archer,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,0,27,0.039247320214132936,0.013848374327158509,0,0
+1473479,2025-04-24,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,12,7,0.14624268363206788,0.03792853888952706,0,0
+1473479,2025-04-24,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,1,49,60,0.432913217363463,0.23751140107472804,1,0
+1473479,2025-04-24,2025,a97c8ec2,PWH de Silva,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,1,16,0.044501579101650715,0.013913249813035027,0,0
+1473479,2025-04-24,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,1,47,30,0.36187362073168694,0.16358615066068669,1,0
+1473479,2025-04-24,2025,e9c7f0d0,Fazalhaq Farooqi,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,2,2,0.05225656069291608,0.01653037534652896,0,0
+1473479,2025-04-24,2025,fb2d1dda,N Rana,Rajasthan Royals,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,28,107,0.39647566699450254,0.18045343510956396,0,0
+1473480,2025-04-25,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,6,231,0.2571017242451429,0.12025934584194833,0,0
+1473480,2025-04-25,2025,73ad96ed,DJ Hooda,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,22,98,0.12461663476871439,0.047890552272264866,0,0
+1473480,2025-04-25,2025,844e79d1,D Brevis,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",1,42,10,0.29301577105967275,0.10169431857149298,1,0
+1473480,2025-04-25,2025,a2f46292,KK Ahmed,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,1,5,0.052319112021925115,0.01913171987367104,0,0
+1473480,2025-04-25,2025,a4e37e47,S Dube,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,12,68,0.3402326380504798,0.1484249104076294,0,0
+1473480,2025-04-25,2025,b2b4f545,A Mhatre,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",1,30,1,0.31712676747890467,0.11885208521961706,1,0
+1473480,2025-04-25,2025,cbf58a86,SK Rasheed,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,0,2,0.24391570197539303,0.07854487884496733,0,0
+1473480,2025-04-25,2025,e94915e6,SM Curran,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,9,49,0.2198332756432916,0.08777018386499971,0,0
+1473480,2025-04-25,2025,efc04be7,Noor Ahmad,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,2,7,0.03828670206871494,0.01518901180676449,0,0
+1473480,2025-04-25,2025,fcc21ace,A Kamboj,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,2,2,0.05298152873186774,0.021444330470597427,0,0
+1473480,2025-04-25,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Sunrisers Hyderabad,"MA Chidambaram Stadium, Chepauk",0,21,186,0.2098693381559707,0.08676265692459642,0,0
+1473480,2025-04-25,2025,08548b13,PHKD Mendis,Sunrisers Hyderabad,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",1,32,2,0.11311727684981274,0.031543295817618174,1,0
+1473480,2025-04-25,2025,12b610c2,TM Head,Sunrisers Hyderabad,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,19,33,0.4041312662697987,0.20000542055850623,0,0
+1473480,2025-04-25,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,7,39,0.4177427019806809,0.20368295073488651,0,0
+1473480,2025-04-25,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",1,44,107,0.34268143162649334,0.15791747909857728,1,0
+1473480,2025-04-25,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,19,7,0.3004890042931586,0.13058257993999242,0,0
+1473480,2025-04-25,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,19,18,0.27679483924300446,0.12511851910828845,0,0
+1473480,2025-04-25,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,0,69,0.34134977659363036,0.14464875078471995,0,0
+1473482,2025-04-27,2025,172dff15,C Bosch,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,0,20,0,0.0737499312145867,0.02644114279782108,0,0
+1473482,2025-04-27,2025,23eeb873,DL Chahar,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,0,1,14,0.05163757160287161,0.016026944356657687,0,0
+1473482,2025-04-27,2025,271f83cd,SA Yadav,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,2,54,143,0.4036955276009271,0.21195086457672038,1,1
+1473482,2025-04-27,2025,740742ef,RG Sharma,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,0,12,259,0.3867845322294099,0.18276112633105937,0,0
+1473482,2025-04-27,2025,9caf69a1,WG Jacks,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,0,29,15,0.2999082660886539,0.11627312441224358,0,0
+1473482,2025-04-27,2025,b0482a1d,Tilak Varma,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,0,6,45,0.45257699890795366,0.22820687246466562,0,0
+1473482,2025-04-27,2025,dbe50b21,HH Pandya,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,0,5,132,0.23711058808877883,0.0924897655754003,0,0
+1473482,2025-04-27,2025,e66732f8,RD Rickelton,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,2,58,9,0.36119852767976307,0.14803927674710315,1,1
+1473482,2025-04-27,2025,fffa744b,Naman Dhir,Mumbai Indians,Lucknow Super Giants,Wankhede Stadium,0,25,13,0.2824183083507768,0.10938045161647825,0,0
+1473482,2025-04-27,2025,13fc5c6d,DS Rathi,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,1,0,0.08083693893033272,0.03237763320314794,0,0
+1473482,2025-04-27,2025,3241e3fd,N Pooran,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,27,80,0.3777322854026931,0.1977056731498083,0,0
+1473482,2025-04-27,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,1,34,44,0.3659470502452945,0.1588394710091869,1,0
+1473482,2025-04-27,2025,6a26221c,AK Markram,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,9,51,0.39301407828012447,0.1882256778534539,0,0
+1473482,2025-04-27,2025,80b2fb19,Prince Yadav,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,4,0,0.08083693893033272,0.03237763320314794,0,0
+1473482,2025-04-27,2025,872b03f7,A Badoni,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,1,35,42,0.2904416417922855,0.12809563620594203,1,0
+1473482,2025-04-27,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,2,47,0.13860173588999103,0.0472960217099192,0,0
+1473482,2025-04-27,2025,919a3be2,RR Pant,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,4,115,0.3869816849407575,0.1936135922589748,0,0
+1473482,2025-04-27,2025,d67d5f00,DA Miller,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,24,130,0.24436490646113201,0.09682716851890026,0,0
+1473482,2025-04-27,2025,df064e1a,Ravi Bishnoi,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,13,15,0.035953505350504955,0.016480271596440905,0,0
+1473482,2025-04-27,2025,eef2536f,Avesh Khan,Lucknow Super Giants,Mumbai Indians,Wankhede Stadium,0,0,11,0.04418409914764939,0.01847726766099224,0,0
+1473483,2025-04-27,2025,2e171977,AR Patel,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,0,15,118,0.2691707353454539,0.10769210457536538,0,0
+1473483,2025-04-27,2025,327b58d3,PVD Chameera,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,0,0,7,0.05708828882938716,0.016433156684912676,0,0
+1473483,2025-04-27,2025,3355b542,F du Plessis,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,0,22,140,0.4644418819325759,0.2709227782628818,0,0
+1473483,2025-04-27,2025,5ffc0565,V Nigam,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,0,12,4,0.24332175499442188,0.06672448452764984,0,0
+1473483,2025-04-27,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,0,2,14,0.3078528122267871,0.1284113663009661,0,0
+1473483,2025-04-27,2025,85b3fab2,T Stubbs,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,1,34,24,0.39378596779919556,0.17717670571225322,1,0
+1473483,2025-04-27,2025,944533a5,KK Nair,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,0,4,71,0.31173424664127675,0.15150052257214008,0,0
+1473483,2025-04-27,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,0,28,24,0.42251786489781584,0.21165511534821327,0,0
+1473483,2025-04-27,2025,b17e2f24,KL Rahul,Delhi Capitals,Royal Challengers Bengaluru,Arun Jaitley Stadium,1,41,126,0.4601325983002126,0.2641768808072326,1,0
+1473483,2025-04-27,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Delhi Capitals,Arun Jaitley Stadium,0,0,72,0.35938453383959357,0.16353399776103583,0,0
+1473483,2025-04-27,2025,3c55c703,JG Bethell,Royal Challengers Bengaluru,Delhi Capitals,Arun Jaitley Stadium,0,12,0,0.07841583333115908,0.027216953334672295,0,0
+1473483,2025-04-27,2025,5b8c830e,KH Pandya,Royal Challengers Bengaluru,Delhi Capitals,Arun Jaitley Stadium,2,73,110,0.16506032866475195,0.056277626212085416,1,1
+1473483,2025-04-27,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Delhi Capitals,Arun Jaitley Stadium,2,51,247,0.4585925932242354,0.3059637501960483,1,1
+1473483,2025-04-27,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Delhi Capitals,Arun Jaitley Stadium,0,6,32,0.40656311355451646,0.216975225455516,0,0
+1473483,2025-04-27,2025,f1f99156,TH David,Royal Challengers Bengaluru,Delhi Capitals,Arun Jaitley Stadium,0,19,41,0.3327847924108438,0.14842755598487517,0,0
+1473484,2025-04-28,2025,39a2dfa8,R Tewatia,Gujarat Titans,Rajasthan Royals,Sawai Mansingh Stadium,0,9,70,0.150088222574057,0.04209364662529513,0,0
+1473484,2025-04-28,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Rajasthan Royals,Sawai Mansingh Stadium,0,5,41,0.19529734265522375,0.07516946508467023,0,0
+1473484,2025-04-28,2025,99b75528,JC Buttler,Gujarat Titans,Rajasthan Royals,Sawai Mansingh Stadium,2,50,112,0.45326174523694757,0.2428963613117312,1,1
+1473484,2025-04-28,2025,b4b99816,Shubman Gill,Gujarat Titans,Rajasthan Royals,Sawai Mansingh Stadium,2,84,105,0.4487362537241615,0.2524496385263731,1,1
+1473484,2025-04-28,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Rajasthan Royals,Sawai Mansingh Stadium,1,39,32,0.47144637430731084,0.2476758607820857,1,0
+1473484,2025-04-28,2025,f19ccfad,Washington Sundar,Gujarat Titans,Rajasthan Royals,Sawai Mansingh Stadium,0,13,40,0.14669885949742933,0.05608929478777258,0,0
+1473484,2025-04-28,2025,04a418e8,R Parag,Rajasthan Royals,Gujarat Titans,Sawai Mansingh Stadium,1,32,67,0.32597041392834175,0.1439972789637602,1,0
+1473484,2025-04-28,2025,470f446b,V Suryavanshi,Rajasthan Royals,Gujarat Titans,Sawai Mansingh Stadium,2,101,2,0.3789886920897612,0.1475639070538419,1,1
+1473484,2025-04-28,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Gujarat Titans,Sawai Mansingh Stadium,2,70,61,0.4669272965880843,0.27264396656624806,1,1
+1473484,2025-04-28,2025,fb2d1dda,N Rana,Rajasthan Royals,Gujarat Titans,Sawai Mansingh Stadium,0,4,108,0.35946645179356995,0.16157239020447794,0,0
+1473485,2025-04-29,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,1,36,46,0.2924999577372401,0.13364227472217138,1,0
+1473485,2025-04-29,2025,0bacade8,Rahmanullah Gurbaz,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,26,13,0.2939161257550491,0.12031429216085857,0,0
+1473485,2025-04-29,2025,29e95537,AM Rahane,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,26,174,0.3767972565307851,0.16188602153842546,0,0
+1473485,2025-04-29,2025,5b7ab5a9,CV Varun,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,1,10,0.03472324407323528,0.012157734008399843,0,0
+1473485,2025-04-29,2025,650d5e49,R Powell,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,5,22,0.18536670913508904,0.06205508196513968,0,0
+1473485,2025-04-29,2025,77b1aa15,Harshit Rana,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,0,8,0.049423113584258285,0.015423078510920129,0,0
+1473485,2025-04-29,2025,9d430b40,SP Narine,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,27,111,0.2268630804042482,0.09226293038533559,0,0
+1473485,2025-04-29,2025,a24be938,VR Iyer,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,7,54,0.35808604103031055,0.16176144233736206,0,0
+1473485,2025-04-29,2025,bbd41817,AD Russell,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,17,107,0.275250954728561,0.1033773444103441,0,0
+1473485,2025-04-29,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,1,44,14,0.32794263942210367,0.14431517967726212,1,0
+1473485,2025-04-29,2025,e4cdf230,AS Roy,Kolkata Knight Riders,Delhi Capitals,Arun Jaitley Stadium,0,0,5,0.054140499799728126,0.018952293726900316,0,0
+1473485,2025-04-29,2025,2e171977,AR Patel,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,1,43,119,0.2670540725583552,0.10524981737260178,1,0
+1473485,2025-04-29,2025,327b58d3,PVD Chameera,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,2,8,0.07009034761919168,0.021501089450657786,0,0
+1473485,2025-04-29,2025,3355b542,F du Plessis,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,2,62,141,0.45712278619089,0.2586972875124286,1,1
+1473485,2025-04-29,2025,3fb19989,MA Starc,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,0,19,0.045271149303400135,0.0179689072220495,0,0
+1473485,2025-04-29,2025,5ffc0565,V Nigam,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,1,38,5,0.22695572246671503,0.05809558969583346,1,0
+1473485,2025-04-29,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,7,15,0.30713049305819506,0.1280955875596501,0,0
+1473485,2025-04-29,2025,85b3fab2,T Stubbs,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,1,25,0.3745398369733217,0.1796503111404995,0,0
+1473485,2025-04-29,2025,8d2c70ad,Kuldeep Yadav,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,1,35,0.07305068516340203,0.025390833397819373,0,0
+1473485,2025-04-29,2025,944533a5,KK Nair,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,15,72,0.29599104728527215,0.14464032259173037,0,0
+1473485,2025-04-29,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,4,25,0.39694691543296134,0.18927551019074546,0,0
+1473485,2025-04-29,2025,b17e2f24,KL Rahul,Delhi Capitals,Kolkata Knight Riders,Arun Jaitley Stadium,0,7,127,0.4656471522098218,0.28082387217780025,0,0
+1473486,2025-04-30,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,11,232,0.2018463108912647,0.0885646236942226,0,0
+1473486,2025-04-30,2025,73ad96ed,DJ Hooda,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,2,99,0.13020379545391514,0.05083372501665586,0,0
+1473486,2025-04-30,2025,844e79d1,D Brevis,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",1,32,11,0.36922352193416774,0.16457457267884587,1,0
+1473486,2025-04-30,2025,a4e37e47,S Dube,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,6,69,0.33888648571942714,0.14726314804722226,0,0
+1473486,2025-04-30,2025,b2b4f545,A Mhatre,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,7,2,0.3964883227277075,0.1677141834199467,0,0
+1473486,2025-04-30,2025,cbf58a86,SK Rasheed,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,11,3,0.14303890402291736,0.038386564303353174,0,0
+1473486,2025-04-30,2025,e94915e6,SM Curran,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",2,88,50,0.19668798744220992,0.06951205612862088,1,1
+1473486,2025-04-30,2025,efc04be7,Noor Ahmad,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,0,8,0.04801746023930448,0.014228020114954948,0,0
+1473486,2025-04-30,2025,fcc21ace,A Kamboj,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,0,3,0.057577351880622143,0.018439503285749115,0,0
+1473486,2025-04-30,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Punjab Kings,"MA Chidambaram Stadium, Chepauk",0,17,187,0.22229322746343588,0.09508469517993347,0,0
+1473486,2025-04-30,2025,26989d80,Shashank Singh,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,23,26,0.295987881699765,0.12786084297813066,0,0
+1473486,2025-04-30,2025,81c36ee9,M Jansen,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,4,17,0.08961674158325611,0.03172228167307338,0,0
+1473486,2025-04-30,2025,85ec8e33,SS Iyer,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",2,72,119,0.37641933560449137,0.1817471361907757,1,1
+1473486,2025-04-30,2025,9418198b,P Simran Singh,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",2,54,41,0.340959255403601,0.15129376205737366,1,1
+1473486,2025-04-30,2025,970ddd24,Suryansh Shedge,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,1,2,0.046343796330508454,0.01494006805610403,0,0
+1473486,2025-04-30,2025,989889ff,JP Inglis,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,6,3,0.12306634479902345,0.033346372391159854,0,0
+1473486,2025-04-30,2025,b5797845,Priyansh Arya,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,23,8,0.3610333427166524,0.17160825819659434,0,0
+1473486,2025-04-30,2025,d1a60072,N Wadhera,Punjab Kings,Chennai Super Kings,"MA Chidambaram Stadium, Chepauk",0,5,23,0.34533169914465206,0.1498883083743498,0,0
+1473487,2025-05-01,2025,271f83cd,SA Yadav,Mumbai Indians,Rajasthan Royals,Sawai Mansingh Stadium,1,48,144,0.40171201609765284,0.20896778184714665,1,0
+1473487,2025-05-01,2025,740742ef,RG Sharma,Mumbai Indians,Rajasthan Royals,Sawai Mansingh Stadium,2,53,260,0.3519408268342946,0.16967536720883716,1,1
+1473487,2025-05-01,2025,dbe50b21,HH Pandya,Mumbai Indians,Rajasthan Royals,Sawai Mansingh Stadium,1,48,133,0.21103633567228042,0.077729363082437,1,0
+1473487,2025-05-01,2025,e66732f8,RD Rickelton,Mumbai Indians,Rajasthan Royals,Sawai Mansingh Stadium,2,61,10,0.364898254114021,0.1639620637790697,1,1
+1473487,2025-05-01,2025,04a418e8,R Parag,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,16,68,0.343416071712977,0.1602740008671325,0,0
+1473487,2025-05-01,2025,470f446b,V Suryavanshi,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,0,3,0.4144343951951728,0.2571386653582299,0,0
+1473487,2025-05-01,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,0,74,0.25279966836818235,0.10911872289537186,0,0
+1473487,2025-05-01,2025,4bd09374,Akash Madhwal,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,4,1,0.06479905498517005,0.018573190060596247,0,0
+1473487,2025-05-01,2025,5574750c,JC Archer,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,1,30,28,0.05433310552906144,0.017990407013820955,1,0
+1473487,2025-05-01,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,15,8,0.1275033834864702,0.035415439131226904,0,0
+1473487,2025-05-01,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,13,62,0.4762046918026899,0.29447748488428704,0,0
+1473487,2025-05-01,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,11,31,0.3260721488748347,0.136137440857368,0,0
+1473487,2025-05-01,2025,f24c6701,M Theekshana,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,2,5,0.05053390088364747,0.014784325651985283,0,0
+1473487,2025-05-01,2025,f6d8a7ab,K Kartikeya,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,2,3,0.05589586784186247,0.015779214298243447,0,0
+1473487,2025-05-01,2025,fb2d1dda,N Rana,Rajasthan Royals,Mumbai Indians,Sawai Mansingh Stadium,0,9,109,0.35279984612690407,0.1680134407079106,0,0
+1473488,2025-05-02,2025,39a2dfa8,R Tewatia,Gujarat Titans,Sunrisers Hyderabad,"Narendra Modi Stadium, Ahmedabad",0,6,71,0.12975350160798108,0.0462933538072371,0,0
+1473488,2025-05-02,2025,5f547c8b,Rashid Khan,Gujarat Titans,Sunrisers Hyderabad,"Narendra Modi Stadium, Ahmedabad",0,0,60,0.11790669815382973,0.0470935349466892,0,0
+1473488,2025-05-02,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Sunrisers Hyderabad,"Narendra Modi Stadium, Ahmedabad",0,6,42,0.20885970932586678,0.08005054354794533,0,0
+1473488,2025-05-02,2025,99b75528,JC Buttler,Gujarat Titans,Sunrisers Hyderabad,"Narendra Modi Stadium, Ahmedabad",2,64,113,0.44732188757429925,0.2675149719441555,1,1
+1473488,2025-05-02,2025,b4b99816,Shubman Gill,Gujarat Titans,Sunrisers Hyderabad,"Narendra Modi Stadium, Ahmedabad",2,76,106,0.4899793632241811,0.30935293643362977,1,1
+1473488,2025-05-02,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Sunrisers Hyderabad,"Narendra Modi Stadium, Ahmedabad",1,48,33,0.4972960631337905,0.29996554042837514,1,0
+1473488,2025-05-02,2025,f19ccfad,Washington Sundar,Gujarat Titans,Sunrisers Hyderabad,"Narendra Modi Stadium, Ahmedabad",0,21,41,0.1487155947977249,0.05660411320073313,0,0
+1473488,2025-05-02,2025,08548b13,PHKD Mendis,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,0,3,0.27871532353713474,0.09206525368311926,0,0
+1473488,2025-05-02,2025,12b610c2,TM Head,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,20,34,0.39571596007724963,0.18537099438385968,0,0
+1473488,2025-05-02,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,23,40,0.46062633859654567,0.24261108600462483,0,0
+1473488,2025-05-02,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,13,108,0.35178057052426503,0.16507616416742904,0,0
+1473488,2025-05-02,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,3,8,0.3114336158410261,0.13465965981497582,0,0
+1473488,2025-05-02,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,21,19,0.26878009135860376,0.11423045295435083,0,0
+1473488,2025-05-02,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,19,46,0.1472996118405509,0.051800812529884485,0,0
+1473488,2025-05-02,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",2,74,70,0.3352276338176112,0.14251194530997274,1,1
+1473489,2025-05-03,2025,2c25d4f5,D Padikkal,Royal Challengers Bengaluru,Chennai Super Kings,M Chinnaswamy Stadium,0,17,73,0.37023644879755097,0.15816644951343228,0,0
+1473489,2025-05-03,2025,3c55c703,JG Bethell,Royal Challengers Bengaluru,Chennai Super Kings,M Chinnaswamy Stadium,2,55,1,0.12033030428387652,0.04427530921142443,1,1
+1473489,2025-05-03,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Chennai Super Kings,M Chinnaswamy Stadium,0,7,42,0.24576267174609218,0.09379145476904226,0,0
+1473489,2025-05-03,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Chennai Super Kings,M Chinnaswamy Stadium,2,62,248,0.48701220737109924,0.30381296514065564,1,1
+1473489,2025-05-03,2025,c5aef772,R Shepherd,Royal Challengers Bengaluru,Chennai Super Kings,M Chinnaswamy Stadium,2,53,9,0.1317381388055774,0.03413480058290531,1,1
+1473489,2025-05-03,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Chennai Super Kings,M Chinnaswamy Stadium,0,11,33,0.41711854271011073,0.21754974347890896,0,0
+1473489,2025-05-03,2025,f1f99156,TH David,Royal Challengers Bengaluru,Chennai Super Kings,M Chinnaswamy Stadium,0,2,42,0.341273104671889,0.14554760089141802,0,0
+1473489,2025-05-03,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,12,233,0.2269757257974172,0.09786057144793599,0,0
+1473489,2025-05-03,2025,844e79d1,D Brevis,Chennai Super Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,0,12,0.3174651640181278,0.12096769143311097,0,0
+1473489,2025-05-03,2025,a4e37e47,S Dube,Chennai Super Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,8,70,0.35039319966257065,0.14329657731720932,0,0
+1473489,2025-05-03,2025,b2b4f545,A Mhatre,Chennai Super Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,2,94,3,0.28628884726632164,0.10032537795608029,1,1
+1473489,2025-05-03,2025,cbf58a86,SK Rasheed,Chennai Super Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,14,4,0.13112487733447392,0.04108451365426203,0,0
+1473489,2025-05-03,2025,e94915e6,SM Curran,Chennai Super Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,0,5,51,0.3008964734223116,0.13827360040355746,0,0
+1473489,2025-05-03,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Royal Challengers Bengaluru,M Chinnaswamy Stadium,2,77,188,0.21148885123542513,0.08330050766496436,1,1
+1473490,2025-05-04,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Rajasthan Royals,Eden Gardens,0,19,47,0.3156672287117424,0.13131663716215536,0,0
+1473490,2025-05-04,2025,0bacade8,Rahmanullah Gurbaz,Kolkata Knight Riders,Rajasthan Royals,Eden Gardens,1,35,14,0.28723988694079355,0.1288690770140762,1,0
+1473490,2025-05-04,2025,29e95537,AM Rahane,Kolkata Knight Riders,Rajasthan Royals,Eden Gardens,1,30,175,0.38679981450989026,0.18073071303205118,1,0
+1473490,2025-05-04,2025,9d430b40,SP Narine,Kolkata Knight Riders,Rajasthan Royals,Eden Gardens,0,11,112,0.2498917124114729,0.1034389085796064,0,0
+1473490,2025-05-04,2025,bbd41817,AD Russell,Kolkata Knight Riders,Rajasthan Royals,Eden Gardens,2,57,108,0.25905086905324437,0.10460552700136898,1,1
+1473490,2025-05-04,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Rajasthan Royals,Eden Gardens,1,44,15,0.37264644041388045,0.1687972572741922,1,0
+1473490,2025-05-04,2025,04a418e8,R Parag,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,2,95,69,0.34978476631487276,0.15533756447429115,1,1
+1473490,2025-05-04,2025,470f446b,V Suryavanshi,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,0,4,4,0.3581926569991324,0.18405344821283387,0,0
+1473490,2025-05-04,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,0,29,75,0.2398511769652308,0.09960110510925815,0,0
+1473490,2025-05-04,2025,5574750c,JC Archer,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,0,12,29,0.08460580473881557,0.03470275727677778,0,0
+1473490,2025-05-04,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,0,25,9,0.13142747740939575,0.045798011915502104,0,0
+1473490,2025-05-04,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,1,34,63,0.4570721667293014,0.27565342912881197,1,0
+1473490,2025-05-04,2025,a97c8ec2,PWH de Silva,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,0,0,17,0.0420802667532741,0.015495915163760105,0,0
+1473490,2025-05-04,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,0,0,32,0.31009764859347416,0.13286662348932932,0,0
+1473490,2025-05-04,2025,e3851766,KS Rathore,Rajasthan Royals,Kolkata Knight Riders,Eden Gardens,0,0,0,0.08011708471089378,0.02745670413366193,0,0
+1473491,2025-05-04,2025,26989d80,Shashank Singh,Punjab Kings,Lucknow Super Giants,Himachal Pradesh Cricket Association Stadium,1,33,27,0.3212661550654086,0.118327669612594,1,0
+1473491,2025-05-04,2025,85ec8e33,SS Iyer,Punjab Kings,Lucknow Super Giants,Himachal Pradesh Cricket Association Stadium,1,45,120,0.37942898292132976,0.18361740869166385,1,0
+1473491,2025-05-04,2025,9418198b,P Simran Singh,Punjab Kings,Lucknow Super Giants,Himachal Pradesh Cricket Association Stadium,2,91,42,0.3200976337194045,0.13787327172979016,1,1
+1473491,2025-05-04,2025,989889ff,JP Inglis,Punjab Kings,Lucknow Super Giants,Himachal Pradesh Cricket Association Stadium,1,30,4,0.1379834100137904,0.04298996770292726,1,0
+1473491,2025-05-04,2025,b5797845,Priyansh Arya,Punjab Kings,Lucknow Super Giants,Himachal Pradesh Cricket Association Stadium,0,1,9,0.354130808883825,0.1521779605504507,0,0
+1473491,2025-05-04,2025,d1a60072,N Wadhera,Punjab Kings,Lucknow Super Giants,Himachal Pradesh Cricket Association Stadium,0,16,24,0.3094888424338972,0.13340853567110508,0,0
+1473491,2025-05-04,2025,d9273ee7,MP Stoinis,Punjab Kings,Lucknow Super Giants,Himachal Pradesh Cricket Association Stadium,0,15,92,0.24399521404631053,0.08158256215016696,0,0
+1473491,2025-05-04,2025,3241e3fd,N Pooran,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,0,6,81,0.3754054281965875,0.1856978301429062,0,0
+1473491,2025-05-04,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,0,0,45,0.33187687831360924,0.14815017315740633,0,0
+1473491,2025-05-04,2025,6a26221c,AK Markram,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,0,13,52,0.35262283249799786,0.1608676416168467,0,0
+1473491,2025-05-04,2025,80b2fb19,Prince Yadav,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,0,1,1,0.07018821638164965,0.024926894732895583,0,0
+1473491,2025-05-04,2025,872b03f7,A Badoni,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,2,74,43,0.3230340392291372,0.14793877205308037,1,1
+1473491,2025-05-04,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,1,45,48,0.12774843127170316,0.04993606948262659,1,0
+1473491,2025-05-04,2025,919a3be2,RR Pant,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,0,18,116,0.3584440042803104,0.17118760978681472,0,0
+1473491,2025-05-04,2025,d67d5f00,DA Miller,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,0,11,131,0.23357794455687197,0.08164195375442705,0,0
+1473491,2025-05-04,2025,eef2536f,Avesh Khan,Lucknow Super Giants,Punjab Kings,Himachal Pradesh Cricket Association Stadium,0,19,12,0.042578370171070024,0.016998802865598937,0,0
+1473494,2025-05-07,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,0,9,48,0.2899853225543252,0.11933237369465037,0,0
+1473494,2025-05-07,2025,0bacade8,Rahmanullah Gurbaz,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,0,11,15,0.3105818820292602,0.13024100636502195,0,0
+1473494,2025-05-07,2025,29e95537,AM Rahane,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,1,48,176,0.37177156918710674,0.18790901780750252,1,0
+1473494,2025-05-07,2025,93b4fc78,MK Pandey,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,1,36,157,0.3427522276047189,0.15052364069495264,1,0
+1473494,2025-05-07,2025,9d430b40,SP Narine,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,0,26,113,0.24448119616743375,0.09955907378806673,0,0
+1473494,2025-05-07,2025,bbd41817,AD Russell,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,1,38,109,0.255455933024582,0.11334949824712352,1,0
+1473494,2025-05-07,2025,be24ead0,Ramandeep Singh,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,0,4,18,0.09411559491099405,0.03748795355001965,0,0
+1473494,2025-05-07,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Chennai Super Kings,Eden Gardens,0,1,16,0.382842446468425,0.18509577254596693,0,0
+1473494,2025-05-07,2025,495d42a5,R Ashwin,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,0,8,90,0.07925821028953099,0.03391172129902563,0,0
+1473494,2025-05-07,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,0,17,234,0.2025321007965034,0.0844967011247795,0,0
+1473494,2025-05-07,2025,844e79d1,D Brevis,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,2,52,13,0.2858672978277461,0.11743218311124534,1,1
+1473494,2025-05-07,2025,a4e37e47,S Dube,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,1,45,71,0.36632179982396085,0.17325827399993002,1,0
+1473494,2025-05-07,2025,b2b4f545,A Mhatre,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,0,0,4,0.37412246266619653,0.18804362852820714,0,0
+1473494,2025-05-07,2025,cf59b3f0,Urvil Patel,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,1,31,0,0.0833327088309535,0.029212635936432342,1,0
+1473494,2025-05-07,2025,df5a6881,DP Conway,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,0,0,24,0.44249693685808605,0.23526752129192313,0,0
+1473494,2025-05-07,2025,efc04be7,Noor Ahmad,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,0,2,9,0.05353927888740952,0.019169408380798312,0,0
+1473494,2025-05-07,2025,fcc21ace,A Kamboj,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,0,4,4,0.04813067286558543,0.01862869396829754,0,0
+1473494,2025-05-07,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Kolkata Knight Riders,Eden Gardens,0,19,189,0.2453314460545254,0.10794329986857794,0,0
+1473497,2025-05-18,2025,26989d80,Shashank Singh,Punjab Kings,Rajasthan Royals,Sawai Mansingh Stadium,2,59,28,0.33197315558864465,0.13737734275828145,1,1
+1473497,2025-05-18,2025,85ec8e33,SS Iyer,Punjab Kings,Rajasthan Royals,Sawai Mansingh Stadium,1,30,121,0.37002831305631534,0.19110729500849885,1,0
+1473497,2025-05-18,2025,8f6dd463,Azmatullah Omarzai,Punjab Kings,Rajasthan Royals,Sawai Mansingh Stadium,0,21,5,0.12295483166162877,0.039041972295804764,0,0
+1473497,2025-05-18,2025,9418198b,P Simran Singh,Punjab Kings,Rajasthan Royals,Sawai Mansingh Stadium,0,21,43,0.37314988813544536,0.17269879353474057,0,0
+1473497,2025-05-18,2025,b5797845,Priyansh Arya,Punjab Kings,Rajasthan Royals,Sawai Mansingh Stadium,0,9,10,0.3250788098220976,0.12367392767196736,0,0
+1473497,2025-05-18,2025,d1a60072,N Wadhera,Punjab Kings,Rajasthan Royals,Sawai Mansingh Stadium,2,70,25,0.3335600136761656,0.14839501706197064,1,1
+1473497,2025-05-18,2025,f2c936d7,MJ Owen,Punjab Kings,Rajasthan Royals,Sawai Mansingh Stadium,0,0,0,0.08270256784433083,0.024441828053007538,0,0
+1473497,2025-05-18,2025,04a418e8,R Parag,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,0,13,70,0.33764969055816246,0.15900789569648344,0,0
+1473497,2025-05-18,2025,107c26fb,KT Maphaka,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,0,8,0,0.08417883294079459,0.023951572538326714,0,0
+1473497,2025-05-18,2025,470f446b,V Suryavanshi,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,1,40,5,0.4311131307997641,0.22250392422363996,1,0
+1473497,2025-05-18,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,0,11,76,0.2027498714850935,0.07690899316019788,0,0
+1473497,2025-05-18,2025,6b2ff18f,SB Dubey,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,0,7,10,0.12545917838396117,0.037543921153435085,0,0
+1473497,2025-05-18,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,2,50,64,0.4735659349027677,0.27378367518648206,1,1
+1473497,2025-05-18,2025,a4cc73aa,SV Samson,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,0,20,165,0.40047484194813615,0.19184089131488463,0,0
+1473497,2025-05-18,2025,a97c8ec2,PWH de Silva,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,0,0,18,0.04213134048200467,0.011234112531795766,0,0
+1473497,2025-05-18,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Punjab Kings,Sawai Mansingh Stadium,2,53,33,0.2799452788799798,0.10757946865478177,1,1
+1473498,2025-05-18,2025,2e171977,AR Patel,Delhi Capitals,Gujarat Titans,Arun Jaitley Stadium,0,25,120,0.24589012230915047,0.09966530340675168,0,0
+1473498,2025-05-18,2025,3355b542,F du Plessis,Delhi Capitals,Gujarat Titans,Arun Jaitley Stadium,0,5,142,0.4501926763165299,0.26977240031407124,0,0
+1473498,2025-05-18,2025,85b3fab2,T Stubbs,Delhi Capitals,Gujarat Titans,Arun Jaitley Stadium,0,21,26,0.37127554382695704,0.16595263436571156,0,0
+1473498,2025-05-18,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Gujarat Titans,Arun Jaitley Stadium,1,30,26,0.3874955984862129,0.1768951657801482,1,0
+1473498,2025-05-18,2025,b17e2f24,KL Rahul,Delhi Capitals,Gujarat Titans,Arun Jaitley Stadium,2,112,128,0.44481575792734773,0.26228132015419375,1,1
+1473498,2025-05-18,2025,b4b99816,Shubman Gill,Gujarat Titans,Delhi Capitals,Arun Jaitley Stadium,2,93,107,0.47814902761141803,0.2825142221703017,1,1
+1473498,2025-05-18,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Delhi Capitals,Arun Jaitley Stadium,2,108,34,0.453684282856187,0.2648543501917664,1,1
+1473499,2025-05-19,2025,0a67aec0,Akash Deep,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,6,4,0.06752963345319526,0.028736185069370434,0,0
+1473499,2025-05-19,2025,1abb78f8,SN Thakur,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,4,38,0.07288349382366169,0.033235909128688804,0,0
+1473499,2025-05-19,2025,3241e3fd,N Pooran,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,45,82,0.36228740004444737,0.16179512676155525,1,0
+1473499,2025-05-19,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,65,46,0.3641230619606589,0.16195180883364507,1,1
+1473499,2025-05-19,2025,6a26221c,AK Markram,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,61,53,0.3793782620162568,0.1720138019694186,1,1
+1473499,2025-05-19,2025,872b03f7,A Badoni,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,3,44,0.32216697530490646,0.13737149640283416,0,0
+1473499,2025-05-19,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,3,49,0.19059823169197448,0.06478790412767979,0,0
+1473499,2025-05-19,2025,919a3be2,RR Pant,Lucknow Super Giants,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,7,117,0.3445128224990126,0.1474422373774557,0,0
+1473499,2025-05-19,2025,08548b13,PHKD Mendis,Sunrisers Hyderabad,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,32,4,0.23776248607018785,0.06408552126981279,1,0
+1473499,2025-05-19,2025,1ac746c8,Atharva Taide,Sunrisers Hyderabad,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,13,9,0.36925855666041685,0.16085843613518863,0,0
+1473499,2025-05-19,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,47,41,0.3922639008238926,0.18410661396827757,1,0
+1473499,2025-05-19,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,35,109,0.3983830054749818,0.19596821264162334,1,0
+1473499,2025-05-19,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,5,9,0.2751924122071415,0.10907380990525836,0,0
+1473499,2025-05-19,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,5,20,0.30172926667945293,0.11540200176850361,0,0
+1473499,2025-05-19,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,59,71,0.38165420330133576,0.16455652543262006,1,1
+1473500,2025-05-20,2025,495d42a5,R Ashwin,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,0,13,91,0.06349533131817146,0.02399339853926289,0,0
+1473500,2025-05-20,2025,4a8a2e3b,MS Dhoni,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,0,16,235,0.196603112527355,0.07277996687324309,0,0
+1473500,2025-05-20,2025,844e79d1,D Brevis,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,1,42,14,0.31926149005320503,0.13380659904952918,1,0
+1473500,2025-05-20,2025,a4e37e47,S Dube,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,1,39,72,0.3494022659008832,0.15707749022337472,1,0
+1473500,2025-05-20,2025,b2b4f545,A Mhatre,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,1,43,5,0.36158566283152166,0.17110785277128315,1,0
+1473500,2025-05-20,2025,cf59b3f0,Urvil Patel,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,0,0,1,0.32906301544026095,0.12987702184536054,0,0
+1473500,2025-05-20,2025,df5a6881,DP Conway,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,0,10,25,0.4445039218093027,0.25527566777806265,0,0
+1473500,2025-05-20,2025,efc04be7,Noor Ahmad,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,0,2,10,0.04666732775033227,0.01528503431695781,0,0
+1473500,2025-05-20,2025,fcc21ace,A Kamboj,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,0,5,5,0.05049525502903676,0.01715645353088837,0,0
+1473500,2025-05-20,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Rajasthan Royals,Arun Jaitley Stadium,0,1,190,0.24186851749859267,0.10270621213787363,0,0
+1473500,2025-05-20,2025,04a418e8,R Parag,Rajasthan Royals,Chennai Super Kings,Arun Jaitley Stadium,0,3,71,0.2992282180856001,0.13361518810708678,0,0
+1473500,2025-05-20,2025,470f446b,V Suryavanshi,Rajasthan Royals,Chennai Super Kings,Arun Jaitley Stadium,2,57,6,0.3534381870107126,0.16739708991512894,1,1
+1473500,2025-05-20,2025,48a1d7b7,SO Hetmyer,Rajasthan Royals,Chennai Super Kings,Arun Jaitley Stadium,0,12,77,0.20914175125944884,0.07789065496019748,0,0
+1473500,2025-05-20,2025,6c19c6e5,YBK Jaiswal,Rajasthan Royals,Chennai Super Kings,Arun Jaitley Stadium,1,36,65,0.45524819545826206,0.27757686166572576,1,0
+1473500,2025-05-20,2025,a4cc73aa,SV Samson,Rajasthan Royals,Chennai Super Kings,Arun Jaitley Stadium,1,41,166,0.3860916460785371,0.1936287853111761,1,0
+1473500,2025-05-20,2025,bcf325d2,Dhruv Jurel,Rajasthan Royals,Chennai Super Kings,Arun Jaitley Stadium,1,31,34,0.3070577149440653,0.13213979544717766,1,0
+1473501,2025-05-21,2025,271f83cd,SA Yadav,Mumbai Indians,Delhi Capitals,Wankhede Stadium,2,73,145,0.4321800010722027,0.22443704730971747,1,1
+1473501,2025-05-21,2025,740742ef,RG Sharma,Mumbai Indians,Delhi Capitals,Wankhede Stadium,0,5,261,0.39957240910270825,0.18292035454942598,0,0
+1473501,2025-05-21,2025,9caf69a1,WG Jacks,Mumbai Indians,Delhi Capitals,Wankhede Stadium,0,21,16,0.3202954467374896,0.14790520967777274,0,0
+1473501,2025-05-21,2025,b0482a1d,Tilak Varma,Mumbai Indians,Delhi Capitals,Wankhede Stadium,0,27,46,0.4396543348353823,0.22045376582021198,0,0
+1473501,2025-05-21,2025,dbe50b21,HH Pandya,Mumbai Indians,Delhi Capitals,Wankhede Stadium,0,3,134,0.2641703836548891,0.10805296254824796,0,0
+1473501,2025-05-21,2025,e66732f8,RD Rickelton,Mumbai Indians,Delhi Capitals,Wankhede Stadium,0,25,11,0.4213179151578982,0.19693470147005607,0,0
+1473501,2025-05-21,2025,fffa744b,Naman Dhir,Mumbai Indians,Delhi Capitals,Wankhede Stadium,0,24,14,0.28456730616506654,0.10959216343673792,0,0
+1473501,2025-05-21,2025,0a8fce53,Mustafizur Rahman,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,0,6,0.037025936723150694,0.013977196362757613,0,0
+1473501,2025-05-21,2025,327b58d3,PVD Chameera,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,8,9,0.04743282731921862,0.01395239803984336,0,0
+1473501,2025-05-21,2025,3355b542,F du Plessis,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,6,143,0.45204982922950937,0.26877862605726366,0,0
+1473501,2025-05-21,2025,5ffc0565,V Nigam,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,20,6,0.2294905040788805,0.08017208992878504,0,0
+1473501,2025-05-21,2025,84d9c311,Ashutosh Sharma,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,18,16,0.27388559081587505,0.1154594185601003,0,0
+1473501,2025-05-21,2025,85b3fab2,T Stubbs,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,2,27,0.3121105661161837,0.1374239420832579,0,0
+1473501,2025-05-21,2025,8d2c70ad,Kuldeep Yadav,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,7,36,0.047909268280809304,0.01733351022721441,0,0
+1473501,2025-05-21,2025,ad3b6e95,Abishek Porel,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,6,27,0.36595217992368356,0.1849493526262735,0,0
+1473501,2025-05-21,2025,b17e2f24,KL Rahul,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,11,129,0.48713793600569544,0.30609349651189166,0,0
+1473501,2025-05-21,2025,f89d3b11,Sameer Rizvi,Delhi Capitals,Mumbai Indians,Wankhede Stadium,1,39,7,0.1261109814447628,0.03839148799499613,1,0
+1473501,2025-05-21,2025,fb5f69e4,M Tiwari,Delhi Capitals,Mumbai Indians,Wankhede Stadium,0,3,0,0.07741648155795122,0.02650545730687589,0,0
+1473502,2025-05-22,2025,3241e3fd,N Pooran,Lucknow Super Giants,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",2,56,83,0.3508734138749554,0.16792819550515536,1,1
+1473502,2025-05-22,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",2,117,47,0.3439160579991141,0.15594358541135117,1,1
+1473502,2025-05-22,2025,6a26221c,AK Markram,Lucknow Super Giants,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,36,54,0.37097201610060204,0.18139770863763277,1,0
+1473502,2025-05-22,2025,919a3be2,RR Pant,Lucknow Super Giants,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,16,118,0.3018350471068556,0.13457757795357003,0,0
+1473502,2025-05-22,2025,12314277,Arshad Khan,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",0,1,8,0.19401930312202026,0.06827968564565746,0,0
+1473502,2025-05-22,2025,39a2dfa8,R Tewatia,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",0,2,72,0.11835075559214639,0.042452365803828544,0,0
+1473502,2025-05-22,2025,5f547c8b,Rashid Khan,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",0,4,61,0.1124278077561113,0.037391016143390625,0,0
+1473502,2025-05-22,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",2,57,43,0.20615047844415657,0.07427609707066181,1,1
+1473502,2025-05-22,2025,99b75528,JC Buttler,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",1,33,114,0.46453461165064347,0.2633867676608692,1,0
+1473502,2025-05-22,2025,b4b99816,Shubman Gill,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",1,35,108,0.49003473250078194,0.3035543753685318,1,0
+1473502,2025-05-22,2025,c7a995d3,R Sai Kishore,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",0,1,2,0.08252756004276396,0.023730976657776792,0,0
+1473502,2025-05-22,2025,d014d5ac,SE Rutherford,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",1,38,16,0.30178636582341717,0.11971186851910469,1,0
+1473502,2025-05-22,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",0,21,35,0.4774636077865359,0.2756986038907594,0,0
+1473502,2025-05-22,2025,e62dd25d,K Rabada,Gujarat Titans,Lucknow Super Giants,"Narendra Modi Stadium, Ahmedabad",0,2,29,0.059484980264080375,0.015627740556481758,0,0
+1473503,2025-05-23,2025,0890552f,A Manohar,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,12,19,0.18322548572843245,0.049537584643692546,0,0
+1473503,2025-05-23,2025,12b610c2,TM Head,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,17,35,0.407714801935679,0.2096403613369234,0,0
+1473503,2025-05-23,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,24,42,0.4535374601768231,0.23311653103292915,0,0
+1473503,2025-05-23,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,94,110,0.36290120390294833,0.16419729265005997,1,1
+1473503,2025-05-23,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,26,10,0.2587220657060118,0.08508158854870096,0,0
+1473503,2025-05-23,2025,aad0c365,Nithish Kumar Reddy,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,4,21,0.28717569103805274,0.11509151038339252,0,0
+1473503,2025-05-23,2025,ded9240e,PJ Cummins,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,13,47,0.14226225646712023,0.04878704008132792,0,0
+1473503,2025-05-23,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,34,72,0.40524182378743656,0.1957150687936602,1,0
+1473503,2025-05-23,2025,00ea847a,MA Agarwal,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,11,119,0.32259387011196916,0.14533875538666005,0,0
+1473503,2025-05-23,2025,2e81a32d,B Kumar,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,3,68,0.04118093437689926,0.01528850355174389,0,0
+1473503,2025-05-23,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,62,30,0.416779545996662,0.2164392121479292,1,1
+1473503,2025-05-23,2025,5b8c830e,KH Pandya,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,8,111,0.17112891617508133,0.06777055552357643,0,0
+1473503,2025-05-23,2025,7210d461,Yash Dayal,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,3,2,0.06623795785157677,0.025459824250070724,0,0
+1473503,2025-05-23,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,24,43,0.22175674133756557,0.08677825461496247,0,0
+1473503,2025-05-23,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,43,249,0.452066978516535,0.2644844909301808,1,0
+1473503,2025-05-23,2025,c5aef772,R Shepherd,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,10,0.22804437089733484,0.09524253111551353,0,0
+1473503,2025-05-23,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,18,34,0.38439731963286694,0.19346279791176996,0,0
+1473503,2025-05-23,2025,f1f99156,TH David,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,1,43,0.3210441432706925,0.14621366999573007,0,0
+1473503,2025-05-23,2025,f834dcfc,L Ngidi,Royal Challengers Bengaluru,Sunrisers Hyderabad,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,0,0.0811135995875421,0.030993884155170383,0,0
+1485779,2025-05-24,2025,26989d80,Shashank Singh,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,0,11,29,0.39423959692274885,0.1860880232710348,0,0
+1485779,2025-05-24,2025,81c36ee9,M Jansen,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,0,0,18,0.09077533217466621,0.02166809538877896,0,0
+1485779,2025-05-24,2025,85ec8e33,SS Iyer,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,2,53,122,0.37204570183075825,0.1882820073987227,1,1
+1485779,2025-05-24,2025,8f6dd463,Azmatullah Omarzai,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,0,1,6,0.13702740015061454,0.03888509885557155,0,0
+1485779,2025-05-24,2025,9418198b,P Simran Singh,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,0,28,44,0.3934936189939555,0.1795507384802578,0,0
+1485779,2025-05-24,2025,989889ff,JP Inglis,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,1,32,5,0.18387677449016127,0.04773261764380317,1,0
+1485779,2025-05-24,2025,b5797845,Priyansh Arya,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,0,6,11,0.2935659013193431,0.10757825335186486,0,0
+1485779,2025-05-24,2025,c05edf8e,Harpreet Brar,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,0,7,24,0.10282023912040883,0.027602066936453666,0,0
+1485779,2025-05-24,2025,d1a60072,N Wadhera,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,0,16,26,0.4036533259312127,0.18892779176257182,0,0
+1485779,2025-05-24,2025,d9273ee7,MP Stoinis,Punjab Kings,Delhi Capitals,Sawai Mansingh Stadium,1,44,93,0.1833485385156436,0.06630331998449486,1,0
+1485779,2025-05-24,2025,3355b542,F du Plessis,Delhi Capitals,Punjab Kings,Sawai Mansingh Stadium,0,23,144,0.47395002557998345,0.25247570265417985,0,0
+1485779,2025-05-24,2025,3c28853f,Sediqullah Atal,Delhi Capitals,Punjab Kings,Sawai Mansingh Stadium,0,22,0,0.08701560861841579,0.02456145995795273,0,0
+1485779,2025-05-24,2025,85b3fab2,T Stubbs,Delhi Capitals,Punjab Kings,Sawai Mansingh Stadium,0,18,28,0.38682471211109304,0.1655850222892484,0,0
+1485779,2025-05-24,2025,944533a5,KK Nair,Delhi Capitals,Punjab Kings,Sawai Mansingh Stadium,1,44,73,0.30326544250542864,0.14297120242143396,1,0
+1485779,2025-05-24,2025,b17e2f24,KL Rahul,Delhi Capitals,Punjab Kings,Sawai Mansingh Stadium,1,35,130,0.48271664213242055,0.30610757792390125,1,0
+1485779,2025-05-24,2025,f89d3b11,Sameer Rizvi,Delhi Capitals,Punjab Kings,Sawai Mansingh Stadium,2,58,8,0.172474329757468,0.06112560937542061,1,1
+1473504,2025-05-25,2025,844e79d1,D Brevis,Chennai Super Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",2,57,15,0.3982087602330983,0.19149381502142088,1,1
+1473504,2025-05-25,2025,a4e37e47,S Dube,Chennai Super Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,17,73,0.32784513512371016,0.14243988118009304,0,0
+1473504,2025-05-25,2025,b2b4f545,A Mhatre,Chennai Super Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,34,6,0.34295375136163475,0.1539123852282666,1,0
+1473504,2025-05-25,2025,cf59b3f0,Urvil Patel,Chennai Super Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",1,37,2,0.2652314208284708,0.07889834586492751,1,0
+1473504,2025-05-25,2025,df5a6881,DP Conway,Chennai Super Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",2,52,26,0.39633558529626056,0.20477346115678646,1,1
+1473504,2025-05-25,2025,fe93fd9d,RA Jadeja,Chennai Super Kings,Gujarat Titans,"Narendra Modi Stadium, Ahmedabad",0,21,191,0.21870869863272724,0.09509842593598586,0,0
+1473504,2025-05-25,2025,12314277,Arshad Khan,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,20,9,0.18273110295111702,0.05323628086787472,0,0
+1473504,2025-05-25,2025,2f49c897,Mohammed Siraj,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,3,20,0.045098363505080105,0.013263770812218943,0,0
+1473504,2025-05-25,2025,3204c99f,G Coetzee,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,5,5,0.05398428973722448,0.01481210319206738,0,0
+1473504,2025-05-25,2025,39a2dfa8,R Tewatia,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,14,73,0.1189685314472407,0.037977498852872,0,0
+1473504,2025-05-25,2025,5f547c8b,Rashid Khan,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,12,62,0.10571573043921254,0.038434506848351306,0,0
+1473504,2025-05-25,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,19,44,0.23627271685300832,0.09100554765213019,0,0
+1473504,2025-05-25,2025,99b75528,JC Buttler,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,5,115,0.4623121807908895,0.28071907441691996,0,0
+1473504,2025-05-25,2025,b4b99816,Shubman Gill,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,13,109,0.4989645189206541,0.3291539076900018,0,0
+1473504,2025-05-25,2025,c7a995d3,R Sai Kishore,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,3,3,0.07699432429571051,0.020452996379896303,0,0
+1473504,2025-05-25,2025,d014d5ac,SE Rutherford,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",0,0,17,0.3577930051081189,0.1423323214177688,0,0
+1473504,2025-05-25,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Chennai Super Kings,"Narendra Modi Stadium, Ahmedabad",1,41,36,0.48216032869113223,0.27656483072450083,1,0
+1473505,2025-05-25,2025,12b610c2,TM Head,Sunrisers Hyderabad,Kolkata Knight Riders,Arun Jaitley Stadium,2,76,36,0.4220964106653817,0.2257673849673127,1,1
+1473505,2025-05-25,2025,235c2bb6,H Klaasen,Sunrisers Hyderabad,Kolkata Knight Riders,Arun Jaitley Stadium,2,105,43,0.41298770688104036,0.20401761612642716,1,1
+1473505,2025-05-25,2025,752f7486,Ishan Kishan,Sunrisers Hyderabad,Kolkata Knight Riders,Arun Jaitley Stadium,0,29,111,0.36383720745436743,0.16067469891441602,0,0
+1473505,2025-05-25,2025,a3b0600d,Aniket Verma,Sunrisers Hyderabad,Kolkata Knight Riders,Arun Jaitley Stadium,0,12,11,0.26922355112396157,0.0919497481044425,0,0
+1473505,2025-05-25,2025,f29185a1,Abhishek Sharma,Sunrisers Hyderabad,Kolkata Knight Riders,Arun Jaitley Stadium,1,32,73,0.4030008657833072,0.20336435218041485,1,0
+1473505,2025-05-25,2025,0a509d6b,RK Singh,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,0,9,49,0.3080297937220621,0.11991056311652748,0,0
+1473505,2025-05-25,2025,29e95537,AM Rahane,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,0,15,177,0.381959074101473,0.16783537897412953,0,0
+1473505,2025-05-25,2025,372455c4,Q de Kock,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,0,9,111,0.3701083539097011,0.17704775787337515,0,0
+1473505,2025-05-25,2025,77b1aa15,Harshit Rana,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,1,34,9,0.045735163139372564,0.01770636354390661,1,0
+1473505,2025-05-25,2025,7c3b3b78,VG Arora,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,0,0,8,0.039085773482298844,0.01615207171162248,0,0
+1473505,2025-05-25,2025,93b4fc78,MK Pandey,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,1,37,158,0.3719190116705562,0.15808442753067192,1,0
+1473505,2025-05-25,2025,9d430b40,SP Narine,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,1,31,114,0.22975185019863953,0.08109110691616504,1,0
+1473505,2025-05-25,2025,bbd41817,AD Russell,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,0,0,110,0.3448857370247661,0.16727860620060903,0,0
+1473505,2025-05-25,2025,be24ead0,Ramandeep Singh,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,0,13,19,0.09157921140632262,0.035882149757400006,0,0
+1473505,2025-05-25,2025,d7017798,A Raghuvanshi,Kolkata Knight Riders,Sunrisers Hyderabad,Arun Jaitley Stadium,0,14,17,0.4041059252145689,0.2085582033322318,0,0
+1473506,2025-05-26,2025,271f83cd,SA Yadav,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,2,57,146,0.43869112804771804,0.23917360420789255,1,1
+1473506,2025-05-26,2025,740742ef,RG Sharma,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,0,24,262,0.38086130563892345,0.18283906785410253,0,0
+1473506,2025-05-26,2025,9caf69a1,WG Jacks,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,0,17,17,0.32299205939234543,0.13626782922295222,0,0
+1473506,2025-05-26,2025,b0482a1d,Tilak Varma,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,0,1,47,0.4291619551280992,0.22190833269747084,0,0
+1473506,2025-05-26,2025,dbe50b21,HH Pandya,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,0,26,135,0.27312053874856074,0.10750088211440505,0,0
+1473506,2025-05-26,2025,e4a0deae,MJ Santner,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,0,1,16,0.0550914445788634,0.01789081902582188,0,0
+1473506,2025-05-26,2025,e66732f8,RD Rickelton,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,0,27,12,0.43034315527771416,0.22393662856746416,0,0
+1473506,2025-05-26,2025,fffa744b,Naman Dhir,Mumbai Indians,Punjab Kings,Sawai Mansingh Stadium,0,20,15,0.3116966299676094,0.12309265700668863,0,0
+1473506,2025-05-26,2025,85ec8e33,SS Iyer,Punjab Kings,Mumbai Indians,Sawai Mansingh Stadium,0,26,123,0.401928790201306,0.2137992368953526,0,0
+1473506,2025-05-26,2025,9418198b,P Simran Singh,Punjab Kings,Mumbai Indians,Sawai Mansingh Stadium,0,13,45,0.36053354577332664,0.16699792068104177,0,0
+1473506,2025-05-26,2025,989889ff,JP Inglis,Punjab Kings,Mumbai Indians,Sawai Mansingh Stadium,2,73,6,0.3526639331909316,0.11714182423432103,1,1
+1473506,2025-05-26,2025,b5797845,Priyansh Arya,Punjab Kings,Mumbai Indians,Sawai Mansingh Stadium,2,62,12,0.2818933461182144,0.10343226497462572,1,1
+1473506,2025-05-26,2025,d1a60072,N Wadhera,Punjab Kings,Mumbai Indians,Sawai Mansingh Stadium,0,2,27,0.3868326700354276,0.17285577954803294,0,0
+1473507,2025-05-27,2025,3241e3fd,N Pooran,Lucknow Super Giants,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,13,84,0.3814103188829855,0.1870115485618514,0,0
+1473507,2025-05-27,2025,35f173a0,MP Breetzke,Lucknow Super Giants,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,14,0,0.09485397336958619,0.03419981900434456,0,0
+1473507,2025-05-27,2025,3d8feaf8,MR Marsh,Lucknow Super Giants,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,67,48,0.4076191656187022,0.20232997111424428,1,1
+1473507,2025-05-27,2025,8e514b4c,Abdul Samad,Lucknow Super Giants,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,1,50,0.17751817281830656,0.06684248788108536,0,0
+1473507,2025-05-27,2025,919a3be2,RR Pant,Lucknow Super Giants,Royal Challengers Bengaluru,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,118,119,0.31009135358171236,0.134537029027554,1,1
+1473507,2025-05-27,2025,00ea847a,MA Agarwal,Royal Challengers Bengaluru,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,41,120,0.30893773249884093,0.1229852453562416,1,0
+1473507,2025-05-27,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",1,30,31,0.46923157716322017,0.2516420640882054,1,0
+1473507,2025-05-27,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,0,44,0.2877599880896612,0.12850668971584972,0,0
+1473507,2025-05-27,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,85,44,0.25272107786307363,0.08994005814386782,1,1
+1473507,2025-05-27,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",2,54,250,0.46483773369264975,0.2734505949245636,1,1
+1473507,2025-05-27,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Lucknow Super Giants,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",0,14,35,0.4001824891133704,0.19797574570322102,0,0
+1473508,2025-05-29,2025,26989d80,Shashank Singh,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,3,30,0.3463007785289839,0.1507795481616346,0,0
+1473508,2025-05-29,2025,68c56d09,KA Jamieson,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,7,0.11211391378452135,0.029170136979519805,0,0
+1473508,2025-05-29,2025,85ec8e33,SS Iyer,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,2,124,0.4023250122623082,0.21123797104290296,0,0
+1473508,2025-05-29,2025,8f6dd463,Azmatullah Omarzai,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,18,7,0.12397273046039461,0.0433724048983787,0,0
+1473508,2025-05-29,2025,9418198b,P Simran Singh,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,18,46,0.3447060722103156,0.14708310942067665,0,0
+1473508,2025-05-29,2025,989889ff,JP Inglis,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,4,7,0.30754612163383405,0.13984353737337973,0,0
+1473508,2025-05-29,2025,b5797845,Priyansh Arya,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,7,13,0.3377503960400448,0.16156278255462686,0,0
+1473508,2025-05-29,2025,c05edf8e,Harpreet Brar,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,4,25,0.09258338843286754,0.034044428428548615,0,0
+1473508,2025-05-29,2025,d1a60072,N Wadhera,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,8,28,0.32149989078642205,0.14453499661286284,0,0
+1473508,2025-05-29,2025,d621b427,Musheer Khan,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,0,0.08934687850745712,0.027678171491587227,0,0
+1473508,2025-05-29,2025,d9273ee7,MP Stoinis,Punjab Kings,Royal Challengers Bengaluru,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,26,94,0.2510287207339909,0.11168618179251974,0,0
+1473508,2025-05-29,2025,00ea847a,MA Agarwal,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,19,121,0.32232775191021645,0.13873349888283454,0,0
+1473508,2025-05-29,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,56,32,0.3963972129356421,0.20566108181010234,1,1
+1473508,2025-05-29,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,12,251,0.46567226347274376,0.291921299273455,0,0
+1473508,2025-05-29,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Punjab Kings,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,15,36,0.35590026008366993,0.1722964683073318,0,0
+1473509,2025-05-30,2025,271f83cd,SA Yadav,Mumbai Indians,Gujarat Titans,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,33,147,0.4427194854013041,0.25116562294045675,1,0
+1473509,2025-05-30,2025,740742ef,RG Sharma,Mumbai Indians,Gujarat Titans,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,81,263,0.3627280149003834,0.17233433530849188,1,1
+1473509,2025-05-30,2025,abb83e27,JM Bairstow,Mumbai Indians,Gujarat Titans,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,47,50,0.4075936263748651,0.1871928707809284,1,0
+1473509,2025-05-30,2025,b0482a1d,Tilak Varma,Mumbai Indians,Gujarat Titans,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,25,48,0.43352977553312333,0.21001838838256912,0,0
+1473509,2025-05-30,2025,dbe50b21,HH Pandya,Mumbai Indians,Gujarat Titans,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,22,136,0.2841414393564878,0.11802299123186015,0,0
+1473509,2025-05-30,2025,e4a0deae,MJ Santner,Mumbai Indians,Gujarat Titans,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,17,0.05124069560783856,0.01644723982135768,0,0
+1473509,2025-05-30,2025,fffa744b,Naman Dhir,Mumbai Indians,Gujarat Titans,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,9,16,0.2962366425041185,0.12393927307030048,0,0
+1473509,2025-05-30,2025,39a2dfa8,R Tewatia,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,16,74,0.15365365066422432,0.05393008345306792,0,0
+1473509,2025-05-30,2025,5d1e7582,BKG Mendis,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,20,0,0.08434437722401837,0.027338141544530764,0,0
+1473509,2025-05-30,2025,5f547c8b,Rashid Khan,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,0,63,0.11438385095446976,0.04519922409270156,0,0
+1473509,2025-05-30,2025,7dcb9bc9,M Shahrukh Khan,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,13,45,0.20019738072727516,0.07552688113352787,0,0
+1473509,2025-05-30,2025,b4b99816,Shubman Gill,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,1,110,0.4733057578059103,0.27347516513148096,0,0
+1473509,2025-05-30,2025,d014d5ac,SE Rutherford,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",0,24,18,0.28770317340252666,0.11266283813310485,0,0
+1473509,2025-05-30,2025,d5130a30,B Sai Sudharsan,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",2,80,37,0.4527916063740493,0.23777903252765883,1,1
+1473509,2025-05-30,2025,f19ccfad,Washington Sundar,Gujarat Titans,Mumbai Indians,"Maharaja Yadavindra Singh International Cricket Stadium, Mullanpur",1,48,42,0.13356887109934512,0.038001113307683396,1,0
+1473510,2025-06-01,2025,271f83cd,SA Yadav,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",1,44,148,0.4442335566605732,0.24829414654921958,1,0
+1473510,2025-06-01,2025,740742ef,RG Sharma,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,8,264,0.347472735654762,0.15824441471639544,0,0
+1473510,2025-06-01,2025,abb83e27,JM Bairstow,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",1,38,51,0.4258499951881173,0.21464020785010973,1,0
+1473510,2025-06-01,2025,b0482a1d,Tilak Varma,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",1,44,49,0.4233992430524979,0.20478129094449987,1,0
+1473510,2025-06-01,2025,ba6b2f91,RA Bawa,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,8,2,0.06679195165882881,0.016791763048159603,0,0
+1473510,2025-06-01,2025,dbe50b21,HH Pandya,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,15,137,0.2625703030891968,0.1052553899786259,0,0
+1473510,2025-06-01,2025,e4a0deae,MJ Santner,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,0,18,0.048929274678431334,0.013216990619487945,0,0
+1473510,2025-06-01,2025,fffa744b,Naman Dhir,Mumbai Indians,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",1,37,17,0.2552422070271002,0.08959971275689152,1,0
+1473510,2025-06-01,2025,26989d80,Shashank Singh,Punjab Kings,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,2,31,0.3437509774721847,0.1577013181210115,0,0
+1473510,2025-06-01,2025,85ec8e33,SS Iyer,Punjab Kings,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",2,87,125,0.38290191027629816,0.20043460135147956,1,1
+1473510,2025-06-01,2025,9418198b,P Simran Singh,Punjab Kings,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,6,47,0.31752993119703066,0.14037883771604226,0,0
+1473510,2025-06-01,2025,989889ff,JP Inglis,Punjab Kings,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",1,38,8,0.3138080100468773,0.1334776213943928,1,0
+1473510,2025-06-01,2025,b5797845,Priyansh Arya,Punjab Kings,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,20,14,0.33827189376134426,0.15549752730494812,0,0
+1473510,2025-06-01,2025,d1a60072,N Wadhera,Punjab Kings,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",1,48,29,0.30751718715314913,0.1347349909958435,1,0
+1473510,2025-06-01,2025,d9273ee7,MP Stoinis,Punjab Kings,Mumbai Indians,"Narendra Modi Stadium, Ahmedabad",0,2,95,0.248216375786631,0.10992799667759834,0,0
+1473511,2025-06-03,2025,00ea847a,MA Agarwal,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,24,122,0.3551031344036981,0.16052962224873898,0,0
+1473511,2025-06-03,2025,2e81a32d,B Kumar,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,1,69,0.04397914145215031,0.014212354517593275,0,0
+1473511,2025-06-03,2025,3d284ca3,PD Salt,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,16,33,0.40013418545150586,0.2109439816527486,0,0
+1473511,2025-06-03,2025,50c6bc2b,LS Livingstone,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,25,45,0.24900895317885496,0.11147748072411252,0,0
+1473511,2025-06-03,2025,5b8c830e,KH Pandya,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,4,112,0.17483901191777623,0.07131019999085418,0,0
+1473511,2025-06-03,2025,7210d461,Yash Dayal,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,1,3,0.054438083660214805,0.015022277180689792,0,0
+1473511,2025-06-03,2025,800d2d97,JM Sharma,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,24,45,0.2663905549891619,0.10922431105566806,0,0
+1473511,2025-06-03,2025,ba607b88,V Kohli,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",1,43,252,0.4888451053431725,0.2925877968445532,1,0
+1473511,2025-06-03,2025,c5aef772,R Shepherd,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,17,11,0.18735874453851567,0.07784744611143674,0,0
+1473511,2025-06-03,2025,c740ea83,RM Patidar,Royal Challengers Bengaluru,Punjab Kings,"Narendra Modi Stadium, Ahmedabad",0,26,37,0.4054532551075488,0.21496761146171234,0,0
+1473511,2025-06-03,2025,26989d80,Shashank Singh,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",2,61,32,0.31864340839759475,0.1441940308090961,1,1
+1473511,2025-06-03,2025,68c56d09,KA Jamieson,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",0,0,8,0.0839216149512293,0.024312384250222745,0,0
+1473511,2025-06-03,2025,85ec8e33,SS Iyer,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",0,1,126,0.39461195756803014,0.21204287306928707,0,0
+1473511,2025-06-03,2025,8f6dd463,Azmatullah Omarzai,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",0,1,8,0.11964818755202952,0.04619326967875837,0,0
+1473511,2025-06-03,2025,9418198b,P Simran Singh,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",0,26,48,0.3217093842748192,0.13376296287628542,0,0
+1473511,2025-06-03,2025,989889ff,JP Inglis,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",1,39,9,0.3748591696400767,0.1790984745075364,1,0
+1473511,2025-06-03,2025,b5797845,Priyansh Arya,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",0,24,15,0.27455612825863684,0.12594753762823438,0,0
+1473511,2025-06-03,2025,d1a60072,N Wadhera,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",0,15,30,0.3594382200058782,0.1608659221048045,0,0
+1473511,2025-06-03,2025,d9273ee7,MP Stoinis,Punjab Kings,Royal Challengers Bengaluru,"Narendra Modi Stadium, Ahmedabad",0,6,96,0.22065921511072703,0.09531876010288293,0,0

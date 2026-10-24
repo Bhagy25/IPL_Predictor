@@ -1,0 +1,210 @@
+{
+  "stage": "3",
+  "session": "03",
+  "purpose": "2008-2025 train/validate, 2026 one-time holdout, refit through 2026",
+  "created_utc": "2026-10-19T20:16:21.905826+00:00",
+  "archive_matches": 1243,
+  "eligible_wicket_examples": {
+    "innings_seen": 2480,
+    "considered_completed_checkpoints": 45268,
+    "excluded_dls_checkpoints": 619,
+    "excluded_anomalous_or_gapped": 14,
+    "censored_no_wicket_short_next_over": 474,
+    "witnessed_wicket_short_next_over": 237,
+    "full_next_over_examples": 43924,
+    "eligible_rows": 44161,
+    "eligible_before_2026": 41580,
+    "policy": "exclude D/L-marked matches; observed short-over positives retained; censored negatives excluded"
+  },
+  "eligible_batter_examples": {
+    "all_rows_in_pre2026_raw": 18768,
+    "excluded_dls_batter_innings": 276,
+    "excluded_no_result_batter_innings": 63,
+    "eligible_pre2026_batter_innings": 18429,
+    "development_train_rows_through_2024": 16231,
+    "development_validation_rows_2025": 1085,
+    "cold_start_rows_no_prior_innings": 736,
+    "unique_batters": 736,
+    "target_class_counts": {
+      "0": 13725,
+      "1": 2624,
+      "2": 2080
+    },
+    "policy": "exclude D/L and no-result matches in this first model cohort; same-date history excluded; batting appearance conditioned",
+    "holdout": "2026 unlocked for one-time final testing and later refit"
+  },
+  "wicket": {
+    "model": "next_over_wicket",
+    "selected_name_from_2025_only": "logistic_context_all_history",
+    "candidate_validation_2025": [
+      {
+        "model": "logistic_basic_all_history",
+        "training_rows": 39019,
+        "rows": 2561,
+        "event_rate": 0.282702,
+        "brier_score": 0.198138,
+        "log_loss": 0.585367,
+        "roc_auc": 0.590603
+      },
+      {
+        "model": "logistic_context_all_history",
+        "training_rows": 39019,
+        "rows": 2561,
+        "event_rate": 0.282702,
+        "brier_score": 0.197057,
+        "log_loss": 0.582613,
+        "roc_auc": 0.595323
+      }
+    ],
+    "constant_validation_2025": {
+      "rows": 2561,
+      "event_rate": 0.282702,
+      "brier_score": 0.202811,
+      "log_loss": 0.595561,
+      "roc_auc": 0.5
+    },
+    "selection_metric": "lowest 2025 Brier, tie break log loss",
+    "train_2008_2024": 39019,
+    "validate_2025": 2561,
+    "refit_2008_2025_for_holdout": 41580,
+    "test_2026_rows": 2581,
+    "test_2026_matches": 73,
+    "holdout_2026": {
+      "rows": 2581,
+      "event_rate": 0.287485,
+      "brier_score": 0.200519,
+      "log_loss": 0.589813,
+      "roc_auc": 0.589476
+    },
+    "holdout_constant": {
+      "rows": 2581,
+      "event_rate": 0.287485,
+      "brier_score": 0.204936,
+      "log_loss": 0.600127,
+      "roc_auc": 0.5
+    },
+    "final_refit_2008_2026": 44161,
+    "final_trained_through": 2026,
+    "selected_features": [
+      "innings",
+      "completed_overs",
+      "runs",
+      "wickets",
+      "run_rate",
+      "last_over_runs",
+      "last_over_wickets",
+      "batting_team",
+      "bowling_team",
+      "phase",
+      "venue_canonical"
+    ],
+    "exclusions": "D/L-marked matches excluded; unusual/censored overs excluded unless a wicket observed",
+    "limitation": "Model performance on a future season is not guaranteed"
+  },
+  "batter": {
+    "model": "batter_milestones_30_50",
+    "selected_name_from_2025_only": "forest_full_history",
+    "candidate_validation_2025": [
+      {
+        "model": "logistic_full_history",
+        "training_rows": 16231,
+        "rows": 1085,
+        "observed_30_rate": 0.312442,
+        "observed_50_rate": 0.137327,
+        "brier_30": 0.197095,
+        "brier_50": 0.11035,
+        "avg_milestone_brier": 0.153722,
+        "multiclass_log_loss": 0.784174,
+        "roc_auc_30": 0.682163,
+        "roc_auc_50": 0.724567
+      },
+      {
+        "model": "forest_full_history",
+        "training_rows": 16231,
+        "rows": 1085,
+        "observed_30_rate": 0.312442,
+        "observed_50_rate": 0.137327,
+        "brier_30": 0.196061,
+        "brier_50": 0.110134,
+        "avg_milestone_brier": 0.153097,
+        "multiclass_log_loss": 0.776982,
+        "roc_auc_30": 0.690008,
+        "roc_auc_50": 0.729672
+      }
+    ],
+    "constant_validation_2025": {
+      "rows": 1085,
+      "observed_30_rate": 0.312442,
+      "observed_50_rate": 0.137327,
+      "brier_30": 0.218882,
+      "brier_50": 0.119289,
+      "avg_milestone_brier": 0.169086,
+      "multiclass_log_loss": 0.845648,
+      "roc_auc_30": 0.5,
+      "roc_auc_50": 0.5
+    },
+    "selection_metric": "lowest 2025 avg milestone Brier, tie break multiclass log loss",
+    "train_2008_2024": 16231,
+    "validate_2025": 1085,
+    "refit_2008_2025_for_holdout": 17316,
+    "test_2026_rows": 1113,
+    "test_2026_matches": 72,
+    "holdout_2026": {
+      "rows": 1113,
+      "observed_30_rate": 0.294699,
+      "observed_50_rate": 0.150045,
+      "brier_30": 0.185299,
+      "brier_50": 0.117947,
+      "avg_milestone_brier": 0.151623,
+      "multiclass_log_loss": 0.743083,
+      "roc_auc_30": 0.708762,
+      "roc_auc_50": 0.728988
+    },
+    "holdout_constant": {
+      "rows": 1113,
+      "observed_30_rate": 0.294699,
+      "observed_50_rate": 0.150045,
+      "brier_30": 0.209614,
+      "brier_50": 0.129097,
+      "avg_milestone_brier": 0.169356,
+      "multiclass_log_loss": 0.818114,
+      "roc_auc_30": 0.5,
+      "roc_auc_50": 0.5
+    },
+    "final_refit_2008_2026": 18429,
+    "final_trained_through": 2026,
+    "selected_features": [
+      "prior_innings",
+      "career_avg_runs",
+      "career_30_rate",
+      "career_50_rate",
+      "recent5_avg_runs",
+      "recent5_30_rate",
+      "recent5_50_rate",
+      "recent10_avg_runs",
+      "recent10_30_rate",
+      "recent10_50_rate",
+      "opposition_prior_innings",
+      "opposition_avg_runs",
+      "opposition_30_rate",
+      "venue_prior_innings",
+      "venue_avg_runs",
+      "venue_30_rate",
+      "days_since_previous_innings",
+      "batting_team",
+      "bowling_team",
+      "venue_canonical"
+    ],
+    "assumption": "conditional on batting appearance; batting selection / did-not-bat not predicted",
+    "exclusions": "D/L-marked and no-result matches initially excluded",
+    "temporal_feature_policy": "2026 model weights frozen at 2025; feature snapshot only uses strictly prior-date player innings"
+  },
+  "important_caveats": [
+    "Full history is used for both models; selection among predeclared algorithms made using 2025 only.",
+    "Holdout models use 2008-2025 records and never train on 2026 outcomes.",
+    "2026 labels used solely for the one-time test, then deployment refit through 2026.",
+    "2026 test batter recent-form features can use earlier 2026 innings, which would have been known chronologically.",
+    "D/L exclusions and censored next-over labeling affect representativeness; scores depend on eligibility choices.",
+    "2027 deployment requires updated player-roster checks and feature construction at requested dates."
+  ]
+}

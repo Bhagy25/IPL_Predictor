@@ -1,4 +1,4 @@
-"""Local demo of the DEVELOPMENT next-over model (not a deployed 2027 model)."""
+"""Manual next-over forecast from chosen saved development or deployment model."""
 from __future__ import annotations
 import argparse
 from pathlib import Path
@@ -18,7 +18,7 @@ def forecast(model_path:Path, *,batting_team:str,bowling_team:str,venue:str,
         raise ValueError('Invalid most-recent-over runs / wickets')
     if not batting_team or not bowling_team or batting_team==bowling_team or not venue:
         raise ValueError('Please supply distinct teams and a venue')
-    # This artifact is trained through 2024 for development validation only.
+    # Accept a development or explicitly refitted deployment artifact.
     saved=joblib.load(model_path)
     x=pd.DataFrame([{
         'batting_team':batting_team,'bowling_team':bowling_team,
@@ -28,10 +28,13 @@ def forecast(model_path:Path, *,batting_team:str,bowling_team:str,venue:str,
         'last_over_runs':last_over_runs,'last_over_wickets':last_over_wickets,
         'phase':phase_for_next_over(completed_overs)}])
     prob=float(saved['model'].predict_proba(x[saved['columns']])[:,1][0])
+    version=saved.get('version','development')
     return {'event':'at least one team wicket in the next scheduled over',
             'probability':round(prob,4),'model':saved['name'],
-            'development_training_end':saved['training_end'],
-            'status':'development_demo_not_final_deployment'}
+            'training_end':saved['training_end'],
+            'status':('deployment_refit' if version=='deployment_refit_2008_2026' else
+                      'development_or_holdout_demo'),
+            'notice':'Manual score input; not a live-data feed'}
 
 
 def main():

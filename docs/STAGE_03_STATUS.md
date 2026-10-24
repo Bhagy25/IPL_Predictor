@@ -1,3 +1,5 @@
+**CURRENT STATUS (Stage 3 / Session 03): Both models fitted on full eligible 2008–2025 history, evaluated once on held-out 2026, and deployment copies refitted through 2026. See `docs/STAGE_03_SESSION_03_FULL_HISTORY.md`. Previous development-session notes follow below as historical context.**
+
 # Stage 3 — Machine Learning: current status
 
 **Session 01 is complete for development validation, not final deployment.** The Next-Over Wicket Predictor has been trained using historic pre-2025 matches, and validated exclusively on 2025. **2026 has not been evaluated or used for feature/model selection.** The Batter Milestone Predictor is scheduled for Session 02.
@@ -58,3 +60,10 @@ pytest -q
 ```
 
 Required local inputs: `data/processed/overs.csv`, `matches.csv` generated from the Cricsheet archive (ignored by Git). Outputs: `data/processed/stage03_next_over_training.csv` and local `models/...joblib` (both ignored), tracked summary CSVs/JSONs and `reports/figures/stage_03/*.png`.
+
+
+## Stage 3 / Session 02 - Pre-match Batter Milestones
+
+**Completed initial 2025 validation; still NO 2026 holdout evaluation.** Build `stage03_batter_training_pre2026.csv` with `python -m cricketlens.batter_training_data`; fit one 3-class model with `python -m cricketlens.fit_batter_models`; generate evaluation plots with `python -m cricketlens.stage03_batter_diagnostics`. The 2025 candidate selected Random Forest (2018+ fit) with Brier(30+) **0.194459**, Brier(50+) **0.109510** on **1,085 batter innings**. `P(50+) <= P(30+)` by construction. The absolute improvement vs smoothed player-history baseline is small; do not overstate. Detailed definitions, exclusions, results, limitations and how to reproduce are in `docs/STAGE_03_SESSION_02_BATTER_MODEL.md`.
+
+**Critical scope:** estimates assume the batter has a recorded batting innings. DNB and selection not modeled, and actual batting slot is not used as a pre-match feature. 2026 untouched until Session 03.

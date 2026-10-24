@@ -121,3 +121,29 @@ python -m cricketlens.predict_wicket --batting-team "Mumbai Indians" --bowling-t
 ```
 
 `data/processed/*.csv` and `models/*.joblib` are excluded from GitHub; use locally. Stage 3 figures, concise model-comparison summaries, scripts and tests belong in the `feature/stage-03-ml` branch **created from merged Stage 2 main**.
+
+
+## Stage 3 / Session 02 - Pre-match Batter Milestone Predictor
+
+This is a **development candidate**, not the final 2027 model. Train on eligible player innings through 2024, validate on 2025, leave 2026 held out. It uses strictly prior-match form features and one 3-category classifier to produce consistent P(30+) and P(50+).
+
+```bash
+# Requires the local audited Stage 1 batter_innings.csv and corrected matches.csv
+python -m cricketlens.batter_training_data
+python -m cricketlens.fit_batter_models
+python -m cricketlens.stage03_batter_diagnostics
+pytest -q
+
+# Demonstration on a real 2025 validation innings (not a future match)
+python -m cricketlens.predict_batter --match-id 1473438 --player-id 29e95537
+```
+
+Find full methodology, sample sizes, caveats and metrics in `docs/STAGE_03_SESSION_02_BATTER_MODEL.md`. The resulting training CSV and `.joblib` model are ignored by Git and should be kept **locally**. The model forecasts milestones **assuming the batter appears and has a recorded batting innings**; it does not determine playing XI / DNB or know real future batting position.
+
+
+## Stage 3 Session 03 — Full-history trained models
+- Reproduced full-history ML training with eligible seasons **2008–2025**, the **single held-out 2026 test**, and a separate final refit through **2026**.
+- `python -m cricketlens.stage03_full_history` and `python -m cricketlens.stage03_full_history_diagnostics` generate model artifacts, test forecasts, and diagnostics locally.
+- See `docs/STAGE_03_SESSION_03_FULL_HISTORY.md` for exact sample counts, scores, assumptions and limitations.
+- Manual inferences: `python -m cricketlens.predict_wicket --model models/wicket_deployment_through_2026.joblib --help` and `python -m cricketlens.forecast_future_batter --help`.
+- Local generated model artifacts and raw/processed CSVs remain **excluded from Git**.
