@@ -1,0 +1,1 @@
+Extract into the IPL_Predictor repository root on your own computer. These files belong under data/processed/ and models/, and must NOT be committed to GitHub. Model is trained on historical seasons through 2024 and VALIDATED on 2025 only; it is not a 2027 deployment artifact. Run code first after adding the Stage 3 source update.
