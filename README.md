@@ -1,6 +1,6 @@
 # CricketLens — Men’s IPL Analytics & Prediction
 
-**IT462 Exploratory Data Analysis college project.** Development **Stage 3: Machine Learning (IN PROGRESS)**; Stage 1 data cleaning and Stage 2 EDA are complete for development, subject to academic review. The next-over wicket model has 2025 validation results; the batter milestone model, final 2026 testing, and website are still pending.
+**IT462 Exploratory Data Analysis college project.** Development **Stage 2: Systematic EDA (INTERNALLY COMPLETE)**; Stage 1 dataset screening and cleaning is complete for EDA with documented exceptions. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
 
 ## Agreed scope
 - Men's IPL matches 2008–2026; Cricsheet ball-by-ball JSON as source.
@@ -15,7 +15,7 @@
 |---|---|---|
 | **1** | Screen, clean, standardize and audit IPL data | **Complete for EDA; candidate ML labels require Stage 3 selection** |
 | **2** | Systematic EDA, descriptive statistics, plots and interpretations | **Internally complete**; Sessions 01–03, 20 figures, corrected Super Over outcomes; professor review pending |
-| **3** | Train/validate/test both ML models | **In progress**; wicket model trained and validated on 2025, batter model pending; 2026 untouched |
+| **3** | Train/validate/test both ML models | Not formally complete; early next-over baseline validated on 2025 |
 | **4** | Build six-tab React dashboard | Not started |
 | **5** | FastAPI integration, tracker and historical replay | Not started |
 | **6** | Consolidate final academic report and demonstrate | Ongoing notes; final report not complete |
