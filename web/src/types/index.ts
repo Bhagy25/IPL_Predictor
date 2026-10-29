@@ -108,79 +108,111 @@ export interface TeamListItem {
   primary_color: string;
 }
 
-export interface TeamSeasonRecord {
-  season: number;
+// Results for a selection: a null win_pct always comes with win_pct_state (see state_definitions)
+export interface TeamResultSummary {
   played: number;
   wins: number;
   losses: number;
-  tied_no_result: number;
-  win_pct: number;
+  ties: number;
+  no_results: number;
+  results_not_recorded: number;
+  super_over_wins: number;
+  super_over_losses: number;
+  win_pct: number | null;
+  win_pct_denominator: number;
+  win_pct_state: string | null;
 }
 
-export interface TeamVenueRecord {
-  venue: string;
-  played: number;
-  wins: number;
-  losses: number;
-  win_pct: number;
+export interface TeamRunTotals {
+  runs_scored: number;
+  runs_conceded: number;
+  wickets_lost: number;
+  wickets_taken: number;
+  balls_faced: number;
+  balls_bowled: number;
+  innings_batted: number;
+  innings_bowled: number;
+  run_rate: number | null;
+  run_rate_state: string | null;
+  economy: number | null;
+  economy_state: string | null;
+  runs_per_innings: number | null;
 }
 
-export interface TeamConditionRecord {
-  played: number;
-  wins: number;
-  losses: number;
-  win_pct: number;
+export type TeamSeasonRecord = TeamResultSummary & TeamRunTotals & { season: number; regulation_ties: number };
+export type TeamVenueRecord = TeamResultSummary & { venue: string };
+export type TeamOpponentRecord = TeamResultSummary & { opponent: string; opponent_short_name: string };
+export type TeamSummaryRecord = TeamResultSummary & TeamRunTotals & { regulation_ties: number; denominator_description: string };
+
+export interface TeamPhaseRecord {
+  phase: 'powerplay' | 'middle' | 'death';
+  label: string;
+  overs: string;
+  batting_runs: number;
+  batting_legal_balls: number;
+  batting_run_rate: number | null;
+  batting_run_rate_state: string | null;
+  wickets_lost: number;
+  wickets_lost_per_six: number | null;
+  conceded_runs: number;
+  bowling_legal_balls: number;
+  economy: number | null;
+  economy_state: string | null;
+  wickets_taken: number;
+  wickets_taken_per_six: number | null;
 }
 
-export interface TeamPhaseScoring {
-  powerplay_run_rate: number;
-  middle_run_rate: number;
-  death_run_rate: number;
-  overall_run_rate?: number;
-  wickets_lost_per_over?: number;
-  powerplay_wickets_per_six_balls?: number;
-  middle_wickets_per_six_balls?: number;
-  death_wickets_per_six_balls?: number;
+export interface TeamLeagueToss {
+  label: string;
+  seasons: number[];
+  after_winning_toss: TeamResultSummary;
+  chose_to_bat: TeamResultSummary;
+  chose_to_field: TeamResultSummary;
 }
 
 export interface TeamTossStats {
   tosses_won: number;
   elected_to_bat: number;
   elected_to_field: number;
-  toss_match_win_rate: number;
-}
-
-export interface TeamSummaryRecord {
-  played: number;
-  wins: number;
-  losses: number;
-  ties: number;
-  no_results: number;
-  win_pct: number;
-  runs_scored?: number;
-  runs_conceded?: number;
-  wickets_lost?: number;
-  wickets_taken?: number;
-  denominator_description: string;
+  toss_match_win_rate: number | null;
+  after_winning_toss: TeamResultSummary;
+  chose_to_bat: TeamResultSummary;
+  chose_to_field: TeamResultSummary;
+  league: TeamLeagueToss;
 }
 
 export interface TeamOverviewResponse {
   team: TeamListItem;
-  coverage?: {
-    season_filter?: string | number;
-    first_season?: number;
-    last_season?: number;
-    total_seasons_participated?: number;
+  coverage: {
+    season_filter: number | null;
+    seasons_in_scope: number[];
+    first_season: number;
+    last_season: number;
+    total_seasons_participated: number;
   };
   all_time: TeamSummaryRecord;
-  comparative_2022_2025?: TeamSummaryRecord | null;
-  batting_first: TeamConditionRecord;
-  chasing: TeamConditionRecord;
+  comparative_2022_2025?: (TeamResultSummary & { window: string }) | null;
+  batting_first: TeamResultSummary;
+  chasing: TeamResultSummary;
+  innings_order_no_results: number;
   season_history: TeamSeasonRecord[];
   venue_records: TeamVenueRecord[];
-  phase_scoring: TeamPhaseScoring;
+  opponents: TeamOpponentRecord[];
+  phases: TeamPhaseRecord[];
   toss_stats: TeamTossStats;
+  definitions: Record<string, string>;
+  state_definitions: Record<string, string>;
   notices: string[];
+}
+
+export interface TeamVenueResponse {
+  team: TeamListItem;
+  season_filter: number | null;
+  min_matches: number;
+  venues_total: number;
+  venues_shown: number;
+  matches_shown: number;
+  venues: TeamVenueRecord[];
 }
 
 export interface HeadToHeadMeeting {
@@ -189,6 +221,8 @@ export interface HeadToHeadMeeting {
   date: string;
   venue: string;
   winner: string | null;
+  result_text: string;
+  super_over: boolean;
   margin_or_summary: string;
   innings1_runs: number;
   innings2_runs: number;
@@ -197,11 +231,18 @@ export interface HeadToHeadMeeting {
 export interface HeadToHeadResponse {
   team1: TeamListItem;
   team2: TeamListItem;
+  season_filter: number | null;
   total_matches: number;
   team1_wins: number;
   team2_wins: number;
   ties_super_overs: number;
+  unresolved_ties: number;
+  team1_super_over_wins: number;
+  team2_super_over_wins: number;
   no_results: number;
+  win_pct_denominator: number;
+  team1_win_pct: number | null;
+  team2_win_pct: number | null;
   team1_batting_first_wins: number;
   team2_batting_first_wins: number;
   team1_chasing_wins: number;
