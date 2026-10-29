@@ -252,6 +252,29 @@ def result_summary(rows: pd.DataFrame) -> Dict[str, Any]:
     }
 
 
+def toss_record(toss_rows: pd.DataFrame) -> Dict[str, Any]:
+    """Decisions and results of toss winners, from the toss winners' team-match rows (see TEAM_DEFINITIONS)."""
+    bat, field = toss_rows[toss_rows["toss_decision"] == "bat"], toss_rows[toss_rows["toss_decision"] == "field"]
+    return {
+        "tosses_won": int(len(toss_rows)),
+        "elected_to_bat": int(len(bat)),
+        "elected_to_field": int(len(field)),
+        "after_winning_toss": result_summary(toss_rows),
+        "chose_to_bat": result_summary(bat),
+        "chose_to_field": result_summary(field),
+    }
+
+
+def innings_order_record(rows: pd.DataFrame) -> Dict[str, Any]:
+    """Results batting first and chasing; no-result matches are excluded and counted separately."""
+    decided = rows[rows["result"] != "no_result"]
+    return {
+        "batting_first": result_summary(decided[decided["batted_first"]]),
+        "chasing": result_summary(decided[~decided["batted_first"]]),
+        "innings_order_no_results": int(len(rows) - len(decided)),
+    }
+
+
 def dismissal_breakdown(dismissals: pd.DataFrame) -> Dict[str, Any]:
     """Dismissal events by kind, most frequent first, with bowler-credited and team-wicket counts.
 
@@ -631,7 +654,7 @@ class CanonicalAnalyticsEngine:
         squads = pd.read_csv(paths[0], usecols=["match_id", "season", "date", "team", "player_name", "player_id"])
         people = pd.read_csv(paths[1], usecols=["player_id", "names"])
         replacements = pd.read_csv(paths[3], usecols=[
-            "match_id", "innings", "team", "reason", "player_in", "player_in_id", "player_out", "player_out_id",
+            "match_id", "innings", "is_super_over", "team", "reason", "player_in", "player_in_id", "player_out", "player_out_id",
         ])
         # Every player at the crease (striker or non-striker) has a batting innings
         appearances = pd.read_csv(paths[2], usecols=[
@@ -1086,7 +1109,6 @@ class CanonicalAnalyticsEngine:
         team_item = self._team_item(name)
         rows = self._team_rows_for(name, season)
         seasons = sorted(int(s) for s in rows["season"].unique())
-        decided_order = rows[rows["result"] != "no_result"]
         phases = self._phase_records(rows)
         venues, _ = self._venue_records(rows, 3)
         toss = rows[rows["toss_won"]]
@@ -1112,9 +1134,7 @@ class CanonicalAnalyticsEngine:
             "comparative_2022_2025": {
                 **result_summary(window), "window": "2022–2025 (4-Year Comparative Era)",
             } if season is None and len(window) else None,
-            "batting_first": result_summary(decided_order[decided_order["batted_first"]]),
-            "chasing": result_summary(decided_order[~decided_order["batted_first"]]),
-            "innings_order_no_results": int(len(rows) - len(decided_order)),
+            **innings_order_record(rows),
             "season_history": [
                 {"season": int(s), **result_summary(g), "regulation_ties": int(g["regulation_tie"].sum()), **self._totals(g)}
                 for s, g in rows.groupby("season")
@@ -1127,19 +1147,12 @@ class CanonicalAnalyticsEngine:
             ),
             "phases": phases,
             "toss_stats": {
-                "tosses_won": int(len(toss)),
-                "elected_to_bat": int((toss["toss_decision"] == "bat").sum()),
-                "elected_to_field": int((toss["toss_decision"] == "field").sum()),
+                **toss_record(toss),
                 "toss_match_win_rate": result_summary(toss)["win_pct"],
-                "after_winning_toss": result_summary(toss),
-                "chose_to_bat": result_summary(toss[toss["toss_decision"] == "bat"]),
-                "chose_to_field": result_summary(toss[toss["toss_decision"] == "field"]),
                 "league": {
                     "label": f"All teams, same seasons ({format_season_ranges(seasons)})",
                     "seasons": seasons,
-                    "after_winning_toss": result_summary(league),
-                    "chose_to_bat": result_summary(league[league["toss_decision"] == "bat"]),
-                    "chose_to_field": result_summary(league[league["toss_decision"] == "field"]),
+                    **{k: v for k, v in toss_record(league).items() if k in ("after_winning_toss", "chose_to_bat", "chose_to_field")},
                 },
             },
             "definitions": TEAM_DEFINITIONS,

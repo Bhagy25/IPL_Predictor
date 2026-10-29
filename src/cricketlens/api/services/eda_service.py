@@ -26,7 +26,7 @@ FIGURE_CATALOG_DATA: List[Dict[str, Any]] = [
         "category": "Scoring Trends",
         "description": "Annual first-innings team scoring averages fitted with an unweighted ordinary least-squares regression line across 18 tournament editions (2008–2025).",
         "figure_url": "/figures/stage_02/01_season_scoring_trend.png",
-        "coverage_span": "2008–2025 (18 Seasons)",
+        "coverage_span": "2008–2025",
         "sample_size": "1,169 first innings",
         "key_findings": [
             "Statistically significant secular upward trend: +1.71 runs per season (R² = 0.663, p < 0.001).",
@@ -40,14 +40,14 @@ FIGURE_CATALOG_DATA: List[Dict[str, Any]] = [
         "figure_num": 2,
         "title": "First-Innings Runs Distribution & Outliers",
         "category": "Historical Distributions",
-        "description": "Histogram and kernel density estimate of all recorded first innings with Tukey boxplot boundaries (IQR = 41 runs, 1.5×IQR bounds = [89, 265]).",
+        "description": "Histogram of all recorded 2018–2025 first innings (shortened innings included) in 10-run bins, with the median marked. Tukey bounds from the same sample: IQR = 44 runs, 1.5×IQR bounds = [89, 265].",
         "figure_url": "/figures/stage_02/02_first_innings_histogram.png",
-        "coverage_span": "2008–2025",
-        "sample_size": "1,169 first innings",
+        "coverage_span": "2018–2025",
+        "sample_size": "533 first innings",
         "key_findings": [
-            "Mean first-innings score is 167.0 runs; median is 167.0 runs (symmetric unimodal distribution).",
-            "Interquartile Range (IQR) spans 147.0 to 188.0 runs (middle 50% of matches).",
-            "11 Tukey outliers detected (extreme low scores below 89, extreme high scores above 265 up to 287).",
+            "Mean first-innings score is 175.8 runs; median is 175 runs.",
+            "Interquartile Range (IQR) spans 155 to 199 runs (middle 50% of innings).",
+            "11 Tukey outliers detected outside [89, 265] (maximum 287).",
         ],
         "source_file": "numeric_descriptive_summary.csv",
     },
@@ -56,12 +56,12 @@ FIGURE_CATALOG_DATA: List[Dict[str, Any]] = [
         "figure_num": 3,
         "title": "First-Innings Scores Across Tournament Eras",
         "category": "Historical Distributions",
-        "description": "Comparative boxplots segmenting the tournament into 5 historical eras: Inaugural (2008–2010), Expansion (2011–2013), Maturity (2014–2017), Pre-COVID (2018–2021), and Modern Impact Player era (2022–2025).",
+        "description": "Comparative boxplots of first-innings totals in four season groups: 2008–2012, 2013–2017, 2018–2021 and 2022–2025.",
         "figure_url": "/figures/stage_02/03_score_boxplots_by_era.png",
-        "coverage_span": "2008–2025 (5 Eras)",
+        "coverage_span": "2008–2025",
         "sample_size": "1,169 first innings",
         "key_findings": [
-            "The 2022–2025 modern era exhibits a substantial upward shift in both median and upper quartile.",
+            "The 2022–2025 group exhibits a substantial upward shift in both median and upper quartile.",
             "Variance increased noticeably in 2024–2025 following high-tempo tactical batting changes.",
             "Lower quartiles remained relatively anchored around 150 runs even in high-scoring seasons.",
         ],
@@ -166,16 +166,16 @@ FIGURE_CATALOG_DATA: List[Dict[str, Any]] = [
     {
         "id": "10_batting_innings_scatter",
         "figure_num": 10,
-        "title": "Batter Consistency vs Volume Scatter",
+        "title": "Batter Runs vs Balls Faced Scatter",
         "category": "Batting and Bowling",
-        "description": "Scatter plot relating average runs per appearance against innings volume for all 69 qualifying batters, annotated with milestone conversion quadrants.",
+        "description": "Scatter plot of runs against balls faced for every recorded 2018–2025 batting appearance.",
         "figure_url": "/figures/stage_02/10_batting_innings_scatter.png",
         "coverage_span": "2018–2025",
-        "sample_size": "69 batters",
+        "sample_size": "8,123 batting appearances",
         "key_findings": [
-            "High-volume anchors (Kohli, Rahul, Gill, Dhawan) cluster in the 30–45 runs/appearance tier.",
-            "Power hitters (Russell, Maxwell) exhibit high volatility but exceptional strike impact.",
-            "No batter averages above 45 runs per appearance over a 90+ innings sample size.",
+            "Runs rise roughly in proportion to balls faced; the spread widens for longer innings.",
+            "Most appearances end within 20 balls faced.",
+            "Each point is one batting appearance, not a player aggregate.",
         ],
         "source_file": "batters_min40_appearances_2018_2025.csv",
     },
@@ -342,6 +342,34 @@ FIGURE_CATALOG_DATA: List[Dict[str, Any]] = [
 ]
 
 
+# Where each figure's season coverage comes from: the generating code (src/cricketlens/stage02_*.py)
+# and the source file or figure title. Every Stage 2 figure excludes the 2026 holdout season.
+FIGURE_COVERAGE_EVIDENCE: Dict[str, str] = {
+    "01_season_scoring_trend": "season_first_innings_trends.csv has one row per season, 2008–2025 (18 rows).",
+    "02_first_innings_histogram": "stage02_eda.py plots first_recent (season >= 2018); figure title 'First-innings totals: 2018-2025'; numeric_descriptive_summary.csv scope recent_2018_2025 (n = 533).",
+    "03_score_boxplots_by_era": "stage02_eda.py plots all 2008–2025 first innings in groups 2008-12, 2013-17, 2018-21, 2022-25.",
+    "04_scoring_rate_by_phase": "innings_phase_patterns_2018_2025.csv, from deliveries with season >= 2018.",
+    "05_current_team_win_rates": "current_teams_win_rates_2022_2025.csv, from matches with 2022 <= season <= 2025.",
+    "06_venue_first_innings_means": "venues_min20_first_innings_2018_2025.csv, from first innings with season >= 2018.",
+    "07_next_over_event_frequency": "next_over_historical_rates_2018_2025.csv, from checkpoints with season >= 2018.",
+    "08_first_innings_correlation": "first_innings_pearson_corr_2018_2025.csv, from first innings with season >= 2018.",
+    "09_top_batters_recent": "batters_min40_appearances_2018_2025.csv, from batting appearances with season >= 2018.",
+    "10_batting_innings_scatter": "stage02_eda.py plots recent_b (season >= 2018); figure title 'Batter runs vs balls faced, 2018-2025'.",
+    "11_match_field_missingness": "match_field_missingness_pre2026.csv: total_records = 1,169 matches (2008–2025).",
+    "12_full_vs_short_innings": "first_innings_full_vs_short_2018_2025.csv, from first innings with season >= 2018.",
+    "13_venue_season_centered": "venues_full_20_season_adjusted_2018_2025.csv, from 120-ball first innings with season >= 2018.",
+    "14_paired_phase_differences": "paired_powerplay_death_per_innings_2018_2025.csv: seasons 2018–2025 (937 innings).",
+    "15_phase_year_matched": "paired_phase_by_season_2018_2025.csv: one row per season, 2018–2025.",
+    "16_toss_decision_association": "toss_decision_match_result_crosstab_2018_2025.csv, from matches with season >= 2018.",
+    "17_city_missingness_by_venue": "missing_city_by_venue_pre2026.csv, from all 2008–2025 matches.",
+    "18_match_outcomes": "match_outcomes_2008_2025.csv: 1,169 matches (2008–2025).",
+    "19_win_rate_super_over_fix": "team_wins_before_after_super_over_fix_2022_2025.csv, from matches with season >= 2022.",
+    "20_dl_innings_sensitivity": "first_innings_by_d_l_and_length_2018_2025.csv, from first innings with season >= 2018.",
+}
+
+STATIC_FIGURE_NOTE = "Static research figure — not affected by filters"
+
+
 class EDAService:
     """Service providing cataloged Stage 2 figures and raw analytical tables."""
 
@@ -350,7 +378,10 @@ class EDAService:
 
     def get_catalog(self) -> EDACatalogResponse:
         """Return all 20 cataloged figures with categories."""
-        figures = [EDAFigureItem(**f) for f in FIGURE_CATALOG_DATA]
+        figures = [
+            EDAFigureItem(**f, coverage_evidence=FIGURE_COVERAGE_EVIDENCE[f["id"]], static_note=STATIC_FIGURE_NOTE)
+            for f in FIGURE_CATALOG_DATA
+        ]
         categories = list(dict.fromkeys(f["category"] for f in FIGURE_CATALOG_DATA))
         return EDACatalogResponse(
             categories=categories,

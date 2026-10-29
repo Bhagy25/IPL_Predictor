@@ -3,19 +3,94 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from fastapi import APIRouter, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import FileResponse
 from cricketlens.api.schemas import (
+    EDAAnalysisResponse,
     EDACatalogResponse,
+    EDAFilterOptionsResponse,
+    EDAPlayerComparisonResponse,
     EDASummaryResponse,
     EDAFullHistoryResponse,
 )
 from cricketlens.api.services.eda_service import eda_service
+from cricketlens.api.services import eda_analysis
 from cricketlens.api.services.canonical_data import canonical_engine, DerivedDataUnavailable
 
 router = APIRouter(prefix="/api/eda", tags=["Statistics & EDA"])
 
 SAFE_FILENAME_RE = re.compile(r"^[a-zA-Z0-9_\-]+\.png$")
+
+SEASON_FROM = Query(None, description="First season (default: first season in the archive)")
+SEASON_TO = Query(None, description="Last season (default: last season in the archive)")
+TEAM = Query(None, description="Franchise id, name or short code (optional)")
+VENUE = Query(None, description="Canonical venue name (optional)")
+
+
+@router.get(
+    "/filters",
+    response_model=EDAFilterOptionsResponse,
+    summary="Filter options for the full-history analysis",
+    description="Available seasons, franchises and canonical venues, and which filters each area supports.",
+)
+async def get_eda_filters() -> EDAFilterOptionsResponse:
+    try:
+        return EDAFilterOptionsResponse(**eda_analysis.filter_options(canonical_engine))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to load EDA filter options: {exc}")
+
+
+@router.get(
+    "/analysis",
+    response_model=EDAAnalysisResponse,
+    summary="Filterable full-history EDA across the analysis areas",
+    description="Every area is recomputed for the season range, team and venue, with coverage, sample size, "
+                "definitions, units and source. Invalid parameters return 422.",
+)
+async def get_eda_analysis(
+    season_from: Optional[int] = SEASON_FROM,
+    season_to: Optional[int] = SEASON_TO,
+    team: Optional[str] = TEAM,
+    venue: Optional[str] = VENUE,
+    venue_min_matches: int = Query(1, ge=1, le=200, description="Venue analysis: minimum matches at a venue"),
+    bat_min_balls: int = Query(1, ge=1, le=120, description="Strike-rate distribution: minimum balls faced"),
+    bowl_min_balls: int = Query(1, ge=1, le=24, description="Economy distribution: minimum legal balls bowled"),
+) -> EDAAnalysisResponse:
+    try:
+        filters = eda_analysis.resolve_filters(
+            canonical_engine, season_from, season_to, team, venue, venue_min_matches, bat_min_balls, bowl_min_balls,
+        )
+        return EDAAnalysisResponse(**eda_analysis.get_analysis(canonical_engine, filters))
+    except eda_analysis.FilterError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except DerivedDataUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
+@router.get(
+    "/player-comparison",
+    response_model=EDAPlayerComparisonResponse,
+    summary="Compare 2–4 players within a season range",
+    description="Batting and bowling for 2–4 registry IDs (comma-separated), using the Player Explorer definitions.",
+)
+async def get_eda_player_comparison(
+    players: str = Query(..., description="Comma-separated registry IDs (2–4)"),
+    season_from: Optional[int] = SEASON_FROM,
+    season_to: Optional[int] = SEASON_TO,
+    team: Optional[str] = TEAM,
+    venue: Optional[str] = VENUE,
+) -> EDAPlayerComparisonResponse:
+    try:
+        filters = eda_analysis.resolve_filters(canonical_engine, season_from, season_to, team, venue)
+        return EDAPlayerComparisonResponse(
+            **eda_analysis.get_player_comparison(canonical_engine, players.split(","), filters)
+        )
+    except eda_analysis.FilterError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except DerivedDataUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
 
 
 @router.get(

@@ -558,6 +558,8 @@ class EDAFigureItem(BaseModel):
     sample_size: str = Field(..., description="Eligible sample size (e.g. '1,169 matches', '533 first innings')")
     key_findings: List[str] = Field(default_factory=list, description="Bullet points of key findings")
     source_file: str = Field(..., description="Stage 2 source CSV or JSON reference file")
+    coverage_evidence: Optional[str] = Field(None, description="How the coverage was verified (code and source file)")
+    static_note: Optional[str] = Field(None, description="Static research figures never react to the filter bar")
 
 
 class EDACatalogResponse(BaseModel):
@@ -605,3 +607,54 @@ class EDAFullHistoryResponse(BaseModel):
     dismissal_distribution: Dict[str, int] = Field(..., description="All-time wicket dismissal mode counts")
     top_all_time_batters: List[Dict[str, Any]] = Field(..., description="Top 10 all-time run scorers (2008–2026)")
     top_all_time_bowlers: List[Dict[str, Any]] = Field(..., description="Top 10 all-time wicket takers (2008–2026)")
+
+
+class EDAFilterNote(BaseModel):
+    filter: str = Field(..., description="Active filter the area does not support: season, team or venue")
+    note: str = Field(..., description="Visible note, e.g. 'Not affected by the venue filter: ...'")
+
+
+class EDACoverage(BaseModel):
+    seasons: List[int] = Field(..., description="Seasons actually present in the returned data")
+    first_season: int
+    last_season: int
+    label: str = Field(..., description="Compressed season ranges, e.g. '2022–2026'")
+
+
+class EDASampleItem(BaseModel):
+    label: str = Field(..., description="What is counted, e.g. 'matches' or 'first innings'")
+    value: int
+
+
+class EDAArea(BaseModel):
+    id: str
+    title: str
+    supported_filters: List[str] = Field(..., description="Filters this area recomputes for")
+    applied_filters: List[str] = Field(..., description="Active filters applied to this area")
+    unaffected_by: List[EDAFilterNote] = Field(default_factory=list, description="Active filters this area ignores")
+    coverage: Optional[EDACoverage] = Field(None, description="Actual season coverage; null when the area is empty")
+    sample: List[EDASampleItem] = Field(default_factory=list, description="Sample size / eligibility")
+    definitions: Dict[str, str]
+    units: str
+    source: str = Field(..., description="Data provenance")
+    state: str = Field(..., description="'ok', or 'empty' when the selection has no data")
+    empty_reason: Optional[str] = Field(None, description="Why the area is empty (never reported as zeros)")
+    data: Optional[Dict[str, Any]] = None
+
+
+class EDAAnalysisResponse(BaseModel):
+    filters: Dict[str, Any] = Field(..., description="Validated filter selection")
+    areas: Dict[str, EDAArea] = Field(..., description="Full-history analysis areas keyed by id")
+
+
+class EDAPlayerComparisonResponse(BaseModel):
+    filters: Dict[str, Any]
+    area: EDAArea
+
+
+class EDAFilterOptionsResponse(BaseModel):
+    seasons: List[int]
+    teams: List[Dict[str, Any]]
+    venues: List[Dict[str, Any]]
+    correlation_min_n: int
+    areas: Dict[str, Dict[str, Any]]
