@@ -692,6 +692,19 @@ class CanonicalAnalyticsEngine:
             return {"available": False, "detail": self._derived_error, "build_command": DERIVED_BUILD_COMMAND}
         return {"available": True, "detail": f"Loaded from {self.derived_dir}.", "build_command": DERIVED_BUILD_COMMAND}
 
+    def archive_coverage(self) -> Dict[str, Any]:
+        """Matches, seasons and first/last match dates of the loaded archive (matches.csv)."""
+        self.ensure_loaded()
+        m = self._matches
+        return {
+            "matches": int(len(m)),
+            "seasons": int(m["season"].nunique()),
+            "first_season": int(m["season"].min()),
+            "last_season": int(m["season"].max()),
+            "first_match_date": str(m["date"].min()),
+            "last_match_date": str(m["date"].max()),
+        }
+
     def require_derived(self) -> None:
         """Raise DerivedDataUnavailable when bowling or boundary statistics cannot be served."""
         self.ensure_loaded()

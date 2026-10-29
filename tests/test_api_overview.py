@@ -89,6 +89,24 @@ def test_health_check_endpoint(client):
     assert data["service"] == "CricketLens Analytical Backend"
 
 
+def test_health_archive_counts_come_from_data(client, m):
+    data = client.get("/api/health").json()
+    assert data["archive_matches"] == len(m)
+    assert data["archive"] == {
+        "matches": len(m),
+        "seasons": m["season"].nunique(),
+        "first_season": int(m["season"].min()),
+        "last_season": int(m["season"].max()),
+        "first_match_date": m["date"].min(),
+        "last_match_date": m["date"].max(),
+    }
+    # Guard: no number is typed into the health response
+    source = (ROOT / "src" / "cricketlens" / "api" / "app.py").read_text(encoding="utf-8")
+    health = source[source.index("async def health_check"):]
+    assert not re.search(r"archive_matches\s*=\s*\d", health)
+    assert not re.search(r"\b(1243|1,243|2008|2026)\b", health)
+
+
 # ---------------------------------------------------------------- KPIs, coverage, notices
 
 def test_kpi_values(summary, m, d, client):

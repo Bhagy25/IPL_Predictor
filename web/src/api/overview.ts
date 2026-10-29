@@ -5,10 +5,20 @@ const API_BASE = '/api';
 export interface HealthResponse {
   status: string;
   version: string;
-  archive_matches: number;
+  archive_matches: number | null;
   timestamp: string;
   service: string;
   derived_tables?: { available: boolean; detail: string; build_command?: string } | null;
+  // Extent of the loaded archive, counted by the API; null when the data failed to load
+  archive?: {
+    matches: number;
+    seasons: number;
+    first_season: number;
+    last_season: number;
+    first_match_date: string;
+    last_match_date: string;
+  } | null;
+  prediction_models?: Record<string, { available: boolean; detail: string }> | null;
 }
 
 export async function fetchHealth(signal?: AbortSignal): Promise<HealthResponse> {

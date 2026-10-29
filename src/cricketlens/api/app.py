@@ -58,16 +58,20 @@ app.add_middleware(
 async def health_check() -> HealthCheckResponse:
     try:
         derived = canonical_engine.derived_status()
+        coverage = canonical_engine.archive_coverage()
     except Exception as exc:
         derived = {"available": False, "detail": f"Analytics data failed to load: {exc}"}
+        coverage = None
     models = prediction_service.prediction_service.status()
-    healthy = derived["available"] and all(m["available"] for m in models.values())
+    healthy = coverage is not None and derived["available"] and all(m["available"] for m in models.values())
     return HealthCheckResponse(
         status="healthy" if healthy else "degraded",
         derived_tables=derived,
         prediction_models=models,
         version=__version__,
-        archive_matches=1243,
+        # Counted from the loaded match data; null when the data could not be loaded
+        archive_matches=coverage["matches"] if coverage else None,
+        archive=coverage,
         timestamp=datetime.now(timezone.utc).isoformat(),
         service="CricketLens Analytical Backend",
     )

@@ -8,12 +8,16 @@ from pydantic import BaseModel, Field
 class HealthCheckResponse(BaseModel):
     status: str = Field(..., description="Operational status of the API, e.g. healthy")
     version: str = Field(..., description="Software version")
-    archive_matches: int = Field(..., description="Verified number of men's IPL matches in archive")
+    archive_matches: Optional[int] = Field(..., description="Matches in the loaded archive (counted from matches.csv); null if it failed to load")
     timestamp: str = Field(..., description="Current ISO 8601 UTC timestamp")
     service: str = Field(default="CricketLens Analytical Backend", description="Service identifier")
     derived_tables: Optional[Dict[str, Any]] = Field(
         None,
         description="Availability of data/derived tables used for bowler wickets; bowling endpoints return 503 when unavailable",
+    )
+    archive: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Matches, seasons and first/last match dates of the loaded archive; null if it failed to load",
     )
     prediction_models: Optional[Dict[str, Dict[str, Any]]] = Field(
         None,
