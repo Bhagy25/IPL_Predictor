@@ -119,13 +119,25 @@ class TeamResultSummary(BaseModel):
     win_pct_state: Optional[str] = Field(None, description="'no_decided_matches' when win_pct is null")
 
 
-class TeamSeasonRecord(TeamResultSummary):
-    season: int = Field(..., description="Tournament year")
-    regulation_ties: int = Field(default=0, description="Matches tied in regulation play")
+class TeamRunTotals(BaseModel):
     runs_scored: int = Field(default=0, description="Runs scored, extras included")
     runs_conceded: int = Field(default=0, description="Runs conceded, extras included")
-    wickets_lost: int = Field(default=0, description="Team wickets lost")
-    wickets_taken: int = Field(default=0, description="Team wickets taken")
+    wickets_lost: int = Field(default=0, description="Team wickets lost (team_wickets_on_ball)")
+    wickets_taken: int = Field(default=0, description="Team wickets taken (team_wickets_on_ball)")
+    balls_faced: int = Field(default=0, description="Legal balls faced")
+    balls_bowled: int = Field(default=0, description="Legal balls bowled")
+    innings_batted: int = Field(default=0, description="Innings batted")
+    innings_bowled: int = Field(default=0, description="Innings bowled")
+    run_rate: Optional[float] = Field(None, description="Runs scored per 6 legal balls")
+    run_rate_state: Optional[str] = Field(None, description="'no_legal_balls' when run_rate is null")
+    economy: Optional[float] = Field(None, description="Runs conceded per 6 legal balls bowled")
+    economy_state: Optional[str] = Field(None, description="'no_legal_balls' when economy is null")
+    runs_per_innings: Optional[float] = Field(None, description="Runs scored per innings batted")
+
+
+class TeamSeasonRecord(TeamResultSummary, TeamRunTotals):
+    season: int = Field(..., description="Tournament year")
+    regulation_ties: int = Field(default=0, description="Matches tied in regulation play")
 
 
 class TeamVenueRecord(TeamResultSummary):
@@ -147,6 +159,12 @@ class TeamPhaseRecord(BaseModel):
     batting_run_rate_state: Optional[str] = Field(None, description="'no_legal_balls' when the run rate is null")
     wickets_lost: int = Field(..., description="Team wickets lost in the phase")
     wickets_lost_per_six: Optional[float] = Field(None, description="Wickets lost per 6 legal balls")
+    conceded_runs: int = Field(..., description="Runs conceded in the phase, extras included")
+    bowling_legal_balls: int = Field(..., description="Legal balls bowled in the phase")
+    economy: Optional[float] = Field(None, description="Runs conceded per 6 legal balls; null with no legal ball")
+    economy_state: Optional[str] = Field(None, description="'no_legal_balls' when economy is null")
+    wickets_taken: int = Field(..., description="Team wickets taken in the phase")
+    wickets_taken_per_six: Optional[float] = Field(None, description="Wickets taken per 6 legal balls")
 
 
 class TeamPhaseScoring(BaseModel):
@@ -158,6 +176,14 @@ class TeamPhaseScoring(BaseModel):
     death_wickets_per_six_balls: Optional[float] = Field(None, description="Death overs wickets lost per 6 balls")
 
 
+class TeamLeagueToss(BaseModel):
+    label: str = Field(..., description="What the comparison covers, e.g. 'All teams, same seasons (2022–2026)'")
+    seasons: List[int] = Field(..., description="Seasons included (the same as the team selection)")
+    after_winning_toss: TeamResultSummary = Field(..., description="Every toss winner's results in those seasons")
+    chose_to_bat: TeamResultSummary = Field(..., description="Toss winners who chose to bat first")
+    chose_to_field: TeamResultSummary = Field(..., description="Toss winners who chose to field first")
+
+
 class TeamTossStats(BaseModel):
     tosses_won: int = Field(..., description="Tosses won")
     elected_to_bat: int = Field(default=0, description="Chose to bat first after winning the toss")
@@ -166,14 +192,11 @@ class TeamTossStats(BaseModel):
     after_winning_toss: TeamResultSummary = Field(..., description="Results after winning the toss")
     chose_to_bat: TeamResultSummary = Field(..., description="Results after winning the toss and batting first")
     chose_to_field: TeamResultSummary = Field(..., description="Results after winning the toss and fielding first")
+    league: TeamLeagueToss = Field(..., description="All teams' toss winners in the same seasons, for comparison")
 
 
-class TeamSummaryRecord(TeamResultSummary):
+class TeamSummaryRecord(TeamResultSummary, TeamRunTotals):
     regulation_ties: int = Field(default=0, description="Matches tied in regulation play (Super Over decided or not)")
-    runs_scored: int = Field(default=0, description="Runs scored, extras included")
-    runs_conceded: int = Field(default=0, description="Runs conceded, extras included")
-    wickets_lost: int = Field(default=0, description="Team wickets lost (team_wickets_on_ball)")
-    wickets_taken: int = Field(default=0, description="Team wickets taken (team_wickets_on_ball)")
     denominator_description: str = Field(..., description="Win percentage rule")
 
 
@@ -197,10 +220,10 @@ class TeamOverviewResponse(BaseModel):
     batting_first: TeamResultSummary = Field(..., description="Results when batting first (no results excluded)")
     chasing: TeamResultSummary = Field(..., description="Results when chasing (no results excluded)")
     innings_order_no_results: int = Field(default=0, description="No-result matches left out of batting first / chasing")
-    season_history: List[TeamSeasonRecord] = Field(..., description="Season-by-season record within the selection")
+    season_history: List[TeamSeasonRecord] = Field(..., description="Season-by-season record and trends (run rate, economy, runs per innings) within the selection")
     venue_records: List[TeamVenueRecord] = Field(..., description="Venues with at least 3 matches in the selection")
     opponents: List[TeamOpponentRecord] = Field(default_factory=list, description="Record against every opponent")
-    phases: List[TeamPhaseRecord] = Field(default_factory=list, description="Batting by phase")
+    phases: List[TeamPhaseRecord] = Field(default_factory=list, description="Batting and bowling (conceded) by phase")
     phase_scoring: TeamPhaseScoring = Field(..., description="Flat batting phase rates (same values as phases)")
     toss_stats: TeamTossStats = Field(..., description="Toss decisions and results")
     definitions: Dict[str, str] = Field(default_factory=dict, description="How every number is defined")

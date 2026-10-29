@@ -202,6 +202,10 @@ TEAM_DEFINITIONS = {
                     "retired hurt and retired not out. Super overs are excluded.",
     "phases": "Powerplay = overs 1–6 (over_index 0–5), middle = overs 7–16 (6–15), death = overs 17–20 (16–19).",
     "run_rate": "Runs ÷ (legal balls / 6).",
+    "economy": "Runs conceded (extras included) ÷ (legal balls bowled / 6), overall and per phase.",
+    "trends": "Season trends: runs per innings batted, run rate and economy for each season in the selection.",
+    "league_toss": "League comparison: the results of every toss winner (all teams) in the same seasons as the "
+                   "selection, with the same win percentage rule.",
     "toss": "Results after winning the toss use the same win percentage rule, overall and by decision.",
     "franchises": "Renamed franchises are one team: Delhi Daredevils → Delhi Capitals, Kings XI Punjab → Punjab "
                   "Kings, Royal Challengers Bangalore → Royal Challengers Bengaluru, Rising Pune Supergiants → "
@@ -938,21 +942,25 @@ class CanonicalAnalyticsEngine:
             t = t.merge(agg.reset_index(), on=["match_id", "team"], how="left")
             counts += names
 
-        # Batting totals per phase
+        t["innings_batted"] = t["runs_scored"].notna().astype("int64")
+        t["innings_bowled"] = t["runs_conceded"].notna().astype("int64")
+
+        # Phase totals as the batting side (bat_*) and as the fielding side (bowl_*)
         d = self._deliveries
-        stats = d[["match_id", "batting_team"]].assign(
+        stats = d[["match_id", "batting_team", "bowling_team"]].assign(
             phase=np.select([d["over_index"] <= PHASES[0][3], d["over_index"] <= PHASES[1][3]],
                             [PHASES[0][0], PHASES[1][0]], PHASES[2][0]),
             runs=d["runs_total"].astype("int64"),
             balls=d["legal_delivery"].astype("int64"),
             wickets=d["team_wickets_on_ball"].astype("int64"),
         )
-        agg = stats.groupby(["match_id", "batting_team", "phase"])[["runs", "balls", "wickets"]].sum().unstack("phase", fill_value=0)
-        agg.columns = [f"bat_{phase}_{stat}" for stat, phase in agg.columns]
-        agg.index.names = ["match_id", "team"]
-        agg = agg.reset_index().astype({"match_id": "int64"})
-        t = t.merge(agg, on=["match_id", "team"], how="left")
-        counts += [c for c in agg.columns if c.startswith("bat_")]
+        for role, team_col in (("bat", "batting_team"), ("bowl", "bowling_team")):
+            agg = stats.groupby(["match_id", team_col, "phase"])[["runs", "balls", "wickets"]].sum().unstack("phase", fill_value=0)
+            agg.columns = [f"{role}_{phase}_{stat}" for stat, phase in agg.columns]
+            agg.index.names = ["match_id", "team"]
+            agg = agg.reset_index().astype({"match_id": "int64"})
+            t = t.merge(agg, on=["match_id", "team"], how="left")
+            counts += [c for c in agg.columns if c.startswith(f"{role}_")]
 
         # A team that never batted or bowled in a match (e.g. abandoned early) has zero totals
         t[counts] = t[counts].fillna(0).astype("int64")
@@ -973,14 +981,27 @@ class CanonicalAnalyticsEngine:
         return rows if season is None else rows[rows["season"] == season]
 
     @staticmethod
-    def _totals(rows: pd.DataFrame) -> Dict[str, int]:
-        return {k: int(rows[k].sum()) for k in ("runs_scored", "runs_conceded", "wickets_lost", "wickets_taken")}
+    def _totals(rows: pd.DataFrame) -> Dict[str, Any]:
+        """Runs, wickets and overall run rate / economy for a set of team-match rows."""
+        sums = {k: int(rows[k].sum()) for k in (
+            "runs_scored", "runs_conceded", "wickets_lost", "wickets_taken", "balls_faced", "balls_bowled",
+            "innings_batted", "innings_bowled",
+        )}
+        return {
+            **sums,
+            "run_rate": run_rate(sums["runs_scored"], sums["balls_faced"]),
+            "run_rate_state": None if sums["balls_faced"] else "no_legal_balls",
+            "economy": run_rate(sums["runs_conceded"], sums["balls_bowled"]),
+            "economy_state": None if sums["balls_bowled"] else "no_legal_balls",
+            "runs_per_innings": round(sums["runs_scored"] / sums["innings_batted"], 2) if sums["innings_batted"] else None,
+        }
 
     @staticmethod
     def _phase_records(rows: pd.DataFrame) -> List[Dict[str, Any]]:
         records = []
         for key, label, first_over, last_over in PHASES:
             runs, balls, wickets = (int(rows[f"bat_{key}_{s}"].sum()) for s in ("runs", "balls", "wickets"))
+            conceded, bowled, taken = (int(rows[f"bowl_{key}_{s}"].sum()) for s in ("runs", "balls", "wickets"))
             records.append({
                 "phase": key, "label": label, "overs": f"{first_over + 1}–{last_over + 1}",
                 "batting_runs": runs, "batting_legal_balls": balls,
@@ -988,6 +1009,11 @@ class CanonicalAnalyticsEngine:
                 "batting_run_rate_state": None if balls else "no_legal_balls",
                 "wickets_lost": wickets,
                 "wickets_lost_per_six": round(wickets / balls * 6, 3) if balls else None,
+                "conceded_runs": conceded, "bowling_legal_balls": bowled,
+                "economy": run_rate(conceded, bowled),
+                "economy_state": None if bowled else "no_legal_balls",
+                "wickets_taken": taken,
+                "wickets_taken_per_six": round(taken / bowled * 6, 3) if bowled else None,
             })
         return records
 
@@ -1010,6 +1036,8 @@ class CanonicalAnalyticsEngine:
         venues, _ = self._venue_records(rows, 3)
         toss = rows[rows["toss_won"]]
         window = rows[(rows["season"] >= 2022) & (rows["season"] <= 2025)]
+        # Every toss winner in the same seasons (one row per match), for comparison with this team
+        league = self._team_rows[self._team_rows["toss_won"] & self._team_rows["season"].isin(seasons)]
 
         return {
             "team": team_item,
@@ -1056,6 +1084,13 @@ class CanonicalAnalyticsEngine:
                 "after_winning_toss": result_summary(toss),
                 "chose_to_bat": result_summary(toss[toss["toss_decision"] == "bat"]),
                 "chose_to_field": result_summary(toss[toss["toss_decision"] == "field"]),
+                "league": {
+                    "label": f"All teams, same seasons ({format_season_ranges(seasons)})",
+                    "seasons": seasons,
+                    "after_winning_toss": result_summary(league),
+                    "chose_to_bat": result_summary(league[league["toss_decision"] == "bat"]),
+                    "chose_to_field": result_summary(league[league["toss_decision"] == "field"]),
+                },
             },
             "definitions": TEAM_DEFINITIONS,
             "state_definitions": TEAM_STATE_DEFINITIONS,
