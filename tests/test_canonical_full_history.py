@@ -165,6 +165,20 @@ def test_player_profile_kohli_boundaries():
 
 def test_player_profile_pure_bowler_bumrah():
     """Verify Jasprit Bumrah's profile has proper bowling metrics and clean batting handling."""
+    # Bowler-credited wickets counted directly from the raw JSON (ordinary innings only)
+    credited_kinds = {"bowled", "caught", "caught and bowled", "lbw", "stumped", "hit wicket"}
+    expected_wickets = 0
+    for path in (ROOT / "data" / "raw" / "ipl_json").glob("*.json"):
+        match = json.loads(path.read_text(encoding="utf-8"))
+        for innings in match["innings"]:
+            if innings.get("super_over"):
+                continue
+            for over in innings["overs"]:
+                for ball in over["deliveries"]:
+                    if ball["bowler"] == "JJ Bumrah":
+                        expected_wickets += sum(w["kind"] in credited_kinds for w in ball.get("wickets", []))
+    assert expected_wickets == 187  # sanity check against the Part 3 baseline
+
     # Find Bumrah by search
     res_search = client.get("/api/players?query=Bumrah")
     assert res_search.status_code == 200
@@ -178,7 +192,7 @@ def test_player_profile_pure_bowler_bumrah():
     # Bowling
     bowl = jb["career_bowling"]
     assert bowl is not None
-    assert bowl["wickets"] == 199
+    assert bowl["wickets"] == expected_wickets
     assert bowl["economy_rate"] < 7.5
     assert bowl["best_bowling"] == "5/10"
 
