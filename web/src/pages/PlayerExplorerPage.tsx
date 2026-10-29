@@ -11,10 +11,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { DirectoryCounts, PlayerListItem, PlayerProfileResponse } from '../types';
+import { DirectoryCounts, PlayerListItem, PlayerListQualification, PlayerProfileResponse } from '../types';
 import { fetchPlayers, fetchPlayerOverview } from '../api/players';
 import { BattingSection, BowlingSection, CareerSummary, DefinitionsDisclosure } from '../components/player/ProfileSections';
-import { FOCUS_RING } from '../components/player/playerFormat';
+import { FOCUS_RING, Stat, fixed2, plural } from '../components/player/playerFormat';
 import { MatchLog } from '../components/player/MatchLog';
 
 // Counts come from the API's directory_counts, never from fixed numbers
@@ -52,6 +52,16 @@ const EXPERIENCE_FILTERS = [
   { id: 'emerging', label: 'Emerging (1–10)' },
 ];
 
+// Sorts that rank a rate: which innings qualify a player, and why the rate can be missing
+const RATE_SORTS: Record<string, { short: string; noun: string; kind: 'batting' | 'bowling'; reason: (p: PlayerListItem) => string }> = {
+  batting_avg: { short: 'Avg', noun: 'a batting average', kind: 'batting', reason: p => (p.batting_innings ? 'Not dismissed in any innings' : 'Did not bat') },
+  strike_rate: { short: 'SR', noun: 'a strike rate', kind: 'batting', reason: p => (p.batting_innings ? 'No ball faced' : 'Did not bat') },
+  bowling_avg: { short: 'Bowl avg', noun: 'a bowling average', kind: 'bowling', reason: p => (p.bowling_innings ? 'No wicket taken' : 'Did not bowl') },
+  economy: { short: 'Econ', noun: 'an economy rate', kind: 'bowling', reason: p => (p.bowling_innings ? 'No legal ball bowled' : 'Did not bowl') },
+};
+const MIN_INNINGS_OPTIONS = [null, 10, 25, 50];
+const DEFAULT_MIN_INNINGS = 10;
+
 const SORT_OPTIONS = [
   { id: 'runs', label: 'Most Runs' },
   { id: 'wickets', label: 'Most Wickets' },
@@ -69,6 +79,9 @@ export const PlayerExplorerPage: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [selectedTier, setSelectedTier] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('runs');
+  // Minimum innings for rate sorts only; null = every player
+  const [minInnings, setMinInnings] = useState<number | null>(null);
+  const [qualification, setQualification] = useState<PlayerListQualification | null>(null);
   const [page, setPage] = useState<number>(1);
   const pageSize = 15;
 
@@ -123,10 +136,12 @@ export const PlayerExplorerPage: React.FC = () => {
         page,
         page_size: pageSize,
         sort_by: sortBy,
+        min_innings: RATE_SORTS[sortBy] ? minInnings : null,
       });
       if (requestId !== listRequest.current) return;
       setPlayers(res.players);
       setTotalCount(res.total_count);
+      setQualification(res.qualification ?? null);
       if (res.directory_counts) setDirectoryCounts(res.directory_counts);
       setRoleById(prev => {
         const next = { ...prev };
@@ -144,7 +159,7 @@ export const PlayerExplorerPage: React.FC = () => {
     } finally {
       if (requestId === listRequest.current) setListLoading(false);
     }
-  }, [debouncedQuery, selectedRole, selectedTier, page, sortBy, selectedPlayerId, selectPlayer]);
+  }, [debouncedQuery, selectedRole, selectedTier, page, sortBy, minInnings, selectedPlayerId, selectPlayer]);
 
   useEffect(() => {
     loadPlayers();
@@ -248,7 +263,14 @@ export const PlayerExplorerPage: React.FC = () => {
             <span className="text-xs text-[#B9B9B3]">Sort:</span>
             <select
               value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
+              aria-label="Sort players"
+              onChange={e => {
+                const next = e.target.value;
+                setSortBy(next);
+                // A rate sort starts with a minimum of 10 innings; other sorts never filter
+                setMinInnings(RATE_SORTS[next] ? DEFAULT_MIN_INNINGS : null);
+                setPage(1);
+              }}
               className="bg-[#101114] border border-[#D9B15F]/30 text-[#F6F6F3] text-xs font-semibold rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#D9B15F] cursor-pointer"
             >
               {SORT_OPTIONS.map(opt => (
@@ -257,8 +279,34 @@ export const PlayerExplorerPage: React.FC = () => {
                 </option>
               ))}
             </select>
+            {RATE_SORTS[sortBy] && (
+              <>
+                <label htmlFor="min-innings" className="text-xs text-[#B9B9B3] ml-2">Minimum {RATE_SORTS[sortBy].kind} innings:</label>
+                <select
+                  id="min-innings"
+                  value={minInnings ?? 'any'}
+                  onChange={e => {
+                    setMinInnings(e.target.value === 'any' ? null : Number(e.target.value));
+                    setPage(1);
+                  }}
+                  className={`bg-[#101114] border border-[#D9B15F]/30 text-[#F6F6F3] text-xs font-semibold rounded-lg px-3 py-1.5 cursor-pointer ${FOCUS_RING}`}
+                >
+                  {MIN_INNINGS_OPTIONS.map(n => (
+                    <option key={n ?? 'any'} value={n ?? 'any'}>{n ?? 'Any'}</option>
+                  ))}
+                </select>
+              </>
+            )}
           </div>
         </div>
+
+        {RATE_SORTS[sortBy] && (
+          <p role="status" className="text-[11px] text-[#B9B9B3] bg-[#101114] border border-[#D9B15F]/15 rounded-lg px-3 py-2">
+            {qualification
+              ? `Qualification applied: only players with at least ${qualification.min_innings} ${qualification.innings_kind} innings are ranked (${plural(totalCount, 'player')}).`
+              : `No qualification: every player is ranked; players without ${RATE_SORTS[sortBy].noun} are listed last.`}
+          </p>
+        )}
 
         {/* Role & Experience Filter Pills */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#D9B15F]/10">
@@ -363,6 +411,12 @@ export const PlayerExplorerPage: React.FC = () => {
                         {(p.wickets ?? 0) > 0 && (
                           <span className="text-[11px] font-bold text-emerald-400 block">
                             {p.wickets} wkt
+                          </span>
+                        )}
+                        {RATE_SORTS[sortBy] && (
+                          <span className="text-[11px] font-bold text-[#F6F6F3] block">
+                            {RATE_SORTS[sortBy].short}{' '}
+                            <Stat value={fixed2(p[sortBy as keyof PlayerListItem] as number | null)} reason={RATE_SORTS[sortBy].reason(p)} />
                           </span>
                         )}
                       </div>

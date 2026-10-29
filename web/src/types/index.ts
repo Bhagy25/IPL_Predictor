@@ -375,14 +375,14 @@ export interface PlayerListItem {
   batting_innings?: number;
   innings: number;
   total_runs: number;
-  batting_avg?: number;
-  strike_rate?: number;
+  batting_avg?: number | null;
+  strike_rate?: number | null;
   scores_30_plus?: number;
   scores_50_plus?: number;
   bowling_innings?: number;
   wickets?: number;
   bowling_avg?: number | null;
-  economy?: number;
+  economy?: number | null;
   best_bowling?: string;
   avg_per_appearance: number;
   milestone30_rate: number;
@@ -499,6 +499,13 @@ export interface PlayerListResponse {
   query?: string | null;
   experience_filter?: string | null;
   directory_counts?: DirectoryCounts;
+  qualification?: PlayerListQualification | null;
+}
+
+export interface PlayerListQualification {
+  sort_by: string;
+  min_innings: number;
+  innings_kind: 'batting' | 'bowling';
 }
 
 export interface DirectoryCounts {

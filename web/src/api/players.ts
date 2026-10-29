@@ -9,6 +9,7 @@ export interface PlayerSearchParams {
   page?: number;
   page_size?: number;
   sort_by?: string;
+  min_innings?: number | null;
 }
 
 export async function fetchPlayers(
@@ -22,6 +23,7 @@ export async function fetchPlayers(
   if (params?.page) queryParams.set('page', params.page.toString());
   if (params?.page_size) queryParams.set('page_size', params.page_size.toString());
   if (params?.sort_by) queryParams.set('sort_by', params.sort_by);
+  if (params?.min_innings) queryParams.set('min_innings', params.min_innings.toString());
 
   const url = `${API_BASE}/players?${queryParams.toString()}`;
   const res = await fetch(url, {
