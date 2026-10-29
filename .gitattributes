@@ -1,0 +1,3 @@
+# Derived tables are published with SHA256 hashes in data/derived/README.md;
+# store them byte-for-byte so a checkout on any platform matches those hashes.
+data/derived/*.csv -text
