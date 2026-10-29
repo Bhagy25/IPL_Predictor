@@ -40,6 +40,9 @@ async def get_head_to_head(
         return team_service.get_head_to_head(team1, team2)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except ValueError as exc:
+        # Same franchise on both sides (including aliases such as 'csk' and 'chennai-super-kings')
+        raise HTTPException(status_code=400, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to calculate head-to-head records: {exc}")
 
