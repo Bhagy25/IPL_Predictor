@@ -13,27 +13,29 @@ export const IPLOverviewPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     setError(null);
     try {
       const [sumRes, chartRes] = await Promise.all([
-        fetchOverviewSummary(),
-        fetchOverviewCharts(),
+        fetchOverviewSummary(signal),
+        fetchOverviewCharts(signal),
       ]);
       setSummary(sumRes);
       setCharts(chartRes);
     } catch (err: any) {
+      // Requests cancelled because the page was left are not failures
+      if (signal?.aborted) return;
       console.error('Failed to load IPL overview data:', err);
       setError(err?.message || 'Unable to connect to Python analytical backend');
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     const controller = new AbortController();
-    loadData();
+    loadData(controller.signal);
     return () => controller.abort();
   }, [loadData]);
 
@@ -107,7 +109,7 @@ export const IPLOverviewPage: React.FC = () => {
                 </div>
               </div>
               <button
-                onClick={loadData}
+                onClick={() => loadData()}
                 className="self-start sm:self-center inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2A1B1E] hover:bg-[#3A2227] text-red-200 border border-red-500/40 transition-colors cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
