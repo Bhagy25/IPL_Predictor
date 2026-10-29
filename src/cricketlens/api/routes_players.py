@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
 from cricketlens.api.schemas import (
     PlayerListResponse,
+    PlayerMatchLogResponse,
     PlayerProfileResponse,
 )
 from cricketlens.api.services.player_service import player_service
@@ -66,3 +67,27 @@ async def get_player_overview(
         raise HTTPException(status_code=503, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to load player overview: {exc}")
+
+
+@router.get(
+    "/{player_id}/matches",
+    response_model=PlayerMatchLogResponse,
+    summary="Paginated match-by-match log for a player",
+    description="One row per match appearance in an official squad list, most recent first, including matches "
+                "where the player did not bat or bowl, with Impact Player / concussion substitution state and "
+                "the result for the player's team.",
+)
+async def get_player_matches(
+    player_id: str,
+    season: Optional[int] = Query(None, description="Only this season's appearances"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Rows per page"),
+) -> PlayerMatchLogResponse:
+    try:
+        return player_service.get_player_matches(player_id, season=season, page=page, page_size=page_size)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=exc.args[0])
+    except DerivedDataUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to load player match log: {exc}")

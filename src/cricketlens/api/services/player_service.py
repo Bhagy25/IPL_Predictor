@@ -13,6 +13,7 @@ from cricketlens.api.schemas import (
     PlayerMilestoneBreakdown,
     PlayerProfileResponse,
     PlayerListResponse,
+    PlayerMatchLogResponse,
 )
 from cricketlens.api.services.canonical_data import canonical_engine
 
@@ -91,6 +92,14 @@ class PlayerService:
             )
 
         return PlayerProfileResponse(**d_copy)
+
+    def get_player_matches(
+        self, player_id: str, season: Optional[int] = None, page: int = 1, page_size: int = 20,
+    ) -> PlayerMatchLogResponse:
+        canonical_engine.ensure_loaded()
+        return PlayerMatchLogResponse(
+            **canonical_engine.get_player_matches(player_id, season=season, page=page, page_size=page_size)
+        )
 
 
 player_service = PlayerService()

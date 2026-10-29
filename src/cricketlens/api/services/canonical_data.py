@@ -1367,6 +1367,26 @@ class CanonicalAnalyticsEngine:
             "season_splits": season_splits,
         }
 
+    def get_player_matches(
+        self, player_id_or_name: str, season: Optional[int] = None, page: int = 1, page_size: int = 20,
+    ) -> Dict[str, Any]:
+        """Match-by-match log: one row per squad appearance, most recent first, paginated."""
+        self.require_derived()
+        pid, name = self._resolve_player(player_id_or_name)
+        log = self._player_rows(pid, season)[3]
+        total = len(log)
+        start = (page - 1) * page_size
+        return {
+            "player_id": pid,
+            "name": name,
+            "season_filter": season,
+            "total_count": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": max(1, -(-total // page_size)),
+            "matches": [self._log_entry(r) for r in log.iloc[start:start + page_size].to_dict("records")],
+        }
+
     # ==========================================
     # STATISTICS & EDA (2008-2026) APIs
     # ==========================================

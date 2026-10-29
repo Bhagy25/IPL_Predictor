@@ -293,6 +293,77 @@ class PlayerTeamSpell(BaseModel):
     matches: int = Field(..., description="Match appearances for this franchise")
 
 
+class PlayerSubstitution(BaseModel):
+    direction: str = Field(..., description="'in' (came into the match) or 'out' (replaced)")
+    reason: str = Field(..., description="Cricsheet reason, e.g. 'impact_player' or 'concussion_substitute'")
+    innings: int = Field(..., description="Innings position where the substitution is recorded")
+    counterpart_id: str = Field(..., description="Registry ID of the other player in the substitution")
+    counterpart_name: str = Field(..., description="Name of the other player as listed for that match")
+
+
+class PlayerMatchBatting(BaseModel):
+    state: str = Field(..., description="'batted' or 'did_not_bat'; every other field is null when did_not_bat")
+    runs: Optional[int] = Field(None, description="Runs off the bat")
+    balls_faced: Optional[int] = Field(None, description="Balls faced, excluding wides")
+    fours: Optional[int] = Field(None, description="Fours off the bat")
+    sixes: Optional[int] = Field(None, description="Sixes off the bat")
+    dismissed: Optional[bool] = Field(None, description="True when the innings ended in a dismissal")
+    dismissal_kind: Optional[str] = Field(
+        None,
+        description="Cricsheet wicket kind (e.g. 'caught'); 'retired hurt' or 'retired not out' appear with "
+                    "dismissed=false; null when not out",
+    )
+
+
+class PlayerMatchBowling(BaseModel):
+    state: str = Field(..., description="'bowled' or 'did_not_bowl'; every other field is null when did_not_bowl")
+    legal_balls: Optional[int] = Field(None, description="Legal deliveries bowled")
+    overs: Optional[str] = Field(None, description="Overs in cricket notation, e.g. '4.0'")
+    runs_conceded: Optional[int] = Field(None, description="Runs off the bat plus wides and no-balls")
+    wickets: Optional[int] = Field(None, description="Bowler-credited wickets")
+    economy: Optional[float] = Field(None, description="Runs per 6 legal balls; null when no legal ball was bowled")
+    economy_state: Optional[str] = Field(None, description="'no_legal_balls' when economy is null after bowling")
+
+
+class PlayerMatchResult(BaseModel):
+    outcome: Optional[str] = Field(None, description="For the player's team: 'won', 'lost', 'tied' or 'no_result'")
+    outcome_state: Optional[str] = Field(None, description="'not_recorded_in_source' when outcome is null")
+    winner: Optional[str] = Field(None, description="Winning franchise in regulation play; null for ties and no results")
+    method: Optional[str] = Field(None, description="Result method when recorded, e.g. 'D/L'")
+    super_over_winner: Optional[str] = Field(None, description="Franchise that won the super over (ties only)")
+    super_over_outcome: Optional[str] = Field(None, description="'won' or 'lost' for the player's team (ties only)")
+    super_over_state: Optional[str] = Field(None, description="'not_recorded_in_source' for a tie without a recorded super-over winner")
+
+
+class PlayerMatchAppearance(BaseModel):
+    match_id: int = Field(..., description="Cricsheet match ID")
+    date: str = Field(..., description="Match date (YYYY-MM-DD)")
+    season: int = Field(..., description="Season year")
+    team: str = Field(..., description="Player's canonical franchise")
+    opposition: str = Field(..., description="Opposing canonical franchise")
+    venue: str = Field(..., description="Canonical venue name")
+    appearance_state: str = Field(
+        ...,
+        description="'playing_xi', 'substituted_in' (Impact Player or concussion substitute), 'substituted_out' "
+                    "or 'substituted_in_and_out'",
+    )
+    substitutions: List[PlayerSubstitution] = Field(default_factory=list, description="Substitutions involving the player")
+    batting: PlayerMatchBatting = Field(..., description="Batting in this match")
+    bowling: PlayerMatchBowling = Field(..., description="Bowling in this match")
+    result: PlayerMatchResult = Field(..., description="Match result for the player's team")
+
+
+class PlayerMatchLogResponse(BaseModel):
+    player_id: str = Field(..., description="Cricsheet registry ID")
+    name: str = Field(..., description="Display name")
+    season_filter: Optional[int] = Field(None, description="Season applied, or null for the full career")
+    total_count: int = Field(..., description="Match appearances matching the filter")
+    page: int = Field(..., description="Current page")
+    page_size: int = Field(..., description="Rows per page")
+    total_pages: int = Field(..., description="Total pages (at least 1)")
+    matches: List[PlayerMatchAppearance] = Field(..., description="Appearances on this page, most recent first")
+
+
 class PlayerMatchLogItem(BaseModel):
     match_id: int = Field(..., description="Match ID")
     date: str = Field(..., description="Match date")
@@ -408,7 +479,7 @@ class PlayerProfileResponse(BaseModel):
     coverage_period: str = Field(default="2008–2026 Complete History", description="Data coverage span")
     recent_matches: List[PlayerMatchLogItem] = Field(
         default_factory=list,
-        description="Every match appearance in the old row shape, most recent first",
+        description="Deprecated: every match appearance in the old row shape; use /api/players/{id}/matches",
     )
     opposition_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: top 10 of batting_by_opposition")
     venue_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: top 10 of batting_by_venue")
