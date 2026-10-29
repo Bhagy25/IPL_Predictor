@@ -862,3 +862,172 @@ export interface EDAPlayerComparisonResponse {
   filters: EDAFiltersEcho;
   area: EDAArea<{ players: EDAComparedPlayer[] }>;
 }
+
+// ==========================================
+// Prediction Arena (/api/predict)
+// ==========================================
+
+export interface PredictionTeamOption {
+  name: string;
+  code: string;
+  slug: string;
+  primary_color: string;
+}
+
+export interface PredictionVenueOption {
+  name: string;
+  matches: number;
+  last_season: number | null;
+  used_in_latest_season: boolean;
+}
+
+export interface PredictionBatterOption {
+  player_id: string;
+  name: string;
+  name_variants: string[];
+  eligible_innings: number;
+  latest_innings_date: string;
+  latest_team: string;
+}
+
+export interface PredictionOptionsResponse {
+  teams: PredictionTeamOption[];
+  venues: PredictionVenueOption[];
+  latest_season: number;
+  archive_last_match_date: string;
+  wicket_rules: Record<string, unknown>;
+  batters: PredictionBatterOption[];
+  batter_date_rule: string;
+  models_available: Record<string, boolean>;
+}
+
+export interface WicketPredictionRequest {
+  batting_team: string;
+  bowling_team: string;
+  venue: string;
+  innings: number;
+  completed_overs: number;
+  runs: number;
+  wickets: number;
+  last_over_runs: number;
+  last_over_wickets: number;
+}
+
+export interface WicketPredictionResponse {
+  event: string;
+  probability: number;
+  probability_pct: number;
+  phase: string;
+  model: string;
+  model_file: string;
+  version: string;
+  status: string;
+  training_end: number;
+  training_span: string;
+  inputs: WicketPredictionRequest;
+  notice: string;
+  function_notice: string;
+}
+
+export interface BatterPredictionRequest {
+  player_id: string;
+  batting_team: string;
+  opponent: string;
+  venue: string;
+  match_date: string;
+}
+
+export interface BatterRecentInnings {
+  date: string;
+  runs: number;
+  batting_team: string;
+  opponent: string;
+  venue: string;
+}
+
+export interface BatterPredictionResponse {
+  player_id: string;
+  player_name: string;
+  source_name: string;
+  batting_team: string;
+  opponent: string;
+  venue: string;
+  date: string;
+  prior_eligible_innings: number;
+  chance_30_plus: number;
+  chance_50_plus: number;
+  chance_30_plus_pct: number;
+  chance_50_plus_pct: number;
+  model: string;
+  model_file: string;
+  model_train_end: number;
+  version: string;
+  training_span: string;
+  scope: string;
+  function_scope: string;
+  warning: string;
+  notice: string;
+  form_context: {
+    prior_eligible_innings: number;
+    latest_innings_date: string;
+    recent_innings: BatterRecentInnings[];
+    definition: string;
+  };
+}
+
+export interface WicketEvaluationMetrics {
+  model?: string | null;
+  training_rows?: number | null;
+  rows: number;
+  event_rate: number;
+  brier_score: number;
+  log_loss: number;
+  roc_auc?: number | null;
+}
+
+export interface BatterEvaluationMetrics {
+  model?: string | null;
+  training_rows?: number | null;
+  rows: number;
+  observed_30_rate: number;
+  observed_50_rate: number;
+  brier_30: number;
+  brier_50: number;
+  avg_milestone_brier: number;
+  multiclass_log_loss: number;
+  roc_auc_30?: number | null;
+  roc_auc_50?: number | null;
+}
+
+export interface PredictionModelInfo {
+  kind: 'wicket' | 'batter';
+  title: string;
+  available: boolean;
+  status_detail: string;
+  deployment_file: string;
+  holdout_file: string;
+  name: string | null;
+  version: string | null;
+  training_end: number | null;
+  training_span: string | null;
+  features: string[];
+  classes: number[];
+  condition: string | null;
+  selected_name: string;
+  selection_metric: string;
+  validation_2025: Record<string, number | string>[];
+  validation_2025_constant: Record<string, number | string>;
+  holdout_2026: Record<string, number | string>;
+  holdout_2026_constant: Record<string, number | string>;
+  rows: Record<string, number>;
+  exclusions: string | null;
+  notes: string[];
+}
+
+export interface PredictionModelsResponse {
+  models: PredictionModelInfo[];
+  holdout_statement: string;
+  caveats: string[];
+  source: string;
+  report_created_utc: string | null;
+}
