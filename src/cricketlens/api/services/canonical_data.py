@@ -186,6 +186,7 @@ class CanonicalAnalyticsEngine:
 
         # Indexed structures (players are keyed by Cricsheet registry ID)
         self._match_players: pd.DataFrame = pd.DataFrame()
+        self._batting_appearances: pd.DataFrame = pd.DataFrame()
         self._people_names: Dict[str, List[str]] = {}
         self._player_names_by_id: Dict[str, str] = {}
         self._player_ids_by_name: Dict[str, Set[str]] = {}
@@ -322,7 +323,7 @@ class CanonicalAnalyticsEngine:
         Names are only unique within a match (the same name can belong to different people across
         seasons), so bowlers are resolved through that match's squad list, never a global name lookup.
         """
-        paths = [self.derived_dir / name for name in ("match_players.csv", "people.csv")]
+        paths = [self.derived_dir / name for name in ("match_players.csv", "people.csv", "batting_appearances.csv")]
         missing = [p.name for p in paths if not p.exists()]
         if missing:
             self._derived_error = f"{', '.join(missing)} missing from {self.derived_dir}."
@@ -330,6 +331,12 @@ class CanonicalAnalyticsEngine:
             return
         squads = pd.read_csv(paths[0], usecols=["match_id", "season", "date", "team", "player_name", "player_id"])
         people = pd.read_csv(paths[1], usecols=["player_id", "names"])
+        # Every player at the crease (striker or non-striker) has a batting innings
+        appearances = pd.read_csv(paths[2], usecols=[
+            "match_id", "season", "date", "innings", "batting_team", "player_id", "balls_faced", "runs", "dismissed",
+        ]).merge(
+            self._innings[["match_id", "innings", "bowling_team", "venue_canonical"]], on=["match_id", "innings"], how="left",
+        )
 
         lookup = (
             squads[["match_id", "player_name", "player_id"]]
@@ -340,16 +347,22 @@ class CanonicalAnalyticsEngine:
         self._deliveries = self._deliveries.merge(lookup.drop_duplicates(["match_id", "bowler"]), on=["match_id", "bowler"], how="left")
         unmapped = int(self._deliveries["bowler_id"].isna().sum()) + int(self._deliveries["batter_id"].isna().sum())
         known = set(people["player_id"])
-        unknown = len((set(self._deliveries["bowler_id"].dropna()) | set(self._deliveries["batter_id"].dropna())) - known)
-        if ambiguous or unmapped or unknown:
+        unknown = len((
+            set(self._deliveries["bowler_id"].dropna()) | set(self._deliveries["batter_id"].dropna())
+            | set(appearances["player_id"])
+        ) - known)
+        orphan_innings = int(appearances["bowling_team"].isna().sum())
+        if ambiguous or unmapped or unknown or orphan_innings:
             self._derived_error = (
                 f"Player identities do not resolve ({unmapped} unmapped deliveries, {ambiguous} ambiguous "
-                f"squad names, {unknown} IDs missing from people.csv)."
+                f"squad names, {unknown} IDs missing from people.csv, {orphan_innings} appearances "
+                f"without an innings in innings.csv)."
             )
             logger.error("%s Player statistics are unavailable.", self._derived_error)
             return
         self._match_players = squads
         self._people_names = dict(zip(people["player_id"], people["names"].str.split(";")))
+        self._batting_appearances = appearances
 
     def derived_status(self) -> Dict[str, Any]:
         """Availability of the data/derived tables used for bowling and boundary statistics."""
@@ -370,7 +383,7 @@ class CanonicalAnalyticsEngine:
     def _build_player_index(self) -> None:
         """Build the player directory: one entry per Cricsheet registry ID who batted or bowled."""
         squads = self._match_players
-        directory_ids = sorted(set(self._batters["batter_id"]) | set(self._deliveries["bowler_id"]))
+        directory_ids = sorted(set(self._batting_appearances["player_id"]) | set(self._deliveries["bowler_id"]))
 
         # Squad appearances give matches, seasons and teams for every player
         squad_grp = squads.groupby("player_id").agg(
@@ -413,12 +426,15 @@ class CanonicalAnalyticsEngine:
             fours=("is_four", "sum"),
             sixes=("is_six", "sum"),
             dots=("is_dot", "sum"),
-        ).reset_index()
+        ).reset_index().rename(columns={"batter_id": "player_id"})
 
+        # One row per batting innings: every crease appearance, including non-striker-only ones
         self._batters_merged = pd.merge(
-            self._batters, ball_agg, on=["match_id", "innings", "batter_id"], how="left"
+            self._batting_appearances, ball_agg, on=["match_id", "innings", "player_id"], how="left"
         )
-        self._batters_merged["player_id"] = self._batters_merged["batter_id"]
+        self._batters_merged["dismissed"] = self._batters_merged["dismissed"].astype(int)
+        self._batters_merged["reached_30"] = (self._batters_merged["runs"] >= 30).astype(int)
+        self._batters_merged["reached_50"] = (self._batters_merged["runs"] >= 50).astype(int)
         self._batters_merged["batter"] = self._batters_merged["player_id"].map(self._player_names_by_id)
         self._batters_merged["fours"] = self._batters_merged["fours"].fillna(0).astype(int)
         self._batters_merged["sixes"] = self._batters_merged["sixes"].fillna(0).astype(int)
