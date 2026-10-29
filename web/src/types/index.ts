@@ -1031,3 +1031,97 @@ export interface PredictionModelsResponse {
   source: string;
   report_created_utc: string | null;
 }
+
+// ==========================================
+// Prediction Tracker: 2026 holdout replay (/api/predict/holdout-replay)
+// ==========================================
+
+export interface CalibrationBin {
+  milestone?: string | null;
+  bin: number;
+  lower: number;
+  upper: number;
+  n: number;
+  avg_predicted: number;
+  observed_rate: number;
+}
+
+export interface MetricCheck {
+  matches_official: boolean;
+  compared: string[];
+  mismatched: string[];
+  tolerance: number;
+}
+
+export interface ReplayMatchItem {
+  match_id: number;
+  date: string;
+  team1: string;
+  team2: string;
+  team1_code: string;
+  team2_code: string;
+  venue: string;
+  winner: string | null;
+  wicket_checkpoints: number;
+  batter_forecasts: number;
+}
+
+export interface HoldoutReplayResponse {
+  label: string;
+  statement: string;
+  matches: ReplayMatchItem[];
+  wicket: {
+    computed: WicketEvaluationMetrics & { calibration: CalibrationBin[] };
+    official: WicketEvaluationMetrics;
+    official_constant: WicketEvaluationMetrics;
+    check: MetricCheck;
+    matches_count: number;
+    eligibility: string;
+  };
+  batter: {
+    computed: BatterEvaluationMetrics & { calibration: CalibrationBin[] };
+    official: BatterEvaluationMetrics;
+    official_constant: BatterEvaluationMetrics;
+    check: MetricCheck;
+    matches_count: number;
+    eligibility: string;
+  };
+  sources: string[];
+}
+
+export interface ReplayBatterRow {
+  innings: number;
+  batting_team: string;
+  batter_id: string;
+  batter: string;
+  prior_innings: number;
+  probability_30_plus: number;
+  probability_50_plus: number;
+  actual_runs: number;
+  actual_30_plus: boolean;
+  actual_50_plus: boolean;
+}
+
+export interface ReplayWicketRow {
+  innings: number;
+  batting_team: string;
+  completed_overs: number;
+  next_over: number;
+  phase: string;
+  predicted_probability: number;
+  wicket_fell: boolean;
+}
+
+export interface HoldoutReplayMatchResponse {
+  label: string;
+  match_id: number;
+  date: string;
+  team1: string;
+  team2: string;
+  venue: string;
+  winner: string | null;
+  batters: ReplayBatterRow[];
+  wickets: ReplayWicketRow[];
+  wicket_summary: WicketEvaluationMetrics | null;
+  batter_summary: BatterEvaluationMetrics | null;
+}
