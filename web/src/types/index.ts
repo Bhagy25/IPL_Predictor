@@ -5,7 +5,7 @@ export interface KPIMetric {
   statusText: string;
   iconName: string;
   description?: string;
-  numeric_value?: number;
+  numeric_value?: number | null;
 }
 
 export interface CoverageMetadata {

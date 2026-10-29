@@ -21,7 +21,7 @@ const defaultMetrics: KPIMetric[] = [
   { id: 'matches', label: 'Matches analyzed', value: null, statusText: 'Awaiting data', iconName: 'Eye' },
   { id: 'deliveries', label: 'Recorded deliveries', value: null, statusText: 'Awaiting data', iconName: 'Activity' },
   { id: 'teams', label: 'Teams', value: null, statusText: 'Awaiting data', iconName: 'Shield' },
-  { id: 'players', label: 'Batters analyzed', value: null, statusText: 'Awaiting data', iconName: 'User' },
+  { id: 'players', label: 'Players', value: null, statusText: 'Awaiting data', iconName: 'User' },
   { id: 'venues', label: 'Venues', value: null, statusText: 'Awaiting data', iconName: 'MapPin' },
   { id: 'runs', label: 'Total runs', value: null, statusText: 'Awaiting data', iconName: 'TrendingUp' },
   { id: 'wickets', label: 'Total wickets', value: null, statusText: 'Awaiting data', iconName: 'Target' },
@@ -46,10 +46,14 @@ export const KPICards: React.FC<KPICardsProps> = ({
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
       {metrics.map((metric) => {
         const IconComponent = iconMap[metric.iconName] || Trophy;
+        const definitionId = `kpi-definition-${metric.id}`;
         return (
           <div
             key={metric.id}
-            className="group relative bg-[#151619] hover:bg-[#1E1F22] border border-white/[0.08] hover:border-[#D9B15F]/40 rounded-2xl p-4 sm:p-5 transition-all duration-200 shadow-sm flex flex-col justify-between"
+            // Focusable when it has a definition, so keyboard users can open the tooltip too
+            tabIndex={metric.description ? 0 : undefined}
+            aria-describedby={metric.description ? definitionId : undefined}
+            className="group relative bg-[#151619] hover:bg-[#1E1F22] border border-white/[0.08] hover:border-[#D9B15F]/40 rounded-2xl p-4 sm:p-5 transition-all duration-200 shadow-sm flex flex-col justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9B15F]"
           >
             {/* Top row: Label + Icon */}
             <div className="flex items-center justify-between gap-2">
@@ -77,6 +81,17 @@ export const KPICards: React.FC<KPICardsProps> = ({
               <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]/60" />
               <span>{metric.statusText}</span>
             </div>
+
+            {/* Definition tooltip, shown on hover and keyboard focus */}
+            {metric.description && (
+              <div
+                id={definitionId}
+                role="tooltip"
+                className="pointer-events-none absolute left-2 right-2 top-full mt-2 z-30 rounded-xl border border-[#D9B15F]/40 bg-[#0D0E10] p-3 text-[11px] leading-relaxed text-[#F6F6F3] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus:opacity-100 group-focus:visible transition-opacity"
+              >
+                {metric.description}
+              </div>
+            )}
           </div>
         );
       })}
