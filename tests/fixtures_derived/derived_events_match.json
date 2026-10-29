@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "data_version": "1.1.0"
+  },
+  "info": {
+    "dates": ["2024-04-10"],
+    "season": "2024",
+    "teams": ["Delhi Daredevils", "Mumbai Indians"],
+    "venue": "Example Ground",
+    "event": {"name": "Indian Premier League"},
+    "outcome": {"result": "tie", "eliminator": "Mumbai Indians"},
+    "toss": {"winner": "Mumbai Indians", "decision": "field"},
+    "players": {
+      "Delhi Daredevils": ["Batter A", "Batter B", "Batter C", "Batter D"],
+      "Mumbai Indians": ["Bowler X", "Bowler Y", "Keeper K", "Fielder F"]
+    },
+    "registry": {
+      "people": {
+        "Batter A": "id_a",
+        "Batter B": "id_b",
+        "Batter C": "id_c",
+        "Batter D": "id_d",
+        "Bowler X": "id_x",
+        "Bowler Y": "id_y",
+        "Keeper K": "id_k",
+        "Fielder F": "id_f",
+        "Sub S": "id_sub"
+      }
+    }
+  },
+  "innings": [
+    {
+      "team": "Delhi Daredevils",
+      "overs": [
+        {
+          "over": 0,
+          "deliveries": [
+            {
+              "batter": "Batter A", "bowler": "Bowler X", "non_striker": "Batter B",
+              "runs": {"batter": 0, "extras": 1, "total": 1},
+              "extras": {"wides": 1}
+            },
+            {
+              "batter": "Batter A", "bowler": "Bowler X", "non_striker": "Batter B",
+              "runs": {"batter": 0, "extras": 0, "total": 0},
+              "wickets": [{"kind": "caught", "player_out": "Batter A", "fielders": [{"name": "Fielder F"}]}]
+            },
+            {
+              "batter": "Batter C", "bowler": "Bowler X", "non_striker": "Batter B",
+              "runs": {"batter": 0, "extras": 0, "total": 0},
+              "wickets": [{"kind": "run out", "player_out": "Batter B", "fielders": [{"name": "Sub S", "substitute": true}]}]
+            }
+          ]
+        },
+        {
+          "over": 1,
+          "deliveries": [
+            {
+              "batter": "Batter C", "bowler": "Bowler Y", "non_striker": "Batter D",
+              "runs": {"batter": 4, "extras": 0, "non_boundary": true, "total": 4}
+            },
+            {
+              "batter": "Batter C", "bowler": "Bowler Y", "non_striker": "Batter D",
+              "runs": {"batter": 0, "extras": 0, "total": 0},
+              "wickets": [{"kind": "stumped", "player_out": "Batter C", "fielders": [{"name": "Keeper K"}]}]
+            },
+            {
+              "batter": "Batter D", "bowler": "Bowler Y", "non_striker": "Batter A",
+              "runs": {"batter": 1, "extras": 0, "total": 1},
+              "wickets": [{"kind": "retired hurt", "player_out": "Batter D"}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "team": "Mumbai Indians",
+      "overs": [
+        {
+          "over": 0,
+          "deliveries": [
+            {
+              "batter": "Keeper K", "bowler": "Batter A", "non_striker": "Fielder F",
+              "runs": {"batter": 4, "extras": 0, "total": 4}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "team": "Delhi Daredevils",
+      "super_over": true,
+      "overs": [
+        {
+          "over": 0,
+          "deliveries": [
+            {
+              "batter": "Batter A", "bowler": "Bowler X", "non_striker": "Batter C",
+              "runs": {"batter": 0, "extras": 0, "total": 0},
+              "wickets": [{"kind": "bowled", "player_out": "Batter A"}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "team": "Mumbai Indians",
+      "super_over": true,
+      "overs": [
+        {
+          "over": 0,
+          "deliveries": [
+            {
+              "batter": "Keeper K", "bowler": "Batter A", "non_striker": "Fielder F",
+              "runs": {"batter": 6, "extras": 0, "total": 6}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
