@@ -252,6 +252,51 @@ def result_summary(rows: pd.DataFrame) -> Dict[str, Any]:
     }
 
 
+def dismissal_breakdown(dismissals: pd.DataFrame) -> Dict[str, Any]:
+    """Dismissal events by kind, most frequent first, with bowler-credited and team-wicket counts.
+
+    Expects ordinary-innings rows of data/derived/dismissals.csv. Retired hurt is a dismissal event
+    but not a team wicket; run outs, retirements and obstructing the field are not credited to the bowler.
+    """
+    total = int(len(dismissals))
+    kinds = []
+    for kind, g in dismissals.groupby("kind"):
+        credited, wickets = int(g["bowler_credited"].sum()), int(g["counts_as_batting_dismissal"].sum())
+        kinds.append({
+            "kind": str(kind), "count": int(len(g)), "pct": percentage(len(g), total),
+            "bowler_credited": credited, "not_bowler_credited": int(len(g)) - credited,
+            "team_wickets": wickets,
+        })
+    kinds.sort(key=lambda k: (-k["count"], k["kind"]))
+    credited = int(dismissals["bowler_credited"].sum())
+    wickets = int(dismissals["counts_as_batting_dismissal"].sum())
+    return {
+        "kinds": kinds,
+        "events": total,
+        "bowler_credited": credited,
+        "not_bowler_credited": total - credited,
+        "team_wickets": wickets,
+        "not_team_wickets": total - wickets,
+    }
+
+
+def outcome_breakdown(matches: pd.DataFrame) -> Dict[str, Any]:
+    """How matches ended: decided in regulation (including D/L), decided by Super Over, or no result."""
+    regulation = int((matches["decided_by"] == "regulation").sum())
+    super_over = int(((matches["decided_by"] == "super_over") & matches["final_winner"].notna()).sum())
+    no_result = int((matches["outcome_type"] == "no result").sum())
+    total = int(len(matches))
+    return {
+        "matches": total,
+        "decided": regulation + super_over,
+        "decided_in_regulation": regulation,
+        "decided_by_super_over": super_over,
+        "no_result": no_result,
+        "other_not_recorded": total - regulation - super_over - no_result,
+        "dl_method": int((matches["outcome_method"] == "D/L").sum()),
+    }
+
+
 class DerivedDataUnavailable(RuntimeError):
     """Raised when bowling or boundary statistics are requested but data/derived is missing or inconsistent."""
 
@@ -435,6 +480,10 @@ class CanonicalAnalyticsEngine:
         self._franchise_seasons: Dict[str, List[int]] = {}
         # One row per team per match (result, toss, innings order, runs, wickets, phase totals)
         self._team_rows: pd.DataFrame = pd.DataFrame()
+        # Ordinary-innings dismissal events, and super-over rows of each derived table (reported as excluded)
+        self._dismissals: pd.DataFrame = pd.DataFrame()
+        self._super_over_events: Dict[str, pd.DataFrame] = {}
+        self._eda_full_history: Optional[Dict[str, Any]] = None
 
     def ensure_loaded(self) -> None:
         if self._initialized:
@@ -510,7 +559,8 @@ class CanonicalAnalyticsEngine:
             self._derived_error = f"{name} is missing from {self.derived_dir}."
             return None
         table = pd.read_csv(path, usecols=DELIVERY_KEY + ["is_super_over", "bowler"] + columns)
-        # Super overs are never part of ordinary match statistics.
+        # Super overs are never part of ordinary match statistics; they are kept aside only to report the exclusion.
+        self._super_over_events[name] = table[table["is_super_over"]].reset_index(drop=True)
         table = table[~table["is_super_over"]]
         joined = table.merge(
             self._deliveries[DELIVERY_KEY + ["bowler"]], on=DELIVERY_KEY,
@@ -534,7 +584,9 @@ class CanonicalAnalyticsEngine:
         boundary statistics are marked unavailable instead of falling back to an estimate.
         """
         self._derived_error = None
-        dismissals = self._read_derived("dismissals.csv", ["bowler_credited"])
+        dismissals = self._read_derived(
+            "dismissals.csv", ["bowler_credited", "kind", "batting_team", "counts_as_batting_dismissal"],
+        )
         non_boundary = self._read_derived("non_boundary_events.csv", []) if dismissals is not None else None
 
         if self._derived_error:
@@ -556,6 +608,8 @@ class CanonicalAnalyticsEngine:
             .merge(credited, on=DELIVERY_KEY, how="left")
             .merge(flagged, on=DELIVERY_KEY, how="left")
         )
+        # One row per ordinary-innings dismissal event (every kind, retirements included)
+        self._dismissals = dismissals.drop(columns=["is_super_over", "bowler"]).reset_index(drop=True)
         self._deliveries["bowler_wickets"] = self._deliveries["bowler_wickets"].fillna(0).astype("int8")
         self._deliveries["is_non_boundary"] = self._deliveries["is_non_boundary"].notna()
         self._load_squads()
@@ -1446,8 +1500,10 @@ class CanonicalAnalyticsEngine:
     # ==========================================
 
     def get_eda_full_history(self) -> Dict[str, Any]:
-        """Compute comprehensive 2008-2026 historical EDA covering all 15 analysis areas."""
+        """Compute comprehensive 2008-2026 historical EDA covering all 15 analysis areas (computed once, then cached)."""
         self.require_derived()
+        if self._eda_full_history is not None:
+            return self._eda_full_history
         m_df = self._matches
         d_df = self._deliveries
         i_df = self._innings
@@ -1582,18 +1638,9 @@ class CanonicalAnalyticsEngine:
         pearson_mat = inn1_corr[corr_vars].corr(method="pearson").round(3).to_dict()
         spearman_mat = inn1_corr[corr_vars].corr(method="spearman").round(3).to_dict()
 
-        # 8. All-Time Dismissal Distribution
+        # 8. All-Time Dismissal Distribution (ordinary innings, from data/derived/dismissals.csv)
         dismissals = {
-            "caught": 9310,
-            "bowled": 2451,
-            "run_out": 1185,
-            "lbw": 881,
-            "caught_and_bowled": 410,
-            "stumped": 388,
-            "hit_wicket": 20,
-            "retired_hurt": 19,
-            "retired_out": 6,
-            "obstructing_the_field": 4,
+            k["kind"].replace(" ", "_"): k["count"] for k in dismissal_breakdown(self._dismissals)["kinds"]
         }
 
         # 9. Top All-Time Batters & Bowlers
@@ -1617,8 +1664,12 @@ class CanonicalAnalyticsEngine:
         top_bowlers["economy"] = (top_bowlers["runs_conceded"] / (top_bowlers["legal_deliveries"] / 6.0)).round(2)
         top_bowlers_list = top_bowlers.to_dict(orient="records")
 
-        return {
-            "coverage": "2008–2026 Complete Archive (19 Seasons, 1,243 Matches, 295,557 Deliveries)",
+        seasons = sorted(int(s) for s in m_df["season"].unique())
+        self._eda_full_history = {
+            "coverage": (
+                f"{format_season_ranges(seasons)} Complete Archive ({len(seasons)} Seasons, "
+                f"{len(m_df):,} Matches, {len(d_df):,} Deliveries)"
+            ),
             "season_evolution": season_evolution,
             "first_innings_trends": first_inn_trends,
             "era_phase_patterns": era_phase_patterns,
@@ -1634,6 +1685,7 @@ class CanonicalAnalyticsEngine:
             "top_all_time_batters": top_batters,
             "top_all_time_bowlers": top_bowlers_list,
         }
+        return self._eda_full_history
 
 
 # Global singleton instance
