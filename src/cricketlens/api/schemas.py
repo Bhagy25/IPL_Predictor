@@ -690,6 +690,8 @@ class PredictionBatterOption(BaseModel):
     eligible_innings: int = Field(..., description="Innings outside D/L-marked and no-result matches")
     latest_innings_date: str = Field(..., description="A match date must be after this date")
     latest_team: str = Field(..., description="Team of the player's latest eligible innings")
+    last_season: int = Field(..., description="Last season the player was in a match squad")
+    appeared_in_latest_season: bool = Field(..., description="In a squad in the archive's latest season")
 
 
 class PredictionOptionsResponse(BaseModel):
@@ -715,6 +717,22 @@ class WicketPredictionRequest(BaseModel):
     last_over_wickets: int = Field(..., description="Wickets in the most recent over, 0 to wickets")
 
 
+class InputRangeItem(BaseModel):
+    field: str
+    label: str
+    value: float
+    observed_min: float
+    observed_max: float
+
+
+class InputRangeCheck(BaseModel):
+    checked: bool = Field(..., description="False when the training rows could not be read")
+    completed_overs: int
+    outside: List[InputRangeItem] = Field(..., description="Inputs outside the observed range at this checkpoint")
+    warning: Optional[str] = Field(None, description="Extrapolation warning; the probability is unchanged")
+    source: str
+
+
 class WicketPredictionResponse(BaseModel):
     event: str
     probability: float = Field(..., description="As returned by predict_wicket.forecast() (4 decimals)")
@@ -729,6 +747,7 @@ class WicketPredictionResponse(BaseModel):
     inputs: Dict[str, Any]
     notice: str
     function_notice: str
+    input_range: InputRangeCheck
 
 
 class BatterPredictionRequest(BaseModel):
@@ -736,7 +755,7 @@ class BatterPredictionRequest(BaseModel):
     batting_team: str
     opponent: str
     venue: str
-    match_date: str = Field(..., description="YYYY-MM-DD, after the player's latest eligible innings")
+    match_date: str = Field(..., description="YYYY-MM-DD, after the archive's last match and the player's latest eligible innings")
 
 
 class BatterRecentInnings(BaseModel):
@@ -773,6 +792,8 @@ class BatterPredictionResponse(BaseModel):
     version: str
     training_span: str
     scope: str
+    appeared_in_latest_season: bool
+    return_note: Optional[str] = Field(None, description="Set when the player has no appearance in the latest season")
     function_scope: str
     warning: str
     notice: str

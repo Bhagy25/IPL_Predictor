@@ -62,16 +62,28 @@ METRIC_TOLERANCE = 1e-6
 DLS_METHODS = {"D/L", "DLS", "D/L METHOD", "DLS METHOD"}
 RECENT_INNINGS_SHOWN = 5
 
+# Physically impossible inputs: an over has six legal balls (6 x 6 = 36 runs) plus an allowance for extras.
+# These are deliberately loose bounds, not a precise rule; the 2008-2026 data never comes close to them.
+MAX_RUNS_PER_OVER = 36
+RUNS_EXTRAS_ALLOWANCE = 30
+LAST_OVER_EXTRAS_ALLOWANCE = 20
 # Input rules mirrored from predict_wicket.forecast(); the API adds team and venue membership
 # because the models' encoders silently ignore an unknown category (handle_unknown="ignore").
 WICKET_RULES = {
     "innings": [1, 2],
     "completed_overs": {"min": 1, "max": 19},
     "wickets": {"min": 0, "max": 9},
-    "runs": {"min": 0},
-    "last_over_runs": "0 to the current runs",
+    "runs": {"min": 0, "max": f"{MAX_RUNS_PER_OVER} x completed overs + {RUNS_EXTRAS_ALLOWANCE}"},
+    "last_over_runs": f"0 to the current runs, and at most {MAX_RUNS_PER_OVER + LAST_OVER_EXTRAS_ALLOWANCE}",
     "last_over_wickets": "0 to the current wickets",
 }
+# The deployment wicket model's eligible training rows (read only): observed ranges per checkpoint
+WICKET_TRAINING_ROWS = "stage03_wicket_full_history_2008_2026.csv"
+RANGE_FIELDS = {"runs": "Runs", "run_rate": "Run rate", "last_over_runs": "Last-over runs"}
+# The stored run rate differs from runs / overs by float rounding (about 1e-15); boundaries count as seen
+RANGE_TOLERANCE = 1e-9
+EXTRAPOLATION_WARNING = ("These inputs are outside anything seen in {span} at this stage of an innings; the "
+                         "estimate is an extrapolation.")
 MANUAL_INPUT_NOTICE = "Manual input: these are the values you entered, not live match data."
 BATTER_SCOPE_NOTE = ("Conditional on the player batting in the match; whether the player is selected in the "
                      "playing XI, or bats at all, is not predicted.")
@@ -166,6 +178,8 @@ class PredictionService:
         self._meta: Dict[str, Dict[str, Any]] = {}
         self._options: Optional[Dict[str, Any]] = None
         self._history: Dict[str, pd.DataFrame] = {}
+        self._ranges: Optional[pd.DataFrame] = None
+        self._archive: Optional[Dict[str, Any]] = None
         self._replay: Optional[Dict[str, Any]] = None
 
     # ------------------------------------------------------------------ deployment artifacts
@@ -255,6 +269,47 @@ class PredictionService:
             self._history = {pid: rows for pid, rows in hist.groupby("batter_id", sort=False)}
         return self._history
 
+    def _archive_extent(self) -> Dict[str, Any]:
+        """Latest season and last match date of the archive, counted from matches.csv."""
+        if self._archive is None:
+            matches = pd.read_csv(self.data_dir / "matches.csv", usecols=["season", "date"])
+            self._archive = {"latest_season": int(matches.season.max()), "last_match_date": str(matches.date.max())}
+        return self._archive
+
+    def _wicket_ranges(self) -> Optional[pd.DataFrame]:
+        """Observed min and max of runs, run rate and last-over runs per completed-overs checkpoint."""
+        if self._ranges is None:
+            path = self.data_dir / WICKET_TRAINING_ROWS
+            if not path.is_file():
+                return None
+            rows = pd.read_csv(path, usecols=["completed_overs", *RANGE_FIELDS])
+            self._ranges = rows.groupby("completed_overs").agg(
+                **{f"{f}_{stat}": (f, stat) for f in RANGE_FIELDS for stat in ("min", "max")})
+        return self._ranges
+
+    def input_range_check(self, inputs: Dict[str, Any], span: str) -> Dict[str, Any]:
+        """Which inputs fall outside the training rows at this checkpoint; never changes the probability."""
+        ranges = self._wicket_ranges()
+        overs = inputs["completed_overs"]
+        if ranges is None or overs not in ranges.index:
+            return {"checked": False, "completed_overs": overs, "outside": [], "warning": None,
+                    "source": f"data/processed/{WICKET_TRAINING_ROWS} (not available)"}
+        row = ranges.loc[overs]
+        values = {"runs": inputs["runs"], "run_rate": inputs["runs"] / overs, "last_over_runs": inputs["last_over_runs"]}
+        outside = [
+            {"field": f, "label": label, "value": round(float(values[f]), 2),
+             "observed_min": round(float(row[f"{f}_min"]), 2), "observed_max": round(float(row[f"{f}_max"]), 2)}
+            for f, label in RANGE_FIELDS.items()
+            if not row[f"{f}_min"] - RANGE_TOLERANCE <= values[f] <= row[f"{f}_max"] + RANGE_TOLERANCE
+        ]
+        return {
+            "checked": True,
+            "completed_overs": overs,
+            "outside": outside,
+            "warning": EXTRAPOLATION_WARNING.format(span=span) if outside else None,
+            "source": f"data/processed/{WICKET_TRAINING_ROWS} (the deployment model's eligible training rows)",
+        }
+
     def options(self) -> Dict[str, Any]:
         self.ensure_loaded()
         if not any(s["available"] for s in self._status.values()):
@@ -263,7 +318,7 @@ class PredictionService:
         if self._options is None:
             allowed = self._allowed()
             matches = pd.read_csv(self.data_dir / "matches.csv")
-            latest_season = int(matches.season.max())
+            latest_season = self._archive_extent()["latest_season"]
             per_venue = matches.groupby("venue_canonical").agg(matches=("match_id", "size"), last=("season", "max"))
             venues = [
                 {"name": name, "matches": int(per_venue.loc[name, "matches"]) if name in per_venue.index else 0,
@@ -277,25 +332,29 @@ class PredictionService:
                 "teams": teams,
                 "venues": venues,
                 "latest_season": latest_season,
-                "archive_last_match_date": str(matches.date.max()),
+                "archive_last_match_date": self._archive_extent()["last_match_date"],
                 "wicket_rules": WICKET_RULES,
                 "batters": self._batter_options(),
-                "batter_date_rule": "The match date must be after the player's latest eligible innings "
-                                    "(D/L-marked and no-result matches are not eligible).",
+                "batter_date_rule": f"The match date must be after the last match in the archive "
+                                    f"({self._archive_extent()['last_match_date']}) and after the player's latest "
+                                    "eligible innings (D/L-marked and no-result matches are not eligible).",
                 "models_available": {k: s["available"] for k, s in self._status.items()},
             }
         return self._options
 
     def _batter_options(self) -> List[Dict[str, Any]]:
+        latest_season = self._archive_extent()["latest_season"]
         try:
             directory = canonical_engine.list_players(page_size=100_000)["players"]
-            names = {p["player_id"]: (p["name"], p["name_variants"]) for p in directory}
+            # Last season in any match squad (playing XI or substitute), from the player directory
+            names = {p["player_id"]: (p["name"], p["name_variants"], p["last_season"]) for p in directory}
         except DerivedDataUnavailable:
             names = {}
         items = []
         for pid, rows in self._batter_history().items():
             last = rows.iloc[-1]
-            name, variants = names.get(pid, (str(last.batter), []))
+            # Without the directory, fall back to the last season of a recorded batting innings
+            name, variants, last_season = names.get(pid, (str(last.batter), [], int(last.season)))
             items.append({
                 "player_id": pid,
                 "name": name,
@@ -303,6 +362,8 @@ class PredictionService:
                 "eligible_innings": int(len(rows)),
                 "latest_innings_date": str(last.date),
                 "latest_team": str(last.batting_team),
+                "last_season": int(last_season),
+                "appeared_in_latest_season": int(last_season) == latest_season,
             })
         return sorted(items, key=lambda p: (-p["eligible_innings"], p["name"]))
 
@@ -321,8 +382,17 @@ class PredictionService:
             errors.append(_error("wickets", "Wickets must be from 0 to 9 (10 wickets ends the innings)."))
         if inputs["runs"] < 0:
             errors.append(_error("runs", "Runs cannot be negative."))
+        runs_limit = MAX_RUNS_PER_OVER * inputs["completed_overs"] + RUNS_EXTRAS_ALLOWANCE
+        if 1 <= inputs["completed_overs"] <= 19 and inputs["runs"] > runs_limit:
+            errors.append(_error("runs", f"{inputs['runs']} runs after {inputs['completed_overs']} overs is not possible: "
+                                         f"the limit is {MAX_RUNS_PER_OVER} per over plus {RUNS_EXTRAS_ALLOWANCE} for "
+                                         f"extras ({runs_limit})."))
         if not 0 <= inputs["last_over_runs"] <= max(inputs["runs"], 0):
             errors.append(_error("last_over_runs", "Runs in the last over must be from 0 to the current runs."))
+        elif inputs["last_over_runs"] > MAX_RUNS_PER_OVER + LAST_OVER_EXTRAS_ALLOWANCE:
+            errors.append(_error("last_over_runs", f"{inputs['last_over_runs']} runs in one over is not possible: the "
+                                                   f"limit is {MAX_RUNS_PER_OVER} plus {LAST_OVER_EXTRAS_ALLOWANCE} for "
+                                                   f"extras ({MAX_RUNS_PER_OVER + LAST_OVER_EXTRAS_ALLOWANCE})."))
         if not 0 <= inputs["last_over_wickets"] <= max(inputs["wickets"], 0):
             errors.append(_error("last_over_wickets", "Wickets in the last over must be from 0 to the current "
                                                       "wickets."))
@@ -361,6 +431,8 @@ class PredictionService:
             "training_span": meta["training_span"],
             "notice": MANUAL_INPUT_NOTICE,
             "function_notice": result["notice"],
+            # Reported alongside the model's probability, which it never alters
+            "input_range": self.input_range_check(inputs, meta["training_span"]),
         }
 
     def validate_batter(self, inputs: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -375,7 +447,11 @@ class PredictionService:
         except ValueError:
             errors.append(_error("match_date", "Match date must be a valid date in YYYY-MM-DD form."))
             return errors
-        if history is not None:
+        archive_end = date.fromisoformat(self._archive_extent()["last_match_date"])
+        if when <= archive_end:
+            errors.append(_error("match_date", f"Match date must be after the last match in the data "
+                                               f"({archive_end.isoformat()}): forecasts are for future matches."))
+        elif history is not None:
             latest = date.fromisoformat(str(history.date.iloc[-1]))
             if when <= latest:
                 errors.append(_error("match_date", f"Match date must be after this player's latest eligible innings "
@@ -402,7 +478,9 @@ class PredictionService:
             raise RuntimeError("Milestone probabilities out of order: P(50+) exceeds P(30+)")
         history = self._batter_history()[pid]
         recent = history.iloc[::-1].head(RECENT_INNINGS_SHOWN)
-        name = next((b["name"] for b in self.options()["batters"] if b["player_id"] == pid), result["player_name"])
+        option = next((b for b in self.options()["batters"] if b["player_id"] == pid), None)
+        name = option["name"] if option else result["player_name"]
+        active = bool(option and option["appeared_in_latest_season"])
         return {
             **result,
             "player_name": name,
@@ -413,6 +491,10 @@ class PredictionService:
             "model_file": meta["file"],
             "training_span": meta["training_span"],
             "scope": BATTER_SCOPE_NOTE,
+            "appeared_in_latest_season": active,
+            "return_note": None if active else (
+                f"This player has no {self._archive_extent()['latest_season']} appearance; the forecast assumes "
+                "they play again."),
             "function_scope": result["scope"],
             "notice": MANUAL_INPUT_NOTICE,
             "form_context": {
