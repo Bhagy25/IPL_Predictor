@@ -1269,30 +1269,11 @@ class CanonicalAnalyticsEngine:
             "batting": batting, "bowling": bowling, "result": result,
         }
 
-    @staticmethod
-    def _legacy_log_item(entry: Dict[str, Any]) -> Dict[str, Any]:
-        """The pre-6A recent_matches row shape, built from a log entry (kept until the frontend moves over)."""
-        bat, bowl = entry["batting"], entry["bowling"]
-        runs = bat.get("runs")
-        if runs is None:
-            status, badge = "Did not bat", "DNB"
-        else:
-            status = "Out" if bat["dismissed"] else "Not Out"
-            badge = "50+ Milestone" if runs >= 50 else "30–49 Runs" if runs >= 30 else "Below 30"
-        return {
-            "match_id": entry["match_id"], "date": entry["date"], "season": entry["season"],
-            "team": entry["team"], "opponent": entry["opposition"], "venue": entry["venue"],
-            "runs": runs, "balls_faced": bat.get("balls_faced"), "fours": bat.get("fours"), "sixes": bat.get("sixes"),
-            "dismissal_status": status, "milestone_badge": badge,
-            "overs_bowled": bowl.get("overs") or "Did not bowl",
-            "runs_conceded": bowl.get("runs_conceded"), "wickets": bowl.get("wickets"), "economy": bowl.get("economy"),
-        }
-
     def get_player_profile(self, player_id_or_name: str, season: Optional[int] = None) -> Dict[str, Any]:
         """Career profile (or one season's): summary, batting and bowling figures, season tables and splits."""
         self.require_derived()
         pid, name = self._resolve_player(player_id_or_name)
-        squad, b_df, w_df, log = self._player_rows(pid, season)
+        squad, b_df, w_df, _ = self._player_rows(pid, season)
         if squad.empty:
             played = format_season_ranges(self._squad_info[pid]["seasons"])
             raise KeyError(f"{name} has no IPL match appearances in {season} (seasons played: {played}).")
@@ -1328,24 +1309,6 @@ class CanonicalAnalyticsEngine:
         for table, label in ((bowling_by_opposition, "opposition"), (bowling_by_venue, "venue")):
             table.sort(key=lambda r, label=label: (-r["wickets"], r["runs_conceded"], r[label]))
 
-        # 4. Fields the current frontend reads, derived from the tables above
-        recent_matches = [self._legacy_log_item(self._log_entry(r)) for r in log.to_dict("records")]
-        split_fields = ("innings", "runs", "average", "strike_rate")
-        bat_seasons = {r["season"]: r for r in batting_by_season}
-        bowl_seasons = {r["season"]: r for r in bowling_by_season}
-        season_splits = []
-        for s in seasons:
-            bat, bowl = bat_seasons.get(s), bowl_seasons.get(s)
-            season_splits.append({
-                "season": s,
-                "batting_innings": bat["innings"] if bat else 0,
-                "runs": bat["runs"] if bat else 0,
-                "highest_score": bat["highest_score"] if bat else None,
-                "bowling_innings": bowl["innings"] if bowl else 0,
-                "wickets": bowl["wickets"] if bowl else 0,
-                "economy": bowl["economy_rate"] if bowl else None,
-            })
-
         return {
             "player_id": pid,
             "name": name,
@@ -1372,12 +1335,6 @@ class CanonicalAnalyticsEngine:
             "bowling_by_venue": bowling_by_venue,
             "metric_definitions": PROFILE_METRIC_DEFINITIONS,
             "state_definitions": STATE_DEFINITIONS,
-            "recent_matches": recent_matches,
-            "opposition_splits": [
-                {"opponent": r["opposition"], **{k: r[k] for k in split_fields}} for r in batting_by_opposition[:10]
-            ],
-            "venue_splits": [{"venue": r["venue"], **{k: r[k] for k in split_fields}} for r in batting_by_venue[:10]],
-            "season_splits": season_splits,
         }
 
     def get_player_matches(

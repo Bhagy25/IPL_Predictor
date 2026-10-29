@@ -337,27 +337,6 @@ export interface PlayerMatchLogResponse {
   matches: PlayerMatchAppearance[];
 }
 
-export interface PlayerMatchLogItem {
-  match_id: number;
-  date: string;
-  season: number;
-  team: string;
-  opponent: string;
-  venue: string;
-  // Batting
-  runs: number | null;
-  balls_faced: number | null;
-  fours: number | null;
-  sixes: number | null;
-  dismissal_status: string;
-  milestone_badge: string;
-  // Bowling
-  overs_bowled: string;
-  runs_conceded: number | null;
-  wickets: number | null;
-  economy: number | null;
-}
-
 export interface PlayerListItem {
   player_id?: string;
   batter_id: string;
@@ -412,45 +391,6 @@ export interface PlayerMilestoneBreakdown {
   score_50_plus_pct: number;
 }
 
-export interface PlayerRecentMatch {
-  match_id: number;
-  date: string;
-  season: number;
-  innings: number;
-  team: string;
-  opponent: string;
-  venue: string;
-  runs: number;
-  milestone_class: number;
-  milestone_label: string;
-  prob_30_plus?: number | null;
-  prob_50_plus?: number | null;
-  actual_30_plus: number;
-  actual_50_plus: number;
-}
-
-export interface PlayerOpponentRecord {
-  opponent: string;
-  innings: number;
-  total_runs?: number;
-  runs?: number;
-  avg_runs?: number;
-  average?: number;
-  strike_rate?: number;
-  count_30_plus?: number;
-  count_50_plus?: number;
-}
-
-export interface PlayerVenueRecord {
-  venue: string;
-  innings: number;
-  total_runs?: number;
-  runs?: number;
-  avg_runs?: number;
-  average?: number;
-  strike_rate?: number;
-}
-
 export interface PlayerProfileResponse {
   player_id?: string;
   batter_id: string;
@@ -480,12 +420,6 @@ export interface PlayerProfileResponse {
   career_summary?: PlayerCareerSummary;
   milestone_breakdown?: PlayerMilestoneBreakdown;
   coverage_period?: string;
-  recent_matches: (PlayerMatchLogItem | PlayerRecentMatch)[];
-  vs_opponents?: PlayerOpponentRecord[];
-  opposition_splits?: PlayerOpponentRecord[];
-  at_venues?: PlayerVenueRecord[];
-  venue_splits?: PlayerVenueRecord[];
-  season_splits?: Record<string, any>[];
   notes?: string[];
 }
 

@@ -113,8 +113,11 @@ def test_haul_counts(raw):
 def test_run_out_off_a_bowlers_delivery_is_not_credited(raw):
     match_id, bowler = sorted(raw["dot_ball_run_outs"])[0]
     credited = sum(v["wickets"] for (mid, pos, b), v in raw["innings"].items() if mid == match_id and b == bowler)
-    log = next(m for m in profile(bowler)["recent_matches"] if m["match_id"] == match_id)
-    assert log["wickets"] == credited
+    pid = profile(bowler)["player_id"]
+    season = raw["season_of"][match_id]
+    log = client.get(f"/api/players/{pid}/matches", params={"season": season, "page_size": 100}).json()["matches"]
+    row = next(m for m in log if m["match_id"] == int(match_id))
+    assert row["bowling"]["wickets"] == credited
 
 
 def test_csk_team_wickets_unchanged():
@@ -131,7 +134,7 @@ def test_season_split_recomputes_bowler_wickets(raw):
         v["wickets"] for (mid, pos, b), v in raw["innings"].items()
         if b == "JJ Bumrah" and raw["season_of"][mid] == season
     )
-    split = next(s for s in profile("JJ Bumrah")["season_splits"] if s["season"] == season)
+    split = next(s for s in profile("JJ Bumrah")["bowling_by_season"] if s["season"] == season)
     assert split["wickets"] == expected
 
 

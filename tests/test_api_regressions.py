@@ -62,7 +62,7 @@ def test_player_profile_returns_200(name, deliveries):
     assert res.status_code == 200
     data = res.json()
     assert data["name"] == name
-    assert len(data["recent_matches"]) > 0
+    assert client.get(f"/api/players/{data['player_id']}/matches").json()["total_count"] == data["matches"] > 0
     assert data["career_batting"] is not None or data["career_bowling"] is not None
 
     expected_seasons = sorted(

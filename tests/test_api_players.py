@@ -70,12 +70,13 @@ def test_player_overview_kohli():
     total_pct = mb["below_30_pct"] + mb["score_30_to_49_pct"] + mb["score_50_plus_pct"]
     assert 99.0 <= total_pct <= 101.0
 
-    # Recent matches should have real data
-    assert len(data["recent_matches"]) > 0
-    first_match = data["recent_matches"][0]
+    # The match log has real rows for the same player
+    log = client.get("/api/players/ba607b88/matches").json()
+    assert log["total_count"] == data["matches"] > 0
+    first_match = log["matches"][0]
     assert "match_id" in first_match
-    assert "runs" in first_match
-    assert "milestone_badge" in first_match
+    assert first_match["batting"]["state"] in ("batted", "did_not_bat")
+    assert first_match["bowling"]["state"] in ("bowled", "did_not_bowl")
 
 
 def test_player_overview_not_found():

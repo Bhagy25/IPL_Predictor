@@ -253,7 +253,9 @@ def assert_profile_matches_raw(raw, pid, season=None):
     assert sorted((t["team"], t["seasons"], t["matches"]) for t in p["team_history"]) == expected_history
     assert [t["seasons"][0] for t in p["team_history"]] == sorted(t["seasons"][0] for t in p["team_history"])
     assert p["teams"] == sorted(teams)
-    assert sorted(m["match_id"] for m in p["recent_matches"]) == sorted(apps)
+    assert sorted(e["match_id"] for e in full_log(pid, season)[0]) == sorted(apps)
+    # The removed pre-6A fields stay removed
+    assert not {"recent_matches", "opposition_splits", "venue_splits", "season_splits"} & set(p)
 
     # Batting: career, season by season, and team / opposition / venue splits
     if bat:

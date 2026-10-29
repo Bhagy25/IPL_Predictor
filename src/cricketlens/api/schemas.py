@@ -364,27 +364,6 @@ class PlayerMatchLogResponse(BaseModel):
     matches: List[PlayerMatchAppearance] = Field(..., description="Appearances on this page, most recent first")
 
 
-class PlayerMatchLogItem(BaseModel):
-    match_id: int = Field(..., description="Match ID")
-    date: str = Field(..., description="Match date")
-    season: int = Field(..., description="Season year")
-    team: str = Field(..., description="Player's franchise")
-    opponent: str = Field(..., description="Opposition team")
-    venue: str = Field(..., description="Canonical stadium")
-    # Batting
-    runs: Optional[int] = Field(None, description="Runs scored or None if did not bat")
-    balls_faced: Optional[int] = Field(None, description="Balls faced or None if did not bat")
-    fours: Optional[int] = Field(None, description="Fours hit or None if did not bat")
-    sixes: Optional[int] = Field(None, description="Sixes hit or None if did not bat")
-    dismissal_status: str = Field(..., description="'Out', 'Not Out', or 'Did not bat'")
-    milestone_badge: str = Field(..., description="'50+ Milestone', '30–49 Runs', 'Below 30', or 'DNB'")
-    # Bowling
-    overs_bowled: str = Field(..., description="Overs bowled (e.g. '4.0') or 'Did not bowl'")
-    runs_conceded: Optional[int] = Field(None, description="Runs conceded or None if did not bowl")
-    wickets: Optional[int] = Field(None, description="Bowler wickets or None if did not bowl")
-    economy: Optional[float] = Field(None, description="Innings economy rate; None if did not bowl or no legal ball")
-
-
 class PlayerListItem(BaseModel):
     player_id: str = Field(..., description="Cricsheet registry ID")
     batter_id: Optional[str] = Field(None, description="Backward-compatible batter ID alias")
@@ -477,13 +456,6 @@ class PlayerProfileResponse(BaseModel):
     career_summary: Optional[PlayerCareerSummary] = Field(None, description="Backward-compatible batting summary")
     milestone_breakdown: Optional[PlayerMilestoneBreakdown] = Field(None, description="Score tier distribution")
     coverage_period: str = Field(default="2008–2026 Complete History", description="Data coverage span")
-    recent_matches: List[PlayerMatchLogItem] = Field(
-        default_factory=list,
-        description="Deprecated: every match appearance in the old row shape; use /api/players/{id}/matches",
-    )
-    opposition_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: top 10 of batting_by_opposition")
-    venue_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: top 10 of batting_by_venue")
-    season_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: use batting_by_season and bowling_by_season")
     notes: List[str] = Field(default_factory=list, description="Cricket context notes")
 
 

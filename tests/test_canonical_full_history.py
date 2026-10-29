@@ -158,12 +158,14 @@ def test_player_profile_dual_career_kohli():
 
     # Match logs: every squad appearance, which includes every match in which he batted or bowled
     squads = pd.read_csv(DATA.parent / "derived" / "match_players.csv", usecols=["match_id", "player_id"])
-    logged = [m["match_id"] for m in data["recent_matches"]]
+    log = client.get("/api/players/ba607b88/matches", params={"page_size": 100}).json()
+    logged = [m["match_id"] for page in range(1, log["total_pages"] + 1) for m in client.get(
+        "/api/players/ba607b88/matches", params={"page": page, "page_size": 100}).json()["matches"]]
     assert sorted(logged) == sorted(squads.loc[squads["player_id"] == "ba607b88", "match_id"])
     assert set(batted["match_id"]) | bowled_matches <= set(logged)
-    first_log = data["recent_matches"][0]
-    assert "runs" in first_log
-    assert "overs_bowled" in first_log
+    first_log = log["matches"][0]
+    assert "runs" in first_log["batting"]
+    assert "overs" in first_log["bowling"]
 
 
 def test_player_profile_kohli_boundaries():
