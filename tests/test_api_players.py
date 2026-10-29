@@ -56,19 +56,21 @@ def test_player_overview_kohli():
 
     assert data["batter_id"] == "ba607b88"
     assert "Kohli" in data["name"]
-    assert data["career_summary"]["innings"] >= 100
-    assert data["career_summary"]["total_runs"] > 4000
+    cb = data["career_batting"]
+    assert cb["innings"] >= 100
+    assert cb["runs"] > 4000
 
     # Full-history 30+ rate from ball-by-ball runs; the old "> 0.5" threshold came
     # from the 2018-2025 Stage 2 cohort, where Kohli's rate was 0.534.
     deliveries = pd.read_csv(DATA / "deliveries.csv", usecols=["match_id", "innings", "batter", "runs_batter"])
     kohli = deliveries[deliveries["batter"] == "V Kohli"].groupby(["match_id", "innings"])["runs_batter"].sum()
-    assert data["career_summary"]["milestone30_rate"] == round(float((kohli >= 30).mean()), 3)
+    assert round(cb["scores_30_plus"] / cb["innings"], 3) == round(float((kohli >= 30).mean()), 3)
 
-    # Milestone breakdown sums to 100% (within rounding)
-    mb = data["milestone_breakdown"]
-    total_pct = mb["below_30_pct"] + mb["score_30_to_49_pct"] + mb["score_50_plus_pct"]
-    assert 99.0 <= total_pct <= 101.0
+    # The score tiers (<30, 30-49, 50+) partition the innings
+    below_30 = cb["innings"] - cb["scores_30_plus"]
+    from_30_to_49 = cb["scores_30_plus"] - cb["scores_50_plus"]
+    assert below_30 >= 0 and from_30_to_49 >= 0 and cb["scores_50_plus"] >= 0
+    assert below_30 + from_30_to_49 + cb["scores_50_plus"] == cb["innings"]
 
     # The match log has real rows for the same player
     log = client.get("/api/players/ba607b88/matches").json()

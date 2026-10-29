@@ -444,7 +444,7 @@ def test_undefined_rates_are_null_with_a_state(raw, players):
     p = profile(bowler)
     assert p["career_batting"]["dismissals"] == 0
     assert (p["career_batting"]["average"], p["career_batting"]["average_state"]) == (None, "no_dismissals")
-    assert p["career_summary"]["avg_per_appearance"] is None
+    assert p["career_batting"]["average"] is None
 
     # Only ever at the non-striker's end: no balls faced, so no strike rate
     non_striker = min(pid for pid, rows in batting_by_player.items() if sum(r["balls_faced"] for r in rows) == 0)

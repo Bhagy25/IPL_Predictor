@@ -6,11 +6,9 @@ backed directly by the verified canonical data engine.
 """
 from __future__ import annotations
 
-from typing import Optional, List, Dict, Any
+from typing import Optional
 from cricketlens.api.schemas import (
     PlayerListItem,
-    PlayerCareerSummary,
-    PlayerMilestoneBreakdown,
     PlayerProfileResponse,
     PlayerListResponse,
     PlayerMatchLogResponse,
@@ -70,30 +68,6 @@ class PlayerService:
         data = canonical_engine.get_player_profile(player_id, season=season)
         d_copy = dict(data)
         d_copy["batter_id"] = data["player_id"]
-
-        if data["career_batting"]:
-            cb = data["career_batting"]
-            total_inn = max(1, cb["innings"])
-            d_copy["career_summary"] = PlayerCareerSummary(
-                innings=cb["innings"],
-                total_runs=cb["runs"],
-                avg_per_appearance=cb["average"],
-                milestone30_count=cb["scores_30_plus"],
-                milestone30_rate=round(cb["scores_30_plus"] / total_inn, 3),
-                milestone50_count=cb["scores_50_plus"],
-                milestone50_rate=round(cb["scores_50_plus"] / total_inn, 3),
-                highest_score=cb["highest_score"],
-                experience_tier="veteran" if cb["innings"] >= 60 else "experienced" if cb["innings"] >= 31 else "regular" if cb["innings"] >= 11 else "emerging",
-            )
-            d_copy["milestone_breakdown"] = PlayerMilestoneBreakdown(
-                below_30_count=total_inn - cb["scores_30_plus"],
-                below_30_pct=round((total_inn - cb["scores_30_plus"]) / total_inn * 100, 1),
-                score_30_to_49_count=cb["scores_30_plus"] - cb["scores_50_plus"],
-                score_30_to_49_pct=round((cb["scores_30_plus"] - cb["scores_50_plus"]) / total_inn * 100, 1),
-                score_50_plus_count=cb["scores_50_plus"],
-                score_50_plus_pct=round(cb["scores_50_plus"] / total_inn * 100, 1),
-            )
-
         return PlayerProfileResponse(**d_copy)
 
     def get_player_matches(

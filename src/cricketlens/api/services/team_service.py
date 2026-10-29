@@ -14,7 +14,7 @@ from cricketlens.api.schemas import (
     TeamVenueResponse,
     HeadToHeadResponse,
 )
-from cricketlens.api.services.canonical_data import canonical_engine, FRANCHISE_METADATA
+from cricketlens.api.services.canonical_data import canonical_engine
 
 
 class TeamService:

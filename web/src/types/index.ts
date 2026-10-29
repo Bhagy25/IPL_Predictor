@@ -475,27 +475,6 @@ export interface PlayerListItem {
   experience_tier: 'veteran' | 'experienced' | 'regular' | 'emerging' | string;
 }
 
-export interface PlayerCareerSummary {
-  innings: number;
-  total_runs: number;
-  avg_per_appearance: number;
-  milestone30_count: number;
-  milestone30_rate: number;
-  milestone50_count: number;
-  milestone50_rate: number;
-  highest_score: number | string;
-  experience_tier: string;
-}
-
-export interface PlayerMilestoneBreakdown {
-  below_30_count: number;
-  below_30_pct: number;
-  score_30_to_49_count: number;
-  score_30_to_49_pct: number;
-  score_50_plus_count: number;
-  score_50_plus_pct: number;
-}
-
 export interface PlayerProfileResponse {
   player_id?: string;
   batter_id: string;
@@ -522,8 +501,6 @@ export interface PlayerProfileResponse {
   bowling_by_venue: PlayerBowlingVenueSplit[];
   metric_definitions: Record<string, string>;
   state_definitions: Record<string, string>;
-  career_summary?: PlayerCareerSummary;
-  milestone_breakdown?: PlayerMilestoneBreakdown;
   coverage_period?: string;
   notes?: string[];
 }

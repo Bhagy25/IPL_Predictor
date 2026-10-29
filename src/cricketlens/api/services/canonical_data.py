@@ -5,7 +5,6 @@ the complete processed delivery, match, and innings datasets.
 """
 from __future__ import annotations
 
-import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Set, Tuple
@@ -881,7 +880,6 @@ class CanonicalAnalyticsEngine:
             runs_conc = w_info["runs_conceded"] if w_info else 0
             total_wkts = w_info["wickets"] if w_info else 0
             bowl_avg = round(runs_conc / total_wkts, 2) if total_wkts > 0 else None
-            bowl_sr = round(legal_deliveries / total_wkts, 2) if total_wkts > 0 else None
             bowl_econ = round(runs_conc / (legal_deliveries / 6.0), 2) if legal_deliveries > 0 else None
 
             role = derive_role(int(squad["matches"]), int(batting_inn), int(bat_balls), int(bowl_inn), int(legal_deliveries))

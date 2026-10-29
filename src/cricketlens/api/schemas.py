@@ -486,27 +486,6 @@ class PlayerListItem(BaseModel):
     milestone50_rate: Optional[float] = Field(None, description="Backward-compatible 50+ rate")
 
 
-class PlayerCareerSummary(BaseModel):
-    innings: int = Field(..., description="Recorded batting appearances")
-    total_runs: int = Field(..., description="Total runs scored")
-    avg_per_appearance: Optional[float] = Field(None, description="Batting average (runs / dismissals); null when never dismissed")
-    milestone30_count: int = Field(default=0, description="Count of scores >= 30")
-    milestone30_rate: float = Field(default=0.0, description="Rate of scoring 30+ runs")
-    milestone50_count: int = Field(default=0, description="Count of scores >= 50")
-    milestone50_rate: float = Field(default=0.0, description="Rate of scoring 50+ runs")
-    highest_score: Any = Field(..., description="Highest score recorded in logs")
-    experience_tier: str = Field(default="regular", description="Experience tier categorization")
-
-
-class PlayerMilestoneBreakdown(BaseModel):
-    below_30_count: int = Field(default=0, description="Innings scoring < 30 runs")
-    below_30_pct: float = Field(default=0.0, description="Percentage scoring < 30 runs")
-    score_30_to_49_count: int = Field(default=0, description="Innings scoring 30–49 runs")
-    score_30_to_49_pct: float = Field(default=0.0, description="Percentage scoring 30–49 runs")
-    score_50_plus_count: int = Field(default=0, description="Innings scoring 50+ runs")
-    score_50_plus_pct: float = Field(default=0.0, description="Percentage scoring 50+ runs")
-
-
 class PlayerProfileResponse(BaseModel):
     player_id: str = Field(..., description="Cricsheet registry ID")
     batter_id: Optional[str] = Field(None, description="Backward compatible ID")
@@ -533,8 +512,6 @@ class PlayerProfileResponse(BaseModel):
     bowling_by_venue: List[PlayerBowlingVenueSplit] = Field(default_factory=list, description="Bowling per venue, most wickets first")
     metric_definitions: Dict[str, str] = Field(default_factory=dict, description="How every statistic is defined")
     state_definitions: Dict[str, str] = Field(default_factory=dict, description="Meaning of each *_state value")
-    career_summary: Optional[PlayerCareerSummary] = Field(None, description="Backward-compatible batting summary")
-    milestone_breakdown: Optional[PlayerMilestoneBreakdown] = Field(None, description="Score tier distribution")
     coverage_period: str = Field(default="2008–2026 Complete History", description="Data coverage span")
     notes: List[str] = Field(default_factory=list, description="Cricket context notes")
 
