@@ -15,6 +15,10 @@ class HealthCheckResponse(BaseModel):
         None,
         description="Availability of data/derived tables used for bowler wickets; bowling endpoints return 503 when unavailable",
     )
+    prediction_models: Optional[Dict[str, Dict[str, Any]]] = Field(
+        None,
+        description="Availability of the wicket and batter deployment models; prediction endpoints return 503 when unavailable",
+    )
 
 
 class KPIMetricItem(BaseModel):
@@ -651,3 +655,118 @@ class EDAFilterOptionsResponse(BaseModel):
     venues: List[Dict[str, Any]]
     correlation_min_n: int
     areas: Dict[str, Dict[str, Any]]
+
+
+# ==========================================
+# Prediction Arena and Prediction Tracker
+# ==========================================
+
+class PredictionTeamOption(BaseModel):
+    name: str = Field(..., description="Canonical franchise name, exactly as the models were trained on it")
+    code: str
+    slug: str
+    primary_color: str
+
+
+class PredictionVenueOption(BaseModel):
+    name: str = Field(..., description="Canonical venue name known to every deployment model")
+    matches: int = Field(..., description="Archive matches played at the venue")
+    last_season: Optional[int] = None
+    used_in_latest_season: bool
+
+
+class PredictionBatterOption(BaseModel):
+    player_id: str = Field(..., description="Cricsheet registry ID")
+    name: str
+    name_variants: List[str]
+    eligible_innings: int = Field(..., description="Innings outside D/L-marked and no-result matches")
+    latest_innings_date: str = Field(..., description="A match date must be after this date")
+    latest_team: str = Field(..., description="Team of the player's latest eligible innings")
+
+
+class PredictionOptionsResponse(BaseModel):
+    teams: List[PredictionTeamOption]
+    venues: List[PredictionVenueOption]
+    latest_season: int
+    archive_last_match_date: str
+    wicket_rules: Dict[str, Any] = Field(..., description="Input rules of predict_wicket.forecast()")
+    batters: List[PredictionBatterOption]
+    batter_date_rule: str
+    models_available: Dict[str, bool]
+
+
+class WicketPredictionRequest(BaseModel):
+    batting_team: str
+    bowling_team: str
+    venue: str
+    innings: int = Field(..., description="1 or 2")
+    completed_overs: int = Field(..., description="1 to 19")
+    runs: int = Field(..., description="Current runs, 0 or more")
+    wickets: int = Field(..., description="Current wickets, 0 to 9")
+    last_over_runs: int = Field(..., description="Runs in the most recent over, 0 to runs")
+    last_over_wickets: int = Field(..., description="Wickets in the most recent over, 0 to wickets")
+
+
+class WicketPredictionResponse(BaseModel):
+    event: str
+    probability: float = Field(..., description="As returned by predict_wicket.forecast() (4 decimals)")
+    probability_pct: float = Field(..., description="probability × 100, one decimal, halves rounded up")
+    phase: str = Field(..., description="Phase of the next over (Stage 3 phase_for_next_over)")
+    model: str
+    model_file: str
+    version: str
+    status: str
+    training_end: int
+    training_span: str
+    inputs: Dict[str, Any]
+    notice: str
+    function_notice: str
+
+
+class BatterPredictionRequest(BaseModel):
+    player_id: str
+    batting_team: str
+    opponent: str
+    venue: str
+    match_date: str = Field(..., description="YYYY-MM-DD, after the player's latest eligible innings")
+
+
+class BatterRecentInnings(BaseModel):
+    date: str
+    runs: int
+    batting_team: str
+    opponent: str
+    venue: str
+
+
+class BatterFormContext(BaseModel):
+    prior_eligible_innings: int
+    latest_innings_date: str
+    recent_innings: List[BatterRecentInnings]
+    definition: str
+
+
+class BatterPredictionResponse(BaseModel):
+    player_id: str
+    player_name: str
+    source_name: str = Field(..., description="Name in the batting data used by the model")
+    batting_team: str
+    opponent: str
+    venue: str
+    date: str
+    prior_eligible_innings: int
+    chance_30_plus: float = Field(..., description="As returned by forecast_future_batter.forecast() (6 decimals)")
+    chance_50_plus: float = Field(..., description="Never greater than chance_30_plus")
+    chance_30_plus_pct: float
+    chance_50_plus_pct: float
+    model: str
+    model_file: str
+    model_train_end: int
+    version: str
+    training_span: str
+    scope: str
+    function_scope: str
+    warning: str
+    notice: str
+    form_context: BatterFormContext
+
