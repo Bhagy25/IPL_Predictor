@@ -5,12 +5,11 @@ the complete processed delivery, match, and innings datasets.
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-from collections import defaultdict
+from typing import Dict, List, Any, Optional, Set, Tuple
+from collections import Counter, defaultdict
 
 import numpy as np
 import pandas as pd
@@ -185,11 +184,13 @@ class CanonicalAnalyticsEngine:
         self._batters: pd.DataFrame = pd.DataFrame()
         self._innings: pd.DataFrame = pd.DataFrame()
 
-        # Indexed structures
-        self._player_index: Dict[str, Dict[str, Any]] = {}
+        # Indexed structures (players are keyed by Cricsheet registry ID)
+        self._match_players: pd.DataFrame = pd.DataFrame()
+        self._people_names: Dict[str, List[str]] = {}
         self._player_names_by_id: Dict[str, str] = {}
-        self._player_ids_by_name: Dict[str, str] = {}
+        self._player_ids_by_name: Dict[str, Set[str]] = {}
         self._player_master_list: List[Dict[str, Any]] = []
+        self._directory_counts: Dict[str, int] = {}
         self._franchise_seasons: Dict[str, List[int]] = {}
 
     def ensure_loaded(self) -> None:
@@ -253,8 +254,9 @@ class CanonicalAnalyticsEngine:
             for name in FRANCHISE_METADATA
         }
 
-        # Build player registry index
-        self._build_player_index()
+        # Build the player directory; without data/derived, player endpoints return 503 instead
+        if not self._derived_error:
+            self._build_player_index()
         self._initialized = True
 
     def _read_derived(self, name: str, columns: List[str]) -> Optional[pd.DataFrame]:
@@ -312,6 +314,42 @@ class CanonicalAnalyticsEngine:
         )
         self._deliveries["bowler_wickets"] = self._deliveries["bowler_wickets"].fillna(0).astype("int8")
         self._deliveries["is_non_boundary"] = self._deliveries["is_non_boundary"].notna()
+        self._load_squads()
+
+    def _load_squads(self) -> None:
+        """Load squad lists and registry names; give every bowler their registry ID within each match.
+
+        Names are only unique within a match (the same name can belong to different people across
+        seasons), so bowlers are resolved through that match's squad list, never a global name lookup.
+        """
+        paths = [self.derived_dir / name for name in ("match_players.csv", "people.csv")]
+        missing = [p.name for p in paths if not p.exists()]
+        if missing:
+            self._derived_error = f"{', '.join(missing)} missing from {self.derived_dir}."
+            logger.error("%s Player statistics are unavailable.", self._derived_error)
+            return
+        squads = pd.read_csv(paths[0], usecols=["match_id", "season", "date", "team", "player_name", "player_id"])
+        people = pd.read_csv(paths[1], usecols=["player_id", "names"])
+
+        lookup = (
+            squads[["match_id", "player_name", "player_id"]]
+            .rename(columns={"player_name": "bowler", "player_id": "bowler_id"})
+            .astype({"match_id": self._deliveries["match_id"].dtype})
+        )
+        ambiguous = int(lookup.duplicated(["match_id", "bowler"]).sum())
+        self._deliveries = self._deliveries.merge(lookup.drop_duplicates(["match_id", "bowler"]), on=["match_id", "bowler"], how="left")
+        unmapped = int(self._deliveries["bowler_id"].isna().sum()) + int(self._deliveries["batter_id"].isna().sum())
+        known = set(people["player_id"])
+        unknown = len((set(self._deliveries["bowler_id"].dropna()) | set(self._deliveries["batter_id"].dropna())) - known)
+        if ambiguous or unmapped or unknown:
+            self._derived_error = (
+                f"Player identities do not resolve ({unmapped} unmapped deliveries, {ambiguous} ambiguous "
+                f"squad names, {unknown} IDs missing from people.csv)."
+            )
+            logger.error("%s Player statistics are unavailable.", self._derived_error)
+            return
+        self._match_players = squads
+        self._people_names = dict(zip(people["player_id"], people["names"].str.split(";")))
 
     def derived_status(self) -> Dict[str, Any]:
         """Availability of the data/derived tables used for bowling and boundary statistics."""
@@ -330,40 +368,58 @@ class CanonicalAnalyticsEngine:
             )
 
     def _build_player_index(self) -> None:
-        """Construct full player directory covering all 806 batters and bowlers."""
-        # 1. Batter IDs from batter_innings
-        b_id_map = self._batters[["batter", "batter_id"]].dropna().drop_duplicates()
-        name_to_id: Dict[str, str] = dict(zip(b_id_map["batter"], b_id_map["batter_id"]))
+        """Build the player directory: one entry per Cricsheet registry ID who batted or bowled."""
+        squads = self._match_players
+        directory_ids = sorted(set(self._batters["batter_id"]) | set(self._deliveries["bowler_id"]))
 
-        # 2. All distinct player names
-        all_batters = set(self._batters["batter"].dropna().unique())
-        all_bowlers = set(self._deliveries["bowler"].dropna().unique())
-        all_names = sorted(all_batters.union(all_bowlers))
+        # Squad appearances give matches, seasons and teams for every player
+        squad_grp = squads.groupby("player_id").agg(
+            matches=("match_id", "nunique"),
+            seasons=("season", lambda s: sorted({int(x) for x in s})),
+            teams=("team", lambda t: sorted(set(t))),
+        )
+        self._squad_info = squad_grp.to_dict(orient="index")
 
-        for name in all_names:
-            if name in name_to_id:
-                pid = str(name_to_id[name])
-            else:
-                # Deterministic 8-char hex id for pure bowlers
-                pid = hashlib.sha256(name.encode("utf-8")).hexdigest()[:8]
-            
-            self._player_names_by_id[pid] = name
-            self._player_ids_by_name[name] = pid
+        # Display name: the most-used name variant, ties broken by the most recent match
+        usage = (
+            squads.groupby(["player_id", "player_name"])
+            .agg(uses=("match_id", "count"), last_date=("date", "max")).reset_index()
+            .sort_values(["player_id", "uses", "last_date"], ascending=[True, False, False])
+        )
+        display = usage.drop_duplicates("player_id").set_index("player_id")["player_name"].to_dict()
+        # Different people who share a name are told apart by franchise and season span
+        shared = Counter(display[pid] for pid in directory_ids)
+        for pid in directory_ids:
+            if shared[display[pid]] > 1:
+                info = self._squad_info[pid]
+                teams = "/".join(FRANCHISE_METADATA[t]["short_name"] for t in info["teams"])
+                first, last = info["seasons"][0], info["seasons"][-1]
+                span = f"{first}" if first == last else f"{first}–{last}"
+                display[pid] = f"{display[pid]} ({teams} {span})"
+        self._player_names_by_id = {pid: display[pid] for pid in directory_ids}
 
-        # 3. Aggregate batting metrics by batter
+        # Every listed name variant and the display name resolve to the registry ID
+        self._player_ids_by_name = defaultdict(set)
+        for pid in directory_ids:
+            for name in {*self._people_names.get(pid, []), display[pid]}:
+                self._player_ids_by_name[name.lower()].add(pid)
+
+        # Aggregate batting metrics per batter
         # Pre-filter boundary balls before grouping for high performance
         boundary_deliv = self._deliveries[
             (self._deliveries["is_four"]) | (self._deliveries["is_six"]) | (self._deliveries["is_dot"])
         ]
-        ball_agg = boundary_deliv.groupby(["match_id", "innings", "batter"]).agg(
+        ball_agg = boundary_deliv.groupby(["match_id", "innings", "batter_id"]).agg(
             fours=("is_four", "sum"),
             sixes=("is_six", "sum"),
             dots=("is_dot", "sum"),
         ).reset_index()
 
         self._batters_merged = pd.merge(
-            self._batters, ball_agg, on=["match_id", "innings", "batter"], how="left"
+            self._batters, ball_agg, on=["match_id", "innings", "batter_id"], how="left"
         )
+        self._batters_merged["player_id"] = self._batters_merged["batter_id"]
+        self._batters_merged["batter"] = self._batters_merged["player_id"].map(self._player_names_by_id)
         self._batters_merged["fours"] = self._batters_merged["fours"].fillna(0).astype(int)
         self._batters_merged["sixes"] = self._batters_merged["sixes"].fillna(0).astype(int)
         self._batters_merged["dots"] = self._batters_merged["dots"].fillna(0).astype(int)
@@ -376,7 +432,7 @@ class CanonicalAnalyticsEngine:
         )
 
         # Batting career aggregations (vectorized)
-        bat_grp = self._batters_merged.groupby("batter").agg(
+        bat_grp = self._batters_merged.groupby("player_id").agg(
             innings=("match_id", "count"),
             runs=("runs", "sum"),
             balls_faced=("balls_faced", "sum"),
@@ -388,21 +444,12 @@ class CanonicalAnalyticsEngine:
             scores_30_plus=("reached_30", "sum"),
             scores_50_plus=("reached_50", "sum"),
             scores_100_plus=("is_100", "sum"),
-            first_season=("season", "min"),
-            last_season=("season", "max"),
-            seasons_played=("season", lambda s: sorted(list(set(s)))),
-            teams=("batting_team", lambda t: sorted(list(set(t)))),
-        ).reset_index()
+        )
+        bat_dict = bat_grp.to_dict(orient="index")
 
-        # Vectorized check for not out on highest score
-        max_runs_col = self._batters_merged.groupby("batter")["runs"].transform("max")
-        hs_no_batters = set(self._batters_merged[(self._batters_merged["runs"] == max_runs_col) & (self._batters_merged["dismissed"] == 0)]["batter"])
-
-        bat_dict = bat_grp.set_index("batter").to_dict(orient="index")
-
-        # 4. Bowling match aggregations
+        # Bowling per innings, keyed by the bowler's registry ID
         bowl_match_agg = self._deliveries.groupby(
-            ["match_id", "date", "season", "innings", "bowling_team", "batting_team", "bowler"]
+            ["match_id", "date", "season", "innings", "bowling_team", "batting_team", "bowler_id"]
         ).agg(
             legal_balls=("legal_delivery", "sum"),
             runs_conceded=("bowler_runs_conceded", "sum"),
@@ -422,10 +469,11 @@ class CanonicalAnalyticsEngine:
         bowl_match_agg["is_3w"] = bowl_match_agg["wickets"] == 3
         bowl_match_agg["is_4w"] = bowl_match_agg["wickets"] == 4
         bowl_match_agg["is_5w"] = bowl_match_agg["wickets"] >= 5
+        bowl_match_agg["bowler"] = bowl_match_agg["bowler_id"].map(self._player_names_by_id)
         self._bowler_matches = bowl_match_agg
 
         # Bowling career aggregations (vectorized)
-        bowl_grp = bowl_match_agg.groupby("bowler").agg(
+        bowl_grp = bowl_match_agg.groupby("bowler_id").agg(
             innings=("match_id", "count"),
             legal_deliveries=("legal_balls", "sum"),
             runs_conceded=("runs_conceded", "sum"),
@@ -433,38 +481,26 @@ class CanonicalAnalyticsEngine:
             hauls_3=("is_3w", "sum"),
             hauls_4=("is_4w", "sum"),
             hauls_5=("is_5w", "sum"),
-            first_season=("season", "min"),
-            last_season=("season", "max"),
-            seasons_played=("season", lambda s: sorted(list(set(s)))),
-            teams=("bowling_team", lambda t: sorted(list(set(t)))),
-        ).reset_index()
+        )
 
-        # Vectorized best bowling figures per bowler
+        # Best bowling figures per bowler: most wickets, then fewest runs
         top_bowling = bowl_match_agg.sort_values(
             by=["wickets", "runs_conceded"], ascending=[False, True]
-        ).drop_duplicates(subset=["bowler"], keep="first")
-        best_bowling = dict(zip(top_bowling["bowler"], top_bowling["wickets"].astype(str) + "/" + top_bowling["runs_conceded"].astype(str)))
+        ).drop_duplicates(subset=["bowler_id"], keep="first")
+        best_bowling = dict(zip(top_bowling["bowler_id"], top_bowling["wickets"].astype(str) + "/" + top_bowling["runs_conceded"].astype(str)))
 
-        bowl_dict = bowl_grp.set_index("bowler").to_dict(orient="index")
+        bowl_dict = bowl_grp.to_dict(orient="index")
 
-        # 5. Build Master Directory Item for each player
+        # One directory entry per registry ID
         master_list = []
-        for name in all_names:
-            pid = self._player_ids_by_name[name]
-            b_info = bat_dict.get(name)
-            w_info = bowl_dict.get(name)
+        for pid in directory_ids:
+            b_info = bat_dict.get(pid)
+            w_info = bowl_dict.get(pid)
+            squad = self._squad_info[pid]
 
             is_batter = b_info is not None
             is_bowler = w_info is not None
-
-            # Combined seasons and teams
-            b_seasons = set(b_info["seasons_played"]) if b_info else set()
-            w_seasons = set(w_info["seasons_played"]) if w_info else set()
-            all_seasons = sorted(b_seasons.union(w_seasons))
-
-            b_teams = set(b_info["teams"]) if b_info else set()
-            w_teams = set(w_info["teams"]) if w_info else set()
-            all_teams = sorted(b_teams.union(w_teams))
+            all_seasons = squad["seasons"]
 
             # Batting stats
             batting_inn = b_info["innings"] if b_info else 0
@@ -495,15 +531,17 @@ class CanonicalAnalyticsEngine:
 
             item = {
                 "player_id": pid,
-                "name": name,
+                "name": self._player_names_by_id[pid],
+                "name_variants": sorted(self._people_names.get(pid, [])),
                 "role": role,
                 "is_batter": is_batter,
                 "is_bowler": is_bowler,
-                "first_season": min(all_seasons) if all_seasons else 2008,
-                "last_season": max(all_seasons) if all_seasons else 2026,
+                "matches": int(squad["matches"]),
+                "first_season": all_seasons[0],
+                "last_season": all_seasons[-1],
                 "seasons_count": len(all_seasons),
                 "seasons_played": all_seasons,
-                "teams": all_teams,
+                "teams": squad["teams"],
                 # Batting preview
                 "batting_innings": int(batting_inn),
                 "total_runs": int(total_runs),
@@ -516,11 +554,17 @@ class CanonicalAnalyticsEngine:
                 "wickets": int(total_wkts),
                 "bowling_avg": bowl_avg,
                 "economy": float(bowl_econ),
-                "best_bowling": best_bowling.get(name, "—"),
+                "best_bowling": best_bowling.get(pid, "—"),
             }
             master_list.append(item)
 
         self._player_master_list = master_list
+        self._directory_counts = {
+            "all": len(master_list),
+            "batters": sum(p["is_batter"] for p in master_list),
+            "bowlers": sum(p["is_bowler"] for p in master_list),
+            "all_rounders": sum(p["role"] == "All-Rounder" for p in master_list),
+        }
 
     # ==========================================
     # TEAM ANALYSIS APIs
@@ -831,10 +875,13 @@ class CanonicalAnalyticsEngine:
         self.require_derived()
         players = list(self._player_master_list)
 
-        # 1. Search filter
+        # 1. Search filter: display name, any listed name variant, or registry ID
         if search:
             q = search.lower().strip()
-            players = [p for p in players if q in p["name"].lower() or q == p["player_id"].lower()]
+            players = [
+                p for p in players
+                if q == p["player_id"].lower() or any(q in n.lower() for n in (p["name"], *p["name_variants"]))
+            ]
 
         # 2. Role filter
         if role and role.lower() != "all":
@@ -890,6 +937,7 @@ class CanonicalAnalyticsEngine:
             "page_size": page_size,
             "total_pages": total_pages,
             "players": paginated,
+            "directory_counts": dict(self._directory_counts),
         }
 
     def get_player_profile(self, player_id_or_name: str) -> Dict[str, Any]:
@@ -898,21 +946,25 @@ class CanonicalAnalyticsEngine:
         pid = player_id_or_name.strip()
         name = self._player_names_by_id.get(pid)
         if not name:
-            # Try lookup by name
-            for n, p in self._player_ids_by_name.items():
-                if n.lower() == pid.lower() or p.lower() == pid.lower():
-                    name = n
-                    pid = p
-                    break
+            # Fall back to an exact name variant, but only when it identifies one player
+            ids = self._player_ids_by_name.get(pid.lower(), set())
+            if len(ids) > 1:
+                raise KeyError(
+                    f"'{player_id_or_name}' matches several players; use a player ID ({', '.join(sorted(ids))})."
+                )
+            if ids:
+                pid = next(iter(ids))
+                name = self._player_names_by_id[pid]
         if not name:
             raise KeyError(f"Player '{player_id_or_name}' not found in canonical IPL directory.")
 
-        b_df = self._batters_merged[self._batters_merged["batter"] == name].copy()
-        w_df = self._bowler_matches[self._bowler_matches["bowler"] == name].copy()
+        b_df = self._batters_merged[self._batters_merged["player_id"] == pid].copy()
+        w_df = self._bowler_matches[self._bowler_matches["bowler_id"] == pid].copy()
 
-        # Seasons and teams
-        seasons = sorted(set(b_df["season"].tolist() + w_df["season"].tolist()))
-        teams = sorted(set(b_df["batting_team"].tolist() + w_df["bowling_team"].tolist()))
+        # Seasons, teams and matches come from the squad lists
+        squad = self._squad_info[pid]
+        seasons = squad["seasons"]
+        teams = squad["teams"]
 
         # 1. Career Batting
         career_batting = None
@@ -1103,8 +1155,10 @@ class CanonicalAnalyticsEngine:
         return {
             "player_id": pid,
             "name": name,
-            "first_season": min(seasons) if seasons else 2008,
-            "last_season": max(seasons) if seasons else 2026,
+            "name_variants": sorted(self._people_names.get(pid, [])),
+            "matches": int(squad["matches"]),
+            "first_season": seasons[0],
+            "last_season": seasons[-1],
             "seasons_played": seasons,
             "teams": teams,
             "career_batting": career_batting,
@@ -1271,7 +1325,8 @@ class CanonicalAnalyticsEngine:
         }
 
         # 9. Top All-Time Batters & Bowlers
-        top_batters = self._batters_merged.groupby("batter").agg(
+        # Grouped by registry ID; the display name is one-to-one with the ID
+        top_batters = self._batters_merged.groupby(["player_id", "batter"]).agg(
             runs=("runs", "sum"),
             innings=("match_id", "count"),
             fours=("fours", "sum"),
@@ -1279,7 +1334,7 @@ class CanonicalAnalyticsEngine:
             scores_50=("reached_50", "sum"),
         ).sort_values("runs", ascending=False).head(10).reset_index().to_dict(orient="records")
 
-        top_bowlers = self._bowler_matches.groupby("bowler").agg(
+        top_bowlers = self._bowler_matches.groupby(["bowler_id", "bowler"]).agg(
             wickets=("wickets", "sum"),
             innings=("match_id", "count"),
             legal_deliveries=("legal_balls", "sum"),

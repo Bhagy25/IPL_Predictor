@@ -274,12 +274,14 @@ class PlayerMatchLogItem(BaseModel):
 
 
 class PlayerListItem(BaseModel):
-    player_id: str = Field(..., description="Unique stable player hash ID")
+    player_id: str = Field(..., description="Cricsheet registry ID")
     batter_id: Optional[str] = Field(None, description="Backward-compatible batter ID alias")
-    name: str = Field(..., description="Player display name")
+    name: str = Field(..., description="Most-used name variant; players sharing a name get franchise and season span added")
+    name_variants: List[str] = Field(default_factory=list, description="Every name this registry ID was listed under")
     role: str = Field(default="Batter", description="'Batter', 'Bowler', or 'All-Rounder'")
     is_batter: bool = Field(default=True, description="Whether player has batting records")
     is_bowler: bool = Field(default=False, description="Whether player has bowling records")
+    matches: int = Field(default=0, description="Matches in an official squad list")
     first_season: int = Field(default=2008, description="First IPL season")
     last_season: int = Field(default=2026, description="Most recent IPL season")
     seasons_count: int = Field(default=1, description="Count of seasons active")
@@ -329,9 +331,11 @@ class PlayerMilestoneBreakdown(BaseModel):
 
 
 class PlayerProfileResponse(BaseModel):
-    player_id: str = Field(..., description="Unique stable player ID")
+    player_id: str = Field(..., description="Cricsheet registry ID")
     batter_id: Optional[str] = Field(None, description="Backward compatible ID")
-    name: str = Field(..., description="Player display name")
+    name: str = Field(..., description="Most-used name variant; players sharing a name get franchise and season span added")
+    name_variants: List[str] = Field(default_factory=list, description="Every name this registry ID was listed under")
+    matches: int = Field(default=0, description="Matches in an official squad list")
     first_season: int = Field(default=2008, description="First IPL season")
     last_season: int = Field(default=2026, description="Latest IPL season")
     seasons_played: List[int] = Field(default_factory=list, description="Seasons active")
@@ -356,6 +360,10 @@ class PlayerListResponse(BaseModel):
     total_pages: Optional[int] = Field(None, description="Total pages")
     query: Optional[str] = Field(None, description="Search query string applied")
     experience_filter: Optional[str] = Field(None, description="Experience tier filter applied")
+    directory_counts: Dict[str, int] = Field(
+        default_factory=dict,
+        description="Unfiltered directory size: all players, batters, bowlers and all-rounders",
+    )
 
 
 # ==========================================

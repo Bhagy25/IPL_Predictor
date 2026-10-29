@@ -58,6 +58,7 @@ class PlayerService:
             total_pages=res["total_pages"],
             query=query,
             experience_filter=experience_filter,
+            directory_counts=res["directory_counts"],
         )
 
     def get_player_overview(self, player_id: str) -> PlayerProfileResponse:
