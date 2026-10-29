@@ -889,6 +889,8 @@ export interface PredictionBatterOption {
   eligible_innings: number;
   latest_innings_date: string;
   latest_team: string;
+  last_season: number;
+  appeared_in_latest_season: boolean;
 }
 
 export interface PredictionOptionsResponse {
@@ -928,6 +930,16 @@ export interface WicketPredictionResponse {
   inputs: WicketPredictionRequest;
   notice: string;
   function_notice: string;
+  input_range: InputRangeCheck;
+}
+
+/** Inputs outside the deployment model's training rows at this checkpoint; the probability is unchanged. */
+export interface InputRangeCheck {
+  checked: boolean;
+  completed_overs: number;
+  outside: { field: string; label: string; value: number; observed_min: number; observed_max: number }[];
+  warning: string | null;
+  source: string;
 }
 
 export interface BatterPredictionRequest {
@@ -965,6 +977,8 @@ export interface BatterPredictionResponse {
   version: string;
   training_span: string;
   scope: string;
+  appeared_in_latest_season: boolean;
+  return_note: string | null;
   function_scope: string;
   warning: string;
   notice: string;

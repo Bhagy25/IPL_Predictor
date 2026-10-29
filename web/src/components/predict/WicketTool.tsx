@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookmarkPlus, Check, Loader2, Target } from 'lucide-react';
+import { AlertTriangle, BookmarkPlus, Check, Loader2, Target } from 'lucide-react';
 import { ApiError, predictWicket } from '../../api/predict';
 import { PredictionModelInfo, PredictionOptionsResponse, WicketPredictionRequest, WicketPredictionResponse } from '../../types';
 import { FOCUS_RING } from '../player/playerFormat';
@@ -19,6 +19,12 @@ const EMPTY: Form = {
 };
 
 const WHOLE = /^\d+$/;
+
+// The API's physical limits (see wicket_rules in /api/predict/options): 36 runs per over from six legal
+// balls, plus an allowance for extras. Loose on purpose; real innings never come close.
+const MAX_RUNS_PER_OVER = 36;
+const RUNS_EXTRAS_ALLOWANCE = 30;
+const LAST_OVER_EXTRAS_ALLOWANCE = 20;
 
 /** The API's rules (predict_wicket.forecast() plus team and venue membership), checked before sending. */
 export function validateWicket(f: Form, options: PredictionOptionsResponse): { errors: FieldErrors; payload: WicketPredictionRequest | null } {
@@ -45,7 +51,13 @@ export function validateWicket(f: Form, options: PredictionOptionsResponse): { e
   const wickets = num('wickets', 'Wickets');
   if (wickets !== null && wickets > 9) add('wickets', 'Wickets must be from 0 to 9 (10 wickets ends the innings).');
   const lastRuns = num('last_over_runs', 'Last-over runs');
+  if (runs !== null && overs !== null && overs >= 1 && overs <= 19 && runs > MAX_RUNS_PER_OVER * overs + RUNS_EXTRAS_ALLOWANCE) {
+    add('runs', `${runs} runs after ${overs} overs is not possible (limit ${MAX_RUNS_PER_OVER * overs + RUNS_EXTRAS_ALLOWANCE}: ${MAX_RUNS_PER_OVER} per over plus ${RUNS_EXTRAS_ALLOWANCE} for extras).`);
+  }
   if (lastRuns !== null && runs !== null && lastRuns > runs) add('last_over_runs', 'Runs in the last over cannot exceed the current runs.');
+  else if (lastRuns !== null && lastRuns > MAX_RUNS_PER_OVER + LAST_OVER_EXTRAS_ALLOWANCE) {
+    add('last_over_runs', `${lastRuns} runs in one over is not possible (limit ${MAX_RUNS_PER_OVER + LAST_OVER_EXTRAS_ALLOWANCE}: ${MAX_RUNS_PER_OVER} plus ${LAST_OVER_EXTRAS_ALLOWANCE} for extras).`);
+  }
   const lastWkts = num('last_over_wickets', 'Last-over wickets');
   if (lastWkts !== null && wickets !== null && lastWkts > wickets) add('last_over_wickets', 'Wickets in the last over cannot exceed the current wickets.');
   if (Object.keys(errors).length) return { errors, payload: null };
@@ -207,6 +219,21 @@ export const WicketTool: React.FC<{
               Over {nextOver} · {PHASE_LABEL[result.phase] ?? result.phase} · Innings {result.inputs.innings}
             </p>
             <BigNumber value={result.probability_pct} label={`chance of ${result.event} (over ${nextOver})`} />
+            {result.input_range.warning && (
+              <div role="note" className="bg-[#2A2414] border border-[#D9B15F]/50 rounded-xl p-3 text-xs text-[#E5C687] space-y-1.5">
+                <p className="font-semibold flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                  <span>{result.input_range.warning}</span>
+                </p>
+                <ul className="pl-6 space-y-0.5 list-disc">
+                  {result.input_range.outside.map((o) => (
+                    <li key={o.field}>
+                      {o.label} {o.value} after {result.input_range.completed_overs} overs; seen {o.observed_min}–{o.observed_max}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <p className="text-sm text-[#F6F6F3]">
               Out of 100 similar situations, about <strong>{Math.round(result.probability * 100)}</strong> had at least one wicket in the next over.
             </p>

@@ -41,7 +41,9 @@ export function validateBatter(player: PredictionBatterOption | null, f: Form, o
   if (!f.venue) add('venue', 'Choose a venue.');
   else if (!options.venues.some((v) => v.name === f.venue)) add('venue', 'Choose one of the listed venues.');
   if (!DATE.test(f.match_date) || Number.isNaN(Date.parse(f.match_date))) add('match_date', 'Enter a valid match date.');
-  else if (player && f.match_date <= player.latest_innings_date) {
+  else if (f.match_date <= options.archive_last_match_date) {
+    add('match_date', `Match date must be after the last match in the data (${options.archive_last_match_date}): forecasts are for future matches.`);
+  } else if (player && f.match_date <= player.latest_innings_date) {
     add('match_date', `Match date must be after this player's latest eligible innings on ${player.latest_innings_date}.`);
   }
   const payload: BatterPredictionRequest | null = Object.keys(errors).length || !player ? null : {
@@ -57,6 +59,8 @@ export const BatterTool: React.FC<{
   const [query, setQuery] = useState('');
   const [player, setPlayer] = useState<PredictionBatterOption | null>(null);
   const [open, setOpen] = useState(false);
+  // By default only players who appeared in the latest season are searchable
+  const [includeInactive, setIncludeInactive] = useState(false);
   const [active, setActive] = useState(0);
   const [form, setForm] = useState<Form>({ batting_team: '', opponent: '', venue: '', match_date: isoDaysFromToday(1) });
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -67,10 +71,17 @@ export const BatterTool: React.FC<{
   const [savedId, setSavedId] = useState<string | null>(null);
   const lastPayload = useRef<BatterPredictionRequest | null>(null);
   const controller = useRef<AbortController | null>(null);
+  // Closing the list on blur is delayed so a click on an option still lands; refocusing cancels it
+  const closeTimer = useRef<number | undefined>(undefined);
   const activeTeams = useMemo(() => new Set(options.teams.map((t) => t.name)), [options.teams]);
-  const suggestions = useMemo(() => (player ? [] : searchBatters(options.batters, query)), [options.batters, query, player]);
+  const pool = useMemo(
+    () => (includeInactive ? options.batters : options.batters.filter((b) => b.appeared_in_latest_season)),
+    [options.batters, includeInactive],
+  );
+  const activeCount = useMemo(() => options.batters.filter((b) => b.appeared_in_latest_season).length, [options.batters]);
+  const suggestions = useMemo(() => (player ? [] : searchBatters(pool, query)), [pool, query, player]);
 
-  useEffect(() => () => controller.current?.abort(), []);
+  useEffect(() => () => { controller.current?.abort(); window.clearTimeout(closeTimer.current); }, []);
 
   const invalidate = (field: string) => {
     // A result always belongs to the inputs on screen: drop it and any request still running
@@ -151,7 +162,17 @@ export const BatterTool: React.FC<{
   const listId = 'bt-player-list';
   const playerHint = player
     ? `${fmtCount(player.eligible_innings)} eligible innings · latest ${player.latest_innings_date} (${player.latest_team}) · ID ${player.player_id}`
-    : `Search ${fmtCount(options.batters.length)} players by name, a name variant or registry ID.`;
+    : `Search ${fmtCount(pool.length)} players by name, a name variant or registry ID.`;
+  const toggleInactive = (on: boolean) => {
+    setIncludeInactive(on);
+    // A player hidden by the filter cannot stay selected
+    if (!on && player && !player.appeared_in_latest_season) {
+      setPlayer(null);
+      setQuery('');
+      invalidate('player_id');
+    }
+  };
+  const earliestDate = [options.archive_last_match_date, player?.latest_innings_date ?? ''].sort().slice(-1)[0];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-6">
@@ -172,8 +193,8 @@ export const BatterTool: React.FC<{
               value={query}
               onChange={(e) => onQuery(e.target.value)}
               onKeyDown={onKeyDown}
-              onFocus={() => setOpen(true)}
-              onBlur={() => setTimeout(() => setOpen(false), 150)}
+              onFocus={() => { window.clearTimeout(closeTimer.current); setOpen(true); }}
+              onBlur={() => { closeTimer.current = window.setTimeout(() => setOpen(false), 150); }}
               className={`${INPUT} pl-8 ${inputBorder(!!errors.player_id)}`}
               {...describe('bt-player_id', errors.player_id, playerHint)}
             />
@@ -200,11 +221,23 @@ export const BatterTool: React.FC<{
             )}
             {open && !player && query.trim() !== '' && suggestions.length === 0 && (
               <p role="status" className="absolute z-20 mt-1 w-full bg-[#17181C] border border-[#D9B15F]/30 rounded-lg px-3 py-2 text-xs text-[#B9B9B3]">
-                No player with eligible batting innings matches “{query.trim()}”.
+                No {includeInactive ? '' : `${options.latest_season} `}player with eligible batting innings matches “{query.trim()}”.
               </p>
             )}
           </div>
         </Field>
+        <div className="space-y-1">
+          <label className="inline-flex items-center gap-2 text-xs text-[#B9B9B3] cursor-pointer">
+            <input type="checkbox" checked={includeInactive} onChange={(e) => toggleInactive(e.target.checked)}
+              className={`w-4 h-4 accent-[#D9B15F] ${FOCUS_RING}`} />
+            Include players without a {options.latest_season} appearance
+          </label>
+          <p className="text-[10px] text-[#8E8E88]">
+            {includeInactive
+              ? `All ${fmtCount(options.batters.length)} players with eligible batting history. A forecast for someone who did not appear in ${options.latest_season} assumes they play again.`
+              : `${fmtCount(activeCount)} players who were in a ${options.latest_season} match squad.`}
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field id="bt-batting_team" label="Player's team" errors={errors.batting_team}>
@@ -217,15 +250,15 @@ export const BatterTool: React.FC<{
         <Field id="bt-venue" label="Venue" errors={errors.venue}>
           <VenueSelect id="bt-venue" value={form.venue} venues={options.venues} latestSeason={options.latest_season} onChange={(v) => set('venue', v)} invalid={!!errors.venue} describedBy={describe('bt-venue', errors.venue)} />
         </Field>
-        <Field id="bt-match_date" label="Match date" hint="Must be after the player's latest eligible innings." errors={errors.match_date}>
+        <Field id="bt-match_date" label="Match date" hint={`Must be after ${earliestDate}, the last match in the data or the player's latest eligible innings.`} errors={errors.match_date}>
           <input
             id="bt-match_date"
             type="date"
-            min={player ? nextDay(player.latest_innings_date) : undefined}
+            min={nextDay(earliestDate)}
             value={form.match_date}
             onChange={(e) => set('match_date', e.target.value)}
             className={`${INPUT} ${inputBorder(!!errors.match_date)} [color-scheme:dark]`}
-            {...describe('bt-match_date', errors.match_date, "Must be after the player's latest eligible innings.")}
+            {...describe('bt-match_date', errors.match_date, 'hint')}
           />
         </Field>
 
@@ -262,6 +295,7 @@ export const BatterTool: React.FC<{
             </p>
             <p className="text-xs text-[#B9B9B3]">
               For {result.batting_team} against {result.opponent} at {result.venue}. {result.scope}
+              {result.return_note && <span className="block mt-1 text-[#E5C687]">{result.return_note}</span>}
             </p>
             <div className="bg-[#101114] border border-white/5 rounded-xl p-3 text-xs text-[#B9B9B3] space-y-2">
               <p>
