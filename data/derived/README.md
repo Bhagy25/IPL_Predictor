@@ -46,6 +46,24 @@ The flag is the only source; nothing is inferred from run values.
 - `batter`, `batter_id`, `bowler`, `bowler_id`: players on the delivery
 - `runs_batter`: runs credited to the batter, which are not a boundary
 
+## batting_appearances.csv
+
+One row per player per ordinary innings in which they were at the crease, as
+striker or non-striker (or dismissed), in order of first appearance. A batting
+innings is one row, so a non-striker run out without facing a ball still counts
+as an innings and a dismissal. Super overs are excluded.
+
+- `match_id`, `season`, `date`, `innings`: innings key (see above)
+- `batting_team`: canonical franchise name
+- `player_id`, `player_name`: registry ID and the name used in that match
+- `balls_faced`: deliveries faced as striker, excluding wides (no-balls count)
+- `runs`: runs off the bat
+- `dismissed`: True when a wicket event for this player counts as a batting dismissal
+- `dismissal_kind`: kind of that dismissal, or of a non-dismissal event such as retired hurt; empty if none
+- `faced_a_ball`: True when `balls_faced` > 0
+- `on_strike`: True when the player was the striker on at least one delivery
+  (including wides); these rows are exactly Stage 1's `batter_innings.csv` rows
+
 ## match_players.csv
 
 One row per player per match from `info.players` (official squad lists, including
@@ -88,5 +106,6 @@ converting them, so the hashes below match a checkout.
 |---|---:|---:|---|
 | dismissals.csv | 14,705 | 2,714,066 | `b626f43307a927cc03b2fd8a7c8a2a1ea8d2f4737bb8d0a29db58af968877220` |
 | non_boundary_events.csv | 29 | 2,385 | `65cbbb65826e7a55371c82d6f8adb89e8cf16576dacdd0d38a40a75eb6498c5a` |
+| batting_appearances.csv | 19,111 | 1,715,390 | `595265dc49da227fed158529adb34eb1288daecd95496e8ce43e50b47458f340` |
 | match_players.csv | 27,909 | 1,723,500 | `525f2513f7cc429e259e7834fa9e0b5e00185cc6c3b3e374a9674ebfab4d2f26` |
 | people.csv | 816 | 55,784 | `ed0f498789641750a7422471fa86581c085a278e2496fb3e6719423c28f2eb4a` |

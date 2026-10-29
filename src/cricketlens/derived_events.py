@@ -33,13 +33,38 @@ NON_BOUNDARY_COLUMNS = [
     'match_id', 'season', 'date', 'innings', 'is_super_over', 'over_index', 'delivery_index',
     'batter', 'batter_id', 'bowler', 'bowler_id', 'runs_batter',
 ]
+BATTING_APPEARANCE_COLUMNS = [
+    'match_id', 'season', 'date', 'innings', 'batting_team', 'player_id', 'player_name',
+    'balls_faced', 'runs', 'dismissed', 'dismissal_kind', 'faced_a_ball', 'on_strike',
+]
 MATCH_PLAYER_COLUMNS = ['match_id', 'season', 'date', 'team', 'player_name', 'player_id']
 PEOPLE_COLUMNS = ['player_id', 'names', 'first_season', 'last_season', 'matches', 'teams']
 
 
+def new_appearance() -> dict:
+    return {'balls_faced': 0, 'runs': 0, 'on_strike': False, 'kinds': []}
+
+
+def appearance_rows(base: dict, innings_pos: int, batting_team: str, registry: dict, crease: dict) -> list:
+    """One row per player at the crease in an ordinary innings, in order of first appearance."""
+    rows = []
+    for name, a in crease.items():
+        # A batter is out if any wicket event for them counts as a dismissal (not retired hurt).
+        counting = [k for k in a['kinds'] if k not in NO_TEAM_WICKET]
+        rows.append({
+            **base, 'innings': innings_pos, 'batting_team': batting_team,
+            'player_id': registry.get(name, ''), 'player_name': name,
+            'balls_faced': a['balls_faced'], 'runs': a['runs'],
+            'dismissed': bool(counting),
+            'dismissal_kind': counting[-1] if counting else (a['kinds'][-1] if a['kinds'] else ''),
+            'faced_a_ball': a['balls_faced'] > 0, 'on_strike': a['on_strike'],
+        })
+    return rows
+
+
 def build_tables(source: Path) -> dict:
-    """Extract dismissals, non-boundary events, match players and people from the raw JSON."""
-    dismissals, non_boundary, match_players = [], [], []
+    """Extract dismissals, non-boundary events, batting appearances, match players and people."""
+    dismissals, non_boundary, batting_appearances, match_players = [], [], [], []
     for filename, match in read_matches(source):
         info = match.get('info', {})
         # Skip exactly the matches, innings and overs pipeline.extract skips, so keys stay aligned.
@@ -68,6 +93,7 @@ def build_tables(source: Path) -> dict:
             if (not is_super_over and innings_pos > 2) or batting_team not in teams:
                 continue
             bowling_team = teams[1] if batting_team == teams[0] else teams[0]
+            crease = {}  # ordinary innings only: striker, non-striker and dismissed players
             for over in innings.get('overs') or []:
                 over_index = over.get('over')
                 if not isinstance(over_index, int) or over_index < 0:
@@ -78,7 +104,15 @@ def build_tables(source: Path) -> dict:
                         'over_index': over_index, 'delivery_index': delivery_index,
                     }
                     batter, bowler = ball.get('batter', ''), ball.get('bowler', '')
+                    non_striker = ball.get('non_striker', '')
                     runs = ball.get('runs') or {}
+                    if not is_super_over:
+                        striker = crease.setdefault(batter, new_appearance())
+                        crease.setdefault(non_striker, new_appearance())
+                        striker['on_strike'] = True
+                        striker['runs'] += int(runs.get('batter', 0))
+                        # A no-ball is faced by the batter; a wide is not (as in Stage 1).
+                        striker['balls_faced'] += int('wides' not in (ball.get('extras') or {}))
                     if runs.get('non_boundary'):
                         non_boundary.append({
                             **key, 'batter': batter, 'batter_id': registry.get(batter, ''),
@@ -89,7 +123,8 @@ def build_tables(source: Path) -> dict:
                         kind = wicket.get('kind', '').lower()
                         player_out = wicket.get('player_out', '')
                         fielders = [f['name'] for f in wicket.get('fielders') or [] if f.get('name')]
-                        non_striker = ball.get('non_striker', '')
+                        if not is_super_over:
+                            crease.setdefault(player_out, new_appearance())['kinds'].append(kind)
                         dismissals.append({
                             **key, 'batting_team': batting_team, 'bowling_team': bowling_team,
                             'batter': batter, 'batter_id': registry.get(batter, ''),
@@ -101,9 +136,12 @@ def build_tables(source: Path) -> dict:
                             'bowler_credited': kind in BOWLER_CREDITED,
                             'counts_as_batting_dismissal': kind not in NO_TEAM_WICKET,
                         })
+            if not is_super_over:
+                batting_appearances.extend(appearance_rows(base, innings_pos, batting_team, registry, crease))
     return {
         'dismissals': dismissals,
         'non_boundary_events': non_boundary,
+        'batting_appearances': batting_appearances,
         'match_players': match_players,
         'people': build_people(match_players, dismissals),
     }
@@ -140,6 +178,7 @@ def write_tables(tables: dict, output: Path) -> dict:
     """Write each table as LF-terminated UTF-8 CSV; return {name: (rows, bytes, sha256)}."""
     columns = {
         'dismissals': DISMISSAL_COLUMNS, 'non_boundary_events': NON_BOUNDARY_COLUMNS,
+        'batting_appearances': BATTING_APPEARANCE_COLUMNS,
         'match_players': MATCH_PLAYER_COLUMNS, 'people': PEOPLE_COLUMNS,
     }
     output.mkdir(parents=True, exist_ok=True)
@@ -202,6 +241,24 @@ The flag is the only source; nothing is inferred from run values.
 - delivery key columns and `is_super_over`, as above
 - `batter`, `batter_id`, `bowler`, `bowler_id`: players on the delivery
 - `runs_batter`: runs credited to the batter, which are not a boundary
+
+## batting_appearances.csv
+
+One row per player per ordinary innings in which they were at the crease, as
+striker or non-striker (or dismissed), in order of first appearance. A batting
+innings is one row, so a non-striker run out without facing a ball still counts
+as an innings and a dismissal. Super overs are excluded.
+
+- `match_id`, `season`, `date`, `innings`: innings key (see above)
+- `batting_team`: canonical franchise name
+- `player_id`, `player_name`: registry ID and the name used in that match
+- `balls_faced`: deliveries faced as striker, excluding wides (no-balls count)
+- `runs`: runs off the bat
+- `dismissed`: True when a wicket event for this player counts as a batting dismissal
+- `dismissal_kind`: kind of that dismissal, or of a non-dismissal event such as retired hurt; empty if none
+- `faced_a_ball`: True when `balls_faced` > 0
+- `on_strike`: True when the player was the striker on at least one delivery
+  (including wides); these rows are exactly Stage 1's `batter_innings.csv` rows
 
 ## match_players.csv
 
