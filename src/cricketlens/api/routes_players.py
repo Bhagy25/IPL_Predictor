@@ -8,6 +8,7 @@ from cricketlens.api.schemas import (
     PlayerProfileResponse,
 )
 from cricketlens.api.services.player_service import player_service
+from cricketlens.api.services.canonical_data import DerivedDataUnavailable
 
 router = APIRouter(prefix="/api/players", tags=["Players"])
 
@@ -38,6 +39,8 @@ async def list_players(
             page_size=page_size,
             sort_by=sort_by,
         )
+    except DerivedDataUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to query players: {exc}")
 
@@ -53,5 +56,7 @@ async def get_player_overview(player_id: str) -> PlayerProfileResponse:
         return player_service.get_player_overview(player_id)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except DerivedDataUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to load player overview: {exc}")

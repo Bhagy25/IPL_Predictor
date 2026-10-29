@@ -7,12 +7,24 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from collections import defaultdict
 
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger(__name__)
+
+# Delivery key shared by deliveries.csv and the data/derived event tables
+DELIVERY_KEY = ["match_id", "innings", "over_index", "delivery_index"]
+DERIVED_BUILD_COMMAND = "python -m cricketlens.derived_events --raw data/raw/ipl_json --output data/derived"
+
+
+class DerivedDataUnavailable(RuntimeError):
+    """Raised when bowling statistics are requested but data/derived is missing or inconsistent."""
+
 
 # 15 Canonical Franchises
 FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
@@ -159,13 +171,15 @@ def format_season_ranges(seasons: List[int]) -> str:
 class CanonicalAnalyticsEngine:
     """In-memory full-history engine for CricketLens."""
 
-    def __init__(self, data_dir: Optional[Path] = None):
+    def __init__(self, data_dir: Optional[Path] = None, derived_dir: Optional[Path] = None):
         if data_dir is None:
             self.data_dir = Path(__file__).resolve().parents[4] / "data" / "processed"
         else:
             self.data_dir = Path(data_dir)
+        self.derived_dir = Path(derived_dir) if derived_dir is not None else self.data_dir.parent / "derived"
 
         self._initialized = False
+        self._derived_error: Optional[str] = None
         self._matches: pd.DataFrame = pd.DataFrame()
         self._deliveries: pd.DataFrame = pd.DataFrame()
         self._batters: pd.DataFrame = pd.DataFrame()
@@ -221,13 +235,8 @@ class CanonicalAnalyticsEngine:
         self._deliveries["bowler_runs_conceded"] = (
             self._deliveries["runs_batter"] + self._deliveries["wides"] + self._deliveries["noballs"]
         )
-        # Definite run outs have runs scored off the bat or byes/legbyes during dismissal
-        is_run_out = (self._deliveries["team_wickets_on_ball"] > 0) & (
-            (self._deliveries["runs_batter"] > 0)
-            | (self._deliveries["byes"] > 0)
-            | (self._deliveries["legbyes"] > 0)
-        )
-        self._deliveries["is_bowler_wicket"] = (self._deliveries["team_wickets_on_ball"] > 0) & (~is_run_out)
+        # Bowler wickets come from the recorded dismissal kinds in data/derived/dismissals.csv
+        self._load_derived_events()
         self._deliveries["is_four"] = self._deliveries["runs_batter"] == 4
         self._deliveries["is_six"] = self._deliveries["runs_batter"] == 6
         self._deliveries["is_dot"] = (self._deliveries["runs_batter"] == 0) & (self._deliveries["legal_delivery"] == 1)
@@ -246,6 +255,64 @@ class CanonicalAnalyticsEngine:
         # Build player registry index
         self._build_player_index()
         self._initialized = True
+
+    def _load_derived_events(self) -> None:
+        """Attach bowler-credited wickets from data/derived to deliveries, keyed by DELIVERY_KEY.
+
+        The tables are rebuilt from the raw JSON by cricketlens.derived_events. If they are
+        missing or do not line up with deliveries.csv, bowling statistics are marked
+        unavailable instead of falling back to an estimate.
+        """
+        self._derived_error = None
+        path = self.derived_dir / "dismissals.csv"
+        if not path.exists():
+            self._derived_error = f"{path.name} is missing from {self.derived_dir}."
+        else:
+            dismissals = pd.read_csv(path, usecols=DELIVERY_KEY + ["is_super_over", "bowler", "bowler_credited"])
+            # Super overs are never part of ordinary match statistics.
+            dismissals = dismissals[~dismissals["is_super_over"]]
+            joined = dismissals.merge(
+                self._deliveries[DELIVERY_KEY + ["bowler"]], on=DELIVERY_KEY,
+                how="left", suffixes=("", "_delivery"), indicator=True,
+            )
+            unmatched = int((joined["_merge"] != "both").sum())
+            mismatched = int((joined.loc[joined["_merge"] == "both", "bowler"]
+                              != joined.loc[joined["_merge"] == "both", "bowler_delivery"]).sum())
+            if unmatched or mismatched:
+                self._derived_error = (
+                    f"{path.name} does not match deliveries.csv "
+                    f"({unmatched} unmatched rows, {mismatched} bowler mismatches)."
+                )
+
+        if self._derived_error:
+            logger.error("%s Bowling statistics are unavailable.", self._derived_error)
+            # Placeholder only: every endpoint serving bowler wickets returns 503 until this is fixed.
+            self._deliveries["bowler_wickets"] = 0
+            return
+
+        credited = (
+            dismissals[dismissals["bowler_credited"]]
+            .groupby(DELIVERY_KEY).size().rename("bowler_wickets").reset_index()
+            .astype({k: self._deliveries[k].dtype for k in DELIVERY_KEY})
+        )
+        self._deliveries = self._deliveries.merge(credited, on=DELIVERY_KEY, how="left")
+        self._deliveries["bowler_wickets"] = self._deliveries["bowler_wickets"].fillna(0).astype("int8")
+
+    def derived_status(self) -> Dict[str, Any]:
+        """Availability of the data/derived tables used for bowling statistics."""
+        self.ensure_loaded()
+        if self._derived_error:
+            return {"available": False, "detail": self._derived_error, "build_command": DERIVED_BUILD_COMMAND}
+        return {"available": True, "detail": f"Loaded from {self.derived_dir}.", "build_command": DERIVED_BUILD_COMMAND}
+
+    def require_derived(self) -> None:
+        """Raise DerivedDataUnavailable when bowling statistics cannot be served."""
+        self.ensure_loaded()
+        if self._derived_error:
+            raise DerivedDataUnavailable(
+                f"Bowling statistics are unavailable: {self._derived_error} "
+                f"Rebuild the derived tables with `{DERIVED_BUILD_COMMAND}` (see data/derived/README.md)."
+            )
 
     def _build_player_index(self) -> None:
         """Construct full player directory covering all 806 batters and bowlers."""
@@ -324,7 +391,7 @@ class CanonicalAnalyticsEngine:
         ).agg(
             legal_balls=("legal_delivery", "sum"),
             runs_conceded=("bowler_runs_conceded", "sum"),
-            wickets=("is_bowler_wicket", "sum"),
+            wickets=("bowler_wickets", "sum"),
             fours=("is_four", "sum"),
             sixes=("is_six", "sum"),
             wides=("wides", lambda x: (x > 0).sum()),
@@ -746,7 +813,7 @@ class CanonicalAnalyticsEngine:
         page_size: int = 20,
     ) -> Dict[str, Any]:
         """Return master directory of players with flexible search, filter, and pagination."""
-        self.ensure_loaded()
+        self.require_derived()
         players = list(self._player_master_list)
 
         # 1. Search filter
@@ -812,7 +879,7 @@ class CanonicalAnalyticsEngine:
 
     def get_player_profile(self, player_id_or_name: str) -> Dict[str, Any]:
         """Compute full historical player profile with Batting, Bowling, and Match Logs."""
-        self.ensure_loaded()
+        self.require_derived()
         pid = player_id_or_name.strip()
         name = self._player_names_by_id.get(pid)
         if not name:
@@ -1039,7 +1106,7 @@ class CanonicalAnalyticsEngine:
 
     def get_eda_full_history(self) -> Dict[str, Any]:
         """Compute comprehensive 2008-2026 historical EDA covering all 15 analysis areas."""
-        self.ensure_loaded()
+        self.require_derived()
         m_df = self._matches
         d_df = self._deliveries
         i_df = self._innings
@@ -1203,7 +1270,9 @@ class CanonicalAnalyticsEngine:
             innings=("match_id", "count"),
             legal_deliveries=("legal_balls", "sum"),
             runs_conceded=("runs_conceded", "sum"),
-        ).sort_values("wickets", ascending=False).head(10).reset_index()
+        ).reset_index().sort_values(
+            ["wickets", "runs_conceded", "bowler"], ascending=[False, True, True]  # ties: fewer runs conceded first
+        ).head(10).reset_index(drop=True)
         top_bowlers["economy"] = (top_bowlers["runs_conceded"] / (top_bowlers["legal_deliveries"] / 6.0)).round(2)
         top_bowlers_list = top_bowlers.to_dict(orient="records")
 

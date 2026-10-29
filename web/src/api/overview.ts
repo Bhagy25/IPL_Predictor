@@ -8,6 +8,7 @@ export interface HealthResponse {
   archive_matches: number;
   timestamp: string;
   service: string;
+  derived_tables?: { available: boolean; detail: string; build_command?: string } | null;
 }
 
 export async function fetchHealth(signal?: AbortSignal): Promise<HealthResponse> {

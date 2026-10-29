@@ -11,6 +11,10 @@ class HealthCheckResponse(BaseModel):
     archive_matches: int = Field(..., description="Verified number of men's IPL matches in archive")
     timestamp: str = Field(..., description="Current ISO 8601 UTC timestamp")
     service: str = Field(default="CricketLens Analytical Backend", description="Service identifier")
+    derived_tables: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Availability of data/derived tables used for bowler wickets; bowling endpoints return 503 when unavailable",
+    )
 
 
 class KPIMetricItem(BaseModel):
@@ -234,14 +238,18 @@ class PlayerBowlingSummary(BaseModel):
     legal_deliveries: int = Field(..., description="Legal deliveries bowled (excludes wides & noballs)")
     overs_bowled: str = Field(..., description="Overs bowled in cricket notation (e.g. '342.4')")
     runs_conceded: int = Field(..., description="Runs conceded off bat + wides + noballs")
-    wickets: int = Field(..., description="Bowler dismissals (excludes run outs)")
-    bowling_average: Optional[float] = Field(None, description="Runs conceded per wicket")
-    bowling_strike_rate: Optional[float] = Field(None, description="Balls per wicket")
+    wickets: int = Field(
+        ...,
+        description="Bowler-credited wickets: bowled, caught, caught and bowled, lbw, stumped, hit wicket "
+                    "(run outs, retirements and obstructing the field are not credited); super overs excluded",
+    )
+    bowling_average: Optional[float] = Field(None, description="Runs conceded per bowler-credited wicket")
+    bowling_strike_rate: Optional[float] = Field(None, description="Legal balls bowled per bowler-credited wicket")
     economy_rate: float = Field(..., description="Runs conceded per 6 legal balls")
-    best_bowling: str = Field(default="—", description="Best figures in an innings (e.g. '5/10')")
-    three_wicket_hauls: int = Field(default=0, description="3-wicket hauls")
-    four_wicket_hauls: int = Field(default=0, description="4-wicket hauls")
-    five_wicket_hauls: int = Field(default=0, description="5+ wicket hauls")
+    best_bowling: str = Field(default="—", description="Best innings figures as wickets/runs: most wickets, ties broken by fewest runs (e.g. '5/10')")
+    three_wicket_hauls: int = Field(default=0, description="Innings with exactly 3 bowler-credited wickets")
+    four_wicket_hauls: int = Field(default=0, description="Innings with exactly 4 bowler-credited wickets")
+    five_wicket_hauls: int = Field(default=0, description="Innings with 5 or more bowler-credited wickets (counted here only, not as 3- or 4-wicket hauls)")
 
 
 class PlayerMatchLogItem(BaseModel):
@@ -287,8 +295,8 @@ class PlayerListItem(BaseModel):
     scores_50_plus: int = Field(default=0, description="Scores >= 50")
     # Bowling preview
     bowling_innings: int = Field(default=0, description="Bowling appearances")
-    wickets: int = Field(default=0, description="Total wickets taken")
-    bowling_avg: Optional[float] = Field(None, description="Bowling average")
+    wickets: int = Field(default=0, description="Bowler-credited wickets (run outs and retirements excluded; super overs excluded)")
+    bowling_avg: Optional[float] = Field(None, description="Runs conceded per bowler-credited wicket")
     economy: float = Field(default=0.0, description="Career economy rate")
     best_bowling: str = Field(default="—", description="Career best bowling figures")
     # Tier flags

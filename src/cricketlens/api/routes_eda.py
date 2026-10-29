@@ -11,7 +11,7 @@ from cricketlens.api.schemas import (
     EDAFullHistoryResponse,
 )
 from cricketlens.api.services.eda_service import eda_service
-from cricketlens.api.services.canonical_data import canonical_engine
+from cricketlens.api.services.canonical_data import canonical_engine, DerivedDataUnavailable
 
 router = APIRouter(prefix="/api/eda", tags=["Statistics & EDA"])
 
@@ -28,6 +28,8 @@ async def get_eda_full_history() -> EDAFullHistoryResponse:
     try:
         canonical_engine.ensure_loaded()
         return EDAFullHistoryResponse(**canonical_engine.get_eda_full_history())
+    except DerivedDataUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to load full history EDA: {exc}")
 
