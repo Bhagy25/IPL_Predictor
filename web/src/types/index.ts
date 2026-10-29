@@ -277,6 +277,8 @@ export interface PlayerListItem {
   player_id?: string;
   batter_id: string;
   name: string;
+  name_variants?: string[];
+  matches?: number;
   role?: 'Batter' | 'Bowler' | 'All-Rounder';
   is_batter?: boolean;
   is_bowler?: boolean;
@@ -368,6 +370,8 @@ export interface PlayerProfileResponse {
   player_id?: string;
   batter_id: string;
   name: string;
+  name_variants?: string[];
+  matches?: number;
   first_season?: number;
   last_season?: number;
   seasons_played?: number[];
@@ -395,6 +399,14 @@ export interface PlayerListResponse {
   total_pages?: number;
   query?: string | null;
   experience_filter?: string | null;
+  directory_counts?: DirectoryCounts;
+}
+
+export interface DirectoryCounts {
+  all: number;
+  batters: number;
+  bowlers: number;
+  all_rounders: number;
 }
 
 // ==========================================

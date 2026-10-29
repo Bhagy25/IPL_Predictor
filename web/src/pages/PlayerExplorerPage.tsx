@@ -17,13 +17,14 @@ import {
   Flame,
   Shield,
 } from 'lucide-react';
-import { PlayerListItem, PlayerProfileResponse } from '../types';
+import { DirectoryCounts, PlayerListItem, PlayerProfileResponse } from '../types';
 import { fetchPlayers, fetchPlayerOverview } from '../api/players';
 
-const ROLE_FILTERS = [
-  { id: 'all', label: 'All Players (806)' },
-  { id: 'batters', label: 'Batters (736)' },
-  { id: 'bowlers', label: 'Bowlers (577)' },
+// Counts come from the API's directory_counts, never from fixed numbers
+const ROLE_FILTERS: { id: string; label: string; countKey?: keyof DirectoryCounts }[] = [
+  { id: 'all', label: 'All Players', countKey: 'all' },
+  { id: 'batters', label: 'Batters', countKey: 'batters' },
+  { id: 'bowlers', label: 'Bowlers', countKey: 'bowlers' },
   { id: 'all-rounders', label: 'All-Rounders' },
 ];
 
@@ -59,6 +60,7 @@ export const PlayerExplorerPage: React.FC = () => {
   // Data state
   const [players, setPlayers] = useState<PlayerListItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [directoryCounts, setDirectoryCounts] = useState<DirectoryCounts | null>(null);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string>('ba607b88'); // Default to V Kohli
   const [profile, setProfile] = useState<PlayerProfileResponse | null>(null);
 
@@ -98,6 +100,7 @@ export const PlayerExplorerPage: React.FC = () => {
       if (requestId !== listRequest.current) return;
       setPlayers(res.players);
       setTotalCount(res.total_count);
+      if (res.directory_counts) setDirectoryCounts(res.directory_counts);
 
       // Auto-select first player if current selected is not in list
       const activeId = selectedPlayerId;
@@ -164,7 +167,7 @@ export const PlayerExplorerPage: React.FC = () => {
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#151619] border border-[#D9B15F]/30 text-xs font-medium text-[#D9B15F] self-start sm:self-center shadow-gold-pill">
             <User className="w-3.5 h-3.5 text-[#D9B15F]" />
-            <span>806 Verified Players &middot; 2008–2026 History</span>
+            <span>{directoryCounts ? directoryCounts.all.toLocaleString() : '…'} Verified Players &middot; 2008–2026 History</span>
           </div>
         </div>
 
@@ -198,7 +201,7 @@ export const PlayerExplorerPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search all 806 players by name or ID (e.g. Kohli, Bumrah, Narine)..."
+              placeholder={`Search ${directoryCounts ? `all ${directoryCounts.all.toLocaleString()} ` : ''}players by name or ID (e.g. Kohli, Bumrah, Narine)...`}
               className="w-full bg-[#101114] border border-[#D9B15F]/30 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-[#F6F6F3] placeholder-[#8E8E88] focus:outline-none focus:ring-1 focus:ring-[#D9B15F]"
             />
           </div>
@@ -241,6 +244,7 @@ export const PlayerExplorerPage: React.FC = () => {
                 }`}
               >
                 {f.label}
+                {f.countKey && directoryCounts ? ` (${directoryCounts[f.countKey].toLocaleString()})` : ''}
               </button>
             ))}
           </div>
@@ -709,7 +713,7 @@ export const PlayerExplorerPage: React.FC = () => {
                   Data Integrity Disclosures
                 </h4>
                 <ul className="list-disc list-inside text-xs text-[#B9B9B3] space-y-1">
-                  <li>Full career directory encompasses all 806 players with recorded appearances across 19 tournament editions (2008–2026).</li>
+                  <li>Full career directory encompasses all {directoryCounts ? directoryCounts.all.toLocaleString() : '…'} players with recorded appearances across 19 tournament editions (2008–2026).</li>
                   <li>Batting averages represent career runs divided by verified dismissals; players remaining undefeated throughout their career show total runs.</li>
                   <li>Bowler statistics credit legal dismissals only (bowled, caught, lbw, stumped, hit wicket); run outs are strictly attributed to team fielding.</li>
                   <li>Overs bowled use standard cricket notation (e.g. 342.4 signifies 342 complete six-ball overs plus 4 balls).</li>
