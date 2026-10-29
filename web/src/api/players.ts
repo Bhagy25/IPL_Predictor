@@ -1,4 +1,4 @@
-import { PlayerListResponse, PlayerProfileResponse } from '../types';
+import { PlayerListResponse, PlayerMatchLogResponse, PlayerProfileResponse } from '../types';
 
 const API_BASE = '/api';
 
@@ -34,16 +34,45 @@ export async function fetchPlayers(
   return res.json();
 }
 
+// season: every number in the profile is computed for that season only; omit for the full career
 export async function fetchPlayerOverview(
   playerId: string,
+  season?: number | null,
   signal?: AbortSignal
 ): Promise<PlayerProfileResponse> {
-  const res = await fetch(`${API_BASE}/players/${encodeURIComponent(playerId)}/overview`, {
+  const query = season != null ? `?season=${season}` : '';
+  const res = await fetch(`${API_BASE}/players/${encodeURIComponent(playerId)}/overview${query}`, {
     signal,
     headers: { 'Accept': 'application/json' },
   });
   if (!res.ok) {
     throw new Error(`Failed to fetch profile for player '${playerId}': HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+export interface PlayerMatchesParams {
+  season?: number | null;
+  page?: number;
+  page_size?: number;
+}
+
+export async function fetchPlayerMatches(
+  playerId: string,
+  params?: PlayerMatchesParams,
+  signal?: AbortSignal
+): Promise<PlayerMatchLogResponse> {
+  const queryParams = new URLSearchParams();
+  if (params?.season != null) queryParams.set('season', params.season.toString());
+  if (params?.page) queryParams.set('page', params.page.toString());
+  if (params?.page_size) queryParams.set('page_size', params.page_size.toString());
+
+  const res = await fetch(`${API_BASE}/players/${encodeURIComponent(playerId)}/matches?${queryParams.toString()}`, {
+    signal,
+    headers: { 'Accept': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch match log for player '${playerId}': HTTP ${res.status}`);
   }
   return res.json();
 }

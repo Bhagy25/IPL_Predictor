@@ -220,14 +220,17 @@ export interface TeamListResponse {
 // Player Explorer Types (Batting & Bowling)
 // ==========================================
 
+// A null rate always comes with a *_state code explaining why (see state_definitions)
 export interface PlayerBattingSummary {
   innings: number;
   runs: number;
   balls_faced: number;
   dismissals: number;
   not_outs: number;
-  average: number;
-  strike_rate: number;
+  average: number | null;
+  average_state: string | null;
+  strike_rate: number | null;
+  strike_rate_state: string | null;
   highest_score: string;
   fours: number;
   sixes: number;
@@ -244,12 +247,94 @@ export interface PlayerBowlingSummary {
   runs_conceded: number;
   wickets: number;
   bowling_average: number | null;
+  bowling_average_state: string | null;
   bowling_strike_rate: number | null;
-  economy_rate: number;
+  bowling_strike_rate_state: string | null;
+  economy_rate: number | null;
+  economy_rate_state: string | null;
   best_bowling: string;
   three_wicket_hauls: number;
   four_wicket_hauls: number;
   five_wicket_hauls: number;
+}
+
+export type PlayerBattingSeason = PlayerBattingSummary & { season: number };
+export type PlayerBattingTeamSplit = PlayerBattingSummary & { team: string };
+export type PlayerBattingOppositionSplit = PlayerBattingSummary & { opposition: string };
+export type PlayerBattingVenueSplit = PlayerBattingSummary & { venue: string };
+export type PlayerBowlingSeason = PlayerBowlingSummary & { season: number };
+export type PlayerBowlingOppositionSplit = PlayerBowlingSummary & { opposition: string };
+export type PlayerBowlingVenueSplit = PlayerBowlingSummary & { venue: string };
+
+export interface PlayerTeamSpell {
+  team: string;
+  short_name: string | null;
+  seasons: number[];
+  seasons_label: string;
+  matches: number;
+}
+
+export interface PlayerSubstitution {
+  direction: 'in' | 'out';
+  reason: string;
+  innings: number;
+  counterpart_id: string;
+  counterpart_name: string;
+}
+
+export interface PlayerMatchBatting {
+  state: string;
+  runs: number | null;
+  balls_faced: number | null;
+  fours: number | null;
+  sixes: number | null;
+  dismissed: boolean | null;
+  dismissal_kind: string | null;
+}
+
+export interface PlayerMatchBowling {
+  state: string;
+  legal_balls: number | null;
+  overs: string | null;
+  runs_conceded: number | null;
+  wickets: number | null;
+  economy: number | null;
+  economy_state: string | null;
+}
+
+export interface PlayerMatchResult {
+  outcome: string | null;
+  outcome_state: string | null;
+  winner: string | null;
+  method: string | null;
+  super_over_winner: string | null;
+  super_over_outcome: string | null;
+  super_over_state: string | null;
+}
+
+export interface PlayerMatchAppearance {
+  match_id: number;
+  date: string;
+  season: number;
+  team: string;
+  opposition: string;
+  venue: string;
+  appearance_state: string;
+  substitutions: PlayerSubstitution[];
+  batting: PlayerMatchBatting;
+  bowling: PlayerMatchBowling;
+  result: PlayerMatchResult;
+}
+
+export interface PlayerMatchLogResponse {
+  player_id: string;
+  name: string;
+  season_filter: number | null;
+  total_count: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  matches: PlayerMatchAppearance[];
 }
 
 export interface PlayerMatchLogItem {
@@ -371,13 +456,27 @@ export interface PlayerProfileResponse {
   batter_id: string;
   name: string;
   name_variants?: string[];
-  matches?: number;
-  first_season?: number;
-  last_season?: number;
-  seasons_played?: number[];
+  season_filter: number | null;
+  matches: number;
+  first_season: number;
+  last_season: number;
+  seasons_played: number[];
+  seasons_count: number;
   teams?: string[];
+  team_history: PlayerTeamSpell[];
+  batting_state: 'batted' | 'did_not_bat';
+  bowling_state: 'bowled' | 'did_not_bowl';
   career_batting?: PlayerBattingSummary | null;
   career_bowling?: PlayerBowlingSummary | null;
+  batting_by_season: PlayerBattingSeason[];
+  batting_by_team: PlayerBattingTeamSplit[];
+  batting_by_opposition: PlayerBattingOppositionSplit[];
+  batting_by_venue: PlayerBattingVenueSplit[];
+  bowling_by_season: PlayerBowlingSeason[];
+  bowling_by_opposition: PlayerBowlingOppositionSplit[];
+  bowling_by_venue: PlayerBowlingVenueSplit[];
+  metric_definitions: Record<string, string>;
+  state_definitions: Record<string, string>;
   career_summary?: PlayerCareerSummary;
   milestone_breakdown?: PlayerMilestoneBreakdown;
   coverage_period?: string;

@@ -4,8 +4,6 @@ import {
   Search,
   Filter,
   ArrowUpDown,
-  TrendingUp,
-  Award,
   Calendar,
   AlertCircle,
   RefreshCw,
@@ -14,11 +12,11 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldAlert,
-  Flame,
-  Shield,
 } from 'lucide-react';
 import { DirectoryCounts, PlayerListItem, PlayerProfileResponse } from '../types';
 import { fetchPlayers, fetchPlayerOverview } from '../api/players';
+import { BattingSection, BowlingSection, CareerSummary, DefinitionsDisclosure } from '../components/player/ProfileSections';
+import { FOCUS_RING } from '../components/player/playerFormat';
 
 // Counts come from the API's directory_counts, never from fixed numbers
 const ROLE_FILTERS: { id: string; label: string; countKey?: keyof DirectoryCounts }[] = [
@@ -32,6 +30,19 @@ const ROLE_FILTERS: { id: string; label: string; countKey?: keyof DirectoryCount
 const ROLE_RULE =
   'Role derived from IPL playing record: bowls regularly = bowled in at least 50% of matches with 12+ legal balls per bowling innings; ' +
   'bats regularly = batted in at least 50% of matches facing 8+ balls per innings; both = All-Rounder.';
+
+const RoleBadge: React.FC<{ role?: string }> = ({ role }) =>
+  role ? (
+    <span title={ROLE_RULE} className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase cursor-help ${
+      role === 'All-Rounder'
+        ? 'bg-[#D9B15F]/15 text-[#D9B15F] border border-[#D9B15F]/30'
+        : role === 'Bowler'
+        ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/30'
+        : 'bg-zinc-800 text-zinc-300 border border-zinc-600/30'
+    }`}>
+      {role}
+    </span>
+  ) : null;
 
 const EXPERIENCE_FILTERS = [
   { id: 'all', label: 'All Tiers' },
@@ -68,6 +79,12 @@ export const PlayerExplorerPage: React.FC = () => {
   const [directoryCounts, setDirectoryCounts] = useState<DirectoryCounts | null>(null);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string>('ba607b88'); // Default to V Kohli
   const [profile, setProfile] = useState<PlayerProfileResponse | null>(null);
+  // null = full career; otherwise every number on the profile is for that season
+  const [profileSeason, setProfileSeason] = useState<number | null>(null);
+  // The selected player's seasons, from the full-career profile
+  const [seasonOptions, setSeasonOptions] = useState<number[]>([]);
+  // Directory roles seen so far, so the profile can show the badge for the selected player
+  const [roleById, setRoleById] = useState<Record<string, string>>({});
 
   // Loading and error states
   const [listLoading, setListLoading] = useState<boolean>(true);
@@ -78,6 +95,12 @@ export const PlayerExplorerPage: React.FC = () => {
   // Only the latest request may update state, so a slow earlier response cannot overwrite it
   const listRequest = useRef(0);
   const profileRequest = useRef(0);
+
+  const selectPlayer = useCallback((pid: string) => {
+    setSelectedPlayerId(pid);
+    setProfileSeason(null);
+    setSeasonOptions([]);
+  }, []);
 
   // Debounce search query
   useEffect(() => {
@@ -106,18 +129,23 @@ export const PlayerExplorerPage: React.FC = () => {
       setPlayers(res.players);
       setTotalCount(res.total_count);
       if (res.directory_counts) setDirectoryCounts(res.directory_counts);
+      setRoleById(prev => {
+        const next = { ...prev };
+        res.players.forEach(p => { if (p.role) next[p.player_id || p.batter_id] = p.role; });
+        return next;
+      });
 
       // Auto-select first player if current selected is not in list
       const activeId = selectedPlayerId;
       if (res.players.length > 0 && !res.players.some(p => (p.player_id || p.batter_id) === activeId)) {
-        setSelectedPlayerId(res.players[0].player_id || res.players[0].batter_id);
+        selectPlayer(res.players[0].player_id || res.players[0].batter_id);
       }
     } catch (err: any) {
       if (requestId === listRequest.current) setError(err?.message || 'Failed to load players directory');
     } finally {
       if (requestId === listRequest.current) setListLoading(false);
     }
-  }, [debouncedQuery, selectedRole, selectedTier, page, sortBy, selectedPlayerId]);
+  }, [debouncedQuery, selectedRole, selectedTier, page, sortBy, selectedPlayerId, selectPlayer]);
 
   useEffect(() => {
     loadPlayers();
@@ -130,8 +158,11 @@ export const PlayerExplorerPage: React.FC = () => {
     setProfileLoading(true);
     setProfileError(null);
     try {
-      const data = await fetchPlayerOverview(selectedPlayerId);
-      if (requestId === profileRequest.current) setProfile(data);
+      const data = await fetchPlayerOverview(selectedPlayerId, profileSeason);
+      if (requestId === profileRequest.current) {
+        setProfile(data);
+        if (profileSeason === null) setSeasonOptions(data.seasons_played);
+      }
     } catch (err: any) {
       if (requestId === profileRequest.current) {
         // Never leave the previous player's figures on screen after a failure
@@ -141,7 +172,7 @@ export const PlayerExplorerPage: React.FC = () => {
     } finally {
       if (requestId === profileRequest.current) setProfileLoading(false);
     }
-  }, [selectedPlayerId]);
+  }, [selectedPlayerId, profileSeason]);
 
   useEffect(() => {
     loadProfile();
@@ -149,8 +180,9 @@ export const PlayerExplorerPage: React.FC = () => {
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  const batting = profile?.career_batting;
-  const bowling = profile?.career_bowling;
+  const scopeLabel = profile?.season_filter != null
+    ? `${profile.season_filter} season`
+    : profile ? `Full career ${profile.first_season}–${profile.last_season}` : '';
 
   return (
     <div className="space-y-10 sm:space-y-12 max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
@@ -309,7 +341,7 @@ export const PlayerExplorerPage: React.FC = () => {
                 return (
                   <button
                     key={pid}
-                    onClick={() => setSelectedPlayerId(pid)}
+                    onClick={() => selectPlayer(pid)}
                     className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-[#1D1E22] border-[#D9B15F] shadow-gold-pill'
@@ -321,17 +353,7 @@ export const PlayerExplorerPage: React.FC = () => {
                         <span className="text-xs sm:text-sm font-extrabold text-[#F6F6F3]">
                           {p.name}
                         </span>
-                        {p.role && (
-                          <span title={ROLE_RULE} className={`text-[9px] px-1.5 py-0.2 rounded font-bold uppercase ${
-                            p.role === 'All-Rounder'
-                              ? 'bg-[#D9B15F]/15 text-[#D9B15F] border border-[#D9B15F]/30'
-                              : p.role === 'Bowler'
-                              ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/30'
-                              : 'bg-zinc-800 text-zinc-300 border border-zinc-600/30'
-                          }`}>
-                            {p.role}
-                          </span>
-                        )}
+                        <RoleBadge role={p.role} />
                       </div>
                       <div className="text-right">
                         {p.total_runs > 0 && (
@@ -391,152 +413,70 @@ export const PlayerExplorerPage: React.FC = () => {
 
         {/* Right Column: Player Profile Details (8 Cols) */}
         <section aria-label="Player Profile Detail" className="lg:col-span-8 space-y-6">
-          {profileLoading ? (
+          {profileLoading && !profile ? (
             <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3 animate-pulse">
               <Loader2 className="w-8 h-8 text-[#D9B15F] animate-spin" />
               <p className="text-sm font-semibold text-[#F6F6F3]">Loading career profile &amp; match logs...</p>
             </div>
           ) : profile ? (
-            <div className="space-y-6">
-              
-              {/* Profile Card Header */}
-              <div className="bg-[#151619] border border-[#D9B15F]/30 rounded-2xl p-6 sm:p-7 space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D9B15F]/15">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-[#1D1E22] border border-[#D9B15F]/40 flex items-center justify-center text-[#D9B15F] shadow-sm">
+            <div className={`space-y-6 transition-opacity ${profileLoading ? 'opacity-60' : ''}`} aria-busy={profileLoading}>
+
+              {/* Profile Card Header with the season selector */}
+              <div className="bg-[#151619] border border-[#D9B15F]/30 rounded-2xl p-5 sm:p-7 space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[#D9B15F]/15">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-14 h-14 flex-shrink-0 rounded-2xl bg-[#1D1E22] border border-[#D9B15F]/40 flex items-center justify-center text-[#D9B15F] shadow-sm">
                       <User className="w-7 h-7" />
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2.5">
-                        <h2 className="text-2xl sm:text-3xl font-black text-[#F6F6F3]">
-                          {profile.name}
-                        </h2>
-                      </div>
-                      <p className="text-xs text-[#B9B9B3] mt-1 flex flex-wrap items-center gap-2">
-                        <span>Career: <strong className="text-[#F6F6F3]">{profile.first_season}–{profile.last_season}</strong></span>
-                        <span>&middot;</span>
-                        <span>Teams: <span className="text-[#D9B15F] font-semibold">{profile.teams?.join(', ') || 'IPL Franchise'}</span></span>
-                      </p>
+                    <div className="min-w-0">
+                      <h2 className="text-2xl sm:text-3xl font-black text-[#F6F6F3] break-words">
+                        {profile.name}
+                      </h2>
+                      {(profile.name_variants ?? []).some(n => n !== profile.name) && (
+                        <p className="text-xs text-[#B9B9B3] mt-1">
+                          Listed as: {(profile.name_variants ?? []).join(', ')}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    {batting && (
-                      <div className="bg-[#101114] border border-[#D9B15F]/20 rounded-xl px-3.5 py-2 text-right">
-                        <span className="text-[10px] uppercase tracking-wider text-[#B9B9B3] font-semibold">Batting Avg</span>
-                        <p className="text-lg font-black text-[#D9B15F]">{batting.average}</p>
-                      </div>
-                    )}
-                    {bowling && (
-                      <div className="bg-[#101114] border border-emerald-500/20 rounded-xl px-3.5 py-2 text-right">
-                        <span className="text-[10px] uppercase tracking-wider text-[#B9B9B3] font-semibold">Bowling Econ</span>
-                        <p className="text-lg font-black text-emerald-400">{bowling.economy_rate}</p>
-                      </div>
-                    )}
+                  <div className="flex flex-col gap-1.5 sm:items-end">
+                    <label htmlFor="profile-season" className="text-[10px] uppercase tracking-wider font-bold text-[#8E8E88]">
+                      Showing
+                    </label>
+                    <select
+                      id="profile-season"
+                      value={profileSeason ?? 'career'}
+                      disabled={profileLoading}
+                      onChange={e => setProfileSeason(e.target.value === 'career' ? null : Number(e.target.value))}
+                      className={`bg-[#101114] border border-[#D9B15F]/40 text-[#F6F6F3] text-xs font-semibold rounded-lg px-3 py-2 cursor-pointer ${FOCUS_RING}`}
+                    >
+                      <option value="career">Full career</option>
+                      {seasonOptions.map(s => (
+                        <option key={s} value={s}>{s} season</option>
+                      ))}
+                    </select>
+                    <span
+                      aria-live="polite"
+                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${
+                        profile.season_filter != null
+                          ? 'bg-[#D9B15F] text-[#0D0E10] border-[#D9B15F]'
+                          : 'bg-[#101114] text-[#D9B15F] border-[#D9B15F]/30'
+                      }`}
+                    >
+                      {profileLoading ? 'Updating…' : `Every number below: ${scopeLabel.toLowerCase()}`}
+                    </span>
                   </div>
                 </div>
 
-                {/* Dual Career Cards: Batting & Bowling */}
-                <div className="space-y-4">
-                  {/* Career Batting Card */}
-                  <div className="bg-[#121316] border border-[#D9B15F]/20 rounded-xl p-4 sm:p-5 space-y-3">
-                    <div className="flex items-center justify-between border-b border-[#D9B15F]/10 pb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#D9B15F] flex items-center gap-2">
-                        <Flame className="w-4 h-4 text-[#D9B15F]" />
-                        Career Batting Figures (2008–2026)
-                      </span>
-                      {batting && (
-                        <span className="text-[11px] text-[#B9B9B3]">
-                          Highest Score: <strong className="text-[#F6F6F3] font-mono">{batting.highest_score}</strong>
-                        </span>
-                      )}
-                    </div>
-
-                    {batting ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 pt-1">
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Runs</span>
-                          <p className="text-base font-black text-[#D9B15F]">{batting.runs.toLocaleString()}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Innings</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{batting.innings}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Average</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{batting.average}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Strike Rate</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{batting.strike_rate}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">4s / 6s</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{batting.fours} / {batting.sixes}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">50s / 100s</span>
-                          <p className="text-base font-black text-[#D9B15F]">{batting.scores_50_plus} / {batting.scores_100_plus}</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-3 text-center text-xs text-[#8E8E88] italic bg-[#17181C] rounded-lg">
-                        Did not bat in official IPL matches (Pure Bowler).
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Career Bowling Card */}
-                  <div className="bg-[#121316] border border-emerald-500/20 rounded-xl p-4 sm:p-5 space-y-3">
-                    <div className="flex items-center justify-between border-b border-emerald-500/10 pb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-emerald-400" />
-                        Career Bowling Figures (2008–2026)
-                      </span>
-                      {bowling && (
-                        <span className="text-[11px] text-[#B9B9B3]">
-                          Best Bowling: <strong className="text-emerald-300 font-mono">{bowling.best_bowling}</strong>
-                        </span>
-                      )}
-                    </div>
-
-                    {bowling ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 pt-1">
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Wickets</span>
-                          <p className="text-base font-black text-emerald-400">{bowling.wickets}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Innings</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{bowling.innings}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Overs Bowled</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{bowling.overs_bowled}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Economy</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{bowling.economy_rate}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">Average</span>
-                          <p className="text-base font-black text-[#F6F6F3]">{bowling.bowling_average ?? '—'}</p>
-                        </div>
-                        <div className="bg-[#17181C] p-2.5 rounded-lg border border-white/5">
-                          <span className="text-[10px] uppercase text-[#8E8E88] font-bold">3w / 4w / 5w</span>
-                          <p className="text-base font-black text-emerald-300">
-                            {bowling.three_wicket_hauls} / {bowling.four_wicket_hauls} / {bowling.five_wicket_hauls}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-3 text-center text-xs text-[#8E8E88] italic bg-[#17181C] rounded-lg">
-                        Did not bowl in official IPL matches (Pure Batter).
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <CareerSummary
+                  profile={profile}
+                  roleBadge={roleById[profile.player_id ?? ''] ? <RoleBadge role={roleById[profile.player_id ?? '']} /> : '…'}
+                />
               </div>
+
+              <BattingSection profile={profile} scopeLabel={scopeLabel} />
+              <BowlingSection profile={profile} scopeLabel={scopeLabel} />
 
               {/* Chronological Match Performance Logs Table */}
               <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-5 sm:p-6 space-y-4">
@@ -646,70 +586,7 @@ export const PlayerExplorerPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Opposition & Venue Splits */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Opposition Table */}
-                <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-5 space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#B9B9B3] flex items-center gap-1.5">
-                    <Award className="w-3.5 h-3.5 text-[#D9B15F]" />
-                    Performance by Opposition
-                  </h4>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-[#101114] text-[#B9B9B3] uppercase font-bold tracking-wider border-b border-[#D9B15F]/20">
-                        <tr>
-                          <th className="py-2 px-3">Opponent</th>
-                          <th className="py-2 px-3 text-center">Inn</th>
-                          <th className="py-2 px-3 text-center">Runs</th>
-                          <th className="py-2 px-3 text-right">Avg</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#D9B15F]/10">
-                        {(profile.vs_opponents || profile.opposition_splits || []).map((o: any) => (
-                          <tr key={o.opponent} className="hover:bg-[#1A1B1F]">
-                            <td className="py-2 px-3 font-medium text-[#F6F6F3]">{o.opponent}</td>
-                            <td className="py-2 px-3 text-center text-[#B9B9B3]">{o.innings}</td>
-                            <td className="py-2 px-3 text-center text-[#D9B15F] font-bold">{o.runs ?? o.total_runs}</td>
-                            <td className="py-2 px-3 text-right font-mono text-[#F6F6F3]">{o.average ?? o.avg_runs}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Venues Table */}
-                <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-5 space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#B9B9B3] flex items-center gap-1.5">
-                    <TrendingUp className="w-3.5 h-3.5 text-[#D9B15F]" />
-                    Performance by Venue
-                  </h4>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-[#101114] text-[#B9B9B3] uppercase font-bold tracking-wider border-b border-[#D9B15F]/20">
-                        <tr>
-                          <th className="py-2 px-3">Stadium</th>
-                          <th className="py-2 px-3 text-center">Inn</th>
-                          <th className="py-2 px-3 text-center">Runs</th>
-                          <th className="py-2 px-3 text-right">Avg</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#D9B15F]/10">
-                        {(profile.at_venues || profile.venue_splits || []).map((v: any) => (
-                          <tr key={v.venue} className="hover:bg-[#1A1B1F]">
-                            <td className="py-2 px-3 font-medium text-[#F6F6F3] truncate max-w-[140px]">{v.venue}</td>
-                            <td className="py-2 px-3 text-center text-[#B9B9B3]">{v.innings}</td>
-                            <td className="py-2 px-3 text-center text-[#D9B15F] font-bold">{v.runs ?? v.total_runs}</td>
-                            <td className="py-2 px-3 text-right font-mono text-[#F6F6F3]">{v.average ?? v.avg_runs}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-              </div>
+              <DefinitionsDisclosure profile={profile} />
 
               {/* Disclosures & Notes */}
               <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-5 space-y-2">
@@ -719,7 +596,7 @@ export const PlayerExplorerPage: React.FC = () => {
                 </h4>
                 <ul className="list-disc list-inside text-xs text-[#B9B9B3] space-y-1">
                   <li>Full career directory encompasses all {directoryCounts ? directoryCounts.all.toLocaleString() : '…'} players with recorded appearances across 19 tournament editions (2008–2026).</li>
-                  <li>Batting averages represent career runs divided by verified dismissals; players remaining undefeated throughout their career show total runs.</li>
+                  <li>Batting average is runs divided by dismissals; a player never dismissed has no average, shown as &ldquo;—&rdquo;.</li>
                   <li>{ROLE_RULE}</li>
                   <li>Bowler statistics credit legal dismissals only (bowled, caught, lbw, stumped, hit wicket); run outs are strictly attributed to team fielding.</li>
                   <li>Overs bowled use standard cricket notation (e.g. 342.4 signifies 342 complete six-ball overs plus 4 balls).</li>
