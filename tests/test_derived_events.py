@@ -93,6 +93,14 @@ def test_batting_appearances_on_fixture(fixture_dir):
     assert (f['balls_faced'], f['dismissed'], f['on_strike']) == (0, False, False)
 
 
+def test_match_replacements_on_fixture(fixture_dir):
+    rows = build_tables(fixture_dir)['match_replacements']
+    # The Impact Player substitution only; the mid-over role replacement does not change the squad
+    assert [(r['innings'], r['over_index'], r['delivery_index'], r['is_super_over'], r['team'], r['reason'],
+             r['player_in'], r['player_in_id'], r['player_out'], r['player_out_id']) for r in rows] == \
+        [(2, 0, 1, False, 'Mumbai Indians', 'impact_player', 'Fielder F', 'id_f', 'Bowler Y', 'id_y')]
+
+
 def test_fixture_keys_align_with_stage1_deliveries(fixture_dir):
     deliveries = extract(fixture_dir)['deliveries']
     team_wickets = {tuple(str(d[k]) for k in KEY): d['team_wickets_on_ball'] for d in deliveries}
@@ -129,17 +137,23 @@ def raw_facts():
     batting_outs = Counter()
     boundaries = Counter()
     ids_by_name = defaultdict(set)
+    substitutions = []
+    squad_sizes = {}
     for path in RAW.glob('*.json'):
         match = json.loads(path.read_text(encoding='utf-8'))
         registry = match['info']['registry']['people']
-        for names in match['info']['players'].values():
+        for team, names in match['info']['players'].items():
+            squad_sizes[(int(path.stem), team)] = len(names)
             for name in names:
                 ids_by_name[name].add(registry[name])
         for innings in match['innings']:
-            if innings.get('super_over'):
-                continue
             for over in innings['overs']:
                 for ball in over['deliveries']:
+                    for sub in ball.get('replacements', {}).get('match', []):
+                        substitutions.append((int(path.stem), sub['team'], sub['reason'],
+                                              registry[sub['in']], registry[sub['out']]))
+                    if innings.get('super_over'):
+                        continue
                     runs = ball['runs']
                     if runs['batter'] in (4, 6) and not runs.get('non_boundary'):
                         boundaries[(registry[ball['batter']], runs['batter'])] += 1
@@ -148,14 +162,15 @@ def raw_facts():
                             credited[registry[ball['bowler']]] += 1
                         if wicket['kind'] not in ('retired hurt', 'retired not out'):
                             batting_outs[registry[wicket['player_out']]] += 1
-    return {'credited': credited, 'batting_outs': batting_outs, 'boundaries': boundaries, 'ids_by_name': ids_by_name}
+    return {'credited': credited, 'batting_outs': batting_outs, 'boundaries': boundaries, 'ids_by_name': ids_by_name,
+            'substitutions': substitutions, 'squad_sizes': squad_sizes}
 
 
 @pytest.fixture(scope='module')
 def derived():
     return {
         name: pd.read_csv(DERIVED / f'{name}.csv', dtype={'fielders': str, 'fielder_ids': str})
-        for name in ('dismissals', 'non_boundary_events', 'match_players', 'people')
+        for name in ('dismissals', 'non_boundary_events', 'match_players', 'match_replacements', 'people')
     }
 
 
@@ -250,3 +265,21 @@ def test_registry_ids_resolve_name_variants(derived, raw_facts):
     # Two different people sharing one name: two registry IDs.
     assert len(ids['Harmeet Singh']) == 2
     assert set(ids['Harmeet Singh']) <= set(people.index)
+
+
+@needs_raw
+def test_match_replacements_match_raw_and_squad_lists(derived, raw_facts):
+    table = derived['match_replacements']
+    rows = sorted(zip(table['match_id'], table['reason'], table['player_in_id'], table['player_out_id']))
+    assert rows == sorted((m, reason, pin, pout) for m, _, reason, pin, pout in raw_facts['substitutions'])
+    assert len(rows) == len(set(rows))
+
+    # Both players of every substitution are in that match's squad list, on the substituting team
+    squads = derived['match_players']
+    listed = set(zip(squads['match_id'], squads['team'], squads['player_id']))
+    for side in ('player_in_id', 'player_out_id'):
+        assert all(key in listed for key in zip(table['match_id'], table['team'], table[side])), side
+
+    # Each listed team is its starting eleven plus every player who came in
+    came_in = Counter((m, team) for m, team, *_ in raw_facts['substitutions'])
+    assert all(size == 11 + came_in[key] for key, size in raw_facts['squad_sizes'].items())

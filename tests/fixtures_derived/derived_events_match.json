@@ -81,7 +81,11 @@
           "deliveries": [
             {
               "batter": "Keeper K", "bowler": "Batter A", "non_striker": "Fielder F",
-              "runs": {"batter": 4, "extras": 0, "total": 4}
+              "runs": {"batter": 4, "extras": 0, "total": 4},
+              "replacements": {
+                "match": [{"in": "Fielder F", "out": "Bowler Y", "team": "Mumbai Indians", "reason": "impact_player"}],
+                "role": [{"in": "Batter A", "reason": "injury", "role": "bowler"}]
+              }
             }
           ]
         }
