@@ -111,7 +111,7 @@ def test_franchise_seasons_match_known_history():
     assert seasons["RPS"] == [2016, 2017]
     assert seasons["KTK"] == [2011]
     assert seasons["PWI"] == [2011, 2012, 2013]
-    assert seasons["DC_OLD"] == [2008, 2009, 2010, 2011, 2012]
+    assert seasons["DCH"] == [2008, 2009, 2010, 2011, 2012]
     assert seasons["SRH"][0] == 2013
     assert seasons["LSG"][0] == 2022
 

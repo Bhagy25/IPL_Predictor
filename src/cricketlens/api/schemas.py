@@ -96,7 +96,7 @@ class OverviewChartsResponse(BaseModel):
 class TeamListItem(BaseModel):
     id: str = Field(..., description="URL-friendly slug (e.g. 'chennai-super-kings')")
     name: str = Field(..., description="Canonical franchise name")
-    short_name: str = Field(..., description="2-4 letter abbreviation (e.g. 'CSK')")
+    short_name: str = Field(..., description="Display code (e.g. 'CSK'; 'DC' is Delhi Capitals, 'DCH' Deccan Chargers)")
     status: str = Field(..., description="'Active' or 'Defunct'")
     seasons_active: str = Field(..., description="Seasons played as ranges derived from match data, e.g. '2008–2015, 2018–2026'")
     active_seasons: List[int] = Field(..., description="Every tournament season the franchise played, derived from match data")

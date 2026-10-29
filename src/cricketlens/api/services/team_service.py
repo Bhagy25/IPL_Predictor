@@ -1,8 +1,8 @@
 """Team Analysis Service for CricketLens.
 
-Provides canonical 2008-2026 historical team analytics, season filtering,
-venue breakdowns, phase scoring, and head-to-head records backed directly
-by the verified canonical data engine.
+Provides canonical team analytics for every season in the archive: results,
+season filtering, venue and opponent breakdowns, phase rates, toss outcomes and
+head-to-head records, backed directly by the verified canonical data engine.
 """
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ class TeamService:
     """Analytical service providing verified team data, head-to-head records, and phase splits."""
 
     def list_teams(self) -> TeamListResponse:
-        """Return list of all 15 canonical franchises."""
+        """Return every canonical franchise with active and defunct counts."""
         canonical_engine.ensure_loaded()
         teams = [TeamListItem(**meta) for meta in canonical_engine.list_teams()]
         active_count = sum(1 for m in teams if m.status == "Active")

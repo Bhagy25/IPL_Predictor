@@ -18,7 +18,8 @@ router = APIRouter(prefix="/api/teams", tags=["Teams"])
     "",
     response_model=TeamListResponse,
     summary="List all canonical IPL franchises",
-    description="Returns all 10 active and 5 historical defunct teams with brand colors, active years, and titles.",
+    description="Returns every canonical franchise (active and defunct) with display code, brand colour, seasons "
+                "played and titles; total_active and total_defunct give the current counts.",
 )
 async def list_teams() -> TeamListResponse:
     try:
@@ -43,7 +44,7 @@ async def get_head_to_head(
     try:
         return team_service.get_head_to_head(team1, team2, season=season)
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        raise HTTPException(status_code=404, detail=exc.args[0])
     except ValueError as exc:
         # Same franchise on both sides (including aliases such as 'csk' and 'chennai-super-kings')
         raise HTTPException(status_code=400, detail=str(exc))
@@ -61,12 +62,12 @@ async def get_head_to_head(
 )
 async def get_team_overview(
     team_id: str,
-    season: Optional[int] = Query(None, description="Optional tournament season year (2008–2026)"),
+    season: Optional[int] = Query(None, description="Optional season the franchise played (404 otherwise)"),
 ) -> TeamOverviewResponse:
     try:
         return team_service.get_team_overview(team_id, season=season)
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        raise HTTPException(status_code=404, detail=exc.args[0])
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to retrieve team overview: {exc}")
 
@@ -85,6 +86,6 @@ async def get_team_venues(
     try:
         return team_service.get_team_venues(team_id, season=season, min_matches=min_matches)
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        raise HTTPException(status_code=404, detail=exc.args[0])
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to retrieve team venues: {exc}")

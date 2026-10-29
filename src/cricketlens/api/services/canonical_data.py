@@ -340,7 +340,8 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     },
     # Defunct Franchises
     "Deccan Chargers": {
-        "short_name": "DC_OLD",
+        # "DC" is Delhi Capitals; Deccan Chargers is shown as DCH
+        "short_name": "DCH",
         "status": "Defunct",
         "titles": 1,
         "title_years": [2009],
@@ -902,7 +903,7 @@ class CanonicalAnalyticsEngine:
         }
 
     def list_teams(self) -> List[Dict[str, Any]]:
-        """Return 15 canonical franchises with title and era metadata."""
+        """Return every canonical franchise with title and era metadata."""
         self.ensure_loaded()
         return [self._team_item(name) for name in FRANCHISE_METADATA]
 
