@@ -53,7 +53,8 @@ def test_team_overview_endpoint():
     assert data["chasing"]["played"] > 0
     assert len(data["season_history"]) > 10
     assert len(data["venue_records"]) > 0
-    assert data["phase_scoring"]["powerplay_run_rate"] > 0
+    assert [p["phase"] for p in data["phases"]] == ["powerplay", "middle", "death"]
+    assert data["phases"][0]["batting_run_rate"] > 0 and data["phases"][0]["economy"] > 0
 
 
 def test_team_overview_not_found():

@@ -1072,11 +1072,6 @@ class CanonicalAnalyticsEngine:
                 key=lambda r: (-r["played"], r["opponent"]),
             ),
             "phases": phases,
-            # Flat batting phase rates the current page reads; the same values as phases
-            "phase_scoring": {
-                **{f"{p['phase']}_run_rate": p["batting_run_rate"] for p in phases},
-                **{f"{p['phase']}_wickets_per_six_balls": p["wickets_lost_per_six"] for p in phases},
-            },
             "toss_stats": {
                 "tosses_won": int(len(toss)),
                 "elected_to_bat": int((toss["toss_decision"] == "bat").sum()),

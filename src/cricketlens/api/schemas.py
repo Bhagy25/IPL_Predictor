@@ -167,15 +167,6 @@ class TeamPhaseRecord(BaseModel):
     wickets_taken_per_six: Optional[float] = Field(None, description="Wickets taken per 6 legal balls")
 
 
-class TeamPhaseScoring(BaseModel):
-    powerplay_run_rate: Optional[float] = Field(None, description="Batting run rate in overs 1-6 (same as phases)")
-    middle_run_rate: Optional[float] = Field(None, description="Batting run rate in overs 7-16 (same as phases)")
-    death_run_rate: Optional[float] = Field(None, description="Batting run rate in overs 17-20 (same as phases)")
-    powerplay_wickets_per_six_balls: Optional[float] = Field(None, description="Powerplay wickets lost per 6 balls")
-    middle_wickets_per_six_balls: Optional[float] = Field(None, description="Middle overs wickets lost per 6 balls")
-    death_wickets_per_six_balls: Optional[float] = Field(None, description="Death overs wickets lost per 6 balls")
-
-
 class TeamLeagueToss(BaseModel):
     label: str = Field(..., description="What the comparison covers, e.g. 'All teams, same seasons (2022–2026)'")
     seasons: List[int] = Field(..., description="Seasons included (the same as the team selection)")
@@ -224,7 +215,6 @@ class TeamOverviewResponse(BaseModel):
     venue_records: List[TeamVenueRecord] = Field(..., description="Venues with at least 3 matches in the selection")
     opponents: List[TeamOpponentRecord] = Field(default_factory=list, description="Record against every opponent")
     phases: List[TeamPhaseRecord] = Field(default_factory=list, description="Batting and bowling (conceded) by phase")
-    phase_scoring: TeamPhaseScoring = Field(..., description="Flat batting phase rates (same values as phases)")
     toss_stats: TeamTossStats = Field(..., description="Toss decisions and results")
     definitions: Dict[str, str] = Field(default_factory=dict, description="How every number is defined")
     state_definitions: Dict[str, str] = Field(default_factory=dict, description="Meaning of each *_state value")
