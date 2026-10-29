@@ -102,7 +102,7 @@ export interface TeamListItem {
   short_name: string;
   status: 'Active' | 'Defunct';
   seasons_active: string;
-  active_seasons?: number[];
+  active_seasons: number[];
   titles: number;
   title_years: number[];
   primary_color: string;

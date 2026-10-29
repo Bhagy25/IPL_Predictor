@@ -19,8 +19,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Chennai Super Kings": {
         "short_name": "CSK",
         "status": "Active",
-        "active_eras": "2008–2015, 2018–2026",
-        "active_seasons": [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
         "titles": 5,
         "title_years": [2010, 2011, 2018, 2021, 2023],
         "primary_color": "#D9B15F",
@@ -29,8 +27,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Mumbai Indians": {
         "short_name": "MI",
         "status": "Active",
-        "active_eras": "2008–2026",
-        "active_seasons": list(range(2008, 2027)),
         "titles": 5,
         "title_years": [2013, 2015, 2017, 2019, 2020],
         "primary_color": "#004BA0",
@@ -39,8 +35,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Kolkata Knight Riders": {
         "short_name": "KKR",
         "status": "Active",
-        "active_eras": "2008–2026",
-        "active_seasons": list(range(2008, 2027)),
         "titles": 3,
         "title_years": [2012, 2014, 2024],
         "primary_color": "#3A225D",
@@ -49,8 +43,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Royal Challengers Bengaluru": {
         "short_name": "RCB",
         "status": "Active",
-        "active_eras": "2008–2026",
-        "active_seasons": list(range(2008, 2027)),
         "titles": 2,
         "title_years": [2025, 2026],
         "primary_color": "#EC1C24",
@@ -59,8 +51,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Rajasthan Royals": {
         "short_name": "RR",
         "status": "Active",
-        "active_eras": "2008–2015, 2018–2026",
-        "active_seasons": [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
         "titles": 1,
         "title_years": [2008],
         "primary_color": "#EA1A85",
@@ -69,8 +59,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Sunrisers Hyderabad": {
         "short_name": "SRH",
         "status": "Active",
-        "active_eras": "2013–2026",
-        "active_seasons": list(range(2013, 2027)),
         "titles": 1,
         "title_years": [2016],
         "primary_color": "#F26522",
@@ -79,8 +67,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Gujarat Titans": {
         "short_name": "GT",
         "status": "Active",
-        "active_eras": "2022–2026",
-        "active_seasons": [2022, 2023, 2024, 2025, 2026],
         "titles": 1,
         "title_years": [2022],
         "primary_color": "#1C1C2B",
@@ -89,8 +75,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Delhi Capitals": {
         "short_name": "DC",
         "status": "Active",
-        "active_eras": "2008–2026",
-        "active_seasons": list(range(2008, 2027)),
         "titles": 0,
         "title_years": [],
         "primary_color": "#282968",
@@ -99,8 +83,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Lucknow Super Giants": {
         "short_name": "LSG",
         "status": "Active",
-        "active_eras": "2022–2026",
-        "active_seasons": [2022, 2023, 2024, 2025, 2026],
         "titles": 0,
         "title_years": [],
         "primary_color": "#A72056",
@@ -109,8 +91,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Punjab Kings": {
         "short_name": "PBKS",
         "status": "Active",
-        "active_eras": "2008–2026",
-        "active_seasons": list(range(2008, 2027)),
         "titles": 0,
         "title_years": [],
         "primary_color": "#DD1F2D",
@@ -120,8 +100,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Deccan Chargers": {
         "short_name": "DC_OLD",
         "status": "Defunct",
-        "active_eras": "2008–2012",
-        "active_seasons": [2008, 2009, 2010, 2011, 2012],
         "titles": 1,
         "title_years": [2009],
         "primary_color": "#4A4D57",
@@ -130,8 +108,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Gujarat Lions": {
         "short_name": "GL",
         "status": "Defunct",
-        "active_eras": "2016–2017",
-        "active_seasons": [2016, 2017],
         "titles": 0,
         "title_years": [],
         "primary_color": "#E37424",
@@ -140,8 +116,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Rising Pune Supergiant": {
         "short_name": "RPS",
         "status": "Defunct",
-        "active_eras": "2016–2017",
-        "active_seasons": [2016, 2017],
         "titles": 0,
         "title_years": [],
         "primary_color": "#7B1B58",
@@ -150,8 +124,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Pune Warriors": {
         "short_name": "PWI",
         "status": "Defunct",
-        "active_eras": "2011–2013",
-        "active_seasons": [2011, 2012, 2013],
         "titles": 0,
         "title_years": [],
         "primary_color": "#2F5597",
@@ -160,8 +132,6 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Kochi Tuskers Kerala": {
         "short_name": "KTK",
         "status": "Defunct",
-        "active_eras": "2011",
-        "active_seasons": [2011],
         "titles": 0,
         "title_years": [],
         "primary_color": "#6B2D82",
@@ -173,6 +143,17 @@ TEAM_NAME_MAP = {k.lower(): k for k in FRANCHISE_METADATA}
 for name, meta in FRANCHISE_METADATA.items():
     TEAM_NAME_MAP[meta["short_name"].lower()] = name
     TEAM_NAME_MAP[meta["slug"].lower()] = name
+
+
+def format_season_ranges(seasons: List[int]) -> str:
+    """Compress sorted seasons into ranges, e.g. [2008, 2009, 2011] -> '2008–2009, 2011'."""
+    ranges: List[List[int]] = []
+    for s in seasons:
+        if ranges and s == ranges[-1][1] + 1:
+            ranges[-1][1] = s
+        else:
+            ranges.append([s, s])
+    return ", ".join(f"{a}" if a == b else f"{a}–{b}" for a, b in ranges)
 
 
 class CanonicalAnalyticsEngine:
@@ -195,6 +176,7 @@ class CanonicalAnalyticsEngine:
         self._player_names_by_id: Dict[str, str] = {}
         self._player_ids_by_name: Dict[str, str] = {}
         self._player_master_list: List[Dict[str, Any]] = []
+        self._franchise_seasons: Dict[str, List[int]] = {}
 
     def ensure_loaded(self) -> None:
         if self._initialized:
@@ -249,6 +231,17 @@ class CanonicalAnalyticsEngine:
         self._deliveries["is_four"] = self._deliveries["runs_batter"] == 4
         self._deliveries["is_six"] = self._deliveries["runs_batter"] == 6
         self._deliveries["is_dot"] = (self._deliveries["runs_batter"] == 0) & (self._deliveries["legal_delivery"] == 1)
+
+        # Seasons each franchise actually played, from canonical team names in matches.csv
+        appearances = pd.concat([
+            self._matches[["season", "team1"]].rename(columns={"team1": "team"}),
+            self._matches[["season", "team2"]].rename(columns={"team2": "team"}),
+        ])
+        seasons_by_team = appearances.groupby("team")["season"].unique()
+        self._franchise_seasons = {
+            name: sorted(int(s) for s in seasons_by_team.get(name, []))
+            for name in FRANCHISE_METADATA
+        }
 
         # Build player registry index
         self._build_player_index()
@@ -451,22 +444,26 @@ class CanonicalAnalyticsEngine:
     # TEAM ANALYSIS APIs
     # ==========================================
 
+    def _team_item(self, name: str) -> Dict[str, Any]:
+        """Franchise metadata with participation seasons derived from match data."""
+        meta = FRANCHISE_METADATA[name]
+        seasons = self._franchise_seasons[name]
+        return {
+            "id": meta["slug"],
+            "name": name,
+            "short_name": meta["short_name"],
+            "status": meta["status"],
+            "seasons_active": format_season_ranges(seasons),
+            "active_seasons": seasons,
+            "titles": meta["titles"],
+            "title_years": meta["title_years"],
+            "primary_color": meta["primary_color"],
+        }
+
     def list_teams(self) -> List[Dict[str, Any]]:
         """Return 15 canonical franchises with title and era metadata."""
         self.ensure_loaded()
-        teams = []
-        for name, meta in FRANCHISE_METADATA.items():
-            teams.append({
-                "id": meta["slug"],
-                "name": name,
-                "short_name": meta["short_name"],
-                "status": meta["status"],
-                "active_eras": meta["active_eras"],
-                "titles": meta["titles"],
-                "title_years": meta["title_years"],
-                "primary_color": meta["primary_color"],
-            })
-        return teams
+        return [self._team_item(name) for name in FRANCHISE_METADATA]
 
     def get_team_overview(self, team_slug_or_name: str, season: Optional[int] = None) -> Dict[str, Any]:
         """Compute complete verified historical team performance."""
@@ -476,6 +473,10 @@ class CanonicalAnalyticsEngine:
             raise KeyError(f"Team '{team_slug_or_name}' not recognized among 15 canonical franchises.")
 
         meta = FRANCHISE_METADATA[canonical_name]
+        team_item = self._team_item(canonical_name)
+        if season is not None and season not in team_item["active_seasons"]:
+            raise KeyError(f"{canonical_name} did not play in the {season} season.")
+
         m_df = self._matches
         i_df = self._innings
         d_df = self._deliveries
@@ -600,22 +601,12 @@ class CanonicalAnalyticsEngine:
         comp_pct = round(comp_wins / comp_decided * 100, 2) if comp_decided > 0 else 0.0
 
         return {
-            "team": {
-                "id": meta["slug"],
-                "name": canonical_name,
-                "short_name": meta["short_name"],
-                "status": meta["status"],
-                "active_eras": meta["active_eras"],
-                "active_seasons": meta["active_seasons"],
-                "titles": meta["titles"],
-                "title_years": meta["title_years"],
-                "primary_color": meta["primary_color"],
-            },
+            "team": team_item,
             "coverage": {
-                "season_filter": season if season is not None else "All Seasons (2008–2026)",
-                "first_season": int(tm["season"].min()) if len(tm) > 0 else 2008,
-                "last_season": int(tm["season"].max()) if len(tm) > 0 else 2026,
-                "total_seasons_participated": len(meta["active_seasons"]),
+                "season_filter": season if season is not None else f"All Seasons ({team_item['seasons_active']})",
+                "first_season": int(tm["season"].min()),
+                "last_season": int(tm["season"].max()),
+                "total_seasons_participated": len(team_item["active_seasons"]),
             },
             "all_time": {
                 "played": total_played,
@@ -699,30 +690,8 @@ class CanonicalAnalyticsEngine:
         b_bat1_wins = sum(1 for _, r in h2h.iterrows() if r["final_winner"] == team_b and inn1_map.get(r["match_id"]) == team_b)
         b_chase_wins = sum(1 for _, r in h2h.iterrows() if r["final_winner"] == team_b and inn1_map.get(r["match_id"]) == team_a)
 
-        meta1 = FRANCHISE_METADATA[team_a]
-        meta2 = FRANCHISE_METADATA[team_b]
-        team1_item = {
-            "id": meta1["slug"],
-            "name": team_a,
-            "short_name": meta1["short_name"],
-            "status": meta1["status"],
-            "seasons_active": meta1["active_eras"],
-            "active_seasons": meta1["active_seasons"],
-            "titles": meta1["titles"],
-            "title_years": meta1["title_years"],
-            "primary_color": meta1["primary_color"],
-        }
-        team2_item = {
-            "id": meta2["slug"],
-            "name": team_b,
-            "short_name": meta2["short_name"],
-            "status": meta2["status"],
-            "seasons_active": meta2["active_eras"],
-            "active_seasons": meta2["active_seasons"],
-            "titles": meta2["titles"],
-            "title_years": meta2["title_years"],
-            "primary_color": meta2["primary_color"],
-        }
+        team1_item = self._team_item(team_a)
+        team2_item = self._team_item(team_b)
 
         recent_encounters = []
         for _, r in h2h.iterrows():
