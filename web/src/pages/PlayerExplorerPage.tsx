@@ -220,7 +220,7 @@ export const PlayerExplorerPage: React.FC = () => {
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#151619] border border-[#D9B15F]/30 text-xs font-medium text-[#D9B15F] self-start sm:self-center shadow-gold-pill">
             <User className="w-3.5 h-3.5 text-[#D9B15F]" />
-            <span>{directoryCounts ? directoryCounts.all.toLocaleString() : '…'} Verified Players &middot; 2008–2026 History</span>
+            <span>{directoryCounts ? plural(directoryCounts.all, 'verified player') : '…'} &middot; 2008–2026 history</span>
           </div>
         </div>
 
@@ -323,7 +323,7 @@ export const PlayerExplorerPage: React.FC = () => {
                   setSelectedRole(f.id);
                   setPage(1);
                 }}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${FOCUS_RING} ${
                   selectedRole === f.id
                     ? 'bg-[#D9B15F] text-[#0D0E10] shadow-sm'
                     : 'bg-[#101114] text-[#B9B9B3] hover:text-[#F6F6F3] border border-[#D9B15F]/15'
@@ -346,7 +346,7 @@ export const PlayerExplorerPage: React.FC = () => {
                   setSelectedTier(f.id);
                   setPage(1);
                 }}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${FOCUS_RING} ${
                   selectedTier === f.id
                     ? 'bg-[#D9B15F]/20 text-[#D9B15F] border border-[#D9B15F]/40'
                     : 'bg-[#101114] text-[#8E8E88] hover:text-[#F6F6F3] border border-white/5'
@@ -366,7 +366,7 @@ export const PlayerExplorerPage: React.FC = () => {
         <section aria-label="Player Directory" className="lg:col-span-4 bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-4 sm:p-5 space-y-4">
           <div className="flex items-center justify-between pb-2 border-b border-[#D9B15F]/15">
             <span className="text-xs font-bold uppercase tracking-wider text-[#B9B9B3]">
-              Directory ({totalCount} players)
+              Directory ({plural(totalCount, 'player')})
             </span>
             <span className="text-[11px] text-[#D9B15F] font-mono">
               Page {page} of {Math.max(1, totalPages)}
@@ -380,7 +380,7 @@ export const PlayerExplorerPage: React.FC = () => {
             </div>
           ) : players.length === 0 ? (
             <div className="p-8 text-center text-xs text-[#B9B9B3]">
-              No players found matching &ldquo;{searchQuery}&rdquo;.
+              {debouncedQuery ? <>No players match &ldquo;{debouncedQuery}&rdquo;.</> : <>No players match these filters.</>}
             </div>
           ) : (
             <div className="space-y-2 max-h-[720px] overflow-y-auto pr-1">
@@ -391,7 +391,7 @@ export const PlayerExplorerPage: React.FC = () => {
                   <button
                     key={pid}
                     onClick={() => selectPlayer(pid)}
-                    className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                    className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${FOCUS_RING} ${
                       isSelected
                         ? 'bg-[#1D1E22] border-[#D9B15F] shadow-gold-pill'
                         : 'bg-[#101114] border-[#D9B15F]/15 hover:border-[#D9B15F]/35 hover:bg-[#16171B]'
@@ -426,10 +426,10 @@ export const PlayerExplorerPage: React.FC = () => {
 
                     <div className="flex items-center justify-between text-[11px] text-[#B9B9B3] mt-1.5">
                       <span>
-                        {p.batting_innings ?? p.innings} bat inn &middot; {p.bowling_innings ?? 0} bowl inn
+                        {plural(p.batting_innings ?? p.innings, 'batting innings', 'batting innings')} &middot; {plural(p.bowling_innings ?? 0, 'bowling innings', 'bowling innings')}
                       </span>
                       <span className="text-[10px] text-[#8E8E88] font-mono">
-                        {p.first_season && p.last_season ? `${p.first_season}–${p.last_season}` : '2008–2026'}
+                        {p.first_season === p.last_season ? p.first_season : `${p.first_season}–${p.last_season}`}
                       </span>
                     </div>
                   </button>
@@ -444,20 +444,20 @@ export const PlayerExplorerPage: React.FC = () => {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(p => Math.max(1, p - 1))}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#101114] text-[#F6F6F3] border border-[#D9B15F]/20 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold bg-[#101114] text-[#F6F6F3] border border-[#D9B15F]/20 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer ${FOCUS_RING}`}
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Prev</span>
+                <span>Previous</span>
               </button>
 
               <span className="text-xs text-[#B9B9B3]">
-                {page} / {totalPages}
+                Page {page} of {totalPages}
               </span>
 
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#101114] text-[#F6F6F3] border border-[#D9B15F]/20 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold bg-[#101114] text-[#F6F6F3] border border-[#D9B15F]/20 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer ${FOCUS_RING}`}
               >
                 <span>Next</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -471,7 +471,7 @@ export const PlayerExplorerPage: React.FC = () => {
           {profileLoading && !profile ? (
             <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3 animate-pulse">
               <Loader2 className="w-8 h-8 text-[#D9B15F] animate-spin" />
-              <p className="text-sm font-semibold text-[#F6F6F3]">Loading career profile &amp; match logs...</p>
+              <p className="text-sm font-semibold text-[#F6F6F3]">Loading career profile...</p>
             </div>
           ) : profile ? (
             <div className={`space-y-6 transition-opacity ${profileLoading ? 'opacity-60' : ''}`} aria-busy={profileLoading}>
@@ -549,10 +549,10 @@ export const PlayerExplorerPage: React.FC = () => {
                   Data Integrity Disclosures
                 </h4>
                 <ul className="list-disc list-inside text-xs text-[#B9B9B3] space-y-1">
-                  <li>Full career directory encompasses all {directoryCounts ? directoryCounts.all.toLocaleString() : '…'} players with recorded appearances across 19 tournament editions (2008–2026).</li>
+                  <li>The directory lists {directoryCounts ? plural(directoryCounts.all, 'player') : 'every player'} who batted or bowled in at least one IPL match in the archive, each identified by Cricsheet registry ID.</li>
                   <li>Batting average is runs divided by dismissals; a player never dismissed has no average, shown as &ldquo;—&rdquo;.</li>
                   <li>{ROLE_RULE}</li>
-                  <li>Bowler statistics credit legal dismissals only (bowled, caught, lbw, stumped, hit wicket); run outs are strictly attributed to team fielding.</li>
+                  <li>Bowler wickets count bowled, caught, caught and bowled, lbw, stumped and hit wicket; run outs and retirements are not credited to the bowler.</li>
                   <li>Overs bowled use standard cricket notation (e.g. 342.4 signifies 342 complete six-ball overs plus 4 balls).</li>
                 </ul>
               </div>
