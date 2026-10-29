@@ -111,6 +111,12 @@ export const TeamAnalysisPage: React.FC = () => {
 
   const currentTeam = teamOverview?.team;
 
+  // Seasons the selected franchise actually played, as reported by the API
+  const seasonOptions = useMemo(() => {
+    const listed = teams.find(t => t.id === selectedTeamId);
+    return listed?.active_seasons ?? currentTeam?.active_seasons ?? [];
+  }, [teams, selectedTeamId, currentTeam]);
+
   return (
     <div className="space-y-12 sm:space-y-16 max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
       
@@ -192,6 +198,10 @@ export const TeamAnalysisPage: React.FC = () => {
                 key={team.id}
                 onClick={() => {
                   setSelectedTeamId(team.id);
+                  // Reset a season filter the newly selected franchise never played
+                  if (selectedSeason !== 'all' && !team.active_seasons.includes(Number(selectedSeason))) {
+                    setSelectedSeason('all');
+                  }
                   if (team.id === opponentId) {
                     const fallback = teams.find(t => t.id !== team.id);
                     if (fallback) setOpponentId(fallback.id);
@@ -278,8 +288,8 @@ export const TeamAnalysisPage: React.FC = () => {
                   onChange={e => setSelectedSeason(e.target.value)}
                   className="bg-[#121316] border border-[#D9B15F]/20 text-[#F6F6F3] text-xs font-bold rounded-lg px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#D9B15F] cursor-pointer"
                 >
-                  <option value="all">All Available Seasons (2008–2026)</option>
-                  {(currentTeam.active_seasons || teamOverview?.season_history.map(s => s.season) || []).map(s => (
+                  <option value="all">All available seasons</option>
+                  {seasonOptions.map(s => (
                     <option key={s} value={s}>
                       IPL {s} Season
                     </option>
