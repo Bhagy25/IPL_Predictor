@@ -135,7 +135,8 @@ export const ScrollRegion: React.FC<{ label: string; className?: string; childre
       role="region"
       aria-label={label}
       tabIndex={0}
-      className={`overflow-auto rounded-lg border border-[#D9B15F]/10 ${FOCUS_RING} ${className}`}
+      // relative: screen-reader-only text in cells is absolutely positioned and must be clipped here too
+      className={`relative overflow-auto rounded-lg border border-[#D9B15F]/10 ${FOCUS_RING} ${className}`}
     >
       {children}
     </div>

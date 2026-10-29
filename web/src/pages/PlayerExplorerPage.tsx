@@ -93,8 +93,9 @@ export const PlayerExplorerPage: React.FC = () => {
   const [profile, setProfile] = useState<PlayerProfileResponse | null>(null);
   // null = full career; otherwise every number on the profile is for that season
   const [profileSeason, setProfileSeason] = useState<number | null>(null);
-  // The selected player's seasons, from the full-career profile
-  const [seasonOptions, setSeasonOptions] = useState<number[]>([]);
+  // Seasons from a full-career profile, kept with their player so reselecting that player keeps them
+  const [careerSeasons, setCareerSeasons] = useState<{ playerId: string; seasons: number[] } | null>(null);
+  const seasonOptions = careerSeasons?.playerId === selectedPlayerId ? careerSeasons.seasons : [];
   // Directory roles seen so far, so the profile can show the badge for the selected player
   const [roleById, setRoleById] = useState<Record<string, string>>({});
 
@@ -111,7 +112,6 @@ export const PlayerExplorerPage: React.FC = () => {
   const selectPlayer = useCallback((pid: string) => {
     setSelectedPlayerId(pid);
     setProfileSeason(null);
-    setSeasonOptions([]);
   }, []);
 
   // Debounce search query
@@ -175,7 +175,7 @@ export const PlayerExplorerPage: React.FC = () => {
       const data = await fetchPlayerOverview(selectedPlayerId, profileSeason);
       if (requestId === profileRequest.current) {
         setProfile(data);
-        if (profileSeason === null) setSeasonOptions(data.seasons_played);
+        if (profileSeason === null) setCareerSeasons({ playerId: selectedPlayerId, seasons: data.seasons_played });
       }
     } catch (err: any) {
       if (requestId === profileRequest.current) {
@@ -196,7 +196,9 @@ export const PlayerExplorerPage: React.FC = () => {
 
   const scopeLabel = profile?.season_filter != null
     ? `${profile.season_filter} season`
-    : profile ? `Full career ${profile.first_season}–${profile.last_season}` : '';
+    : profile
+    ? `Full career ${profile.first_season === profile.last_season ? profile.first_season : `${profile.first_season}–${profile.last_season}`}`
+    : '';
 
   return (
     <div className="space-y-10 sm:space-y-12 max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
