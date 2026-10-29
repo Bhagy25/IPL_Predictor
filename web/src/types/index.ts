@@ -505,6 +505,8 @@ export interface EDAFigureItem {
   sample_size: string;
   key_findings: string[];
   source_file: string;
+  coverage_evidence?: string | null;
+  static_note?: string | null;
 }
 
 export interface EDACatalogResponse {
@@ -614,4 +616,261 @@ export interface EDAFullHistoryResponse {
     runs_conceded: number;
     economy: number;
   }[];
+}
+
+// ==========================================
+// Statistics & EDA: filterable full-history analysis
+// ==========================================
+
+export type EDAFilterKey = 'season' | 'team' | 'venue';
+
+export interface EDAArea<D = Record<string, any>> {
+  id: string;
+  title: string;
+  supported_filters: EDAFilterKey[];
+  applied_filters: EDAFilterKey[];
+  unaffected_by: { filter: EDAFilterKey; note: string }[];
+  coverage: { seasons: number[]; first_season: number; last_season: number; label: string } | null;
+  sample: { label: string; value: number }[];
+  definitions: Record<string, string>;
+  units: string;
+  source: string;
+  state: 'ok' | 'empty';
+  empty_reason: string | null;
+  data: D | null;
+}
+
+export interface EDAFiltersEcho {
+  season_from: number;
+  season_to: number;
+  team: { id: string; name: string; short_name: string; seasons_label: string } | null;
+  venue: string | null;
+  venue_min_matches: number;
+  bat_min_balls: number;
+  bowl_min_balls: number;
+  label: string;
+}
+
+export interface EDAHistogramBin { bin: string; count: number; pct: number | null }
+
+export interface EDAOutcomes {
+  matches: number;
+  decided: number;
+  decided_in_regulation: number;
+  decided_by_super_over: number;
+  no_result: number;
+  other_not_recorded: number;
+  dl_method: number;
+}
+
+export interface EDATossRecord {
+  tosses_won: number;
+  elected_to_bat: number;
+  elected_to_field: number;
+  after_winning_toss: TeamResultSummary;
+  chose_to_bat: TeamResultSummary;
+  chose_to_field: TeamResultSummary;
+}
+
+export interface EDAInningsOrderRecord {
+  batting_first: TeamResultSummary;
+  chasing: TeamResultSummary;
+  innings_order_no_results: number;
+}
+
+export interface EDAMatchListItem {
+  match_id: number;
+  date: string;
+  season: number;
+  teams: string;
+  venue: string;
+  winner: string | null;
+}
+
+export interface EDABoundaryRecord {
+  fours: number;
+  sixes: number;
+  boundary_runs: number;
+  runs: number;
+  legal_balls: number;
+  dot_balls: number;
+  boundary_run_pct: number | null;
+  dot_ball_pct: number | null;
+  balls_per_boundary: number | null;
+}
+
+export type EDALeaderBatter = PlayerBattingSummary & { player_id: string; name: string };
+export type EDALeaderBowler = PlayerBowlingSummary & { player_id: string; name: string };
+
+export interface EDATeamComparisonRow extends TeamResultSummary {
+  team: string;
+  id: string;
+  short_name: string;
+  status: string;
+  seasons_label: string;
+  run_rate: number | null;
+  economy: number | null;
+  runs_per_innings: number | null;
+  selected: boolean;
+}
+
+export interface EDAVenueRow {
+  venue: string;
+  matches: number;
+  first_innings: number;
+  first_innings_mean: number | null;
+  first_innings_median: number | null;
+  run_rate: number | null;
+  result_label: string;
+  result: TeamResultSummary;
+  selected: boolean;
+}
+
+export interface EDAInningsDistribution {
+  innings: number;
+  n: number;
+  mean: number | null;
+  median: number | null;
+  q1: number | null;
+  q3: number | null;
+  min: number | null;
+  max: number | null;
+  full_innings: number;
+  histogram: EDAHistogramBin[];
+}
+
+export interface EDADismissalKind {
+  kind: string;
+  count: number;
+  pct: number | null;
+  bowler_credited: number;
+  not_bowler_credited: number;
+  team_wickets: number;
+}
+
+export interface EDAStage1Audit {
+  label: string;
+  coverage: string;
+  source: string;
+  screening_issue_counts: Record<string, number>;
+  missingness: { table: string; column: string; missing_count: number; total_rows: number; missing_pct: number }[];
+  raw_over_anomalies: { match_id: number; innings: number; over_index: number; issue: string; detail: string }[];
+}
+
+export interface EDAAreas {
+  matches_runs: EDAArea<{
+    by_season: { season: number; matches: number; runs: number; deliveries: number; legal_balls: number; wickets: number; run_rate: number | null }[];
+    totals: { matches: number; runs: number; deliveries: number; legal_balls: number; wickets: number; run_rate: number | null };
+  }>;
+  scoring_trends: EDAArea<{
+    by_season: {
+      season: number;
+      innings: number;
+      runs: number;
+      legal_balls: number;
+      runs_per_innings: number;
+      run_rate: number | null;
+      first_innings: number;
+      first_innings_mean: number | null;
+      second_innings: number;
+      second_innings_mean: number | null;
+    }[];
+    totals: { innings: number; runs: number; legal_balls: number; runs_per_innings: number; run_rate: number | null };
+  }>;
+  batting_distribution: EDAArea<{
+    summary: PlayerBattingSummary & { mean_runs: number; median_runs: number };
+    runs_histogram: EDAHistogramBin[];
+    strike_rate_min_balls: number;
+    strike_rate_innings: number;
+    strike_rate_median: number | null;
+    strike_rate_histogram: EDAHistogramBin[];
+    leaders: EDALeaderBatter[];
+  }>;
+  bowling: EDAArea<{
+    summary: PlayerBowlingSummary;
+    economy_min_balls: number;
+    economy_innings: number;
+    economy_median: number | null;
+    economy_histogram: EDAHistogramBin[];
+    leaders: EDALeaderBowler[];
+  }>;
+  phases: EDAArea<{ team_view: boolean; overall: TeamPhaseRecord[]; by_season: { season: number; phases: TeamPhaseRecord[] }[] }>;
+  team_comparison: EDAArea<{ teams: EDATeamComparisonRow[] }>;
+  venues: EDAArea<{ min_matches: number; venues_total: number; venues_shown: number; matches_shown: number; venues: EDAVenueRow[] }>;
+  toss: EDAArea<{ team_view: boolean; overall: EDATossRecord; by_season: (EDATossRecord & { season: number })[] }>;
+  innings_order: EDAArea<{
+    team_view: boolean;
+    outcomes: EDAOutcomes;
+    overall: EDAInningsOrderRecord;
+    by_season: (EDAInningsOrderRecord & { season: number })[];
+  }>;
+  innings_scores: EDAArea<{ by_innings: EDAInningsDistribution[] }>;
+  dismissals: EDAArea<{
+    kinds: EDADismissalKind[];
+    events: number;
+    bowler_credited: number;
+    not_bowler_credited: number;
+    team_wickets: number;
+    not_team_wickets: number;
+    team_wickets_from_deliveries: number;
+    super_over_events_excluded: number;
+  }>;
+  boundaries: EDAArea<{ totals: EDABoundaryRecord; by_season: (EDABoundaryRecord & { season: number })[] }>;
+  anomalies: EDAArea<{
+    outcomes: EDAOutcomes;
+    super_over_matches: number;
+    dl_matches: number;
+    no_results: number;
+    penalty_run_deliveries: number;
+    penalty_runs: number;
+    substitutions: number;
+    substitutions_by_reason: Record<string, number>;
+    substitutions_in_super_overs: number;
+    missing_city_matches: number;
+    matches_without_two_innings: number;
+    lists: { super_over: EDAMatchListItem[]; dl: EDAMatchListItem[]; no_result: EDAMatchListItem[] };
+    stage1_audit: EDAStage1Audit;
+  }>;
+  correlations: EDAArea<{
+    n: number;
+    min_n: number;
+    state: 'ok' | 'insufficient_sample';
+    explanation: string | null;
+    variables: { key: string; label: string }[];
+    pearson: Record<string, Record<string, number | null>> | null;
+    spearman: Record<string, Record<string, number | null>> | null;
+    pairs_with_total: { x: string; y: string; pearson: number | null; spearman: number | null }[];
+  }>;
+}
+
+export interface EDAAnalysisResponse {
+  filters: EDAFiltersEcho;
+  areas: EDAAreas;
+}
+
+export interface EDAFilterOptionsResponse {
+  seasons: number[];
+  teams: { id: string; name: string; short_name: string; status: string; seasons_label: string }[];
+  venues: { name: string; matches: number; seasons_label: string }[];
+  correlation_min_n: number;
+  areas: Record<string, { title: string; supports: EDAFilterKey[] }>;
+}
+
+export interface EDAComparedPlayer {
+  player_id: string;
+  name: string;
+  seasons_played: string;
+  state: 'ok' | 'empty';
+  empty_reason: string | null;
+  coverage: string | null;
+  matches: number;
+  batting: PlayerBattingSummary | null;
+  bowling: PlayerBowlingSummary | null;
+  batting_by_season: PlayerBattingSeason[];
+  bowling_by_season: PlayerBowlingSeason[];
+}
+
+export interface EDAPlayerComparisonResponse {
+  filters: EDAFiltersEcho;
+  area: EDAArea<{ players: EDAComparedPlayer[] }>;
 }
