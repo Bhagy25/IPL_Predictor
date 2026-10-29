@@ -1,8 +1,8 @@
 """Player Explorer Service for CricketLens.
 
-Provides canonical 2008-2026 player directory covering all 806 players
-(both batting and bowling careers, match logs, and splits), backed directly
-by the verified canonical data engine.
+Provides the canonical player directory (every registry ID who batted or
+bowled), career and season profiles with splits, and paginated match logs,
+backed directly by the verified canonical data engine.
 """
 from __future__ import annotations
 

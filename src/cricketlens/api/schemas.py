@@ -399,7 +399,7 @@ class PlayerListItem(BaseModel):
     economy: Optional[float] = Field(None, description="Runs conceded per 6 legal balls; null when no legal ball was bowled")
     best_bowling: str = Field(default="—", description="Career best bowling figures")
     # Tier flags
-    is_stage02_leaderboard: bool = Field(default=False, description="Whether in 69-player leaderboard")
+    is_stage02_leaderboard: bool = Field(default=False, description="At least 40 batting innings (the leaderboard tier)")
     experience_tier: str = Field(default="regular", description="Experience category")
     avg_per_appearance: Optional[float] = Field(None, description="Backward-compatible average alias")
     milestone30_rate: Optional[float] = Field(None, description="Backward-compatible 30+ rate")

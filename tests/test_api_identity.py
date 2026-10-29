@@ -91,6 +91,14 @@ def test_two_harmeet_singhs_are_separate_entries(raw):
     hits = search("Harmeet Singh")
     assert {p["player_id"] for p in hits} == expected
     assert len({p["name"] for p in hits}) == 2  # display names are disambiguated
+    # ... with full franchise names and the season span, never an internal short code
+    squads = pd.read_csv(ROOT / "data" / "derived" / "match_players.csv")
+    for p in hits:
+        rows = squads[squads["player_id"] == p["player_id"]]
+        first, last = rows["season"].min(), rows["season"].max()
+        span = f"{first}" if first == last else f"{first}–{last}"
+        assert p["name"] == f"Harmeet Singh ({' / '.join(sorted(set(rows['team'])))} {span})"
+        assert "_" not in p["name"]
     assert client.get("/api/players/Harmeet Singh/overview").status_code == 404  # ambiguous by name
     for pid in expected:
         assert client.get(f"/api/players/{pid}/overview").status_code == 200

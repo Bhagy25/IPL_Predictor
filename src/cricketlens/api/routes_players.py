@@ -18,7 +18,8 @@ router = APIRouter(prefix="/api/players", tags=["Players"])
     "",
     response_model=PlayerListResponse,
     summary="List and search players with pagination and filters",
-    description="Returns searchable IPL players across all 806 canonical players with role, tier, and sorting options.",
+    description="Returns the searchable directory of every player who batted or bowled in an IPL match, with role, "
+                "tier and sorting options; directory_counts gives the current totals.",
 )
 async def list_players(
     query: Optional[str] = Query(None, description="Search by player name or ID"),

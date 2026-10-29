@@ -581,12 +581,12 @@ class CanonicalAnalyticsEngine:
             .sort_values(["player_id", "uses", "last_date"], ascending=[True, False, False])
         )
         display = usage.drop_duplicates("player_id").set_index("player_id")["player_name"].to_dict()
-        # Different people who share a name are told apart by franchise and season span
+        # Different people who share a name are told apart by full franchise names and season span
         shared = Counter(display[pid] for pid in directory_ids)
         for pid in directory_ids:
             if shared[display[pid]] > 1:
                 info = self._squad_info[pid]
-                teams = "/".join(FRANCHISE_METADATA[t]["short_name"] for t in info["teams"])
+                teams = " / ".join(info["teams"])
                 first, last = info["seasons"][0], info["seasons"][-1]
                 span = f"{first}" if first == last else f"{first}–{last}"
                 display[pid] = f"{display[pid]} ({teams} {span})"
