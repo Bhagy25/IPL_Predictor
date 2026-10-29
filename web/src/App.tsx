@@ -23,7 +23,8 @@ const RouteLoading: React.FC = () => (
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    // Opt in to the React Router v7 behaviour named by its future-flag warnings
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="min-h-screen flex flex-col bg-[#070708] text-[#F6F6F3]">
         {/* Sticky Header with 6 Nav Routes */}
         <Navbar />
