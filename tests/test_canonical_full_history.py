@@ -1,9 +1,15 @@
 """Tests for Stage 4.3B Complete IPL History (2008–2026) Canonical Analytics."""
+import json
+from pathlib import Path
+
+import pandas as pd
 from fastapi.testclient import TestClient
 from cricketlens.api.app import app
 from cricketlens.api.services.canonical_data import canonical_engine
 
 client = TestClient(app)
+ROOT = Path(__file__).resolve().parents[1]
+DATA = ROOT / "data" / "processed"
 
 
 def test_canonical_engine_initialization():
@@ -68,13 +74,17 @@ def test_team_overview_all_time_and_season_filter():
 
 def test_team_head_to_head_full_history():
     """Verify full 2008-2026 head-to-head records between CSK and MI."""
+    matches = pd.read_csv(DATA / "matches.csv")
+    pair = {"Chennai Super Kings", "Mumbai Indians"}
+    meetings = matches[[{a, b} == pair for a, b in zip(matches["team1"], matches["team2"])]]
+
     res = client.get("/api/teams/head-to-head?team1=chennai-super-kings&team2=mumbai-indians")
     assert res.status_code == 200
     data = res.json()
-    assert data["total_matches"] == 38
-    assert data["team1_wins"] == 17
-    assert data["team2_wins"] == 21
-    assert len(data["recent_meetings"]) == 38
+    assert data["total_matches"] == len(meetings)
+    assert data["team1_wins"] == int((meetings["final_winner"] == "Chennai Super Kings").sum())
+    assert data["team2_wins"] == int((meetings["final_winner"] == "Mumbai Indians").sum())
+    assert len(data["recent_meetings"]) == len(meetings)
     assert data["recent_meetings"][0]["match_id"] > 0
     assert "vs" in data["recent_meetings"][0]["margin_or_summary"]
 
@@ -99,20 +109,22 @@ def test_player_explorer_total_806_and_roles():
 
 def test_player_profile_dual_career_kohli():
     """Verify Virat Kohli's batting and bowling figures across 2008–2026."""
+    deliveries = pd.read_csv(DATA / "deliveries.csv", usecols=["match_id", "innings", "batter", "bowler"])
+    batted = deliveries.loc[deliveries["batter"] == "V Kohli", ["match_id", "innings"]].drop_duplicates()
+    bowled_matches = set(deliveries.loc[deliveries["bowler"] == "V Kohli", "match_id"])
+
     res = client.get("/api/players/ba607b88/overview")
     assert res.status_code == 200
     data = res.json()
     assert "Kohli" in data["name"]
-    
+
     # Batting
     bat = data["career_batting"]
     assert bat is not None
     assert bat["runs"] == 9336
-    assert bat["innings"] == 267
+    assert bat["innings"] == len(batted)
     assert bat["scores_100_plus"] == 9
     assert bat["highest_score"] == "113*"
-    assert bat["fours"] == 788
-    assert bat["sixes"] == 307
 
     # Bowling (part-time bowler)
     bowl = data["career_bowling"]
@@ -120,11 +132,35 @@ def test_player_profile_dual_career_kohli():
     assert bowl["wickets"] == 4
     assert bowl["innings"] == 26
 
-    # Match logs
-    assert len(data["recent_matches"]) == 267
+    # Match logs: every match in which he batted or bowled
+    assert len(data["recent_matches"]) == len(set(batted["match_id"]) | bowled_matches)
     first_log = data["recent_matches"][0]
     assert "runs" in first_log
     assert "overs_bowled" in first_log
+
+
+def test_player_profile_kohli_boundaries():
+    """Fours and sixes count boundaries only.
+
+    Cricsheet marks scoring shots that were not boundaries with `non_boundary`
+    (all-run fours, overthrows), so the expected counts come from the raw JSON.
+    """
+    fours = sixes = 0
+    for path in (ROOT / "data" / "raw" / "ipl_json").glob("*.json"):
+        match = json.loads(path.read_text(encoding="utf-8"))
+        for innings in match["innings"]:
+            if innings.get("super_over"):
+                continue
+            for over in innings["overs"]:
+                for ball in over["deliveries"]:
+                    if ball["batter"] != "V Kohli" or ball["runs"].get("non_boundary"):
+                        continue
+                    fours += ball["runs"]["batter"] == 4
+                    sixes += ball["runs"]["batter"] == 6
+
+    bat = client.get("/api/players/ba607b88/overview").json()["career_batting"]
+    assert bat["fours"] == fours
+    assert bat["sixes"] == sixes
 
 
 def test_player_profile_pure_bowler_bumrah():

@@ -1,8 +1,12 @@
 """Unit tests for Player Explorer API endpoints."""
+from pathlib import Path
+
+import pandas as pd
 from fastapi.testclient import TestClient
 from cricketlens.api.app import app
 
 client = TestClient(app)
+DATA = Path(__file__).resolve().parents[1] / "data" / "processed"
 
 
 def test_list_players_default():
@@ -22,10 +26,15 @@ def test_list_players_default():
 
 
 def test_list_players_filter_leaderboard():
+    # The 40+ innings tier covers the full 2008-2026 history; 69 was the size of
+    # the 2018-2025 Stage 2 cohort. Count batters with 40+ innings directly.
+    batter_innings = pd.read_csv(DATA / "batter_innings.csv")
+    expected = int((batter_innings.groupby("batter").size() >= 40).sum())
+
     res = client.get("/api/players?experience_filter=leaderboard_only")
     assert res.status_code == 200
     data = res.json()
-    assert data["total_count"] == 69
+    assert data["total_count"] == expected
     assert all(p["is_stage02_leaderboard"] for p in data["players"])
 
 
@@ -47,7 +56,12 @@ def test_player_overview_kohli():
     assert "Kohli" in data["name"]
     assert data["career_summary"]["innings"] >= 100
     assert data["career_summary"]["total_runs"] > 4000
-    assert data["career_summary"]["milestone30_rate"] > 0.5
+
+    # Full-history 30+ rate from ball-by-ball runs; the old "> 0.5" threshold came
+    # from the 2018-2025 Stage 2 cohort, where Kohli's rate was 0.534.
+    deliveries = pd.read_csv(DATA / "deliveries.csv", usecols=["match_id", "innings", "batter", "runs_batter"])
+    kohli = deliveries[deliveries["batter"] == "V Kohli"].groupby(["match_id", "innings"])["runs_batter"].sum()
+    assert data["career_summary"]["milestone30_rate"] == round(float((kohli >= 30).mean()), 3)
 
     # Milestone breakdown sums to 100% (within rounding)
     mb = data["milestone_breakdown"]
@@ -59,7 +73,7 @@ def test_player_overview_kohli():
     first_match = data["recent_matches"][0]
     assert "match_id" in first_match
     assert "runs" in first_match
-    assert "milestone_label" in first_match
+    assert "milestone_badge" in first_match
 
 
 def test_player_overview_not_found():
