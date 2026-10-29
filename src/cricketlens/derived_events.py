@@ -38,6 +38,10 @@ BATTING_APPEARANCE_COLUMNS = [
     'balls_faced', 'runs', 'dismissed', 'dismissal_kind', 'faced_a_ball', 'on_strike',
 ]
 MATCH_PLAYER_COLUMNS = ['match_id', 'season', 'date', 'team', 'player_name', 'player_id']
+MATCH_REPLACEMENT_COLUMNS = [
+    'match_id', 'season', 'date', 'innings', 'is_super_over', 'over_index', 'delivery_index',
+    'team', 'reason', 'player_in', 'player_in_id', 'player_out', 'player_out_id',
+]
 PEOPLE_COLUMNS = ['player_id', 'names', 'first_season', 'last_season', 'matches', 'teams']
 
 
@@ -63,8 +67,8 @@ def appearance_rows(base: dict, innings_pos: int, batting_team: str, registry: d
 
 
 def build_tables(source: Path) -> dict:
-    """Extract dismissals, non-boundary events, batting appearances, match players and people."""
-    dismissals, non_boundary, batting_appearances, match_players = [], [], [], []
+    """Extract dismissals, non-boundary events, batting appearances, match players, replacements and people."""
+    dismissals, non_boundary, batting_appearances, match_players, replacements = [], [], [], [], []
     for filename, match in read_matches(source):
         info = match.get('info', {})
         # Skip exactly the matches, innings and overs pipeline.extract skips, so keys stay aligned.
@@ -119,6 +123,14 @@ def build_tables(source: Path) -> dict:
                             'bowler': bowler, 'bowler_id': registry.get(bowler, ''),
                             'runs_batter': int(runs.get('batter', 0)),
                         })
+                    # Match-level substitutions (Impact Player, concussion); mid-over role changes are not.
+                    for sub in (ball.get('replacements') or {}).get('match') or []:
+                        player_in, player_out = sub.get('in', ''), sub.get('out', '')
+                        replacements.append({
+                            **key, 'team': franchise(sub.get('team', '')), 'reason': sub.get('reason', ''),
+                            'player_in': player_in, 'player_in_id': registry.get(player_in, ''),
+                            'player_out': player_out, 'player_out_id': registry.get(player_out, ''),
+                        })
                     for wicket in ball.get('wickets') or []:
                         kind = wicket.get('kind', '').lower()
                         player_out = wicket.get('player_out', '')
@@ -143,6 +155,7 @@ def build_tables(source: Path) -> dict:
         'non_boundary_events': non_boundary,
         'batting_appearances': batting_appearances,
         'match_players': match_players,
+        'match_replacements': replacements,
         'people': build_people(match_players, dismissals),
     }
 
@@ -179,7 +192,8 @@ def write_tables(tables: dict, output: Path) -> dict:
     columns = {
         'dismissals': DISMISSAL_COLUMNS, 'non_boundary_events': NON_BOUNDARY_COLUMNS,
         'batting_appearances': BATTING_APPEARANCE_COLUMNS,
-        'match_players': MATCH_PLAYER_COLUMNS, 'people': PEOPLE_COLUMNS,
+        'match_players': MATCH_PLAYER_COLUMNS, 'match_replacements': MATCH_REPLACEMENT_COLUMNS,
+        'people': PEOPLE_COLUMNS,
     }
     output.mkdir(parents=True, exist_ok=True)
     summary = {}
@@ -269,6 +283,23 @@ listed impact or replacement players) and `info.registry.people`.
 - `team`: canonical franchise name
 - `player_name`: name as listed for that match
 - `player_id`: Cricsheet registry ID
+
+## match_replacements.csv
+
+One row per match-level substitution recorded in a delivery's
+`replacements.match` list: Impact Player substitutions and concussion
+substitutes. Both players are in `info.players`, so both have a
+match_players.csv row for that match: a team's list is its starting eleven
+plus every player who came in. Mid-over bowler or batter changes
+(`replacements.role`) do not change the squad and are not included.
+
+- `match_id`, `season`, `date`, `innings`, `over_index`, `delivery_index`: the
+  delivery where the substitution is recorded (see Keys)
+- `is_super_over`: True when it is recorded in a super-over innings
+- `team`: canonical franchise name
+- `reason`: Cricsheet reason, e.g. `impact_player` or `concussion_substitute`
+- `player_in`, `player_in_id`: player who came into the match and registry ID
+- `player_out`, `player_out_id`: player replaced and registry ID
 
 ## people.csv
 

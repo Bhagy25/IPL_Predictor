@@ -1,0 +1,564 @@
+match_id,season,date,innings,is_super_over,over_index,delivery_index,team,reason,player_in,player_in_id,player_out,player_out_id
+1359475,2023,2023-03-31,2,False,0,1,Chennai Super Kings,impact_player,TU Deshpande,46a9bea1,AT Rayudu,70d205c9
+1359475,2023,2023-03-31,2,False,3,8,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,KS Williamson,d027ba9f
+1359476,2023,2023-04-01,2,False,0,1,Punjab Kings,impact_player,R Dhawan,26a85969,PBB Rajapaksa,6c882e9a
+1359476,2023,2023-04-01,2,False,2,1,Kolkata Knight Riders,impact_player,VR Iyer,a24be938,CV Varun,5b7ab5a9
+1359477,2023,2023-04-01,1,False,19,1,Delhi Capitals,impact_player,Aman Hakim Khan,378daa89,KK Ahmed,a2f46292
+1359477,2023,2023-04-01,1,False,19,8,Lucknow Super Giants,impact_player,K Gowtham,90de905a,A Badoni,872b03f7
+1359478,2023,2023-04-02,2,False,9,4,Sunrisers Hyderabad,impact_player,Abdul Samad,8e514b4c,Fazalhaq Farooqi,e9c7f0d0
+1359478,2023,2023-04-02,2,False,11,1,Rajasthan Royals,impact_player,NA Saini,21d4e29b,YBK Jaiswal,6c19c6e5
+1359479,2023,2023-04-02,2,False,0,1,Mumbai Indians,impact_player,JP Behrendorff,4933f499,SA Yadav,271f83cd
+1359480,2023,2023-04-03,1,False,19,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,Avesh Khan,eef2536f
+1359480,2023,2023-04-03,2,False,0,1,Chennai Super Kings,impact_player,TU Deshpande,46a9bea1,AT Rayudu,70d205c9
+1359481,2023,2023-04-04,2,False,0,1,Delhi Capitals,impact_player,KK Ahmed,a2f46292,SN Khan,f088b960
+1359481,2023,2023-04-04,2,False,6,1,Gujarat Titans,impact_player,V Shankar,0994d0ae,J Little,9061a703
+1359482,2023,2023-04-05,1,False,16,1,Rajasthan Royals,impact_player,Dhruv Jurel,bcf325d2,YS Chahal,57ee1fde
+1359482,2023,2023-04-05,2,False,15,1,Punjab Kings,impact_player,R Dhawan,26a85969,P Simran Singh,9418198b
+1359483,2023,2023-04-06,2,False,0,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,VR Iyer,a24be938
+1359483,2023,2023-04-06,2,False,11,4,Royal Challengers Bengaluru,impact_player,Anuj Rawat,c8f5f961,Mohammed Siraj,2f49c897
+1359484,2023,2023-04-07,1,False,19,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,A Mishra,6b19d823
+1359484,2023,2023-04-07,2,False,0,1,Sunrisers Hyderabad,impact_player,Fazalhaq Farooqi,e9c7f0d0,RA Tripathi,77255a9e
+1359485,2023,2023-04-08,2,False,0,1,Delhi Capitals,impact_player,PP Shaw,8b3e9c7c,KK Ahmed,a2f46292
+1359485,2023,2023-04-08,2,False,7,1,Rajasthan Royals,impact_player,M Ashwin,e2db2409,JC Buttler,99b75528
+1359486,2023,2023-04-08,2,False,6,1,Mumbai Indians,impact_player,K Kartikeya,f6d8a7ab,TH David,f1f99156
+1359486,2023,2023-04-08,2,False,14,3,Chennai Super Kings,impact_player,AT Rayudu,70d205c9,DL Chahar,23eeb873
+1359487,2023,2023-04-09,2,False,0,1,Gujarat Titans,impact_player,J Little,9061a703,B Sai Sudharsan,d5130a30
+1359487,2023,2023-04-09,2,False,2,4,Kolkata Knight Riders,impact_player,VR Iyer,a24be938,Suyash Sharma,9440ef41
+1359488,2023,2023-04-09,1,False,8,6,Punjab Kings,impact_player,Sikandar Raza,26d041c4,P Simran Singh,9418198b
+1359489,2023,2023-04-10,1,False,16,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,A Mishra,6b19d823
+1359489,2023,2023-04-10,2,False,0,1,Royal Challengers Bengaluru,impact_player,KV Sharma,119678fd,Anuj Rawat,c8f5f961
+1359490,2023,2023-04-11,2,False,0,1,Delhi Capitals,impact_player,Mukesh Kumar,2cffab74,PP Shaw,8b3e9c7c
+1359490,2023,2023-04-11,2,False,16,1,Mumbai Indians,impact_player,TH David,f1f99156,RP Meredith,64775749
+1359491,2023,2023-04-12,1,False,19,6,Rajasthan Royals,impact_player,A Zampa,14f96089,JC Buttler,99b75528
+1359491,2023,2023-04-12,2,False,13,6,Chennai Super Kings,impact_player,AT Rayudu,70d205c9,SSB Magala,8361e524
+1359492,2023,2023-04-13,2,False,0,1,Punjab Kings,impact_player,RD Chahar,2ed569a0,PBB Rajapaksa,6c882e9a
+1359493,2023,2023-04-14,2,False,0,1,Sunrisers Hyderabad,impact_player,Washington Sundar,f19ccfad,HC Brook,4ae1755b
+1359493,2023,2023-04-14,2,False,0,4,Kolkata Knight Riders,impact_player,VR Iyer,a24be938,Suyash Sharma,9440ef41
+1359494,2023,2023-04-15,1,False,14,3,Royal Challengers Bengaluru,impact_player,Anuj Rawat,c8f5f961,MK Lomror,da934ee8
+1359494,2023,2023-04-15,2,False,0,1,Delhi Capitals,impact_player,PP Shaw,8b3e9c7c,Mustafizur Rahman,0a8fce53
+1359495,2023,2023-04-15,1,False,18,5,Lucknow Super Giants,impact_player,K Gowtham,90de905a,KR Mayers,73c18486
+1359495,2023,2023-04-15,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,RD Chahar,2ed569a0
+1359496,2023,2023-04-16,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,RP Meredith,64775749
+1359496,2023,2023-04-16,2,False,0,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,VR Iyer,a24be938
+1359497,2023,2023-04-16,1,False,17,1,Rajasthan Royals,impact_player,D Padikkal,2c25d4f5,YS Chahal,57ee1fde
+1359497,2023,2023-04-16,2,False,12,1,Gujarat Titans,impact_player,Noor Ahmad,efc04be7,Shubman Gill,b4b99816
+1359498,2023,2023-04-17,2,False,0,1,Chennai Super Kings,impact_player,Akash Singh,b483905d,AT Rayudu,70d205c9
+1359498,2023,2023-04-17,2,False,16,6,Royal Challengers Bengaluru,impact_player,SS Prabhudessai,9385de2e,Mohammed Siraj,2f49c897
+1359499,2023,2023-04-18,2,False,0,1,Mumbai Indians,impact_player,RP Meredith,64775749,Tilak Varma,b0482a1d
+1359499,2023,2023-04-18,2,False,14,1,Sunrisers Hyderabad,impact_player,Abdul Samad,8e514b4c,T Natarajan,ce794613
+1359500,2023,2023-04-19,1,False,15,1,Rajasthan Royals,impact_player,D Padikkal,2c25d4f5,YS Chahal,57ee1fde
+1359500,2023,2023-04-19,2,False,8,1,Lucknow Super Giants,impact_player,A Mishra,6b19d823,KR Mayers,73c18486
+1359501,2023,2023-04-20,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,RD Chahar,2ed569a0
+1359501,2023,2023-04-20,2,False,0,1,Royal Challengers Bengaluru,impact_player,Vijaykumar Vyshak,54e52590,F du Plessis,3355b542
+1359502,2023,2023-04-20,1,False,12,1,Delhi Capitals,impact_player,PP Shaw,8b3e9c7c,I Sharma,5bb1a1c4
+1359502,2023,2023-04-20,1,False,14,5,Kolkata Knight Riders,impact_player,AS Roy,e4cdf230,VR Iyer,a24be938
+1359503,2023,2023-04-21,2,False,0,1,Sunrisers Hyderabad,impact_player,Mayank Dagar,a457cfb5,RA Tripathi,77255a9e
+1359503,2023,2023-04-21,2,False,14,5,Chennai Super Kings,impact_player,AT Rayudu,70d205c9,Akash Singh,b483905d
+1359504,2023,2023-04-22,1,False,17,1,Lucknow Super Giants,impact_player,PN Mankad,663b5e34,A Mishra,6b19d823
+1359504,2023,2023-04-22,2,False,0,1,Gujarat Titans,impact_player,J Yadav,81049310,Shubman Gill,b4b99816
+1359505,2023,2023-04-22,2,False,0,1,Punjab Kings,impact_player,NT Ellis,9eb1455b,P Simran Singh,9418198b
+1359505,2023,2023-04-22,2,False,19,4,Mumbai Indians,impact_player,N Wadhera,d1a60072,JP Behrendorff,4933f499
+1359506,2023,2023-04-23,2,False,0,1,Royal Challengers Bengaluru,impact_player,HV Patel,f986ca1a,F du Plessis,3355b542
+1359506,2023,2023-04-23,2,False,19,5,Rajasthan Royals,impact_player,Abdul Basith,cc777ffa,D Padikkal,2c25d4f5
+1359507,2023,2023-04-23,2,False,0,1,Chennai Super Kings,impact_player,Akash Singh,b483905d,AT Rayudu,70d205c9
+1359507,2023,2023-04-23,2,False,0,5,Kolkata Knight Riders,impact_player,VR Iyer,a24be938,Suyash Sharma,9440ef41
+1359508,2023,2023-04-24,1,False,19,1,Sunrisers Hyderabad,impact_player,RA Tripathi,77255a9e,T Natarajan,ce794613
+1359508,2023,2023-04-24,2,False,0,1,Delhi Capitals,impact_player,Mukesh Kumar,2cffab74,SN Khan,f088b960
+1359509,2023,2023-04-25,2,False,0,1,Gujarat Titans,impact_player,J Little,9061a703,Shubman Gill,b4b99816
+1359509,2023,2023-04-25,2,False,7,4,Mumbai Indians,impact_player,Tilak Varma,b0482a1d,K Kartikeya,f6d8a7ab
+1359510,2023,2023-04-26,2,False,0,1,Royal Challengers Bengaluru,impact_player,F du Plessis,3355b542,HV Patel,f986ca1a
+1359510,2023,2023-04-26,2,False,0,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,JJ Roy,d1c36f5c
+1359511,2023,2023-04-27,2,False,0,1,Rajasthan Royals,impact_player,K Yadav,030f3089,SO Hetmyer,48a1d7b7
+1359511,2023,2023-04-27,2,False,10,3,Chennai Super Kings,impact_player,AT Rayudu,70d205c9,Akash Singh,b483905d
+1359512,2023,2023-04-28,1,False,9,1,Punjab Kings,impact_player,P Simran Singh,9418198b,Gurnoor Brar,99258814
+1359512,2023,2023-04-28,2,False,6,1,Lucknow Super Giants,impact_player,A Mishra,6b19d823,KR Mayers,73c18486
+1359513,2023,2023-04-29,2,False,0,1,Gujarat Titans,impact_player,Shubman Gill,b4b99816,MM Sharma,759ac88f
+1359513,2023,2023-04-29,2,False,0,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,VR Iyer,a24be938
+1359514,2023,2023-04-29,1,False,19,1,Delhi Capitals,impact_player,SN Khan,f088b960,I Sharma,5bb1a1c4
+1359514,2023,2023-04-29,2,False,0,1,Sunrisers Hyderabad,impact_player,T Natarajan,ce794613,RA Tripathi,77255a9e
+1359515,2023,2023-04-30,2,False,0,1,Chennai Super Kings,impact_player,Akash Singh,b483905d,AT Rayudu,70d205c9
+1359515,2023,2023-04-30,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,K Rabada,e62dd25d
+1359516,2023,2023-04-30,2,False,0,1,Rajasthan Royals,impact_player,KR Sen,2e78f685,Dhruv Jurel,bcf325d2
+1359517,2023,2023-05-01,2,False,0,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,Yash Thakur,4b31f3a3
+1359517,2023,2023-05-01,2,False,10,1,Royal Challengers Bengaluru,impact_player,HV Patel,f986ca1a,Anuj Rawat,c8f5f961
+1359518,2023,2023-05-02,2,False,0,1,Delhi Capitals,impact_player,KK Ahmed,a2f46292,PK Garg,bb965e9a
+1359518,2023,2023-05-02,2,False,0,1,Gujarat Titans,impact_player,Shubman Gill,b4b99816,MM Sharma,759ac88f
+1359519,2023,2023-05-03,1,False,17,5,Chennai Super Kings,impact_player,AT Rayudu,70d205c9,M Theekshana,f24c6701
+1359520,2023,2023-05-03,2,False,0,1,Punjab Kings,impact_player,NT Ellis,9eb1455b,P Simran Singh,9418198b
+1359520,2023,2023-05-03,2,False,6,1,Mumbai Indians,impact_player,SA Yadav,271f83cd,Akash Madhwal,4bd09374
+1359521,2023,2023-05-04,1,False,17,4,Kolkata Knight Riders,impact_player,AS Roy,e4cdf230,JJ Roy,d1c36f5c
+1359521,2023,2023-05-04,2,False,2,6,Sunrisers Hyderabad,impact_player,RA Tripathi,77255a9e,T Natarajan,ce794613
+1359522,2023,2023-05-05,1,False,8,1,Rajasthan Royals,impact_player,R Parag,04a418e8,YBK Jaiswal,6c19c6e5
+1359522,2023,2023-05-05,2,False,0,1,Gujarat Titans,impact_player,Shubman Gill,b4b99816,MM Sharma,759ac88f
+1359523,2023,2023-05-06,1,False,16,1,Chennai Super Kings,impact_player,AT Rayudu,70d205c9,M Theekshana,f24c6701
+1359523,2023,2023-05-06,2,False,0,1,Mumbai Indians,impact_player,R Goyal,266849c1,SA Yadav,271f83cd
+1359524,2023,2023-05-06,1,False,19,1,Delhi Capitals,impact_player,RV Patel,60500956,I Sharma,5bb1a1c4
+1359524,2023,2023-05-06,2,False,8,1,Royal Challengers Bengaluru,impact_player,HV Patel,f986ca1a,KM Jadhav,99d63244
+1359525,2023,2023-05-07,2,False,0,1,Gujarat Titans,impact_player,AS Joseph,b0946605,Shubman Gill,b4b99816
+1359525,2023,2023-05-07,2,False,16,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,Yash Thakur,4b31f3a3
+1359526,2023,2023-05-07,2,False,0,1,Sunrisers Hyderabad,impact_player,Anmolpreet Singh,1399b39c,T Natarajan,ce794613
+1359526,2023,2023-05-07,2,False,13,1,Rajasthan Royals,impact_player,OC McCoy,529eb9e0,R Ashwin,495d42a5
+1359527,2023,2023-05-08,2,False,0,1,Kolkata Knight Riders,impact_player,JJ Roy,d1c36f5c,Suyash Sharma,9440ef41
+1359527,2023,2023-05-08,2,False,0,1,Punjab Kings,impact_player,NT Ellis,9eb1455b,PBB Rajapaksa,6c882e9a
+1359528,2023,2023-05-09,1,False,14,1,Royal Challengers Bengaluru,impact_player,KM Jadhav,99d63244,MK Lomror,da934ee8
+1359529,2023,2023-05-10,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,S Dube,a4e37e47
+1359529,2023,2023-05-10,2,False,2,5,Delhi Capitals,impact_player,MK Pandey,93b4fc78,KK Ahmed,a2f46292
+1359530,2023,2023-05-11,2,False,0,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,VR Iyer,a24be938
+1359531,2023,2023-05-12,2,False,0,1,Mumbai Indians,impact_player,Akash Madhwal,4bd09374,Vishnu Vinod,0494fa6e
+1359531,2023,2023-05-12,2,False,0,1,Gujarat Titans,impact_player,Shubman Gill,b4b99816,MM Sharma,759ac88f
+1359532,2023,2023-05-13,1,False,16,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,A Mishra,6b19d823
+1359532,2023,2023-05-13,2,False,0,1,Sunrisers Hyderabad,impact_player,Vivrant Sharma,1b7b0fa7,Anmolpreet Singh,1399b39c
+1359533,2023,2023-05-13,2,False,0,1,Punjab Kings,impact_player,NT Ellis,9eb1455b,P Simran Singh,9418198b
+1359533,2023,2023-05-13,2,False,9,1,Delhi Capitals,impact_player,MK Pandey,93b4fc78,KK Ahmed,a2f46292
+1359534,2023,2023-05-14,2,False,0,1,Royal Challengers Bengaluru,impact_player,Shahbaz Ahmed,f9e6e7ef,KD Karthik,c03f1114
+1359534,2023,2023-05-14,2,False,1,6,Rajasthan Royals,impact_player,D Padikkal,2c25d4f5,YS Chahal,57ee1fde
+1359535,2023,2023-05-14,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,S Dube,a4e37e47
+1359535,2023,2023-05-14,2,False,1,1,Kolkata Knight Riders,impact_player,VR Iyer,a24be938,Suyash Sharma,9440ef41
+1359536,2023,2023-05-15,2,False,0,1,Gujarat Titans,impact_player,Yash Dayal,7210d461,Shubman Gill,b4b99816
+1359536,2023,2023-05-15,2,False,19,3,Sunrisers Hyderabad,impact_player,Anmolpreet Singh,1399b39c,T Natarajan,ce794613
+1359537,2023,2023-05-16,2,False,1,1,Lucknow Super Giants,impact_player,Yash Thakur,4b31f3a3,PN Mankad,663b5e34
+1359537,2023,2023-05-16,2,False,16,2,Mumbai Indians,impact_player,Vishnu Vinod,0494fa6e,Akash Madhwal,4bd09374
+1359538,2023,2023-05-17,2,False,0,1,Delhi Capitals,impact_player,Mukesh Kumar,2cffab74,PP Shaw,8b3e9c7c
+1359538,2023,2023-05-17,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,NT Ellis,9eb1455b
+1359539,2023,2023-05-18,2,False,0,1,Sunrisers Hyderabad,impact_player,T Natarajan,ce794613,Abdul Samad,8e514b4c
+1359540,2023,2023-05-19,2,False,0,1,Punjab Kings,impact_player,NT Ellis,9eb1455b,P Simran Singh,9418198b
+1359540,2023,2023-05-19,2,False,18,1,Rajasthan Royals,impact_player,Dhruv Jurel,bcf325d2,YS Chahal,57ee1fde
+1359541,2023,2023-05-20,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,S Dube,a4e37e47
+1359541,2023,2023-05-20,2,False,0,1,Delhi Capitals,impact_player,PP Shaw,8b3e9c7c,KK Ahmed,a2f46292
+1359542,2023,2023-05-20,1,False,11,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,Harshit Rana,77b1aa15
+1359542,2023,2023-05-20,2,False,0,1,Lucknow Super Giants,impact_player,Yash Thakur,4b31f3a3,KS Sharma,39ed0d2f
+1359543,2023,2023-05-21,2,False,0,1,Sunrisers Hyderabad,impact_player,Kartik Tyagi,5d2eea49,MA Agarwal,00ea847a
+1359544,2023,2023-05-21,2,False,0,1,Royal Challengers Bengaluru,impact_player,H Sharma,52294a79,KD Karthik,c03f1114
+1359544,2023,2023-05-21,2,False,3,1,Gujarat Titans,impact_player,V Shankar,0994d0ae,Yash Dayal,7210d461
+1370350,2023,2023-05-23,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,S Dube,a4e37e47
+1370350,2023,2023-05-23,2,False,0,1,Gujarat Titans,impact_player,V Shankar,0994d0ae,MM Sharma,759ac88f
+1370351,2023,2023-05-24,2,False,0,1,Lucknow Super Giants,impact_player,KR Mayers,73c18486,Yash Thakur,4b31f3a3
+1370351,2023,2023-05-24,2,False,0,1,Mumbai Indians,impact_player,N Wadhera,d1a60072,SA Yadav,271f83cd
+1370352,2023,2023-05-26,2,False,0,1,Gujarat Titans,impact_player,J Little,9061a703,Shubman Gill,b4b99816
+1370352,2023,2023-05-26,2,False,0,1,Mumbai Indians,impact_player,N Wadhera,d1a60072,Akash Madhwal,4bd09374
+1370352,2023,2023-05-26,2,False,11,3,Mumbai Indians,concussion_substitute,Vishnu Vinod,0494fa6e,Ishan Kishan,752f7486
+1370353,2023,2023-05-29,2,False,0,1,Gujarat Titans,impact_player,J Little,9061a703,B Sai Sudharsan,d5130a30
+1370353,2023,2023-05-29,2,False,6,4,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1422119,2024,2024-03-22,2,False,0,1,Royal Challengers Bengaluru,impact_player,Yash Dayal,7210d461,KD Karthik,c03f1114
+1422119,2024,2024-03-22,2,False,10,4,Chennai Super Kings,impact_player,S Dube,a4e37e47,Mustafizur Rahman,0a8fce53
+1422120,2024,2024-03-23,1,False,17,2,Delhi Capitals,impact_player,Abishek Porel,ad3b6e95,RK Bhui,b63e358a
+1422120,2024,2024-03-23,1,False,19,1,Punjab Kings,impact_player,P Simran Singh,9418198b,Arshdeep Singh,244048f6
+1422121,2024,2024-03-23,2,False,0,1,Sunrisers Hyderabad,impact_player,Abhishek Sharma,f29185a1,T Natarajan,ce794613
+1422121,2024,2024-03-23,2,False,8,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,Ramandeep Singh,be24ead0
+1422122,2024,2024-03-24,2,False,0,1,Rajasthan Royals,impact_player,N Burger,465aa633,SO Hetmyer,48a1d7b7
+1422122,2024,2024-03-24,2,False,3,2,Lucknow Super Giants,impact_player,DJ Hooda,73ad96ed,Yash Thakur,4b31f3a3
+1422123,2024,2024-03-24,2,False,0,1,Gujarat Titans,impact_player,MM Sharma,759ac88f,B Sai Sudharsan,d5130a30
+1422123,2024,2024-03-24,2,False,3,1,Mumbai Indians,impact_player,D Brevis,844e79d1,L Wood,65b6943c
+1422124,2024,2024-03-25,2,False,0,1,Punjab Kings,impact_player,Arshdeep Singh,244048f6,P Simran Singh,9418198b
+1422124,2024,2024-03-25,2,False,16,3,Royal Challengers Bengaluru,impact_player,MK Lomror,da934ee8,Yash Dayal,7210d461
+1422125,2024,2024-03-26,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,S Dube,a4e37e47
+1422125,2024,2024-03-26,2,False,2,7,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,MM Sharma,759ac88f
+1422126,2024,2024-03-27,2,False,0,1,Sunrisers Hyderabad,impact_player,Umran Malik,81c08fa3,TM Head,12b610c2
+1422126,2024,2024-03-27,2,False,18,1,Mumbai Indians,impact_player,R Shepherd,c5aef772,KT Maphaka,107c26fb
+1422127,2024,2024-03-28,1,False,15,1,Delhi Capitals,impact_player,Abishek Porel,ad3b6e95,KK Ahmed,a2f46292
+1422127,2024,2024-03-28,2,False,0,1,Rajasthan Royals,impact_player,N Burger,465aa633,SO Hetmyer,48a1d7b7
+1422128,2024,2024-03-29,1,False,17,1,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,CV Varun,5b7ab5a9
+1422128,2024,2024-03-29,2,False,0,1,Royal Challengers Bengaluru,impact_player,Vijaykumar Vyshak,54e52590,KD Karthik,c03f1114
+1422129,2024,2024-03-30,1,False,19,5,Lucknow Super Giants,impact_player,Naveen-ul-Haq,c0c411cb,KL Rahul,b17e2f24
+1422129,2024,2024-03-30,2,False,11,5,Punjab Kings,impact_player,P Simran Singh,9418198b,Arshdeep Singh,244048f6
+1422130,2024,2024-03-31,1,False,19,3,Sunrisers Hyderabad,impact_player,Washington Sundar,f19ccfad,MA Agarwal,00ea847a
+1422130,2024,2024-03-31,2,False,4,2,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,MM Sharma,759ac88f
+1422131,2024,2024-03-31,2,False,6,1,Delhi Capitals,impact_player,Rasikh Salam,b8527c3d,PP Shaw,8b3e9c7c
+1422131,2024,2024-03-31,2,False,10,3,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1422132,2024,2024-04-01,1,False,1,1,Mumbai Indians,impact_player,D Brevis,844e79d1,Naman Dhir,fffa744b
+1422132,2024,2024-04-01,1,False,18,1,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,YS Chahal,57ee1fde
+1422133,2024,2024-04-02,2,False,0,1,Lucknow Super Giants,impact_player,M Siddharth,cf0ccafa,Q de Kock,372455c4
+1422133,2024,2024-04-02,2,False,12,7,Royal Challengers Bengaluru,impact_player,MK Lomror,da934ee8,Yash Dayal,7210d461
+1422134,2024,2024-04-03,1,False,18,1,Delhi Capitals,impact_player,Abishek Porel,ad3b6e95,KK Ahmed,a2f46292
+1422134,2024,2024-04-03,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,A Raghuvanshi,d7017798
+1422135,2024,2024-04-04,2,False,0,1,Gujarat Titans,impact_player,MM Sharma,759ac88f,R Tewatia,39a2dfa8
+1422135,2024,2024-04-04,2,False,15,4,Punjab Kings,impact_player,Ashutosh Sharma,84d9c311,Arshdeep Singh,244048f6
+1422136,2024,2024-04-05,2,False,0,1,Chennai Super Kings,impact_player,Mukesh Choudhary,765a4731,S Dube,a4e37e47
+1422136,2024,2024-04-05,2,False,0,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,T Natarajan,ce794613
+1422137,2024,2024-04-06,1,False,18,1,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,YS Chahal,57ee1fde
+1422137,2024,2024-04-06,2,False,0,1,Royal Challengers Bengaluru,impact_player,H Sharma,52294a79,Saurav Chauhan,9e7225b0
+1422138,2024,2024-04-07,1,False,17,1,Delhi Capitals,impact_player,Kumar Kushagra,57ca01b3,KK Ahmed,a2f46292
+1422138,2024,2024-04-07,2,False,0,1,Mumbai Indians,impact_player,Akash Madhwal,4bd09374,SA Yadav,271f83cd
+1422139,2024,2024-04-07,2,False,0,1,Lucknow Super Giants,impact_player,M Siddharth,cf0ccafa,MP Stoinis,d9273ee7
+1422139,2024,2024-04-07,2,False,6,1,Gujarat Titans,impact_player,KS Williamson,d027ba9f,MM Sharma,759ac88f
+1426260,2024,2024-04-08,1,False,18,4,Kolkata Knight Riders,impact_player,AS Roy,e4cdf230,RK Singh,0a509d6b
+1426260,2024,2024-04-08,2,False,12,4,Chennai Super Kings,impact_player,S Dube,a4e37e47,Mustafizur Rahman,0a8fce53
+1426261,2024,2024-04-09,1,False,5,1,Sunrisers Hyderabad,impact_player,RA Tripathi,77255a9e,TM Head,12b610c2
+1426261,2024,2024-04-09,2,False,1,5,Punjab Kings,impact_player,P Simran Singh,9418198b,Arshdeep Singh,244048f6
+1426262,2024,2024-04-10,2,False,0,1,Rajasthan Royals,impact_player,KA Maharaj,0b60eb09,YBK Jaiswal,6c19c6e5
+1426262,2024,2024-04-10,2,False,0,1,Gujarat Titans,impact_player,M Shahrukh Khan,7dcb9bc9,MM Sharma,759ac88f
+1426263,2024,2024-04-11,1,False,16,6,Royal Challengers Bengaluru,impact_player,Saurav Chauhan,9e7225b0,RM Patidar,c740ea83
+1426263,2024,2024-04-11,2,False,8,7,Mumbai Indians,impact_player,SA Yadav,271f83cd,Akash Madhwal,4bd09374
+1426264,2024,2024-04-12,1,False,7,5,Lucknow Super Giants,impact_player,DJ Hooda,73ad96ed,Q de Kock,372455c4
+1426264,2024,2024-04-12,1,False,18,1,Delhi Capitals,impact_player,Abishek Porel,ad3b6e95,KK Ahmed,a2f46292
+1426265,2024,2024-04-13,1,False,16,2,Punjab Kings,impact_player,Ashutosh Sharma,84d9c311,P Simran Singh,9418198b
+1426265,2024,2024-04-13,2,False,0,1,Rajasthan Royals,impact_player,YBK Jaiswal,6c19c6e5,KR Sen,2e78f685
+1426266,2024,2024-04-14,1,False,17,1,Kolkata Knight Riders,impact_player,RK Singh,0a509d6b,CV Varun,5b7ab5a9
+1426266,2024,2024-04-14,1,False,19,2,Lucknow Super Giants,impact_player,Arshad Khan (2),12314277,Q de Kock,372455c4
+1426267,2024,2024-04-14,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,AM Rahane,29e95537
+1426267,2024,2024-04-14,2,False,7,2,Mumbai Indians,impact_player,SA Yadav,271f83cd,Akash Madhwal,4bd09374
+1426268,2024,2024-04-15,1,False,18,1,Royal Challengers Bengaluru,impact_player,Anuj Rawat,c8f5f961,Yash Dayal,7210d461
+1426268,2024,2024-04-15,2,False,0,1,Sunrisers Hyderabad,impact_player,M Markande,a9fd84fb,TM Head,12b610c2
+1426269,2024,2024-04-16,2,False,0,1,Rajasthan Royals,impact_player,JC Buttler,99b75528,KR Sen,2e78f685
+1426269,2024,2024-04-16,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,RK Singh,0a509d6b
+1426270,2024,2024-04-17,1,False,8,4,Gujarat Titans,impact_player,M Shahrukh Khan,7dcb9bc9,B Sai Sudharsan,d5130a30
+1426270,2024,2024-04-17,1,False,15,1,Delhi Capitals,impact_player,Abishek Porel,ad3b6e95,KK Ahmed,a2f46292
+1426271,2024,2024-04-18,2,False,0,1,Mumbai Indians,impact_player,Akash Madhwal,4bd09374,SA Yadav,271f83cd
+1426271,2024,2024-04-18,2,False,2,1,Punjab Kings,impact_player,Harpreet Singh,28c78fb3,Arshdeep Singh,244048f6
+1426272,2024,2024-04-19,1,False,11,2,Chennai Super Kings,impact_player,Sameer Rizvi,f89d3b11,AM Rahane,29e95537
+1426273,2024,2024-04-20,1,False,19,5,Sunrisers Hyderabad,impact_player,Washington Sundar,f19ccfad,TM Head,12b610c2
+1426273,2024,2024-04-20,2,False,0,1,Delhi Capitals,impact_player,PP Shaw,8b3e9c7c,KK Ahmed,a2f46292
+1426274,2024,2024-04-21,2,False,6,1,Kolkata Knight Riders,impact_player,Suyash Sharma,9440ef41,RK Singh,0a509d6b
+1426274,2024,2024-04-21,2,False,11,5,Royal Challengers Bengaluru,impact_player,SS Prabhudessai,9385de2e,Yash Dayal,7210d461
+1426275,2024,2024-04-21,1,False,13,6,Punjab Kings,impact_player,Harpreet Singh,28c78fb3,P Simran Singh,9418198b
+1426275,2024,2024-04-21,1,False,19,1,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,S Sandeep Warrier,cdc6bdba
+1426276,2024,2024-04-22,2,False,0,1,Mumbai Indians,impact_player,N Thushara,ee1b6c27,SA Yadav,271f83cd
+1426276,2024,2024-04-22,2,False,0,1,Rajasthan Royals,impact_player,JC Buttler,99b75528,YS Chahal,57ee1fde
+1426277,2024,2024-04-23,2,False,0,1,Chennai Super Kings,impact_player,SN Thakur,1abb78f8,AM Rahane,29e95537
+1426277,2024,2024-04-23,2,False,4,5,Lucknow Super Giants,impact_player,D Padikkal,2c25d4f5,Yash Thakur,4b31f3a3
+1426278,2024,2024-04-24,2,False,0,1,Delhi Capitals,impact_player,Rasikh Salam,b8527c3d,PP Shaw,8b3e9c7c
+1426278,2024,2024-04-24,2,False,1,4,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,S Sandeep Warrier,cdc6bdba
+1426279,2024,2024-04-25,1,False,18,7,Royal Challengers Bengaluru,impact_player,Swapnil Singh,983f2f61,RM Patidar,c740ea83
+1426279,2024,2024-04-25,2,False,0,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,T Natarajan,ce794613
+1426280,2024,2024-04-26,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,Arshdeep Singh,244048f6
+1426280,2024,2024-04-26,2,False,3,1,Kolkata Knight Riders,impact_player,AS Roy,e4cdf230,VR Iyer,a24be938
+1426281,2024,2024-04-27,2,False,3,2,Mumbai Indians,impact_player,SA Yadav,271f83cd,N Thushara,ee1b6c27
+1426281,2024,2024-04-27,2,False,9,1,Delhi Capitals,impact_player,Rasikh Salam,b8527c3d,Kumar Kushagra,57ca01b3
+1426282,2024,2024-04-27,2,False,6,2,Rajasthan Royals,impact_player,R Parag,04a418e8,YS Chahal,57ee1fde
+1426282,2024,2024-04-27,2,False,8,1,Lucknow Super Giants,impact_player,A Mishra,6b19d823,Q de Kock,372455c4
+1426283,2024,2024-04-28,2,False,0,1,Gujarat Titans,impact_player,S Sandeep Warrier,cdc6bdba,B Sai Sudharsan,d5130a30
+1426284,2024,2024-04-28,2,False,0,1,Chennai Super Kings,impact_player,SN Thakur,1abb78f8,S Dube,a4e37e47
+1426284,2024,2024-04-28,2,False,1,6,Sunrisers Hyderabad,impact_player,Anmolpreet Singh,1399b39c,T Natarajan,ce794613
+1426285,2024,2024-04-29,1,False,12,2,Delhi Capitals,impact_player,Kumar Kushagra,57ca01b3,PP Shaw,8b3e9c7c
+1426285,2024,2024-04-29,1,False,15,1,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,CV Varun,5b7ab5a9
+1426286,2024,2024-04-30,2,False,0,1,Mumbai Indians,impact_player,N Thushara,ee1b6c27,SA Yadav,271f83cd
+1426286,2024,2024-04-30,2,False,0,1,Lucknow Super Giants,impact_player,AA Kulkarni,2d140b79,MP Yadav,b1ad996b
+1426287,2024,2024-05-01,1,False,9,6,Chennai Super Kings,impact_player,Sameer Rizvi,f89d3b11,AM Rahane,29e95537
+1426287,2024,2024-05-01,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,Arshdeep Singh,244048f6
+1426288,2024,2024-05-02,2,False,0,1,Rajasthan Royals,impact_player,JC Buttler,99b75528,YS Chahal,57ee1fde
+1426288,2024,2024-05-02,2,False,0,1,Sunrisers Hyderabad,impact_player,JD Unadkat,1e66c162,Anmolpreet Singh,1399b39c
+1426289,2024,2024-05-03,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,N Thushara,ee1b6c27
+1426289,2024,2024-05-03,2,False,6,2,Kolkata Knight Riders,impact_player,MK Pandey,93b4fc78,A Raghuvanshi,d7017798
+1426290,2024,2024-05-04,1,False,17,4,Gujarat Titans,impact_player,V Shankar,0994d0ae,B Sai Sudharsan,d5130a30
+1426290,2024,2024-05-04,1,False,18,1,Royal Challengers Bengaluru,impact_player,RM Patidar,c740ea83,Yash Dayal,7210d461
+1426291,2024,2024-05-05,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,Arshdeep Singh,244048f6
+1426291,2024,2024-05-05,2,False,0,1,Chennai Super Kings,impact_player,Simarjeet Singh,30df8c66,AM Rahane,29e95537
+1426292,2024,2024-05-05,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,A Raghuvanshi,d7017798
+1426292,2024,2024-05-05,2,False,0,1,Lucknow Super Giants,impact_player,AA Kulkarni,2d140b79,Yash Thakur,4b31f3a3
+1426292,2024,2024-05-05,2,False,15,1,Lucknow Super Giants,impact_player,Yudhvir Singh,4885bbe6,Mohsin Khan,c33d8116
+1426293,2024,2024-05-06,1,False,17,1,Sunrisers Hyderabad,impact_player,Sanvir Singh,b0f2baf4,Abhishek Sharma,f29185a1
+1426294,2024,2024-05-07,1,False,18,5,Delhi Capitals,impact_player,Rasikh Salam,b8527c3d,Abishek Porel,ad3b6e95
+1426294,2024,2024-05-07,2,False,0,1,Rajasthan Royals,impact_player,JC Buttler,99b75528,YS Chahal,57ee1fde
+1426295,2024,2024-05-08,1,False,19,1,Sunrisers Hyderabad,impact_player,Abhishek Sharma,f29185a1,T Natarajan,ce794613
+1426296,2024,2024-05-09,1,False,17,1,Punjab Kings,impact_player,JM Sharma,800d2d97,V Kaverappa,d4d929b0
+1426296,2024,2024-05-09,2,False,0,1,Royal Challengers Bengaluru,impact_player,Yash Dayal,7210d461,RM Patidar,c740ea83
+1426297,2024,2024-05-10,2,False,0,1,Chennai Super Kings,impact_player,AM Rahane,29e95537,TU Deshpande,46a9bea1
+1426297,2024,2024-05-10,2,False,0,1,Gujarat Titans,impact_player,S Sandeep Warrier,cdc6bdba,B Sai Sudharsan,d5130a30
+1426298,2024,2024-05-11,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,N Rana,fb2d1dda
+1426298,2024,2024-05-11,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,N Thushara,ee1b6c27
+1426299,2024,2024-05-12,2,False,0,1,Rajasthan Royals,impact_player,N Burger,465aa633,Dhruv Jurel,bcf325d2
+1426299,2024,2024-05-12,2,False,15,6,Chennai Super Kings,impact_player,Sameer Rizvi,f89d3b11,DJ Mitchell,eade4650
+1426300,2024,2024-05-12,1,False,18,1,Royal Challengers Bengaluru,impact_player,Swapnil Singh,983f2f61,RM Patidar,c740ea83
+1426300,2024,2024-05-12,2,False,0,1,Delhi Capitals,impact_player,DA Warner,dcce6f09,KK Ahmed,a2f46292
+1426302,2024,2024-05-14,1,False,18,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,Mohsin Khan,c33d8116
+1426302,2024,2024-05-14,2,False,0,1,Delhi Capitals,impact_player,I Sharma,5bb1a1c4,Abishek Porel,ad3b6e95
+1426303,2024,2024-05-15,1,False,14,4,Rajasthan Royals,impact_player,D Ferreira,f0af99a7,Dhruv Jurel,bcf325d2
+1426303,2024,2024-05-15,2,False,15,6,Punjab Kings,impact_player,Ashutosh Sharma,84d9c311,Arshdeep Singh,244048f6
+1426305,2024,2024-05-17,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,N Thushara,ee1b6c27
+1426305,2024,2024-05-17,2,False,0,1,Lucknow Super Giants,impact_player,Naveen-ul-Haq,c0c411cb,A Badoni,872b03f7
+1426306,2024,2024-05-18,2,False,0,1,Royal Challengers Bengaluru,impact_player,Swapnil Singh,983f2f61,RM Patidar,c740ea83
+1426306,2024,2024-05-18,2,False,9,2,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Theekshana,f24c6701
+1426307,2024,2024-05-19,2,False,0,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,T Natarajan,ce794613
+1426307,2024,2024-05-19,2,False,0,1,Punjab Kings,impact_player,Arshdeep Singh,244048f6,Ashutosh Sharma,84d9c311
+1426309,2024,2024-05-21,1,False,13,3,Sunrisers Hyderabad,impact_player,Sanvir Singh,b0f2baf4,Abhishek Sharma,f29185a1
+1426310,2024,2024-05-22,1,False,18,3,Royal Challengers Bengaluru,impact_player,Swapnil Singh,983f2f61,RM Patidar,c740ea83
+1426310,2024,2024-05-22,2,False,13,2,Rajasthan Royals,impact_player,SO Hetmyer,48a1d7b7,YS Chahal,57ee1fde
+1426311,2024,2024-05-24,1,False,14,1,Sunrisers Hyderabad,impact_player,Shahbaz Ahmed,f9e6e7ef,TM Head,12b610c2
+1426311,2024,2024-05-24,2,False,11,5,Rajasthan Royals,impact_player,SO Hetmyer,48a1d7b7,YS Chahal,57ee1fde
+1426312,2024,2024-05-26,1,False,11,6,Sunrisers Hyderabad,impact_player,Abdul Samad,8e514b4c,TM Head,12b610c2
+1473438,2025,2025-03-22,1,False,16,1,Royal Challengers Bengaluru,impact_player,D Padikkal,2c25d4f5,Suyash Sharma,9440ef41
+1473438,2025,2025-03-22,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,A Raghuvanshi,d7017798
+1473439,2025,2025-03-23,2,False,0,1,Rajasthan Royals,impact_player,SV Samson,a4cc73aa,Fazalhaq Farooqi,e9c7f0d0
+1473439,2025,2025-03-23,2,False,7,1,Sunrisers Hyderabad,impact_player,A Zampa,14f96089,TM Head,12b610c2
+1473440,2025,2025-03-23,1,False,19,1,Chennai Super Kings,impact_player,RA Tripathi,77255a9e,KK Ahmed,a2f46292
+1473440,2025,2025-03-23,2,False,0,1,Mumbai Indians,impact_player,V Puthur,1e030637,RG Sharma,740742ef
+1473441,2025,2025-03-24,2,False,0,1,Lucknow Super Giants,impact_player,M Siddharth,cf0ccafa,MR Marsh,3d8feaf8
+1473441,2025,2025-03-24,2,False,6,5,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,Mukesh Kumar,2cffab74
+1473442,2025,2025-03-25,2,False,12,4,Gujarat Titans,impact_player,SE Rutherford,d014d5ac,M Prasidh Krishna,85e0cf10
+1473442,2025,2025-03-25,2,False,13,1,Punjab Kings,impact_player,Vijaykumar Vyshak,54e52590,Priyansh Arya,b5797845
+1473443,2025,2025-03-26,1,False,11,1,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,SV Samson,a4cc73aa
+1473443,2025,2025-03-26,1,False,16,1,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,CV Varun,5b7ab5a9
+1473444,2025,2025-03-27,2,False,0,1,Lucknow Super Giants,impact_player,MR Marsh,3d8feaf8,DS Rathi,13fc5c6d
+1473444,2025,2025-03-27,2,False,6,1,Sunrisers Hyderabad,impact_player,A Zampa,14f96089,TM Head,12b610c2
+1473445,2025,2025-03-28,2,False,6,1,Royal Challengers Bengaluru,impact_player,Suyash Sharma,9440ef41,D Padikkal,2c25d4f5
+1473445,2025,2025-03-28,2,False,8,6,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1473446,2025,2025-03-29,2,False,0,1,Gujarat Titans,impact_player,I Sharma,5bb1a1c4,SE Rutherford,d014d5ac
+1473446,2025,2025-03-29,2,False,11,4,Mumbai Indians,impact_player,R Minz,bafd0398,PVSN Raju,c27b5a0e
+1473447,2025,2025-03-30,1,False,14,1,Sunrisers Hyderabad,impact_player,PWA Mulder,c96f6ac5,TM Head,12b610c2
+1473448,2025,2025-03-30,1,False,18,5,Rajasthan Royals,impact_player,K Kartikeya,f6d8a7ab,SV Samson,a4cc73aa
+1473448,2025,2025-03-30,2,False,7,2,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1473449,2025,2025-03-31,1,False,7,1,Kolkata Knight Riders,impact_player,MK Pandey,93b4fc78,A Raghuvanshi,d7017798
+1473449,2025,2025-03-31,1,False,15,1,Mumbai Indians,impact_player,RG Sharma,740742ef,V Puthur,1e030637
+1473450,2025,2025-04-01,1,False,17,1,Punjab Kings,impact_player,N Wadhera,d1a60072,YS Chahal,57ee1fde
+1473450,2025,2025-04-01,2,False,6,1,Lucknow Super Giants,impact_player,M Siddharth,cf0ccafa,DA Miller,d67d5f00
+1473451,2025,2025-04-02,2,False,4,1,Royal Challengers Bengaluru,impact_player,Rasikh Salam,b8527c3d,D Padikkal,2c25d4f5
+1473451,2025,2025-04-02,2,False,12,4,Gujarat Titans,impact_player,SE Rutherford,d014d5ac,I Sharma,5bb1a1c4
+1473452,2025,2025-04-03,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,A Raghuvanshi,d7017798
+1473452,2025,2025-04-03,2,False,0,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,Zeeshan Ansari,36619795
+1473453,2025,2025-04-04,2,False,0,1,Lucknow Super Giants,impact_player,Ravi Bishnoi,df064e1a,MR Marsh,3d8feaf8
+1473453,2025,2025-04-04,2,False,8,2,Mumbai Indians,impact_player,Tilak Varma,b0482a1d,V Puthur,1e030637
+1473454,2025,2025-04-05,2,False,0,1,Delhi Capitals,impact_player,Mukesh Kumar,2cffab74,Ashutosh Sharma,84d9c311
+1473454,2025,2025-04-05,2,False,5,4,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1473455,2025,2025-04-05,1,False,18,1,Punjab Kings,impact_player,Priyansh Arya,b5797845,YS Chahal,57ee1fde
+1473455,2025,2025-04-05,2,False,3,4,Rajasthan Royals,impact_player,K Kartikeya,f6d8a7ab,N Rana,fb2d1dda
+1473456,2025,2025-04-08,1,False,14,1,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,CV Varun,5b7ab5a9
+1473456,2025,2025-04-08,2,False,0,1,Lucknow Super Giants,impact_player,Ravi Bishnoi,df064e1a,MR Marsh,3d8feaf8
+1473457,2025,2025-04-06,1,False,18,5,Sunrisers Hyderabad,impact_player,Simarjeet Singh,30df8c66,TM Head,12b610c2
+1473457,2025,2025-04-06,2,False,13,2,Gujarat Titans,impact_player,SE Rutherford,d014d5ac,I Sharma,5bb1a1c4
+1473458,2025,2025-04-07,1,False,15,1,Mumbai Indians,impact_player,RG Sharma,740742ef,V Puthur,1e030637
+1473458,2025,2025-04-07,2,False,6,1,Royal Challengers Bengaluru,impact_player,Suyash Sharma,9440ef41,D Padikkal,2c25d4f5
+1473459,2025,2025-04-08,2,False,0,1,Punjab Kings,impact_player,Yash Thakur,4b31f3a3,Priyansh Arya,b5797845
+1473459,2025,2025-04-08,2,False,7,3,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1473460,2025,2025-04-09,1,False,13,1,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,Fazalhaq Farooqi,e9c7f0d0
+1473460,2025,2025-04-09,2,False,0,1,Gujarat Titans,impact_player,K Khejroliya,fa2f1dde,SE Rutherford,d014d5ac
+1473461,2025,2025-04-10,2,False,2,1,Delhi Capitals,impact_player,Abishek Porel,ad3b6e95,Mukesh Kumar,2cffab74
+1473461,2025,2025-04-10,2,False,6,1,Royal Challengers Bengaluru,impact_player,Suyash Sharma,9440ef41,D Padikkal,2c25d4f5
+1473462,2025,2025-04-11,1,False,13,4,Chennai Super Kings,impact_player,DJ Hooda,73ad96ed,RA Tripathi,77255a9e
+1473463,2025,2025-04-12,2,False,0,1,Gujarat Titans,impact_player,M Prasidh Krishna,85e0cf10,SE Rutherford,d014d5ac
+1473463,2025,2025-04-12,2,False,11,2,Lucknow Super Giants,impact_player,A Badoni,872b03f7,DS Rathi,13fc5c6d
+1473464,2025,2025-04-12,1,False,18,1,Sunrisers Hyderabad,impact_player,A Manohar,0890552f,E Malinga,5750bcb4
+1473464,2025,2025-04-12,2,False,3,1,Punjab Kings,impact_player,Yash Thakur,4b31f3a3,Priyansh Arya,b5797845
+1473465,2025,2025-04-13,1,False,17,1,Royal Challengers Bengaluru,impact_player,D Padikkal,2c25d4f5,Suyash Sharma,9440ef41
+1473465,2025,2025-04-13,2,False,5,1,Rajasthan Royals,impact_player,K Kartikeya,f6d8a7ab,N Rana,fb2d1dda
+1473466,2025,2025-04-13,2,False,0,1,Delhi Capitals,impact_player,KK Nair,944533a5,Mukesh Kumar,2cffab74
+1473466,2025,2025-04-13,2,False,6,1,Mumbai Indians,impact_player,KV Sharma,119678fd,RG Sharma,740742ef
+1473467,2025,2025-04-14,2,False,0,1,Lucknow Super Giants,impact_player,Ravi Bishnoi,df064e1a,MR Marsh,3d8feaf8
+1473467,2025,2025-04-14,2,False,8,6,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1473468,2025,2025-04-15,1,False,8,5,Punjab Kings,impact_player,Suryansh Shedge,970ddd24,P Simran Singh,9418198b
+1473468,2025,2025-04-15,1,False,14,1,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,CV Varun,5b7ab5a9
+1473469,2025,2025-04-16,2,False,0,1,Delhi Capitals,impact_player,Mukesh Kumar,2cffab74,Abishek Porel,ad3b6e95
+1473469,2025,2025-04-16,4,True,0,1,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,M Theekshana,f24c6701
+1473470,2025,2025-04-17,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,KV Sharma,119678fd
+1473470,2025,2025-04-17,2,False,7,1,Sunrisers Hyderabad,impact_player,RD Chahar,2ed569a0,Mohammed Shami,8cf9814c
+1473471,2025,2025-04-18,1,False,7,5,Royal Challengers Bengaluru,impact_player,MS Bhandage,e96801ea,LS Livingstone,50c6bc2b
+1473471,2025,2025-04-18,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,YS Chahal,57ee1fde
+1473472,2025,2025-04-19,2,False,17,3,Delhi Capitals,impact_player,D Ferreira,f0af99a7,Abishek Porel,ad3b6e95
+1473472,2025,2025-04-19,2,False,19,1,Gujarat Titans,impact_player,SE Rutherford,d014d5ac,I Sharma,5bb1a1c4
+1473473,2025,2025-04-19,1,False,7,5,Lucknow Super Giants,impact_player,A Badoni,872b03f7,MR Marsh,3d8feaf8
+1473473,2025,2025-04-19,2,False,0,1,Rajasthan Royals,impact_player,V Suryavanshi,470f446b,Sandeep Sharma,ce820073
+1473474,2025,2025-04-20,1,False,16,1,Royal Challengers Bengaluru,impact_player,D Padikkal,2c25d4f5,Suyash Sharma,9440ef41
+1473474,2025,2025-04-20,2,False,0,1,Punjab Kings,impact_player,Harpreet Brar,c05edf8e,P Simran Singh,9418198b
+1473475,2025,2025-04-20,2,False,0,1,Chennai Super Kings,impact_player,R Ashwin,495d42a5,S Dube,a4e37e47
+1473475,2025,2025-04-20,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,Ashwani Kumar,d45c29b1
+1473476,2025,2025-04-21,2,False,0,1,Gujarat Titans,impact_player,I Sharma,5bb1a1c4,SE Rutherford,d014d5ac
+1473476,2025,2025-04-21,2,False,16,4,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,VG Arora,7c3b3b78
+1473477,2025,2025-04-22,1,False,14,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,MR Marsh,3d8feaf8
+1473478,2025,2025-04-23,1,False,8,4,Sunrisers Hyderabad,impact_player,A Manohar,0890552f,TM Head,12b610c2
+1473478,2025,2025-04-23,1,False,16,1,Mumbai Indians,impact_player,RG Sharma,740742ef,V Puthur,1e030637
+1473479,2025,2025-04-24,2,False,0,1,Rajasthan Royals,impact_player,V Suryavanshi,470f446b,Sandeep Sharma,ce820073
+1473479,2025,2025-04-24,2,False,6,1,Royal Challengers Bengaluru,impact_player,Suyash Sharma,9440ef41,D Padikkal,2c25d4f5
+1473480,2025,2025-04-25,1,False,16,4,Chennai Super Kings,impact_player,A Kamboj,fcc21ace,S Dube,a4e37e47
+1473480,2025,2025-04-25,2,False,0,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,Zeeshan Ansari,36619795
+1473481,2025,2025-04-26,1,False,19,1,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,C Sakariya,2cdce1be
+1473481,2025,2025-04-26,2,False,0,1,Punjab Kings,impact_player,Harpreet Brar,c05edf8e,P Simran Singh,9418198b
+1473482,2025,2025-04-27,2,False,0,1,Mumbai Indians,impact_player,JJ Bumrah,462411b3,RG Sharma,740742ef
+1473482,2025,2025-04-27,2,False,11,3,Lucknow Super Giants,impact_player,DA Miller,d67d5f00,N Pooran,3241e3fd
+1473483,2025,2025-04-27,1,False,15,1,Royal Challengers Bengaluru,impact_player,D Padikkal,2c25d4f5,Suyash Sharma,9440ef41
+1473483,2025,2025-04-27,1,False,16,3,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,F du Plessis,3355b542
+1473484,2025,2025-04-28,2,False,0,1,Gujarat Titans,impact_player,I Sharma,5bb1a1c4,Shubman Gill,b4b99816
+1473485,2025,2025-04-29,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,VR Iyer,a24be938
+1473485,2025,2025-04-29,2,False,15,3,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,Mukesh Kumar,2cffab74
+1473486,2025,2025-04-30,1,False,18,6,Chennai Super Kings,impact_player,A Kamboj,fcc21ace,A Mhatre,b2b4f545
+1473486,2025,2025-04-30,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,YS Chahal,57ee1fde
+1473487,2025,2025-05-01,2,False,4,6,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,Fazalhaq Farooqi,e9c7f0d0
+1473487,2025,2025-05-01,2,False,7,2,Mumbai Indians,impact_player,KV Sharma,119678fd,RG Sharma,740742ef
+1473488,2025,2025-05-02,1,False,17,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,Mohammed Shami,8cf9814c
+1473488,2025,2025-05-02,2,False,0,1,Gujarat Titans,impact_player,I Sharma,5bb1a1c4,B Sai Sudharsan,d5130a30
+1473489,2025,2025-05-03,2,False,6,1,Royal Challengers Bengaluru,impact_player,Suyash Sharma,9440ef41,D Padikkal,2c25d4f5
+1473489,2025,2025-05-03,2,False,19,4,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1473490,2025,2025-05-04,2,False,0,1,Kolkata Knight Riders,impact_player,Harshit Rana,77b1aa15,A Raghuvanshi,d7017798
+1473490,2025,2025-05-04,2,False,15,7,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,Akash Madhwal,4bd09374
+1473491,2025,2025-05-04,2,False,0,1,Lucknow Super Giants,impact_player,MR Marsh,3d8feaf8,Akash Singh,b483905d
+1473491,2025,2025-05-04,2,False,4,1,Punjab Kings,impact_player,Vijaykumar Vyshak,54e52590,P Simran Singh,9418198b
+1473492,2025,2025-05-05,1,False,12,2,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,Abishek Porel,ad3b6e95
+1473492,2025,2025-05-05,1,False,14,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,JD Unadkat,1e66c162
+1473493,2025,2025-05-06,1,False,19,5,Mumbai Indians,impact_player,KV Sharma,119678fd,RG Sharma,740742ef
+1473493,2025,2025-05-06,2,False,9,1,Mumbai Indians,concussion_substitute,Ashwani Kumar,d45c29b1,C Bosch,172dff15
+1473493,2025,2025-05-06,2,False,11,4,Gujarat Titans,impact_player,SE Rutherford,d014d5ac,M Prasidh Krishna,85e0cf10
+1473494,2025,2025-05-07,2,False,0,1,Kolkata Knight Riders,impact_player,Harshit Rana,77b1aa15,MK Pandey,93b4fc78
+1473494,2025,2025-05-07,2,False,5,3,Chennai Super Kings,impact_player,S Dube,a4e37e47,M Pathirana,64839cb3
+1473497,2025,2025-05-18,2,False,0,1,Punjab Kings,impact_player,Harpreet Brar,c05edf8e,SS Iyer,85ec8e33
+1473497,2025,2025-05-18,2,False,17,3,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,Fazalhaq Farooqi,e9c7f0d0
+1473498,2025,2025-05-18,2,False,0,1,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,M Prasidh Krishna,85e0cf10
+1473498,2025,2025-05-18,2,False,0,1,Delhi Capitals,impact_player,PVD Chameera,327b58d3,Ashutosh Sharma,84d9c311
+1473499,2025,2025-05-19,1,False,16,1,Sunrisers Hyderabad,impact_player,Atharva Taide,1ac746c8,Zeeshan Ansari,36619795
+1473499,2025,2025-05-19,1,False,19,5,Lucknow Super Giants,impact_player,SN Thakur,1abb78f8,MR Marsh,3d8feaf8
+1473500,2025,2025-05-20,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,S Dube,a4e37e47
+1473501,2025,2025-05-21,2,False,0,1,Delhi Capitals,impact_player,KL Rahul,b17e2f24,Mukesh Kumar,2cffab74
+1473501,2025,2025-05-21,2,False,7,1,Mumbai Indians,impact_player,KV Sharma,119678fd,RG Sharma,740742ef
+1473502,2025,2025-05-22,2,False,0,1,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,M Prasidh Krishna,85e0cf10
+1473502,2025,2025-05-22,2,False,0,1,Lucknow Super Giants,impact_player,Akash Singh,b483905d,MR Marsh,3d8feaf8
+1473503,2025,2025-05-23,2,False,0,1,Sunrisers Hyderabad,impact_player,Harsh Dubey,25228673,TM Head,12b610c2
+1473503,2025,2025-05-23,2,False,10,5,Royal Challengers Bengaluru,impact_player,RM Patidar,c740ea83,Suyash Sharma,9440ef41
+1473504,2025,2025-05-25,2,False,0,1,Chennai Super Kings,impact_player,M Pathirana,64839cb3,DP Conway,df5a6881
+1473504,2025,2025-05-25,2,False,0,1,Gujarat Titans,impact_player,B Sai Sudharsan,d5130a30,M Prasidh Krishna,85e0cf10
+1473505,2025,2025-05-25,2,False,5,4,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,CV Varun,5b7ab5a9
+1473505,2025,2025-05-25,2,False,6,6,Sunrisers Hyderabad,impact_player,Harsh Dubey,25228673,TM Head,12b610c2
+1473506,2025,2025-05-26,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,Vijaykumar Vyshak,54e52590
+1473506,2025,2025-05-26,2,False,3,1,Mumbai Indians,impact_player,Ashwani Kumar,d45c29b1,RG Sharma,740742ef
+1473507,2025,2025-05-27,2,False,0,1,Lucknow Super Giants,impact_player,Akash Singh,b483905d,MR Marsh,3d8feaf8
+1473507,2025,2025-05-27,2,False,5,5,Royal Challengers Bengaluru,impact_player,RM Patidar,c740ea83,Suyash Sharma,9440ef41
+1473508,2025,2025-05-29,1,False,8,3,Punjab Kings,impact_player,Musheer Khan,d621b427,P Simran Singh,9418198b
+1473508,2025,2025-05-29,2,False,3,3,Royal Challengers Bengaluru,impact_player,MA Agarwal,00ea847a,Suyash Sharma,9440ef41
+1473509,2025,2025-05-30,1,False,18,5,Gujarat Titans,impact_player,SE Rutherford,d014d5ac,Mohammed Siraj,2f49c897
+1473509,2025,2025-05-30,2,False,10,1,Mumbai Indians,impact_player,Ashwani Kumar,d45c29b1,RG Sharma,740742ef
+1473510,2025,2025-06-01,1,False,17,1,Punjab Kings,impact_player,P Simran Singh,9418198b,YS Chahal,57ee1fde
+1473510,2025,2025-06-01,2,False,0,1,Mumbai Indians,impact_player,Ashwani Kumar,d45c29b1,RG Sharma,740742ef
+1473511,2025,2025-06-03,2,False,0,1,Punjab Kings,impact_player,P Simran Singh,9418198b,YS Chahal,57ee1fde
+1473511,2025,2025-06-03,2,False,6,1,Royal Challengers Bengaluru,impact_player,Suyash Sharma,9440ef41,MA Agarwal,00ea847a
+1485779,2025,2025-05-24,1,False,17,1,Delhi Capitals,impact_player,KL Rahul,b17e2f24,Mukesh Kumar,2cffab74
+1485779,2025,2025-05-24,2,False,0,1,Punjab Kings,impact_player,P Dubey,ed5a5510,P Simran Singh,9418198b
+1527674,2026,2026-03-28,1,False,7,1,Royal Challengers Bengaluru,impact_player,D Padikkal,2c25d4f5,JA Duffy,dadbdb68
+1527674,2026,2026-03-28,1,False,17,6,Sunrisers Hyderabad,impact_player,DA Payne,6c79c098,TM Head,12b610c2
+1527675,2026,2026-03-29,2,False,0,1,Kolkata Knight Riders,impact_player,Kartik Tyagi,5d2eea49,FH Allen,bf74b130
+1527675,2026,2026-03-29,2,False,11,7,Mumbai Indians,impact_player,SA Yadav,271f83cd,JJ Bumrah,462411b3
+1527676,2026,2026-03-30,1,False,3,2,Chennai Super Kings,impact_player,SN Khan,f088b960,A Mhatre,b2b4f545
+1527677,2026,2026-03-31,1,False,16,1,Punjab Kings,impact_player,Priyansh Arya,b5797845,YS Chahal,57ee1fde
+1527677,2026,2026-03-31,2,False,0,1,Gujarat Titans,impact_player,M Prasidh Krishna,85e0cf10,M Shahrukh Khan,7dcb9bc9
+1527678,2026,2026-04-01,1,False,13,2,Lucknow Super Giants,impact_player,Shahbaz Ahmed,f9e6e7ef,MR Marsh,3d8feaf8
+1527678,2026,2026-04-01,2,False,3,4,Delhi Capitals,impact_player,Sameer Rizvi,f89d3b11,T Natarajan,ce794613
+1527679,2026,2026-04-02,2,False,0,1,Kolkata Knight Riders,impact_player,FH Allen,bf74b130,B Muzarabani,449f4e3c
+1527679,2026,2026-04-02,2,False,0,1,Sunrisers Hyderabad,impact_player,E Malinga,5750bcb4,TM Head,12b610c2
+1527680,2026,2026-04-03,1,False,18,1,Punjab Kings,impact_player,Priyansh Arya,b5797845,YS Chahal,57ee1fde
+1527680,2026,2026-04-03,2,False,0,1,Chennai Super Kings,impact_player,RD Chahar,2ed569a0,Kartik Sharma,7b679de5
+1527681,2026,2026-04-04,2,False,1,5,Delhi Capitals,impact_player,Sameer Rizvi,f89d3b11,Mukesh Kumar,2cffab74
+1527681,2026,2026-04-04,2,False,5,1,Mumbai Indians,impact_player,M Markande,a9fd84fb,RG Sharma,740742ef
+1527682,2026,2026-04-04,2,False,0,1,Rajasthan Royals,impact_player,Ravi Bishnoi,df064e1a,D Ferreira,f0af99a7
+1527682,2026,2026-04-04,2,False,13,2,Gujarat Titans,impact_player,M Shahrukh Khan,7dcb9bc9,M Prasidh Krishna,85e0cf10
+1527683,2026,2026-04-05,1,False,12,1,Lucknow Super Giants,impact_player,A Badoni,872b03f7,Mohammed Shami,8cf9814c
+1527683,2026,2026-04-05,2,False,0,1,Sunrisers Hyderabad,impact_player,E Malinga,5750bcb4,TM Head,12b610c2
+1527684,2026,2026-04-05,1,False,16,1,Chennai Super Kings,impact_player,Kartik Sharma,7b679de5,KK Ahmed,a2f46292
+1527684,2026,2026-04-05,2,False,10,1,Royal Challengers Bengaluru,impact_player,Suyash Sharma,9440ef41,D Padikkal,2c25d4f5
+1527686,2026,2026-04-07,2,False,0,1,Rajasthan Royals,impact_player,Ravi Bishnoi,df064e1a,D Ferreira,f0af99a7
+1527686,2026,2026-04-07,2,False,5,1,Mumbai Indians,impact_player,SE Rutherford,d014d5ac,AM Ghazanfar,9ca68676
+1527687,2026,2026-04-08,2,False,0,1,Gujarat Titans,impact_player,M Prasidh Krishna,85e0cf10,M Shahrukh Khan,7dcb9bc9
+1527687,2026,2026-04-08,2,False,9,6,Delhi Capitals,impact_player,Sameer Rizvi,f89d3b11,Mukesh Kumar,2cffab74
+1527688,2026,2026-04-09,2,False,0,1,Kolkata Knight Riders,impact_player,VG Arora,7c3b3b78,FH Allen,bf74b130
+1527688,2026,2026-04-09,2,False,4,4,Lucknow Super Giants,impact_player,A Badoni,872b03f7,M Siddharth,cf0ccafa
+1527689,2026,2026-04-10,1,False,14,1,Royal Challengers Bengaluru,impact_player,VR Iyer,a24be938,D Padikkal,2c25d4f5
+1527689,2026,2026-04-10,2,False,0,1,Rajasthan Royals,impact_player,V Suryavanshi,470f446b,Sandeep Sharma,ce820073
+1527690,2026,2026-04-11,2,False,0,1,Sunrisers Hyderabad,impact_player,JD Unadkat,1e66c162,TM Head,12b610c2
+1527690,2026,2026-04-11,2,False,10,3,Punjab Kings,impact_player,N Wadhera,d1a60072,YS Chahal,57ee1fde
+1527691,2026,2026-04-11,2,False,0,1,Chennai Super Kings,impact_player,AJ Hosein,4d7f517e,A Mhatre,b2b4f545
+1527691,2026,2026-04-11,2,False,12,3,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,Mukesh Kumar,2cffab74
+1527692,2026,2026-04-12,1,False,16,3,Lucknow Super Giants,impact_player,GF Linde,e5437608,A Badoni,872b03f7
+1527692,2026,2026-04-12,1,False,16,3,Gujarat Titans,impact_player,M Shahrukh Khan,7dcb9bc9,Mohammed Siraj,2f49c897
+1527693,2026,2026-04-12,2,False,0,1,Royal Challengers Bengaluru,impact_player,Rasikh Salam,b8527c3d,TH David,f1f99156
+1527693,2026,2026-04-12,2,False,12,4,Mumbai Indians,impact_player,SE Rutherford,d014d5ac,M Markande,a9fd84fb
+1529264,2026,2026-04-13,2,False,0,1,Sunrisers Hyderabad,impact_player,Sakib Hussain,280fff14,TM Head,12b610c2
+1529264,2026,2026-04-13,2,False,0,1,Rajasthan Royals,impact_player,V Suryavanshi,470f446b,Sandeep Sharma,ce820073
+1529265,2026,2026-04-14,2,False,0,1,Kolkata Knight Riders,impact_player,FH Allen,bf74b130,CV Varun,5b7ab5a9
+1529265,2026,2026-04-14,2,False,0,1,Chennai Super Kings,impact_player,AJ Hosein,4d7f517e,A Mhatre,b2b4f545
+1529266,2026,2026-04-15,1,False,16,7,Lucknow Super Giants,impact_player,GF Linde,e5437608,A Badoni,872b03f7
+1529266,2026,2026-04-15,2,False,0,1,Royal Challengers Bengaluru,impact_player,V Kohli,ba607b88,Suyash Sharma,9440ef41
+1529267,2026,2026-04-16,2,False,0,1,Mumbai Indians,impact_player,AM Ghazanfar,9ca68676,SA Yadav,271f83cd
+1529268,2026,2026-04-17,2,False,6,1,Kolkata Knight Riders,impact_player,CV Varun,5b7ab5a9,A Raghuvanshi,d7017798
+1529268,2026,2026-04-17,2,False,19,3,Gujarat Titans,impact_player,M Shahrukh Khan,7dcb9bc9,M Prasidh Krishna,85e0cf10
+1529269,2026,2026-04-18,1,False,19,4,Royal Challengers Bengaluru,impact_player,Rasikh Salam,b8527c3d,D Padikkal,2c25d4f5
+1529269,2026,2026-04-18,2,False,0,5,Delhi Capitals,impact_player,KK Nair,944533a5,Mukesh Kumar,2cffab74
+1529270,2026,2026-04-18,1,False,17,3,Sunrisers Hyderabad,impact_player,LS Livingstone,50c6bc2b,TM Head,12b610c2
+1529270,2026,2026-04-18,2,False,1,2,Chennai Super Kings,impact_player,A Mhatre,b2b4f545,Gurjapneet Singh,cc61ee8f
+1529271,2026,2026-04-19,1,False,15,1,Kolkata Knight Riders,impact_player,A Raghuvanshi,d7017798,CV Varun,5b7ab5a9
+1529271,2026,2026-04-19,2,False,5,1,Rajasthan Royals,impact_player,Yash Raj Punja,02dfebbe,V Suryavanshi,470f446b
+1529272,2026,2026-04-19,1,False,16,1,Lucknow Super Giants,impact_player,Himmat Singh,ebcfef83,Mohsin Khan,c33d8116
+1529272,2026,2026-04-19,2,False,0,1,Punjab Kings,impact_player,Vijaykumar Vyshak,54e52590,N Wadhera,d1a60072
+1529273,2026,2026-04-20,2,False,0,1,Mumbai Indians,impact_player,Ashwani Kumar,d45c29b1,SE Rutherford,d014d5ac
+1529273,2026,2026-04-20,2,False,7,3,Gujarat Titans,impact_player,R Tewatia,39a2dfa8,M Prasidh Krishna,85e0cf10
+1529274,2026,2026-04-21,2,False,0,1,Sunrisers Hyderabad,impact_player,D Madushanka,de7d833e,TM Head,12b610c2
+1529274,2026,2026-04-21,2,False,15,6,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,Mukesh Kumar,2cffab74
+1529275,2026,2026-04-22,1,False,15,6,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,YBK Jaiswal,6c19c6e5
+1529275,2026,2026-04-22,2,False,9,5,Lucknow Super Giants,impact_player,Himmat Singh,ebcfef83,Prince Yadav,80b2fb19
+1529276,2026,2026-04-23,1,False,17,1,Mumbai Indians,impact_player,DV Malewar,9e6032fa,AM Ghazanfar,9ca68676
+1529276,2026,2026-04-23,1,False,18,1,Chennai Super Kings,impact_player,AJ Hosein,4d7f517e,Kartik Sharma,7b679de5
+1529276,2026,2026-04-23,2,False,12,3,Mumbai Indians,concussion_substitute,SN Thakur,1abb78f8,MJ Santner,e4a0deae
+1529277,2026,2026-04-24,2,False,0,1,Gujarat Titans,impact_player,M Prasidh Krishna,85e0cf10,R Tewatia,39a2dfa8
+1529277,2026,2026-04-24,2,False,0,1,Royal Challengers Bengaluru,impact_player,JG Bethell,3c55c703,Suyash Sharma,9440ef41
+1529278,2026,2026-04-25,1,False,17,1,Punjab Kings,impact_player,N Wadhera,d1a60072,YS Chahal,57ee1fde
+1529278,2026,2026-04-25,2,False,0,1,Delhi Capitals,impact_player,Auqib Nabi,7c3c0337,P Nissanka,8ee36b18
+1529278,2026,2026-04-25,2,False,3,1,Delhi Capitals,concussion_substitute,V Nigam,5ffc0565,L Ngidi,f834dcfc
+1529279,2026,2026-04-25,1,False,18,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,Sakib Hussain,280fff14
+1529279,2026,2026-04-25,2,False,0,1,Rajasthan Royals,impact_player,Ravi Bishnoi,df064e1a,YBK Jaiswal,6c19c6e5
+1529280,2026,2026-04-26,1,False,4,1,Chennai Super Kings,impact_player,SN Khan,f088b960,Urvil Patel,cf59b3f0
+1529281,2026,2026-04-26,1,False,11,1,Lucknow Super Giants,impact_player,Himmat Singh,ebcfef83,Mohsin Khan,c33d8116
+1529281,2026,2026-04-26,2,False,6,1,Kolkata Knight Riders,impact_player,CV Varun,5b7ab5a9,A Raghuvanshi,d7017798
+1529282,2026,2026-04-27,1,False,2,5,Delhi Capitals,impact_player,Abishek Porel,ad3b6e95,SU Parakh,926c7443
+1529282,2026,2026-04-27,2,False,0,1,Royal Challengers Bengaluru,impact_player,JG Bethell,3c55c703,Suyash Sharma,9440ef41
+1529283,2026,2026-04-28,2,False,3,1,Punjab Kings,impact_player,Harpreet Brar,c05edf8e,Priyansh Arya,b5797845
+1529283,2026,2026-04-28,2,False,14,1,Rajasthan Royals,impact_player,SB Dubey,6b2ff18f,Yash Raj Punja,02dfebbe
+1529284,2026,2026-04-29,1,False,19,1,Sunrisers Hyderabad,impact_player,Aniket Verma,a3b0600d,Sakib Hussain,280fff14
+1529284,2026,2026-04-29,2,False,7,1,Mumbai Indians,impact_player,SN Thakur,1abb78f8,R Minz,bafd0398
+1529285,2026,2026-04-30,1,False,14,1,Royal Challengers Bengaluru,impact_player,VR Iyer,a24be938,JG Bethell,3c55c703
+1529285,2026,2026-04-30,2,False,10,2,Gujarat Titans,impact_player,R Tewatia,39a2dfa8,Mohammed Siraj,2f49c897
+1529286,2026,2026-05-01,2,False,0,1,Rajasthan Royals,impact_player,TU Deshpande,46a9bea1,SB Dubey,6b2ff18f
+1529287,2026,2026-05-02,2,False,5,1,Mumbai Indians,impact_player,Raghu Sharma,5b615e7c,R Minz,bafd0398
+1529287,2026,2026-05-02,2,False,5,5,Chennai Super Kings,impact_player,Kartik Sharma,7b679de5,Mukesh Choudhary,765a4731
+1529288,2026,2026-05-03,2,False,0,1,Kolkata Knight Riders,impact_player,FH Allen,bf74b130,VG Arora,7c3b3b78
+1529288,2026,2026-05-03,2,False,7,1,Sunrisers Hyderabad,impact_player,Sakib Hussain,280fff14,Aniket Verma,a3b0600d
+1529289,2026,2026-05-03,1,False,17,7,Punjab Kings,impact_player,Vijaykumar Vyshak,54e52590,N Wadhera,d1a60072
+1529289,2026,2026-05-03,2,False,14,6,Gujarat Titans,impact_player,R Tewatia,39a2dfa8,Mohammed Siraj,2f49c897
+1529290,2026,2026-05-04,2,False,0,1,Lucknow Super Giants,impact_player,M Siddharth,cf0ccafa,MR Marsh,3d8feaf8
+1529290,2026,2026-05-04,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,Raghu Sharma,5b615e7c
+1529291,2026,2026-05-05,1,False,11,1,Delhi Capitals,impact_player,Sameer Rizvi,f89d3b11,KK Nair,944533a5
+1529292,2026,2026-05-06,1,False,16,1,Punjab Kings,impact_player,Priyansh Arya,b5797845,YS Chahal,57ee1fde
+1529292,2026,2026-05-06,2,False,0,1,Sunrisers Hyderabad,impact_player,Harsh Dubey,25228673,TM Head,12b610c2
+1529293,2026,2026-05-07,2,False,0,1,Lucknow Super Giants,impact_player,MP Yadav,b1ad996b,Himmat Singh,ebcfef83
+1529293,2026,2026-05-07,2,False,10,6,Royal Challengers Bengaluru,impact_player,TH David,f1f99156,Suyash Sharma,9440ef41
+1529294,2026,2026-05-08,1,False,18,1,Kolkata Knight Riders,impact_player,FH Allen,bf74b130,CV Varun,5b7ab5a9
+1529294,2026,2026-05-08,2,False,0,1,Delhi Capitals,impact_player,Kuldeep Yadav,8d2c70ad,Ashutosh Sharma,84d9c311
+1529295,2026,2026-05-09,1,False,14,1,Rajasthan Royals,impact_player,V Suryavanshi,470f446b,Yash Raj Punja,02dfebbe
+1529295,2026,2026-05-09,2,False,2,6,Gujarat Titans,impact_player,R Sai Kishore,c7a995d3,R Tewatia,39a2dfa8
+1529296,2026,2026-05-10,1,False,19,6,Lucknow Super Giants,impact_player,Avesh Khan,eef2536f,JP Inglis,989889ff
+1529296,2026,2026-05-10,2,False,16,2,Chennai Super Kings,impact_player,PR Veer,e148e6bd,Mukesh Choudhary,765a4731
+1529297,2026,2026-05-10,1,False,15,3,Royal Challengers Bengaluru,impact_player,D Padikkal,2c25d4f5,Suyash Sharma,9440ef41
+1529297,2026,2026-05-10,2,False,0,1,Mumbai Indians,impact_player,Raghu Sharma,5b615e7c,RG Sharma,740742ef
+1529298,2026,2026-05-11,1,False,17,1,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,Mukesh Kumar,2cffab74
+1529298,2026,2026-05-11,2,False,0,1,Punjab Kings,impact_player,Yash Thakur,4b31f3a3,Shashank Singh,26989d80
+1529299,2026,2026-05-12,2,False,0,1,Gujarat Titans,impact_player,M Prasidh Krishna,85e0cf10,R Tewatia,39a2dfa8
+1529299,2026,2026-05-12,2,False,0,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,Sakib Hussain,280fff14
+1529300,2026,2026-05-13,1,False,14,1,Royal Challengers Bengaluru,impact_player,D Padikkal,2c25d4f5,JA Duffy,dadbdb68
+1529300,2026,2026-05-13,2,False,0,1,Kolkata Knight Riders,impact_player,SR Dubey,11061889,FH Allen,bf74b130
+1529301,2026,2026-05-14,1,False,16,3,Punjab Kings,impact_player,Vishnu Vinod,0494fa6e,P Simran Singh,9418198b
+1529301,2026,2026-05-14,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,Raghu Sharma,5b615e7c
+1529302,2026,2026-05-15,2,False,0,1,Chennai Super Kings,impact_player,Gurjapneet Singh,cc61ee8f,S Dube,a4e37e47
+1529302,2026,2026-05-15,2,False,0,1,Lucknow Super Giants,impact_player,JP Inglis,989889ff,Prince Yadav,80b2fb19
+1529303,2026,2026-05-16,2,False,0,1,Kolkata Knight Riders,impact_player,M Pathirana,64839cb3,FH Allen,bf74b130
+1529303,2026,2026-05-16,2,False,18,7,Gujarat Titans,impact_player,R Tewatia,39a2dfa8,Mohammed Siraj,2f49c897
+1529304,2026,2026-05-17,1,False,18,1,Punjab Kings,impact_player,MP Stoinis,d9273ee7,YS Chahal,57ee1fde
+1529304,2026,2026-05-17,2,False,3,1,Royal Challengers Bengaluru,impact_player,Rasikh Salam,b8527c3d,D Padikkal,2c25d4f5
+1529305,2026,2026-05-17,1,False,16,6,Rajasthan Royals,impact_player,MD Shanaka,3ff033bb,SB Dubey,6b2ff18f
+1529305,2026,2026-05-17,2,False,18,2,Delhi Capitals,impact_player,Ashutosh Sharma,84d9c311,Mukesh Kumar,2cffab74
+1529306,2026,2026-05-18,2,False,0,1,Chennai Super Kings,impact_player,Mukesh Choudhary,765a4731,Kartik Sharma,7b679de5
+1529306,2026,2026-05-18,2,False,0,1,Sunrisers Hyderabad,impact_player,TM Head,12b610c2,Sakib Hussain,280fff14
+1529307,2026,2026-05-19,1,False,18,1,Rajasthan Royals,impact_player,V Suryavanshi,470f446b,Yash Raj Punja,02dfebbe
+1529307,2026,2026-05-19,2,False,0,1,Lucknow Super Giants,impact_player,DS Rathi,13fc5c6d,JP Inglis,989889ff
+1529308,2026,2026-05-20,1,False,17,1,Kolkata Knight Riders,impact_player,FH Allen,bf74b130,CV Varun,5b7ab5a9
+1529308,2026,2026-05-20,2,False,0,1,Mumbai Indians,impact_player,AM Ghazanfar,9ca68676,RG Sharma,740742ef
+1529308,2026,2026-05-20,2,False,15,3,Kolkata Knight Riders,concussion_substitute,T Dahiya,f12fe2a1,A Raghuvanshi,d7017798
+1529309,2026,2026-05-21,2,False,0,1,Gujarat Titans,impact_player,M Prasidh Krishna,85e0cf10,R Tewatia,39a2dfa8
+1529309,2026,2026-05-21,2,False,2,5,Chennai Super Kings,impact_player,Kartik Sharma,7b679de5,Gurjapneet Singh,cc61ee8f
+1529310,2026,2026-05-22,1,False,15,7,Royal Challengers Bengaluru,impact_player,TH David,f1f99156,Suyash Sharma,9440ef41
+1529310,2026,2026-05-22,2,False,0,1,Sunrisers Hyderabad,impact_player,HV Patel,f986ca1a,S Arora,d7423da1
+1529311,2026,2026-05-23,1,False,15,1,Punjab Kings,impact_player,MP Stoinis,d9273ee7,YS Chahal,57ee1fde
+1529311,2026,2026-05-23,2,False,0,1,Lucknow Super Giants,impact_player,DS Rathi,13fc5c6d,JP Inglis,989889ff
+1529312,2026,2026-05-24,1,False,17,6,Rajasthan Royals,impact_player,RA Jadeja,fe93fd9d,SB Dubey,6b2ff18f
+1529312,2026,2026-05-24,2,False,0,1,Mumbai Indians,impact_player,RG Sharma,740742ef,Raghu Sharma,5b615e7c
+1529313,2026,2026-05-24,1,False,15,1,Kolkata Knight Riders,concussion_substitute,FH Allen,bf74b130,SP Narine,9d430b40
+1529313,2026,2026-05-24,2,False,0,1,Delhi Capitals,impact_player,Kuldeep Yadav,8d2c70ad,KL Rahul,b17e2f24
+1535462,2026,2026-05-26,1,False,19,1,Gujarat Titans,impact_player,R Tewatia,39a2dfa8,K Khejroliya,fa2f1dde
+1535462,2026,2026-05-26,2,False,11,1,Royal Challengers Bengaluru,impact_player,R Shepherd,c5aef772,JA Duffy,dadbdb68
+1535463,2026,2026-05-27,1,False,16,1,Sunrisers Hyderabad,impact_player,Salil Arora,d7423da1,PP Hinge,ece7b6b3
+1535463,2026,2026-05-27,1,False,19,3,Rajasthan Royals,impact_player,SS Mishra,92500ad5,YBK Jaiswal,6c19c6e5
+1535464,2026,2026-05-29,1,False,17,1,Gujarat Titans,impact_player,R Tewatia,39a2dfa8,Mohammed Siraj,2f49c897
+1535464,2026,2026-05-29,2,False,0,1,Rajasthan Royals,impact_player,TU Deshpande,46a9bea1,YBK Jaiswal,6c19c6e5
+1535465,2026,2026-05-31,1,False,14,1,Royal Challengers Bengaluru,impact_player,VR Iyer,a24be938,JA Duffy,dadbdb68
+1535465,2026,2026-05-31,2,False,0,1,Gujarat Titans,impact_player,M Prasidh Krishna,85e0cf10,R Tewatia,39a2dfa8

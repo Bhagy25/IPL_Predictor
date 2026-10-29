@@ -74,6 +74,23 @@ listed impact or replacement players) and `info.registry.people`.
 - `player_name`: name as listed for that match
 - `player_id`: Cricsheet registry ID
 
+## match_replacements.csv
+
+One row per match-level substitution recorded in a delivery's
+`replacements.match` list: Impact Player substitutions and concussion
+substitutes. Both players are in `info.players`, so both have a
+match_players.csv row for that match: a team's list is its starting eleven
+plus every player who came in. Mid-over bowler or batter changes
+(`replacements.role`) do not change the squad and are not included.
+
+- `match_id`, `season`, `date`, `innings`, `over_index`, `delivery_index`: the
+  delivery where the substitution is recorded (see Keys)
+- `is_super_over`: True when it is recorded in a super-over innings
+- `team`: canonical franchise name
+- `reason`: Cricsheet reason, e.g. `impact_player` or `concussion_substitute`
+- `player_in`, `player_in_id`: player who came into the match and registry ID
+- `player_out`, `player_out_id`: player replaced and registry ID
+
 ## people.csv
 
 One row per registry ID seen as a listed player or as a fielder.
@@ -108,4 +125,5 @@ converting them, so the hashes below match a checkout.
 | non_boundary_events.csv | 29 | 2,385 | `65cbbb65826e7a55371c82d6f8adb89e8cf16576dacdd0d38a40a75eb6498c5a` |
 | batting_appearances.csv | 19,111 | 1,715,390 | `595265dc49da227fed158529adb34eb1288daecd95496e8ce43e50b47458f340` |
 | match_players.csv | 27,909 | 1,723,500 | `525f2513f7cc429e259e7834fa9e0b5e00185cc6c3b3e374a9674ebfab4d2f26` |
+| match_replacements.csv | 563 | 62,160 | `001be472ddcf16f12f02aaafd13e317e616bb7312f654e8a67e960503247423b` |
 | people.csv | 816 | 55,784 | `ed0f498789641750a7422471fa86581c085a278e2496fb3e6719423c28f2eb4a` |
