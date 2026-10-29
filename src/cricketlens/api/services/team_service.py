@@ -1,0 +1,47 @@
+"""Team Analysis Service for CricketLens.
+
+Provides canonical 2008-2026 historical team analytics, season filtering,
+venue breakdowns, phase scoring, and head-to-head records backed directly
+by the verified canonical data engine.
+"""
+from __future__ import annotations
+
+from typing import Optional
+from cricketlens.api.schemas import (
+    TeamListItem,
+    TeamListResponse,
+    TeamOverviewResponse,
+    HeadToHeadResponse,
+)
+from cricketlens.api.services.canonical_data import canonical_engine, FRANCHISE_METADATA
+
+
+class TeamService:
+    """Analytical service providing verified team data, head-to-head records, and phase splits."""
+
+    def list_teams(self) -> TeamListResponse:
+        """Return list of all 15 canonical franchises."""
+        canonical_engine.ensure_loaded()
+        teams = [TeamListItem(**meta) for meta in canonical_engine.list_teams()]
+        active_count = sum(1 for m in teams if m.status == "Active")
+        defunct_count = sum(1 for m in teams if m.status == "Defunct")
+        return TeamListResponse(
+            teams=teams,
+            total_active=active_count,
+            total_defunct=defunct_count,
+        )
+
+    def get_team_overview(self, team_id: str, season: Optional[int] = None) -> TeamOverviewResponse:
+        """Return complete analytical summary for a team with optional season filter."""
+        canonical_engine.ensure_loaded()
+        data = canonical_engine.get_team_overview(team_id, season=season)
+        return TeamOverviewResponse(**data)
+
+    def get_head_to_head(self, team1_id: str, team2_id: str) -> HeadToHeadResponse:
+        """Return full 2008-2026 head-to-head match records between two teams."""
+        canonical_engine.ensure_loaded()
+        data = canonical_engine.get_head_to_head(team1_id, team2_id)
+        return HeadToHeadResponse(**data)
+
+
+team_service = TeamService()

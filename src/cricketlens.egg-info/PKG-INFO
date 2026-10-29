@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: cricketlens
+Version: 0.1.0
+Summary: EDA-first men's IPL analytics and probability prediction
+Requires-Python: >=3.10
+License-File: LICENSE_NOTES.md
+Requires-Dist: pandas<3,>=2.0
+Requires-Dist: scikit-learn<2,>=1.2
+Requires-Dist: joblib<2,>=1.2
+Requires-Dist: numpy<3,>=1.24
+Requires-Dist: scipy<2,>=1.10
+Requires-Dist: matplotlib<4,>=3.7
+Provides-Extra: dev
+Requires-Dist: pytest<10,>=7; extra == "dev"
+Requires-Dist: matplotlib<4,>=3.7; extra == "dev"
+Dynamic: license-file
