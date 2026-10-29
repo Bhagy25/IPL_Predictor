@@ -207,7 +207,10 @@ class TeamSummaryRecord(TeamResultSummary, TeamRunTotals):
 
 
 class TeamComparativeRecord(TeamResultSummary):
-    window: str = Field(..., description="Fixed comparison window")
+    window: str = Field(..., description="Seasons of the comparative window, e.g. '2022–2026'")
+    first_season: int = Field(..., description="First season every current franchise played")
+    last_season: int = Field(..., description="Latest season in the archive")
+    rule: str = Field(..., description="How the window is chosen")
 
 
 class TeamCoverage(BaseModel):
@@ -222,7 +225,8 @@ class TeamOverviewResponse(BaseModel):
     team: TeamListItem = Field(..., description="Franchise metadata")
     coverage: TeamCoverage = Field(..., description="Seasons in scope")
     all_time: TeamSummaryRecord = Field(..., description="Record for the selection (all seasons or one)")
-    comparative_2022_2025: Optional[TeamComparativeRecord] = Field(None, description="Fixed 2022–2025 window; all-season view only")
+    comparative_window: Optional[TeamComparativeRecord] = Field(
+        None, description="Record over the comparative window shared with the homepage; all-season view only")
     batting_first: TeamResultSummary = Field(..., description="Results when batting first (no results excluded)")
     chasing: TeamResultSummary = Field(..., description="Results when chasing (no results excluded)")
     innings_order_no_results: int = Field(default=0, description="No-result matches left out of batting first / chasing")

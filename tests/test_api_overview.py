@@ -291,8 +291,10 @@ def test_team_records_window_and_values(charts, m):
     last = m["season"].max()
     current = set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"])
     start = max(m[(m["team1"] == t) | (m["team2"] == t)]["season"].min() for t in current)
-    assert (w["first_season"], w["last_season"], w["franchises"]) == (start, last - 1, len(current))
-    window = m[m["season"].between(start, last - 1)]
+    # Descriptive records include the latest season (only model evaluation holds it out)
+    assert (w["first_season"], w["last_season"], w["franchises"]) == (start, last, len(current))
+    assert w["label"] == f"{start}–{last}"
+    window = m[m["season"].between(start, last)]
     records = {t["team"]: t for t in charts["team_records"]}
     assert set(records) == current
     for team in current:

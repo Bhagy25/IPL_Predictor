@@ -254,7 +254,8 @@ export interface TeamOverviewResponse {
     total_seasons_participated: number;
   };
   all_time: TeamSummaryRecord;
-  comparative_2022_2025?: (TeamResultSummary & { window: string }) | null;
+  // Same window as the homepage team records: first season every current franchise played to the latest season
+  comparative_window?: (TeamResultSummary & { window: string; first_season: number; last_season: number; rule: string }) | null;
   batting_first: TeamResultSummary;
   chasing: TeamResultSummary;
   innings_order_no_results: number;

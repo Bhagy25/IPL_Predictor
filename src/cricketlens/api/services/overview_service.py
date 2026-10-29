@@ -51,12 +51,6 @@ SCORE_BINS: List[Tuple[Optional[int], Optional[int], str, str]] = [
     (210, None, "210+", "Explosive / record scores"),
 ]
 
-TEAM_RECORDS_WINDOW_RULE = (
-    "Comparative window: from the first season in which every current franchise played, to the season before "
-    "the latest one (the latest season is the Stage 3 holdout)."
-)
-
-
 def _count_label(n: int, singular: str, plural_form: str) -> str:
     return f"{n:,} {singular if n == 1 else plural_form}"
 
@@ -208,7 +202,8 @@ class OverviewService:
             "innings aggregates.",
             "Franchise renames are standardized (Delhi Capitals, Punjab Kings, Royal Challengers Bengaluru). "
             "Discontinued clubs remain distinct.",
-            f"IPL {last}, the latest season, was reserved as an unseen holdout for Stage 3 machine learning evaluation.",
+            f"IPL {last}, the latest season, was held out only to evaluate the Stage 3 machine learning models; "
+            "every descriptive statistic here includes it.",
         ]
         complete_summary = players_ok and retired_hurt is not None
         return OverviewSummaryResponse(metrics=metrics, coverage=coverage, notices=notices), complete_summary
@@ -216,13 +211,10 @@ class OverviewService:
     # ---------------------------------------------------------------- charts
 
     def _team_records(self) -> Tuple[List[TeamRecordItem], Dict[str, Any]]:
-        """Records of the current franchises over the comparative window (see TEAM_RECORDS_WINDOW_RULE)."""
+        """Records of the current franchises over the comparative window (see COMPARATIVE_WINDOW_RULE)."""
         e = self.engine
-        m = e._matches
-        last = int(m["season"].max())
-        current = sorted(set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"]))
-        start = max(e._franchise_seasons[t][0] for t in current)
-        end = last - 1
+        comparative = e.comparative_window()
+        current, start, end = comparative["teams"], comparative["first_season"], comparative["last_season"]
         rows = e._team_rows[e._team_rows["season"].between(start, end)]
         champions = e.season_champions()
         records = []
@@ -244,8 +236,8 @@ class OverviewService:
         window = {
             "first_season": start,
             "last_season": end,
-            "label": f"{start}–{end}",
-            "rule": TEAM_RECORDS_WINDOW_RULE,
+            "label": comparative["label"],
+            "rule": comparative["rule"],
             "win_pct_definition": TEAM_DEFINITIONS["win_pct"],
             "franchises": len(current),
         }

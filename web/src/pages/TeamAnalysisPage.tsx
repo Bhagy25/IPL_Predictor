@@ -392,16 +392,16 @@ export const TeamAnalysisPage: React.FC = () => {
                 </select>
               </div>
 
-              {teamOverview?.comparative_2022_2025 && selectedSeason === 'all' && (
-                <div className="bg-[#1A1B1F] border border-[#D9B15F]/20 rounded-xl p-3 sm:p-4 text-right">
+              {teamOverview?.comparative_window && selectedSeason === 'all' && (
+                <div className="bg-[#1A1B1F] border border-[#D9B15F]/20 rounded-xl p-3 sm:p-4 text-right" title={teamOverview.comparative_window.rule}>
                   <span className="text-[10px] uppercase tracking-wider text-[#B9B9B3] font-semibold">
-                    2022–2025 win % (fixed window)
+                    {teamOverview.comparative_window.window} win % (comparative window)
                   </span>
                   <p className="text-xl sm:text-2xl font-black text-[#D9B15F]">
-                    <Stat value={fmtPct(teamOverview.comparative_2022_2025.win_pct)} reason={stateText(teamOverview.comparative_2022_2025.win_pct_state)} />
+                    <Stat value={fmtPct(teamOverview.comparative_window.win_pct)} reason={stateText(teamOverview.comparative_window.win_pct_state)} />
                   </p>
                   <p className="text-[11px] text-[#B9B9B3]">
-                    {teamOverview.comparative_2022_2025.wins} / {teamOverview.comparative_2022_2025.win_pct_denominator} &middot; {teamOverview.comparative_2022_2025.wins}W {teamOverview.comparative_2022_2025.losses}L
+                    {teamOverview.comparative_window.wins} / {teamOverview.comparative_window.win_pct_denominator} &middot; {teamOverview.comparative_window.wins}W {teamOverview.comparative_window.losses}L
                   </p>
                 </div>
               )}

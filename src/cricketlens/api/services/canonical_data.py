@@ -432,6 +432,11 @@ for name, meta in FRANCHISE_METADATA.items():
     TEAM_NAME_MAP[meta["short_name"].lower()] = name
     TEAM_NAME_MAP[meta["slug"].lower()] = name
 
+# Descriptive statistics include every season; only model evaluation holds out the latest one.
+COMPARATIVE_WINDOW_RULE = (
+    "Comparative window: from the first season in which every current franchise played, to the latest season."
+)
+
 CHAMPION_RULE = (
     "The champion of a season is the winner (final_winner, Super Over included) of that season's final: its last "
     "match by date. In the raw Cricsheet records every season's last match is the one marked stage 'Final'."
@@ -691,6 +696,16 @@ class CanonicalAnalyticsEngine:
         if self._derived_error:
             return {"available": False, "detail": self._derived_error, "build_command": DERIVED_BUILD_COMMAND}
         return {"available": True, "detail": f"Loaded from {self.derived_dir}.", "build_command": DERIVED_BUILD_COMMAND}
+
+    def comparative_window(self) -> Dict[str, Any]:
+        """Seasons every current franchise has played (see COMPARATIVE_WINDOW_RULE), shared by the homepage and team pages."""
+        self.ensure_loaded()
+        m = self._matches
+        last = int(m["season"].max())
+        current = sorted(set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"]))
+        start = max(self._franchise_seasons[t][0] for t in current)
+        return {"first_season": start, "last_season": last, "label": f"{start}–{last}",
+                "rule": COMPARATIVE_WINDOW_RULE, "teams": current}
 
     def archive_coverage(self) -> Dict[str, Any]:
         """Matches, seasons and first/last match dates of the loaded archive (matches.csv)."""
@@ -1134,7 +1149,8 @@ class CanonicalAnalyticsEngine:
         phases = self._phase_records(rows)
         venues, _ = self._venue_records(rows, 3)
         toss = rows[rows["toss_won"]]
-        window = rows[(rows["season"] >= 2022) & (rows["season"] <= 2025)]
+        comparative = self.comparative_window()
+        window = rows[rows["season"].between(comparative["first_season"], comparative["last_season"])]
         # Every toss winner in the same seasons (one row per match), for comparison with this team
         league = self._team_rows[self._team_rows["toss_won"] & self._team_rows["season"].isin(seasons)]
 
@@ -1153,8 +1169,9 @@ class CanonicalAnalyticsEngine:
                 **self._totals(rows),
                 "denominator_description": TEAM_DEFINITIONS["win_pct"],
             },
-            "comparative_2022_2025": {
-                **result_summary(window), "window": "2022–2025 (4-Year Comparative Era)",
+            "comparative_window": {
+                **result_summary(window), "window": comparative["label"], "first_season": comparative["first_season"],
+                "last_season": comparative["last_season"], "rule": comparative["rule"],
             } if season is None and len(window) else None,
             **innings_order_record(rows),
             "season_history": [

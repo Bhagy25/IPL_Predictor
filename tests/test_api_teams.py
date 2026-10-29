@@ -1,6 +1,11 @@
 """Unit tests for Team Analysis API endpoints."""
+from pathlib import Path
+
+import pandas as pd
 from fastapi.testclient import TestClient
 from cricketlens.api.app import app
+
+DATA = Path(__file__).resolve().parents[1] / "data" / "processed"
 
 client = TestClient(app)
 
@@ -43,10 +48,19 @@ def test_team_overview_endpoint():
     assert 40.0 < data["all_time"]["win_pct"] < 65.0
     assert "denominator_description" in data["all_time"]
 
-    # Comparative window for active team
-    assert data["comparative_2022_2025"] is not None
-    assert data["comparative_2022_2025"]["played"] == 58
-    assert data["comparative_2022_2025"]["wins"] == 25
+    # Comparative window for an active team: the homepage window, counted here from matches.csv
+    m = pd.read_csv(DATA / "matches.csv")
+    last = m["season"].max()
+    current = set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"])
+    start = max(m[(m["team1"] == t) | (m["team2"] == t)]["season"].min() for t in current)
+    rows = m[m["season"].between(start, last) & ((m["team1"] == "Chennai Super Kings") | (m["team2"] == "Chennai Super Kings"))]
+    c = data["comparative_window"]
+    assert (c["first_season"], c["last_season"], c["window"]) == (start, last, f"{start}–{last}")
+    assert c["played"] == len(rows)
+    assert c["wins"] == (rows["final_winner"] == "Chennai Super Kings").sum()
+    assert c["losses"] == (rows["final_winner"].notna() & (rows["final_winner"] != "Chennai Super Kings")).sum()
+    homepage = {r["team"]: r for r in client.get("/api/overview/charts").json()["team_records"]}["Chennai Super Kings"]
+    assert (c["played"], c["wins"], c["losses"], c["win_pct"]) == (homepage["played"], homepage["wins"], homepage["losses"], homepage["win_pct"])
 
     # Conditions & Phase
     assert data["batting_first"]["played"] > 0
