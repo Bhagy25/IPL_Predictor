@@ -144,14 +144,10 @@ export interface TeamPhaseScoring {
 }
 
 export interface TeamTossStats {
-  total_tosses_won?: number;
-  tosses_won?: number;
-  opt_to_bat?: number;
-  opt_to_field?: number;
-  elected_to_bat?: number;
-  elected_to_field?: number;
-  win_rate_when_toss_won?: number;
-  toss_match_win_rate?: number;
+  tosses_won: number;
+  elected_to_bat: number;
+  elected_to_field: number;
+  toss_match_win_rate: number;
 }
 
 export interface TeamSummaryRecord {

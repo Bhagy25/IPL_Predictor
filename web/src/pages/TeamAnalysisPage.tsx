@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import {
   Shield,
   Swords,
@@ -10,6 +10,7 @@ import {
   Info,
   CheckCircle2,
   Loader2,
+  Database,
 } from 'lucide-react';
 import {
   BarChart,
@@ -33,47 +34,54 @@ export const TeamAnalysisPage: React.FC = () => {
   const [opponentId, setOpponentId] = useState<string>('mumbai-indians');
   const [h2h, setH2H] = useState<HeadToHeadResponse | null>(null);
   const [h2hLoading, setH2HLoading] = useState<boolean>(false);
+  const [h2hError, setH2HError] = useState<string | null>(null);
 
   // Loading and error states
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [teamsError, setTeamsError] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<'Active' | 'Defunct' | 'All'>('Active');
 
-  // Load teams list once
-  useEffect(() => {
-    let active = true;
-    const loadTeams = async () => {
-      try {
-        const res = await fetchTeams();
-        if (active) {
-          setTeams(res.teams);
-          if (res.teams.length > 0 && !res.teams.some(t => t.id === selectedTeamId)) {
-            setSelectedTeamId(res.teams[0].id);
-          }
-        }
-      } catch (err: any) {
-        if (active) {
-          setError(err?.message || 'Failed to load teams list');
-        }
+  // Only the latest request may update state, so a slow earlier response cannot overwrite it
+  const overviewRequest = useRef(0);
+  const h2hRequest = useRef(0);
+
+  // Load teams list
+  const loadTeams = useCallback(async () => {
+    setTeamsError(null);
+    try {
+      const res = await fetchTeams();
+      setTeams(res.teams);
+      if (res.teams.length > 0 && !res.teams.some(t => t.id === selectedTeamId)) {
+        setSelectedTeamId(res.teams[0].id);
       }
-    };
-    loadTeams();
-    return () => { active = false; };
+    } catch (err: any) {
+      setTeamsError(err?.message || 'Failed to load teams list');
+    }
   }, []);
+
+  useEffect(() => {
+    loadTeams();
+  }, [loadTeams]);
 
   // Load team overview when selectedTeamId or selectedSeason changes
   const loadOverview = useCallback(async () => {
     if (!selectedTeamId) return;
+    const requestId = ++overviewRequest.current;
     setLoading(true);
     setError(null);
     try {
       const sNum = selectedSeason === 'all' ? undefined : parseInt(selectedSeason, 10);
       const data = await fetchTeamOverview(selectedTeamId, sNum);
-      setTeamOverview(data);
+      if (requestId === overviewRequest.current) setTeamOverview(data);
     } catch (err: any) {
-      setError(err?.message || 'Failed to load team analytics');
+      if (requestId === overviewRequest.current) {
+        // Never leave the previous franchise's numbers on screen after a failure
+        setTeamOverview(null);
+        setError(err?.message || 'Failed to load team analytics');
+      }
     } finally {
-      setLoading(false);
+      if (requestId === overviewRequest.current) setLoading(false);
     }
   }, [selectedTeamId, selectedSeason]);
 
@@ -82,23 +90,35 @@ export const TeamAnalysisPage: React.FC = () => {
   }, [loadOverview]);
 
   // Load Head-to-Head when opponent or selected team changes
-  useEffect(() => {
+  const loadH2H = useCallback(async () => {
     if (!selectedTeamId || !opponentId || selectedTeamId === opponentId) return;
-    let active = true;
-    const loadH2H = async () => {
-      setH2HLoading(true);
-      try {
-        const res = await fetchHeadToHead(selectedTeamId, opponentId);
-        if (active) setH2H(res);
-      } catch (err) {
-        console.error('Failed to load head-to-head:', err);
-      } finally {
-        if (active) setH2HLoading(false);
+    const requestId = ++h2hRequest.current;
+    setH2HLoading(true);
+    setH2HError(null);
+    try {
+      const res = await fetchHeadToHead(selectedTeamId, opponentId);
+      if (requestId === h2hRequest.current) setH2H(res);
+    } catch (err: any) {
+      if (requestId === h2hRequest.current) {
+        setH2H(null);
+        setH2HError(err?.message || 'Failed to load head-to-head records');
       }
-    };
-    loadH2H();
-    return () => { active = false; };
+    } finally {
+      if (requestId === h2hRequest.current) setH2HLoading(false);
+    }
   }, [selectedTeamId, opponentId]);
+
+  useEffect(() => {
+    loadH2H();
+  }, [loadH2H]);
+
+  const retryFailedRequests = () => {
+    if (teamsError) loadTeams();
+    loadOverview();
+  };
+
+  // Overview-backed sections render data only once the current request has succeeded
+  const overviewReady = !loading && teamOverview !== null;
 
   const displayedTeams = useMemo(() => {
     if (filterCategory === 'All') return teams;
@@ -142,13 +162,13 @@ export const TeamAnalysisPage: React.FC = () => {
         </div>
 
         {/* Status Alert Banner */}
-        {error && (
+        {(teamsError || error) && (
           <div className="bg-[#1C1517] border border-red-500/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs sm:text-sm font-semibold text-red-200">
-                  Analytical backend error ({error})
+                  Analytical backend error ({teamsError || error})
                 </p>
                 <p className="text-xs text-red-300/75 mt-0.5">
                   Unable to load franchise dataset from port 8000.
@@ -156,7 +176,7 @@ export const TeamAnalysisPage: React.FC = () => {
               </div>
             </div>
             <button
-              onClick={loadOverview}
+              onClick={retryFailedRequests}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2A1B1E] hover:bg-[#3A2227] text-red-200 border border-red-500/40 transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -439,14 +459,17 @@ export const TeamAnalysisPage: React.FC = () => {
               </h3>
               <p className="text-xs text-[#B9B9B3] mt-0.5">Annual win percentage among decided games</p>
             </div>
-            <span className="text-xs px-2.5 py-1 rounded-full bg-[#1A1B1F] text-[#D9B15F] border border-[#D9B15F]/20 font-semibold">
-              {teamOverview?.season_history.length ?? 0} seasons
-            </span>
+            {overviewReady && teamOverview && (
+              <span className="text-xs px-2.5 py-1 rounded-full bg-[#1A1B1F] text-[#D9B15F] border border-[#D9B15F]/20 font-semibold">
+                {teamOverview.season_history.length} seasons
+              </span>
+            )}
           </div>
 
+          {overviewReady && teamOverview ? (
           <div className="h-64 sm:h-72 w-full pt-2">
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-              <BarChart data={teamOverview?.season_history || []}>
+              <BarChart data={teamOverview.season_history}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#26272B" vertical={false} />
                 <XAxis dataKey="season" stroke="#8E8E88" fontSize={11} tickLine={false} />
                 <YAxis stroke="#8E8E88" fontSize={11} domain={[0, 100]} unit="%" tickLine={false} />
@@ -459,6 +482,9 @@ export const TeamAnalysisPage: React.FC = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
+          ) : (
+            <SectionState loading={loading} error={error} onRetry={loadOverview} className="h-64 sm:h-72" />
+          )}
         </section>
 
         {/* Phase Scoring & Toss Analysis */}
@@ -471,11 +497,13 @@ export const TeamAnalysisPage: React.FC = () => {
             <p className="text-xs text-[#B9B9B3] mt-0.5">Average run rate (runs per 6 legal balls) by tournament phase</p>
           </div>
 
+          {overviewReady && teamOverview ? (
+          <>
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-[#1A1B1F] border border-[#D9B15F]/15 rounded-xl p-3 text-center">
               <span className="text-[10px] uppercase font-bold text-[#B9B9B3]">Powerplay (1–6)</span>
               <p className="text-xl font-extrabold text-[#D9B15F] mt-1">
-                {teamOverview?.phase_scoring.powerplay_run_rate ?? '8.40'}
+                {teamOverview.phase_scoring.powerplay_run_rate}
               </p>
               <p className="text-[10px] text-[#B9B9B3]">rpo</p>
             </div>
@@ -483,7 +511,7 @@ export const TeamAnalysisPage: React.FC = () => {
             <div className="bg-[#1A1B1F] border border-[#D9B15F]/15 rounded-xl p-3 text-center">
               <span className="text-[10px] uppercase font-bold text-[#B9B9B3]">Middle (7–16)</span>
               <p className="text-xl font-extrabold text-[#D9B15F] mt-1">
-                {teamOverview?.phase_scoring.middle_run_rate ?? '8.30'}
+                {teamOverview.phase_scoring.middle_run_rate}
               </p>
               <p className="text-[10px] text-[#B9B9B3]">rpo</p>
             </div>
@@ -491,7 +519,7 @@ export const TeamAnalysisPage: React.FC = () => {
             <div className="bg-[#1A1B1F] border border-[#D9B15F]/15 rounded-xl p-3 text-center">
               <span className="text-[10px] uppercase font-bold text-[#B9B9B3]">Death (17–20)</span>
               <p className="text-xl font-extrabold text-[#D9B15F] mt-1">
-                {teamOverview?.phase_scoring.death_run_rate ?? '10.60'}
+                {teamOverview.phase_scoring.death_run_rate}
               </p>
               <p className="text-[10px] text-[#B9B9B3]">rpo</p>
             </div>
@@ -505,13 +533,13 @@ export const TeamAnalysisPage: React.FC = () => {
               <div className="bg-[#1A1B1F] p-3 rounded-lg border border-[#D9B15F]/15">
                 <span className="text-[#B9B9B3]">Elected to Field:</span>
                 <span className="font-extrabold text-[#F6F6F3] float-right">
-                  {teamOverview?.toss_stats.opt_to_field ?? 0} matches (~75%)
+                  {teamOverview.toss_stats.elected_to_field} matches ({shareOf(teamOverview.toss_stats.elected_to_field, teamOverview.toss_stats.tosses_won)})
                 </span>
               </div>
               <div className="bg-[#1A1B1F] p-3 rounded-lg border border-[#D9B15F]/15">
                 <span className="text-[#B9B9B3]">Elected to Bat:</span>
                 <span className="font-extrabold text-[#F6F6F3] float-right">
-                  {teamOverview?.toss_stats.opt_to_bat ?? 0} matches (~25%)
+                  {teamOverview.toss_stats.elected_to_bat} matches ({shareOf(teamOverview.toss_stats.elected_to_bat, teamOverview.toss_stats.tosses_won)})
                 </span>
               </div>
             </div>
@@ -519,6 +547,10 @@ export const TeamAnalysisPage: React.FC = () => {
               Stage 2 verified toss trend: Toss winners choosing to field win ~52.8% of completed encounters.
             </p>
           </div>
+          </>
+          ) : (
+            <SectionState loading={loading} error={error} onRetry={loadOverview} />
+          )}
         </section>
       </div>
 
@@ -534,6 +566,7 @@ export const TeamAnalysisPage: React.FC = () => {
           </div>
         </div>
 
+        {overviewReady && teamOverview ? (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#101114] text-[#B9B9B3] uppercase font-bold tracking-wider border-b border-[#D9B15F]/20">
@@ -546,7 +579,7 @@ export const TeamAnalysisPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#D9B15F]/10">
-              {teamOverview?.venue_records.map(v => (
+              {teamOverview.venue_records.map(v => (
                 <tr key={v.venue} className="hover:bg-[#1A1B1F] transition-colors">
                   <td className="py-3 px-4 font-medium text-[#F6F6F3]">{v.venue}</td>
                   <td className="py-3 px-4 text-center text-[#B9B9B3]">{v.played}</td>
@@ -560,6 +593,9 @@ export const TeamAnalysisPage: React.FC = () => {
             </tbody>
           </table>
         </div>
+        ) : (
+          <SectionState loading={loading} error={error} onRetry={loadOverview} />
+        )}
       </section>
 
       {/* 7. Head-to-Head Comparison Tool */}
@@ -679,7 +715,9 @@ export const TeamAnalysisPage: React.FC = () => {
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <SectionState loading={false} error={h2hError} onRetry={loadH2H} />
+        )}
       </section>
 
       {/* 8. Audit & Methodological Notices */}
@@ -697,6 +735,59 @@ export const TeamAnalysisPage: React.FC = () => {
         </section>
       )}
 
+    </div>
+  );
+};
+
+// Share of a total as a whole percentage, or an unavailable marker when the total is zero
+const shareOf = (part: number, total: number): string =>
+  total > 0 ? `${Math.round((part / total) * 100)}%` : '—';
+
+interface SectionStateProps {
+  loading: boolean;
+  error: string | null;
+  onRetry: () => void;
+  className?: string;
+}
+
+// Loading / failed / no-data placeholder for a section, so no number is shown without verified data
+const SectionState: React.FC<SectionStateProps> = ({ loading, error, onRetry, className = '' }) => {
+  let body: React.ReactNode;
+  if (loading) {
+    body = (
+      <>
+        <Loader2 className="w-6 h-6 text-[#D9B15F] animate-spin" />
+        <p className="text-xs font-semibold text-[#F6F6F3]">Loading verified franchise records...</p>
+      </>
+    );
+  } else if (error) {
+    body = (
+      <>
+        <AlertCircle className="w-5 h-5 text-red-400" />
+        <p className="text-xs font-semibold text-red-200">Unable to load this section</p>
+        <p className="text-[11px] text-red-300/75 max-w-sm">{error}</p>
+        <button
+          onClick={onRetry}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2A1B1E] hover:bg-[#3A2227] text-red-200 border border-red-500/40 transition-colors"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          <span>Retry</span>
+        </button>
+      </>
+    );
+  } else {
+    body = (
+      <>
+        <div className="w-9 h-9 rounded-xl bg-black/50 border border-[#D9B15F]/25 flex items-center justify-center text-[#D9B15F] shadow-gold-pill">
+          <Database className="w-4 h-4" />
+        </div>
+        <p className="text-xs font-semibold text-[#F6F6F3]">No verified data available</p>
+      </>
+    );
+  }
+  return (
+    <div className={`flex flex-col items-center justify-center text-center gap-2 py-8 ${className}`}>
+      {body}
     </div>
   );
 };

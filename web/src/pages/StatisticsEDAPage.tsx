@@ -600,12 +600,16 @@ export const StatisticsEDAPage: React.FC = () => {
                         <tr key={rVar} className="hover:bg-[#1A1B1F]">
                           <td className="py-2 px-3 font-semibold text-[#F6F6F3] capitalize">{rVar}</td>
                           {summary.correlations.variables.map(cVar => {
-                            const val = summary.correlations.pearson[rVar]?.[cVar] ?? 0;
+                            const val = summary.correlations.pearson[rVar]?.[cVar];
                             return (
                               <td key={cVar} className="py-2 px-3 text-right font-mono">
-                                <span className={val > 0.4 ? 'text-emerald-400 font-bold' : val < -0.3 ? 'text-rose-400 font-bold' : 'text-[#B9B9B3]'}>
-                                  {val.toFixed(2)}
-                                </span>
+                                {val == null ? (
+                                  <span className="text-[#B9B9B3]">—</span>
+                                ) : (
+                                  <span className={val > 0.4 ? 'text-emerald-400 font-bold' : val < -0.3 ? 'text-rose-400 font-bold' : 'text-[#B9B9B3]'}>
+                                    {val.toFixed(2)}
+                                  </span>
+                                )}
                               </td>
                             );
                           })}
