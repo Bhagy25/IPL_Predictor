@@ -76,18 +76,23 @@ export interface Column<T> {
   title?: string;
   cell: (row: T) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
+  // Lets long text wrap (e.g. "whitespace-normal min-w-[7rem]") instead of widening the table
+  className?: string;
 }
 
 const ALIGN = { left: 'text-left', center: 'text-center', right: 'text-right' };
 
 /** A table that scrolls inside its own container; the first column is the row header. */
-export function DataTable<T>({ caption, columns, rows, rowKey, maxHeight }: {
+export function DataTable<T>({ caption, columns, rows, rowKey, maxHeight, dense = false }: {
   caption: string;
   columns: Column<T>[];
   rows: T[];
   rowKey: (row: T) => string | number;
   maxHeight?: string;
+  // Tighter cell padding for wide tables such as the match log
+  dense?: boolean;
 }) {
+  const pad = dense ? 'py-2 px-2' : 'py-2 px-3';
   return (
     <ScrollRegion label={caption} className={maxHeight}>
       <table className="w-full text-left text-xs">
@@ -95,7 +100,7 @@ export function DataTable<T>({ caption, columns, rows, rowKey, maxHeight }: {
         <thead className="bg-[#101114] text-[#B9B9B3] uppercase font-bold tracking-wider border-b border-[#D9B15F]/20 sticky top-0 z-10">
           <tr>
             {columns.map((c) => (
-              <th key={c.header} scope="col" title={c.title} className={`py-2 px-3 whitespace-nowrap ${ALIGN[c.align ?? 'center']}`}>
+              <th key={c.header} scope="col" title={c.title} className={`${pad} whitespace-nowrap ${ALIGN[c.align ?? 'center']}`}>
                 {c.header}
               </th>
             ))}
@@ -106,11 +111,11 @@ export function DataTable<T>({ caption, columns, rows, rowKey, maxHeight }: {
             <tr key={rowKey(row)} className="hover:bg-[#1A1B1F]">
               {columns.map((c, i) =>
                 i === 0 ? (
-                  <th key={c.header} scope="row" className={`py-2 px-3 font-medium text-[#F6F6F3] whitespace-nowrap ${ALIGN[c.align ?? 'left']}`}>
+                  <th key={c.header} scope="row" className={`${pad} font-medium text-[#F6F6F3] ${c.className ?? 'whitespace-nowrap'} ${ALIGN[c.align ?? 'left']}`}>
                     {c.cell(row)}
                   </th>
                 ) : (
-                  <td key={c.header} className={`py-2 px-3 whitespace-nowrap text-[#B9B9B3] ${ALIGN[c.align ?? 'center']}`}>
+                  <td key={c.header} className={`${pad} text-[#B9B9B3] ${c.className ?? 'whitespace-nowrap'} ${ALIGN[c.align ?? 'center']}`}>
                     {c.cell(row)}
                   </td>
                 )

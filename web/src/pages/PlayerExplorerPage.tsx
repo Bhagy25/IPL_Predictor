@@ -4,19 +4,18 @@ import {
   Search,
   Filter,
   ArrowUpDown,
-  Calendar,
   AlertCircle,
   RefreshCw,
   Loader2,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  ShieldAlert,
 } from 'lucide-react';
 import { DirectoryCounts, PlayerListItem, PlayerProfileResponse } from '../types';
 import { fetchPlayers, fetchPlayerOverview } from '../api/players';
 import { BattingSection, BowlingSection, CareerSummary, DefinitionsDisclosure } from '../components/player/ProfileSections';
 import { FOCUS_RING } from '../components/player/playerFormat';
+import { MatchLog } from '../components/player/MatchLog';
 
 // Counts come from the API's directory_counts, never from fixed numbers
 const ROLE_FILTERS: { id: string; label: string; countKey?: keyof DirectoryCounts }[] = [
@@ -478,113 +477,12 @@ export const PlayerExplorerPage: React.FC = () => {
               <BattingSection profile={profile} scopeLabel={scopeLabel} />
               <BowlingSection profile={profile} scopeLabel={scopeLabel} />
 
-              {/* Chronological Match Performance Logs Table */}
-              <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-5 sm:p-6 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-[#D9B15F]/15 gap-2">
-                  <div>
-                    <h3 className="text-base font-bold text-[#F6F6F3] flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-[#D9B15F]" />
-                      Chronological Match-by-Match Logs (2008–2026)
-                    </h3>
-                    <p className="text-xs text-[#B9B9B3] mt-0.5">
-                      Verified match appearances showing both Batting and Bowling performances
-                    </p>
-                  </div>
-                  <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-[#101114] text-[#D9B15F] border border-[#D9B15F]/20 self-start sm:self-center">
-                    {profile.recent_matches.length} matches logged
-                  </span>
-                </div>
-
-                {profile.recent_matches.length === 0 ? (
-                  <div className="p-8 text-center text-xs text-[#B9B9B3] bg-[#101114] rounded-xl border border-[#D9B15F]/10">
-                    <ShieldAlert className="w-6 h-6 text-[#D9B15F] mx-auto mb-2 opacity-60" />
-                    <span>No match logs recorded for this player.</span>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-[#101114] text-[#B9B9B3] uppercase font-bold tracking-wider border-b border-[#D9B15F]/20">
-                        <tr>
-                          <th className="py-2.5 px-3">Date</th>
-                          <th className="py-2.5 px-3">Season</th>
-                          <th className="py-2.5 px-3">Opponent</th>
-                          <th className="py-2.5 px-3">Venue</th>
-                          <th className="py-2.5 px-3 text-center bg-[#17181C]">Bat Runs</th>
-                          <th className="py-2.5 px-3 text-center bg-[#17181C]">Balls (4s/6s)</th>
-                          <th className="py-2.5 px-3 text-center bg-[#17181C]">Dismissal</th>
-                          <th className="py-2.5 px-3 text-center bg-[#151917]">Overs</th>
-                          <th className="py-2.5 px-3 text-center bg-[#151917]">Wkts / Runs</th>
-                          <th className="py-2.5 px-3 text-right bg-[#151917]">Economy</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#D9B15F]/10">
-                        {profile.recent_matches.map((m: any) => (
-                          <tr key={m.match_id} className="hover:bg-[#1A1B1F] transition-colors">
-                            <td className="py-2.5 px-3 font-mono text-[#B9B9B3]">{m.date}</td>
-                            <td className="py-2.5 px-3 text-[#F6F6F3] font-bold">{m.season}</td>
-                            <td className="py-2.5 px-3 text-[#F6F6F3] font-medium">{m.opponent}</td>
-                            <td className="py-2.5 px-3 text-[#B9B9B3] truncate max-w-[140px]">{m.venue}</td>
-                            
-                            {/* Batting Columns */}
-                            <td className="py-2.5 px-3 text-center bg-[#17181C]">
-                              {m.runs !== null && m.runs !== undefined ? (
-                                <span className={`font-black ${m.runs >= 50 ? 'text-[#D9B15F]' : m.runs >= 30 ? 'text-amber-300' : 'text-[#F6F6F3]'}`}>
-                                  {m.runs}
-                                </span>
-                              ) : (
-                                <span className="text-[#666] italic">Did not bat</span>
-                              )}
-                            </td>
-                            <td className="py-2.5 px-3 text-center bg-[#17181C] text-[#B9B9B3]">
-                              {m.balls_faced !== null && m.balls_faced !== undefined ? (
-                                <span>{m.balls_faced} ({m.fours}×4, {m.sixes}×6)</span>
-                              ) : (
-                                <span className="text-[#555]">—</span>
-                              )}
-                            </td>
-                            <td className="py-2.5 px-3 text-center bg-[#17181C]">
-                              {m.dismissal_status ? (
-                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                                  m.dismissal_status === 'Not Out'
-                                    ? 'bg-emerald-950/60 text-emerald-300'
-                                    : m.dismissal_status === 'Out'
-                                    ? 'bg-zinc-800 text-zinc-300'
-                                    : 'text-[#666]'
-                                }`}>
-                                  {m.dismissal_status}
-                                </span>
-                              ) : (
-                                <span className="text-[#555]">—</span>
-                              )}
-                            </td>
-
-                            {/* Bowling Columns */}
-                            <td className="py-2.5 px-3 text-center bg-[#151917] font-mono text-[#F6F6F3]">
-                              {m.overs_bowled && m.overs_bowled !== 'Did not bowl' ? (
-                                m.overs_bowled
-                              ) : (
-                                <span className="text-[#666] italic">Did not bowl</span>
-                              )}
-                            </td>
-                            <td className="py-2.5 px-3 text-center bg-[#151917]">
-                              {m.wickets !== null && m.wickets !== undefined ? (
-                                <span className="font-bold text-emerald-400">
-                                  {m.wickets} / {m.runs_conceded}
-                                </span>
-                              ) : (
-                                <span className="text-[#555]">—</span>
-                              )}
-                            </td>
-                            <td className="py-2.5 px-3 text-right bg-[#151917] font-mono text-[#D9B15F]">
-                              {m.economy !== null && m.economy !== undefined ? m.economy.toFixed(2) : '—'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
+              <MatchLog
+                key={`${profile.player_id}-${profile.season_filter ?? 'career'}`}
+                playerId={profile.player_id ?? profile.batter_id}
+                season={profile.season_filter}
+                scopeLabel={scopeLabel}
+              />
 
               <DefinitionsDisclosure profile={profile} />
 
