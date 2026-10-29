@@ -228,33 +228,36 @@ def test_player_profile_pure_bowler_bumrah():
     assert bowl["best_bowling"] == "5/10"
 
 
-def test_eda_full_history_19_seasons():
-    """Verify the 2008–2026 full history EDA endpoint covers all 15 analysis areas."""
-    res = client.get("/api/eda/full-history")
+def test_eda_analysis_covers_19_seasons():
+    """The filterable EDA analysis (which replaced /api/eda/full-history) covers 2008–2026 by default."""
+    res = client.get("/api/eda/analysis")
     assert res.status_code == 200
-    data = res.json()
-    
-    # 19 seasons
-    assert len(data["season_evolution"]) == 19
-    assert data["season_evolution"][0]["season"] == 2008
-    assert data["season_evolution"][-1]["season"] == 2026
-    
-    # First innings trends across 19 seasons
-    assert len(data["first_innings_trends"]) == 19
+    areas = res.json()["areas"]
 
-    # 5 tournament eras
-    eras = set(p["era"] for p in data["era_phase_patterns"])
-    assert len(eras) == 5
+    # 19 seasons
+    seasons = areas["matches_runs"]["data"]["by_season"]
+    assert len(seasons) == 19
+    assert seasons[0]["season"] == 2008
+    assert seasons[-1]["season"] == 2026
+
+    # First innings trends across 19 seasons
+    assert sum(s["first_innings_mean"] is not None for s in areas["scoring_trends"]["data"]["by_season"]) == 19
+
+    # Phases: powerplay, middle and death in each of the 19 seasons (replaces the five-era table)
+    phases = areas["phases"]["data"]["by_season"]
+    assert len(phases) == 19 and all(len(s["phases"]) == 3 for s in phases)
 
     # Boundary evolution
-    assert len(data["boundaries_by_season"]) == 19
+    assert len(areas["boundaries"]["data"]["by_season"]) == 19
 
     # Toss and chasing across all 19 seasons
-    assert len(data["toss_and_chasing"]) == 19
+    assert len(areas["toss"]["data"]["by_season"]) == 19
+    assert len(areas["innings_order"]["data"]["by_season"]) == 19
 
-    # Venue par scoring
-    assert len(data["venue_par"]) >= 15
+    # Venue scoring: grounds with at least 10 matches
+    venues = client.get("/api/eda/analysis", params={"venue_min_matches": 10}).json()["areas"]["venues"]["data"]
+    assert venues["venues_shown"] >= 15
 
     # Leaders
-    assert data["top_all_time_batters"][0]["batter"] == "V Kohli"
-    assert data["top_all_time_bowlers"][0]["bowler"] == "YS Chahal"
+    assert areas["batting_distribution"]["data"]["leaders"][0]["name"] == "V Kohli"
+    assert areas["bowling"]["data"]["leaders"][0]["name"] == "YS Chahal"

@@ -427,6 +427,7 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
 }
 
 TEAM_NAME_MAP = {k.lower(): k for k in FRANCHISE_METADATA}
+
 for name, meta in FRANCHISE_METADATA.items():
     TEAM_NAME_MAP[meta["short_name"].lower()] = name
     TEAM_NAME_MAP[meta["slug"].lower()] = name
@@ -435,6 +436,7 @@ CHAMPION_RULE = (
     "The champion of a season is the winner (final_winner, Super Over included) of that season's final: its last "
     "match by date. In the raw Cricsheet records every season's last match is the one marked stage 'Final'."
 )
+
 
 def format_season_ranges(seasons: List[int]) -> str:
     """Compress sorted seasons into ranges, e.g. [2008, 2009, 2011] -> '2008–2009, 2011'."""
@@ -489,7 +491,6 @@ class CanonicalAnalyticsEngine:
         # Ordinary-innings dismissal events, and super-over rows of each derived table (reported as excluded)
         self._dismissals: pd.DataFrame = pd.DataFrame()
         self._super_over_events: Dict[str, pd.DataFrame] = {}
-        self._eda_full_history: Optional[Dict[str, Any]] = None
 
     def ensure_loaded(self) -> None:
         if self._initialized:
@@ -1520,198 +1521,6 @@ class CanonicalAnalyticsEngine:
             "total_pages": max(1, -(-total // page_size)),
             "matches": [self._log_entry(r) for r in log.iloc[start:start + page_size].to_dict("records")],
         }
-
-    # ==========================================
-    # STATISTICS & EDA (2008-2026) APIs
-    # ==========================================
-
-    def get_eda_full_history(self) -> Dict[str, Any]:
-        """Compute comprehensive 2008-2026 historical EDA covering all 15 analysis areas (computed once, then cached)."""
-        self.require_derived()
-        if self._eda_full_history is not None:
-            return self._eda_full_history
-        m_df = self._matches
-        d_df = self._deliveries
-        i_df = self._innings
-        b_df = self._batters
-
-        # 1. Season Scoring & Match Evolution
-        s_m = m_df.groupby("season")["match_id"].count()
-        s_r = d_df.groupby("season")["runs_total"].sum()
-        s_w = d_df.groupby("season")["team_wickets_on_ball"].sum()
-        s_b = d_df.groupby("season")["legal_delivery"].sum()
-
-        season_evolution = []
-        for s in sorted(s_m.index):
-            season_evolution.append({
-                "season": int(s),
-                "matches": int(s_m.loc[s]),
-                "runs": int(s_r.loc[s]),
-                "wickets": int(s_w.loc[s]),
-                "legal_balls": int(s_b.loc[s]),
-                "run_rate": round(float(s_r.loc[s] / s_b.loc[s] * 6.0), 2),
-            })
-
-        # 2. First Innings Scoring Trends
-        inn1 = i_df[i_df["innings"] == 1].copy()
-        first_inn_trends = []
-        for s, grp in inn1.groupby("season"):
-            first_inn_trends.append({
-                "season": int(s),
-                "innings_count": int(len(grp)),
-                "mean_runs": round(float(grp["runs"].mean()), 2),
-                "median_runs": round(float(grp["runs"].median()), 1),
-                "std_runs": round(float(grp["runs"].std()), 2),
-                "min_runs": int(grp["runs"].min()),
-                "max_runs": int(grp["runs"].max()),
-            })
-
-        # 3. Phase Scoring Evolution Across Eras
-        def get_era(s):
-            if s <= 2010: return "Inaugural Era (2008–2010)"
-            elif s <= 2013: return "Expansion Era (2011–2013)"
-            elif s <= 2017: return "Maturity Era (2014–2017)"
-            elif s <= 2021: return "Pre-COVID Era (2018–2021)"
-            else: return "Modern 10-Team Era (2022–2026)"
-
-        def get_phase(o):
-            if o <= 5: return "Powerplay (1-6)"
-            elif o <= 15: return "Middle (7-16)"
-            else: return "Death (17-20)"
-
-        d_df_copy = d_df[["season", "over_index", "runs_total", "legal_delivery", "team_wickets_on_ball"]].copy()
-        d_df_copy["era"] = d_df_copy["season"].apply(get_era)
-        d_df_copy["phase"] = d_df_copy["over_index"].apply(get_phase)
-
-        era_phase_patterns = []
-        for (era, ph), grp in d_df_copy.groupby(["era", "phase"]):
-            r = int(grp["runs_total"].sum())
-            b = int(grp["legal_delivery"].sum())
-            w = int(grp["team_wickets_on_ball"].sum())
-            era_phase_patterns.append({
-                "era": era,
-                "phase": ph,
-                "runs": r,
-                "legal_balls": b,
-                "wickets": w,
-                "run_rate": round(r / b * 6.0, 2),
-                "wickets_per_six_balls": round(w / b * 6.0, 3),
-            })
-
-        # 4. Boundaries Analysis (Fours & Sixes by Season)
-        # is_four / is_six already exclude Cricsheet non-boundary runs
-        d_df_b = d_df[["season", "is_four", "is_six", "runs_total"]]
-
-        boundaries_by_season = []
-        for s, grp in d_df_b.groupby("season"):
-            f_cnt = int(grp["is_four"].sum())
-            s_cnt = int(grp["is_six"].sum())
-            b_runs = (f_cnt * 4) + (s_cnt * 6)
-            tot_runs = int(grp["runs_total"].sum())
-            boundaries_by_season.append({
-                "season": int(s),
-                "fours": f_cnt,
-                "sixes": s_cnt,
-                "boundary_runs": b_runs,
-                "boundary_run_pct": round(b_runs / tot_runs * 100, 2),
-            })
-
-        # 5. Toss Decisions & Chasing Outcomes (All 1,243 Matches)
-        toss_summary = []
-        for s, grp in m_df.groupby("season"):
-            decided = grp[grp["final_winner"].notna()]
-            tw_won = (decided["toss_winner"] == decided["final_winner"]).sum()
-            fld_choice = (grp["toss_decision"] == "field").sum()
-            bat_choice = (grp["toss_decision"] == "bat").sum()
-            
-            # Chase win: winner == innings 2 batting team
-            inn2_map = dict(zip(i_df[(i_df["innings"] == 2) & (i_df["season"] == s)]["match_id"], i_df[(i_df["innings"] == 2) & (i_df["season"] == s)]["batting_team"]))
-            chase_w = sum(1 for mid, w in zip(decided["match_id"], decided["final_winner"]) if mid in inn2_map and inn2_map[mid] == w)
-            
-            toss_summary.append({
-                "season": int(s),
-                "matches": int(len(grp)),
-                "decided_matches": int(len(decided)),
-                "field_elected": int(fld_choice),
-                "bat_elected": int(bat_choice),
-                "toss_winner_match_win_pct": round(tw_won / len(decided) * 100, 1) if len(decided) > 0 else 0.0,
-                "chasing_win_pct": round(chase_w / len(decided) * 100, 1) if len(decided) > 0 else 0.0,
-            })
-
-        # 6. Venue First-Innings Par Scoring (Min 10 Matches)
-        venue_par = []
-        for vname, grp in inn1.groupby("venue_canonical"):
-            if len(grp) >= 10:
-                venue_par.append({
-                    "venue": vname,
-                    "first_innings_count": int(len(grp)),
-                    "mean_runs": round(float(grp["runs"].mean()), 2),
-                    "median_runs": round(float(grp["runs"].median()), 1),
-                    "min_runs": int(grp["runs"].min()),
-                    "max_runs": int(grp["runs"].max()),
-                })
-        venue_par.sort(key=lambda x: -x["mean_runs"])
-
-        # 7. Correlation Matrix (Runs, Wickets, Legal Balls, Boundaries, Season)
-        inn1_corr = inn1[["match_id", "season", "runs", "wickets", "legal_balls"]].copy()
-        inn1_boundaries = d_df[d_df["innings"] == 1].groupby("match_id").agg(
-            fours=("is_four", "sum"),
-            sixes=("is_six", "sum"),
-        ).reset_index()
-        inn1_corr = pd.merge(inn1_corr, inn1_boundaries, on="match_id", how="left").fillna(0)
-
-        corr_vars = ["runs", "wickets", "legal_balls", "fours", "sixes", "season"]
-        pearson_mat = inn1_corr[corr_vars].corr(method="pearson").round(3).to_dict()
-        spearman_mat = inn1_corr[corr_vars].corr(method="spearman").round(3).to_dict()
-
-        # 8. All-Time Dismissal Distribution (ordinary innings, from data/derived/dismissals.csv)
-        dismissals = {
-            k["kind"].replace(" ", "_"): k["count"] for k in dismissal_breakdown(self._dismissals)["kinds"]
-        }
-
-        # 9. Top All-Time Batters & Bowlers
-        # Grouped by registry ID; the display name is one-to-one with the ID
-        top_batters = self._batters_merged.groupby(["player_id", "batter"]).agg(
-            runs=("runs", "sum"),
-            innings=("match_id", "count"),
-            fours=("fours", "sum"),
-            sixes=("sixes", "sum"),
-            scores_50=("reached_50", "sum"),
-        ).sort_values("runs", ascending=False).head(10).reset_index().to_dict(orient="records")
-
-        top_bowlers = self._bowler_matches.groupby(["bowler_id", "bowler"]).agg(
-            wickets=("wickets", "sum"),
-            innings=("match_id", "count"),
-            legal_deliveries=("legal_balls", "sum"),
-            runs_conceded=("runs_conceded", "sum"),
-        ).reset_index().sort_values(
-            ["wickets", "runs_conceded", "bowler"], ascending=[False, True, True]  # ties: fewer runs conceded first
-        ).head(10).reset_index(drop=True)
-        top_bowlers["economy"] = (top_bowlers["runs_conceded"] / (top_bowlers["legal_deliveries"] / 6.0)).round(2)
-        top_bowlers_list = top_bowlers.to_dict(orient="records")
-
-        seasons = sorted(int(s) for s in m_df["season"].unique())
-        self._eda_full_history = {
-            "coverage": (
-                f"{format_season_ranges(seasons)} Complete Archive ({len(seasons)} Seasons, "
-                f"{len(m_df):,} Matches, {len(d_df):,} Deliveries)"
-            ),
-            "season_evolution": season_evolution,
-            "first_innings_trends": first_inn_trends,
-            "era_phase_patterns": era_phase_patterns,
-            "boundaries_by_season": boundaries_by_season,
-            "toss_and_chasing": toss_summary,
-            "venue_par": venue_par,
-            "correlations": {
-                "variables": corr_vars,
-                "pearson": pearson_mat,
-                "spearman": spearman_mat,
-            },
-            "dismissal_distribution": dismissals,
-            "top_all_time_batters": top_batters,
-            "top_all_time_bowlers": top_bowlers_list,
-        }
-        return self._eda_full_history
 
 
 # Global singleton instance

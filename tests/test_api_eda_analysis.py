@@ -415,10 +415,10 @@ def test_dismissals_reconcile_with_archive_totals(dis):
     assert data["super_over_events_excluded"] == dis["is_super_over"].sum() > 0
 
 
-def test_full_history_dismissals_are_computed(dis):
-    dist = client.get("/api/eda/full-history").json()["dismissal_distribution"]
-    expected = dis[~dis["is_super_over"]]["kind"].str.replace(" ", "_").value_counts().to_dict()
-    assert dist == expected
+def test_dismissal_kinds_are_computed(dis):
+    # Replaces the /api/eda/full-history dismissal_distribution check
+    kinds = {k["kind"]: k["count"] for k in analysis()["dismissals"]["data"]["kinds"]}
+    assert kinds == dis[~dis["is_super_over"]]["kind"].value_counts().to_dict()
 
 
 # ---------------------------------------------------------------- 13. boundaries
@@ -560,7 +560,7 @@ def test_filter_options_cover_archive(m):
 
 def test_warm_responses_are_fast():
     analysis(season_from=2015, season_to=2020)
-    for path in ("/api/eda/analysis?season_from=2015&season_to=2020", "/api/eda/full-history"):
+    for path in ("/api/eda/analysis?season_from=2015&season_to=2020", "/api/eda/analysis"):
         client.get(path)
         start = time.perf_counter()
         assert client.get(path).status_code == 200

@@ -13,7 +13,6 @@ from cricketlens.api.schemas import (
     EDAFilterOptionsResponse,
     EDAPlayerComparisonResponse,
     EDASummaryResponse,
-    EDAFullHistoryResponse,
 )
 from cricketlens.api.services.eda_service import eda_service
 from cricketlens.api.services import eda_analysis
@@ -91,22 +90,6 @@ async def get_eda_player_comparison(
         raise HTTPException(status_code=422, detail=str(exc))
     except DerivedDataUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc))
-
-
-@router.get(
-    "/full-history",
-    response_model=EDAFullHistoryResponse,
-    summary="Get comprehensive 2008–2026 historical EDA across all 15 analytical areas",
-    description="Returns complete tournament scoring evolution, 19-season first innings trends, era phase patterns, boundary analysis, toss/chasing records, venue par, correlations, and all-time leaderboards.",
-)
-async def get_eda_full_history() -> EDAFullHistoryResponse:
-    try:
-        canonical_engine.ensure_loaded()
-        return EDAFullHistoryResponse(**canonical_engine.get_eda_full_history())
-    except DerivedDataUnavailable as exc:
-        raise HTTPException(status_code=503, detail=str(exc))
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to load full history EDA: {exc}")
 
 
 @router.get(

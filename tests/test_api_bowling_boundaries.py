@@ -144,11 +144,11 @@ def test_top10_bowler_leaderboard(raw):
     ).groupby("bowler", as_index=False).sum()
     expected = totals.sort_values(["wickets", "runs", "bowler"], ascending=[False, True, True]).head(10)
 
-    board = client.get("/api/eda/full-history").json()["top_all_time_bowlers"]
-    assert [(b["bowler"], b["wickets"]) for b in board] == list(zip(expected["bowler"], expected["wickets"]))
+    board = client.get("/api/eda/analysis").json()["areas"]["bowling"]["data"]["leaders"]
+    assert [(b["name"], b["wickets"]) for b in board] == list(zip(expected["bowler"], expected["wickets"]))
 
 
 def test_boundaries_by_season_exclude_non_boundary_runs(raw):
-    seasons = client.get("/api/eda/full-history").json()["boundaries_by_season"]
+    seasons = client.get("/api/eda/analysis").json()["areas"]["boundaries"]["data"]["by_season"]
     assert sum(s["fours"] for s in seasons) == raw["fours"]
     assert sum(s["sixes"] for s in seasons) == raw["sixes"]

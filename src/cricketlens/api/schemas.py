@@ -602,20 +602,6 @@ class EDASummaryResponse(BaseModel):
     notices: List[str] = Field(default_factory=list, description="Analytical limitations and development holdout rules")
 
 
-class EDAFullHistoryResponse(BaseModel):
-    coverage: str = Field(..., description="Dataset coverage description")
-    season_evolution: List[Dict[str, Any]] = Field(..., description="Evolution across all 19 seasons (2008–2026)")
-    first_innings_trends: List[Dict[str, Any]] = Field(..., description="First innings mean, median, std, min, max")
-    era_phase_patterns: List[Dict[str, Any]] = Field(..., description="Powerplay, Middle, Death across 5 tournament eras")
-    boundaries_by_season: List[Dict[str, Any]] = Field(..., description="Fours, sixes, boundary runs, percentage per season")
-    toss_and_chasing: List[Dict[str, Any]] = Field(..., description="Toss decision and chasing outcomes across 1,243 matches")
-    venue_par: List[Dict[str, Any]] = Field(..., description="First innings scoring averages at top grounds (min 10 matches)")
-    correlations: Dict[str, Any] = Field(..., description="Pearson and Spearman correlation matrices")
-    dismissal_distribution: Dict[str, int] = Field(..., description="All-time wicket dismissal mode counts")
-    top_all_time_batters: List[Dict[str, Any]] = Field(..., description="Top 10 all-time run scorers (2008–2026)")
-    top_all_time_bowlers: List[Dict[str, Any]] = Field(..., description="Top 10 all-time wicket takers (2008–2026)")
-
-
 class EDAFilterNote(BaseModel):
     filter: str = Field(..., description="Active filter the area does not support: season, team or venue")
     note: str = Field(..., description="Visible note, e.g. 'Not affected by the venue filter: ...'")
