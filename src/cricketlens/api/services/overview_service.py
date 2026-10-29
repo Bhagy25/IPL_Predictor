@@ -11,6 +11,11 @@ from typing import Optional, Dict, Any, List
 
 import pandas as pd
 
+from cricketlens.api.services.canonical_data import (
+    PLAYER_DIRECTORY_DEFINITION,
+    DerivedDataUnavailable,
+    canonical_engine,
+)
 from cricketlens.api.schemas import (
     KPIMetricItem,
     CoverageMetadata,
@@ -55,7 +60,28 @@ class OverviewService:
         self.reports_dir = self.repo_root / "reports"
         self._summary_cache: Optional[OverviewSummaryResponse] = None
         self._charts_cache: Optional[OverviewChartsResponse] = None
+        self._players_resolved = False
         self._load_data()
+
+    @staticmethod
+    def _players_metric() -> KPIMetricItem:
+        """Player KPI from the same directory as Player Explorer; an unavailable directory is shown as such."""
+        try:
+            players = canonical_engine.player_directory_counts()["all"]
+        except DerivedDataUnavailable:
+            return KPIMetricItem(
+                id="players", label="Players", value="—", numeric_value=None,
+                statusText="Player data unavailable", iconName="User", description=PLAYER_DIRECTORY_DEFINITION,
+            )
+        return KPIMetricItem(
+            id="players",
+            label="Players",
+            value=f"{players:,}",
+            numeric_value=float(players),
+            statusText="Batted or bowled",
+            iconName="User",
+            description=PLAYER_DIRECTORY_DEFINITION,
+        )
 
     def _load_data(self) -> None:
         """Load and cache overview summary and charts from reports."""
@@ -107,7 +133,6 @@ class OverviewService:
         canonical_venues = source_audit_data.get("distinct_canonical_venue_strings", 38)
         seasons_list = audit_data.get("coverage", {}).get("seasons", list(range(2008, 2027)))
         seasons_count = len(seasons_list)
-        unique_batters = 736  # verified in Stage 3 Session 03
 
         metrics = [
             KPIMetricItem(
@@ -146,14 +171,10 @@ class OverviewService:
                 iconName="Shield",
                 description="10 active franchises and 5 historical defunct teams with name renames consolidated.",
             ),
+            # Filled from the player directory on first request (see _players_metric)
             KPIMetricItem(
-                id="players",
-                label="Batters analyzed",
-                value=f"{unique_batters:,}",
-                numeric_value=float(unique_batters),
-                statusText="736 unique batters",
-                iconName="User",
-                description="736 distinct batters with recorded batting appearances across 2008–2026 ordinary innings.",
+                id="players", label="Players", value="—", numeric_value=None,
+                statusText="Awaiting player directory", iconName="User", description=PLAYER_DIRECTORY_DEFINITION,
             ),
             KPIMetricItem(
                 id="venues",
@@ -203,6 +224,7 @@ class OverviewService:
             "IPL 2026 was reserved as an unseen holdout for Stage 3 machine learning evaluation.",
         ]
 
+        self._players_resolved = False
         self._summary_cache = OverviewSummaryResponse(
             metrics=metrics,
             coverage=coverage,
@@ -387,6 +409,11 @@ class OverviewService:
         if self._summary_cache is None:
             self._load_data()
         assert self._summary_cache is not None
+        if not self._players_resolved:
+            metric = self._players_metric()
+            metrics = self._summary_cache.metrics
+            metrics[next(i for i, m in enumerate(metrics) if m.id == "players")] = metric
+            self._players_resolved = metric.numeric_value is not None
         return self._summary_cache
 
     def get_charts(self) -> OverviewChartsResponse:

@@ -320,6 +320,12 @@ def outcome_breakdown(matches: pd.DataFrame) -> Dict[str, Any]:
     }
 
 
+PLAYER_DIRECTORY_DEFINITION = (
+    "Players: Cricsheet registry IDs who batted (at the crease as striker or non-striker, or dismissed) or bowled "
+    "in at least one ordinary innings; super overs excluded. The same set as the Player Explorer directory."
+)
+
+
 class DerivedDataUnavailable(RuntimeError):
     """Raised when bowling or boundary statistics are requested but data/derived is missing or inconsistent."""
 
@@ -1328,9 +1334,14 @@ class CanonicalAnalyticsEngine:
             "page_size": page_size,
             "total_pages": total_pages,
             "players": paginated,
-            "directory_counts": dict(self._directory_counts),
+            "directory_counts": self.player_directory_counts(),
             "qualification": qualification,
         }
+
+    def player_directory_counts(self) -> Dict[str, int]:
+        """Player directory totals (see PLAYER_DIRECTORY_DEFINITION); the homepage player KPI reads the same numbers."""
+        self.require_derived()
+        return dict(self._directory_counts)
 
     def _resolve_player(self, player_id_or_name: str) -> Tuple[str, str]:
         """Registry ID and display name for a player ID, or for a name variant that identifies one player."""

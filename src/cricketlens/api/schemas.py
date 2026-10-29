@@ -21,7 +21,7 @@ class KPIMetricItem(BaseModel):
     id: str = Field(..., description="Unique metric identifier matching frontend card id")
     label: str = Field(..., description="Display label for the KPI card")
     value: str = Field(..., description="Formatted display value (e.g. '1,243' or '401,423')")
-    numeric_value: float = Field(..., description="Raw unformatted numeric value for computations")
+    numeric_value: Optional[float] = Field(..., description="Raw unformatted numeric value; null when unavailable")
     statusText: str = Field(..., description="Secondary status text/badge")
     iconName: str = Field(..., description="Lucide icon component name")
     description: Optional[str] = Field(None, description="Analytical context or methodology note")

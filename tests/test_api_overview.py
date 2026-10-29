@@ -48,11 +48,12 @@ def test_overview_summary_endpoint(client):
     assert metrics["teams"]["value"] == "15"
     assert metrics["teams"]["numeric_value"] == 15.0
 
-    # Batter count KPI accurately labeled and defined
-    assert metrics["players"]["label"] == "Batters analyzed"
-    assert metrics["players"]["value"] == "736"
-    assert metrics["players"]["numeric_value"] == 736.0
-    assert "unique batters" in metrics["players"]["statusText"]
+    # Player KPI: the Player Explorer directory total, with its definition
+    directory_total = client.get("/api/players", params={"page_size": 1}).json()["directory_counts"]["all"]
+    assert metrics["players"]["label"] == "Players"
+    assert metrics["players"]["numeric_value"] == float(directory_total)
+    assert metrics["players"]["value"] == f"{directory_total:,}"
+    assert "registry IDs who batted" in metrics["players"]["description"]
 
     assert metrics["venues"]["value"] == "38"
     assert metrics["venues"]["numeric_value"] == 38.0
