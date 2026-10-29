@@ -10,14 +10,27 @@ from cricketlens.api.services.canonical_data import canonical_engine
 client = TestClient(app)
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed"
+DERIVED = ROOT / "data" / "derived"
+
+
+def directory_ids():
+    """Registry IDs at the crease or bowling in an ordinary innings, computed from data/derived."""
+    squads = pd.read_csv(DERIVED / "match_players.csv", usecols=["match_id", "player_name", "player_id"])
+    bowling = pd.read_csv(DATA / "deliveries.csv", usecols=["match_id", "bowler"]).drop_duplicates()
+    bowlers = set(
+        bowling.merge(squads, left_on=["match_id", "bowler"], right_on=["match_id", "player_name"])["player_id"]
+    )
+    batters = set(pd.read_csv(DERIVED / "batting_appearances.csv", usecols=["player_id"])["player_id"])
+    return batters, bowlers
 
 
 def test_canonical_engine_initialization():
-    """Verify that the canonical engine loads all 1,243 matches, 295,557 deliveries, and 806 players."""
+    """Verify that the canonical engine loads all 1,243 matches, 295,557 deliveries and every player."""
     canonical_engine.ensure_loaded()
+    batters, bowlers = directory_ids()
     assert len(canonical_engine._matches) == 1243
     assert len(canonical_engine._deliveries) == 295557
-    assert len(canonical_engine._player_master_list) == 806
+    assert len(canonical_engine._player_master_list) == len(batters | bowlers)
     assert canonical_engine._matches["season"].min() == 2008
     assert canonical_engine._matches["season"].max() == 2026
 
@@ -89,22 +102,33 @@ def test_team_head_to_head_full_history():
     assert "vs" in data["recent_meetings"][0]["margin_or_summary"]
 
 
-def test_player_explorer_total_806_and_roles():
-    """Verify Player Explorer covers all 806 players and supports role filtering."""
-    # All players
+REFERENCE_ROLES = {
+    "Batter": ["V Kohli", "RG Sharma", "SK Raina", "DA Warner", "MS Dhoni", "AB de Villiers", "S Dhawan"],
+    "Bowler": ["JJ Bumrah", "YS Chahal", "SL Malinga", "B Kumar", "Rashid Khan", "A Mishra"],
+    "All-Rounder": ["RA Jadeja", "HH Pandya", "AD Russell", "SR Watson", "DJ Bravo"],
+}
+
+
+def test_player_explorer_totals_and_roles():
+    """Directory totals match registry IDs in the derived tables; role filters and reference roles hold."""
+    batters, bowlers = directory_ids()
+    people = set(pd.read_csv(DERIVED / "people.csv", usecols=["player_id"])["player_id"])
+    assert (batters | bowlers) <= people
+    # 805 / 741 / 576 at the time of writing: 736 batters faced a ball, 5 more were only at the crease
+    assert (len(batters | bowlers), len(batters), len(bowlers)) == (805, 741, 576)
+
     res_all = client.get("/api/players?page_size=1")
     assert res_all.status_code == 200
-    assert res_all.json()["total_count"] == 806
+    counts = res_all.json()["directory_counts"]
+    assert res_all.json()["total_count"] == counts["all"] == len(batters | bowlers)
+    assert client.get("/api/players?role=batters&page_size=1").json()["total_count"] == counts["batters"] == len(batters)
+    assert client.get("/api/players?role=bowlers&page_size=1").json()["total_count"] == counts["bowlers"] == len(bowlers)
+    assert client.get("/api/players?role=all-rounders&page_size=1").json()["total_count"] == counts["all_rounders"]
 
-    # Batters only
-    res_bat = client.get("/api/players?role=batters&page_size=1")
-    assert res_bat.status_code == 200
-    assert res_bat.json()["total_count"] == 736
-
-    # Bowlers only
-    res_bowl = client.get("/api/players?role=bowlers&page_size=1")
-    assert res_bowl.status_code == 200
-    assert res_bowl.json()["total_count"] == 577
+    for role, names in REFERENCE_ROLES.items():
+        for name in names:
+            players = client.get("/api/players", params={"query": name, "page_size": 50}).json()["players"]
+            assert next(p for p in players if p["name"] == name)["role"] == role, name
 
 
 def test_player_profile_dual_career_kohli():

@@ -27,9 +27,10 @@ def test_list_players_default():
 
 def test_list_players_filter_leaderboard():
     # The 40+ innings tier covers the full 2008-2026 history; 69 was the size of
-    # the 2018-2025 Stage 2 cohort. Count batters with 40+ innings directly.
-    batter_innings = pd.read_csv(DATA / "batter_innings.csv")
-    expected = int((batter_innings.groupby("batter").size() >= 40).sum())
+    # the 2018-2025 Stage 2 cohort. A batting innings is any crease appearance,
+    # including non-striker-only ones, counted per registry ID.
+    appearances = pd.read_csv(DATA.parent / "derived" / "batting_appearances.csv", usecols=["player_id"])
+    expected = int((appearances.groupby("player_id").size() >= 40).sum())
 
     res = client.get("/api/players?experience_filter=leaderboard_only")
     assert res.status_code == 200

@@ -74,6 +74,25 @@ def test_non_boundary_players_and_people_on_fixture(fixture_dir):
     assert people['id_sub']['names'] == 'Sub S' and people['id_sub']['matches'] == 0
 
 
+def test_batting_appearances_on_fixture(fixture_dir):
+    rows = {(r['innings'], r['player_name']): r for r in build_tables(fixture_dir)['batting_appearances']}
+    # Ordinary innings only, in order of first appearance; super overs are excluded
+    assert list(rows) == [(1, 'Batter A'), (1, 'Batter B'), (1, 'Batter C'), (1, 'Batter D'),
+                          (2, 'Keeper K'), (2, 'Fielder F')]
+
+    a = rows[(1, 'Batter A')]  # a wide, then caught: one ball faced
+    assert (a['balls_faced'], a['runs'], a['dismissed'], a['dismissal_kind']) == (1, 0, True, 'caught')
+    b = rows[(1, 'Batter B')]  # run out at the non-striker's end without facing
+    assert (b['balls_faced'], b['dismissed'], b['dismissal_kind'], b['faced_a_ball'], b['on_strike']) == \
+        (0, True, 'run out', False, False)
+    c = rows[(1, 'Batter C')]  # the non-boundary four still counts as runs off the bat
+    assert (c['balls_faced'], c['runs'], c['dismissed'], c['dismissal_kind']) == (3, 4, True, 'stumped')
+    d = rows[(1, 'Batter D')]  # retired hurt is not a dismissal
+    assert (d['balls_faced'], d['runs'], d['dismissed'], d['dismissal_kind']) == (1, 1, False, 'retired hurt')
+    f = rows[(2, 'Fielder F')]
+    assert (f['balls_faced'], f['dismissed'], f['on_strike']) == (0, False, False)
+
+
 def test_fixture_keys_align_with_stage1_deliveries(fixture_dir):
     deliveries = extract(fixture_dir)['deliveries']
     team_wickets = {tuple(str(d[k]) for k in KEY): d['team_wickets_on_ball'] for d in deliveries}
@@ -166,6 +185,27 @@ def test_keys_align_with_processed_deliveries(derived):
     per_key = ordinary[ordinary['counts_as_batting_dismissal']].groupby(KEY).size()
     team_wickets = deliveries[deliveries['team_wickets_on_ball'] > 0].set_index(KEY)['team_wickets_on_ball']
     assert per_key.sort_index().equals(team_wickets.sort_index())
+
+
+@needs_raw
+def test_batting_appearances_extend_stage1_batter_innings(derived):
+    appearances = pd.read_csv(DERIVED / 'batting_appearances.csv')
+    stage1 = pd.read_csv(PROCESSED / 'batter_innings.csv').rename(columns={'batter_id': 'player_id'})
+    key = ['match_id', 'innings', 'player_id']
+    joined = appearances.merge(stage1[key + ['runs', 'balls_faced', 'dismissed']], on=key, how='outer',
+                               suffixes=('', '_s1'), indicator=True)
+    assert not (joined['_merge'] == 'right_only').any()
+    # Rows Stage 1 has are exactly the on-strike rows, with identical runs, balls and dismissals
+    both = joined[joined['_merge'] == 'both']
+    assert both['on_strike'].all() and len(both) == len(stage1)
+    assert (both['runs'] == both['runs_s1']).all() and (both['balls_faced'] == both['balls_faced_s1']).all()
+    assert (both['dismissed'].astype(int) == both['dismissed_s1']).all()
+    # The extra rows are non-striker-only appearances with no runs or balls
+    extra = joined[joined['_merge'] == 'left_only']
+    assert (~extra['on_strike']).all() and (extra['runs'] == 0).all() and (extra['balls_faced'] == 0).all()
+    # Every batting dismissal in dismissals.csv appears exactly once
+    ordinary = derived['dismissals'][~derived['dismissals']['is_super_over']]
+    assert int(appearances['dismissed'].sum()) == int(ordinary['counts_as_batting_dismissal'].sum())
 
 
 @needs_raw
