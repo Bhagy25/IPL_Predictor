@@ -374,16 +374,16 @@ export const TeamAnalysisPage: React.FC = () => {
 
             <div className="flex flex-wrap items-center gap-3">
               {/* Season Filter Dropdown */}
-              <div className="flex items-center gap-2 bg-[#1A1B1F] border border-[#D9B15F]/30 rounded-xl px-3 py-2">
+              <div className="flex items-center gap-2 max-w-full bg-[#1A1B1F] border border-[#D9B15F]/30 rounded-xl px-3 py-2">
                 <Calendar className="w-3.5 h-3.5 text-[#D9B15F]" />
                 <label htmlFor="team-season" className="text-xs font-semibold text-[#B9B9B3]">Season:</label>
                 <select
                   id="team-season"
                   value={selectedSeason}
                   onChange={e => setSelectedSeason(e.target.value)}
-                  className={`bg-[#121316] border border-[#D9B15F]/20 text-[#F6F6F3] text-xs font-bold rounded-lg px-2.5 py-1 cursor-pointer ${FOCUS_RING}`}
+                  className={`min-w-0 max-w-full bg-[#121316] border border-[#D9B15F]/20 text-[#F6F6F3] text-xs font-bold rounded-lg px-2.5 py-1 cursor-pointer ${FOCUS_RING}`}
                 >
-                  <option value="all">All seasons ({currentTeam.seasons_active})</option>
+                  <option value="all">All seasons</option>
                   {seasonOptions.map(s => (
                     <option key={s} value={s}>
                       IPL {s}
