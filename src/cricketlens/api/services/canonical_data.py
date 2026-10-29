@@ -335,80 +335,60 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
     "Chennai Super Kings": {
         "short_name": "CSK",
         "status": "Active",
-        "titles": 5,
-        "title_years": [2010, 2011, 2018, 2021, 2023],
         "primary_color": "#D9B15F",
         "slug": "chennai-super-kings",
     },
     "Mumbai Indians": {
         "short_name": "MI",
         "status": "Active",
-        "titles": 5,
-        "title_years": [2013, 2015, 2017, 2019, 2020],
         "primary_color": "#004BA0",
         "slug": "mumbai-indians",
     },
     "Kolkata Knight Riders": {
         "short_name": "KKR",
         "status": "Active",
-        "titles": 3,
-        "title_years": [2012, 2014, 2024],
         "primary_color": "#3A225D",
         "slug": "kolkata-knight-riders",
     },
     "Royal Challengers Bengaluru": {
         "short_name": "RCB",
         "status": "Active",
-        "titles": 2,
-        "title_years": [2025, 2026],
         "primary_color": "#EC1C24",
         "slug": "royal-challengers-bengaluru",
     },
     "Rajasthan Royals": {
         "short_name": "RR",
         "status": "Active",
-        "titles": 1,
-        "title_years": [2008],
         "primary_color": "#EA1A85",
         "slug": "rajasthan-royals",
     },
     "Sunrisers Hyderabad": {
         "short_name": "SRH",
         "status": "Active",
-        "titles": 1,
-        "title_years": [2016],
         "primary_color": "#F26522",
         "slug": "sunrisers-hyderabad",
     },
     "Gujarat Titans": {
         "short_name": "GT",
         "status": "Active",
-        "titles": 1,
-        "title_years": [2022],
         "primary_color": "#1C1C2B",
         "slug": "gujarat-titans",
     },
     "Delhi Capitals": {
         "short_name": "DC",
         "status": "Active",
-        "titles": 0,
-        "title_years": [],
         "primary_color": "#282968",
         "slug": "delhi-capitals",
     },
     "Lucknow Super Giants": {
         "short_name": "LSG",
         "status": "Active",
-        "titles": 0,
-        "title_years": [],
         "primary_color": "#A72056",
         "slug": "lucknow-super-giants",
     },
     "Punjab Kings": {
         "short_name": "PBKS",
         "status": "Active",
-        "titles": 0,
-        "title_years": [],
         "primary_color": "#DD1F2D",
         "slug": "punjab-kings",
     },
@@ -417,40 +397,30 @@ FRANCHISE_METADATA: Dict[str, Dict[str, Any]] = {
         # "DC" is Delhi Capitals; Deccan Chargers is shown as DCH
         "short_name": "DCH",
         "status": "Defunct",
-        "titles": 1,
-        "title_years": [2009],
         "primary_color": "#4A4D57",
         "slug": "deccan-chargers",
     },
     "Gujarat Lions": {
         "short_name": "GL",
         "status": "Defunct",
-        "titles": 0,
-        "title_years": [],
         "primary_color": "#E37424",
         "slug": "gujarat-lions",
     },
     "Rising Pune Supergiant": {
         "short_name": "RPS",
         "status": "Defunct",
-        "titles": 0,
-        "title_years": [],
         "primary_color": "#7B1B58",
         "slug": "rising-pune-supergiant",
     },
     "Pune Warriors": {
         "short_name": "PWI",
         "status": "Defunct",
-        "titles": 0,
-        "title_years": [],
         "primary_color": "#2F5597",
         "slug": "pune-warriors",
     },
     "Kochi Tuskers Kerala": {
         "short_name": "KTK",
         "status": "Defunct",
-        "titles": 0,
-        "title_years": [],
         "primary_color": "#6B2D82",
         "slug": "kochi-tuskers-kerala",
     },
@@ -461,6 +431,10 @@ for name, meta in FRANCHISE_METADATA.items():
     TEAM_NAME_MAP[meta["short_name"].lower()] = name
     TEAM_NAME_MAP[meta["slug"].lower()] = name
 
+CHAMPION_RULE = (
+    "The champion of a season is the winner (final_winner, Super Over included) of that season's final: its last "
+    "match by date. In the raw Cricsheet records every season's last match is the one marked stage 'Final'."
+)
 
 def format_season_ranges(seasons: List[int]) -> str:
     """Compress sorted seasons into ranges, e.g. [2008, 2009, 2011] -> '2008–2009, 2011'."""
@@ -509,6 +483,9 @@ class CanonicalAnalyticsEngine:
         self._franchise_seasons: Dict[str, List[int]] = {}
         # One row per team per match (result, toss, innings order, runs, wickets, phase totals)
         self._team_rows: pd.DataFrame = pd.DataFrame()
+        # One entry per season: the final and its winner (see CHAMPION_RULE)
+        self._champions: List[Dict[str, Any]] = []
+        self._title_years: Dict[str, List[int]] = {}
         # Ordinary-innings dismissal events, and super-over rows of each derived table (reported as excluded)
         self._dismissals: pd.DataFrame = pd.DataFrame()
         self._super_over_events: Dict[str, pd.DataFrame] = {}
@@ -575,6 +552,7 @@ class CanonicalAnalyticsEngine:
             for name in FRANCHISE_METADATA
         }
         self._build_team_rows()
+        self._build_champions()
 
         # Build the player directory; without data/derived, player endpoints return 503 instead
         if not self._derived_error:
@@ -969,6 +947,30 @@ class CanonicalAnalyticsEngine:
     # TEAM ANALYSIS APIs
     # ==========================================
 
+    def _build_champions(self) -> None:
+        """Each season's final (its last match by date) and the franchise that won it."""
+        finals = self._matches.sort_values(["season", "date", "match_id"]).groupby("season").tail(1)
+        champions, title_years = [], defaultdict(list)
+        for r in finals.itertuples():
+            winner = r.final_winner if pd.notna(r.final_winner) else None
+            champions.append({
+                "season": int(r.season), "match_id": int(r.match_id), "date": str(r.date),
+                "champion": winner,
+                "champion_short_name": FRANCHISE_METADATA[winner]["short_name"] if winner else None,
+                "runner_up": (r.team2 if r.team1 == winner else r.team1) if winner else None,
+                "venue": str(r.venue_canonical),
+                "state": None if winner else "not_recorded_in_source",
+            })
+            if winner:
+                title_years[winner].append(int(r.season))
+        self._champions = champions
+        self._title_years = dict(title_years)
+
+    def season_champions(self) -> List[Dict[str, Any]]:
+        """Champion of every season (see CHAMPION_RULE), oldest first."""
+        self.ensure_loaded()
+        return [dict(c) for c in self._champions]
+
     def _team_item(self, name: str) -> Dict[str, Any]:
         """Franchise metadata with participation seasons derived from match data."""
         meta = FRANCHISE_METADATA[name]
@@ -980,8 +982,8 @@ class CanonicalAnalyticsEngine:
             "status": meta["status"],
             "seasons_active": format_season_ranges(seasons),
             "active_seasons": seasons,
-            "titles": meta["titles"],
-            "title_years": meta["title_years"],
+            "titles": len(self._title_years.get(name, [])),
+            "title_years": list(self._title_years.get(name, [])),
             "primary_color": meta["primary_color"],
         }
 
