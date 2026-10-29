@@ -409,15 +409,15 @@ class PlayerListItem(BaseModel):
     batting_innings: int = Field(default=0, description="Batting appearances")
     innings: Optional[int] = Field(None, description="Backward-compatible innings alias")
     total_runs: int = Field(default=0, description="Total career runs scored")
-    batting_avg: float = Field(default=0.0, description="Batting average")
-    strike_rate: float = Field(default=0.0, description="Batting strike rate")
+    batting_avg: Optional[float] = Field(None, description="Runs / dismissals; null when never dismissed or never batted")
+    strike_rate: Optional[float] = Field(None, description="Runs per 100 balls faced; null when no ball was faced")
     scores_30_plus: int = Field(default=0, description="Scores >= 30")
     scores_50_plus: int = Field(default=0, description="Scores >= 50")
     # Bowling preview
     bowling_innings: int = Field(default=0, description="Bowling appearances")
     wickets: int = Field(default=0, description="Bowler-credited wickets (run outs and retirements excluded; super overs excluded)")
     bowling_avg: Optional[float] = Field(None, description="Runs conceded per bowler-credited wicket")
-    economy: float = Field(default=0.0, description="Career economy rate")
+    economy: Optional[float] = Field(None, description="Runs conceded per 6 legal balls; null when no legal ball was bowled")
     best_bowling: str = Field(default="—", description="Career best bowling figures")
     # Tier flags
     is_stage02_leaderboard: bool = Field(default=False, description="Whether in 69-player leaderboard")
@@ -487,6 +487,12 @@ class PlayerProfileResponse(BaseModel):
     notes: List[str] = Field(default_factory=list, description="Cricket context notes")
 
 
+class PlayerListQualification(BaseModel):
+    sort_by: str = Field(..., description="Rate the directory is sorted by")
+    min_innings: int = Field(..., description="Minimum innings a player needs to be listed")
+    innings_kind: str = Field(..., description="'batting' or 'bowling': which innings count towards the minimum")
+
+
 class PlayerListResponse(BaseModel):
     players: List[PlayerListItem] = Field(..., description="List of players")
     total_count: int = Field(..., description="Total matching players")
@@ -498,6 +504,9 @@ class PlayerListResponse(BaseModel):
     directory_counts: Dict[str, int] = Field(
         default_factory=dict,
         description="Unfiltered directory size: all players, batters, bowlers and all-rounders",
+    )
+    qualification: Optional[PlayerListQualification] = Field(
+        None, description="Minimum-innings qualification applied to a rate sort; null when none is applied",
     )
 
 

@@ -30,6 +30,11 @@ async def list_players(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     sort_by: str = Query("runs", description="Sort by: 'runs', 'wickets', 'batting_avg', 'bowling_avg', 'economy', 'innings', 'strike_rate'"),
+    min_innings: Optional[int] = Query(
+        None, ge=1,
+        description="Rate sorts only (batting_avg, strike_rate: batting innings; bowling_avg, economy: bowling "
+                    "innings): list only players with at least this many innings. Ignored for other sorts.",
+    ),
 ) -> PlayerListResponse:
     try:
         return player_service.list_players(
@@ -39,6 +44,7 @@ async def list_players(
             page=page,
             page_size=page_size,
             sort_by=sort_by,
+            min_innings=min_innings,
         )
     except DerivedDataUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc))

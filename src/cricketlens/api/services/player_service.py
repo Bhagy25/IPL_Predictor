@@ -29,6 +29,7 @@ class PlayerService:
         page: int = 1,
         page_size: int = 20,
         sort_by: str = "runs",
+        min_innings: Optional[int] = None,
     ) -> PlayerListResponse:
         canonical_engine.ensure_loaded()
         res = canonical_engine.list_players(
@@ -38,6 +39,7 @@ class PlayerService:
             sort_by=sort_by,
             page=page,
             page_size=page_size,
+            min_innings=min_innings,
         )
 
         items = []
@@ -60,6 +62,7 @@ class PlayerService:
             query=query,
             experience_filter=experience_filter,
             directory_counts=res["directory_counts"],
+            qualification=res["qualification"],
         )
 
     def get_player_overview(self, player_id: str, season: Optional[int] = None) -> PlayerProfileResponse:

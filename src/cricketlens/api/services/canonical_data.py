@@ -87,6 +87,15 @@ PROFILE_METRIC_DEFINITIONS = {
 }
 
 
+# Directory sorts that rank a rate: the innings that qualify a player, and whether higher is better
+RATE_SORTS = {
+    "batting_avg": ("batting", True),
+    "strike_rate": ("batting", True),
+    "bowling_avg": ("bowling", False),
+    "economy": ("bowling", False),
+}
+
+
 def overs_notation(legal_balls: int) -> str:
     """Overs in cricket notation: completed six-ball overs, then remaining balls (22 -> '3.4')."""
     return f"{legal_balls // 6}.{legal_balls % 6}"
@@ -694,8 +703,9 @@ class CanonicalAnalyticsEngine:
             total_runs = b_info["runs"] if b_info else 0
             dismissals = b_info["dismissals"] if b_info else 0
             bat_balls = b_info["balls_faced"] if b_info else 0
-            bat_avg = round(total_runs / dismissals, 2) if dismissals > 0 else (float(total_runs) if total_runs > 0 else 0.0)
-            bat_sr = round(total_runs / bat_balls * 100, 2) if bat_balls > 0 else 0.0
+            # A rate with no denominator is undefined (null), never runs or 0
+            bat_avg = round(total_runs / dismissals, 2) if dismissals > 0 else None
+            bat_sr = round(total_runs / bat_balls * 100, 2) if bat_balls > 0 else None
 
             # Bowling stats
             bowl_inn = w_info["innings"] if w_info else 0
@@ -704,7 +714,7 @@ class CanonicalAnalyticsEngine:
             total_wkts = w_info["wickets"] if w_info else 0
             bowl_avg = round(runs_conc / total_wkts, 2) if total_wkts > 0 else None
             bowl_sr = round(legal_deliveries / total_wkts, 2) if total_wkts > 0 else None
-            bowl_econ = round(runs_conc / (legal_deliveries / 6.0), 2) if legal_deliveries > 0 else 0.0
+            bowl_econ = round(runs_conc / (legal_deliveries / 6.0), 2) if legal_deliveries > 0 else None
 
             role = derive_role(int(squad["matches"]), int(batting_inn), int(bat_balls), int(bowl_inn), int(legal_deliveries))
 
@@ -724,15 +734,15 @@ class CanonicalAnalyticsEngine:
                 # Batting preview
                 "batting_innings": int(batting_inn),
                 "total_runs": int(total_runs),
-                "batting_avg": float(bat_avg),
-                "strike_rate": float(bat_sr),
+                "batting_avg": bat_avg,
+                "strike_rate": bat_sr,
                 "scores_30_plus": int(b_info["scores_30_plus"]) if b_info else 0,
                 "scores_50_plus": int(b_info["scores_50_plus"]) if b_info else 0,
                 # Bowling preview
                 "bowling_innings": int(bowl_inn),
                 "wickets": int(total_wkts),
                 "bowling_avg": bowl_avg,
-                "economy": float(bowl_econ),
+                "economy": bowl_econ,
                 "best_bowling": best_bowling.get(pid, "—"),
             }
             master_list.append(item)
@@ -1098,8 +1108,13 @@ class CanonicalAnalyticsEngine:
         sort_by: str = "runs",
         page: int = 1,
         page_size: int = 20,
+        min_innings: Optional[int] = None,
     ) -> Dict[str, Any]:
-        """Return master directory of players with flexible search, filter, and pagination."""
+        """Return master directory of players with flexible search, filter, and pagination.
+
+        min_innings applies only to a rate sort (see RATE_SORTS): it keeps players with at least that
+        many batting or bowling innings, so no player is ever removed when no rate is being ranked.
+        """
         self.require_derived()
         players = list(self._player_master_list)
 
@@ -1135,22 +1150,19 @@ class CanonicalAnalyticsEngine:
             elif "emerging" in t_low or "1-10" in t_low:
                 players = [p for p in players if (1 <= p["batting_innings"] <= 10) or (1 <= p["bowling_innings"] <= 10)]
 
-        # 4. Sorting
-        if sort_by == "runs":
-            players.sort(key=lambda x: -x["total_runs"])
+        # 4. Qualification for rate sorts, then sorting (an undefined rate always sorts last)
+        qualification = None
+        if sort_by in RATE_SORTS:
+            innings_kind, higher_is_better = RATE_SORTS[sort_by]
+            if min_innings:
+                players = [p for p in players if p[f"{innings_kind}_innings"] >= min_innings]
+                qualification = {"sort_by": sort_by, "min_innings": min_innings, "innings_kind": innings_kind}
+            sign = -1 if higher_is_better else 1
+            players.sort(key=lambda x: (x[sort_by] is None, sign * x[sort_by] if x[sort_by] is not None else 0))
         elif sort_by == "wickets":
             players.sort(key=lambda x: -x["wickets"])
-        elif sort_by == "batting_avg":
-            players.sort(key=lambda x: -x["batting_avg"])
-        elif sort_by == "bowling_avg":
-            # Sort valid bowling averages ascending
-            players.sort(key=lambda x: (x["bowling_avg"] is None, x["bowling_avg"] if x["bowling_avg"] is not None else 999.0))
-        elif sort_by == "economy":
-            players.sort(key=lambda x: (x["economy"] == 0.0, x["economy"]))
         elif sort_by == "innings":
             players.sort(key=lambda x: -(x["batting_innings"] + x["bowling_innings"]))
-        elif sort_by == "strike_rate":
-            players.sort(key=lambda x: -x["strike_rate"])
         else:
             players.sort(key=lambda x: -x["total_runs"])
 
@@ -1166,6 +1178,7 @@ class CanonicalAnalyticsEngine:
             "total_pages": total_pages,
             "players": paginated,
             "directory_counts": dict(self._directory_counts),
+            "qualification": qualification,
         }
 
     def _resolve_player(self, player_id_or_name: str) -> Tuple[str, str]:
