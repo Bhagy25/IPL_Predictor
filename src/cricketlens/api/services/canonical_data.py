@@ -904,7 +904,7 @@ class CanonicalAnalyticsEngine:
             runs_conc = int(w_df["runs_conceded"].sum())
             wkts = int(w_df["wickets"].sum())
             b_avg = round(runs_conc / wkts, 2) if wkts > 0 else None
-            b_sr = round(legal_deliveries / wkts, 2) if wkts > 0 else None
+            b_sr = round(legal_balls / wkts, 2) if wkts > 0 else None
             econ = round(runs_conc / (legal_balls / 6.0), 2) if legal_balls > 0 else 0.0
             
             top = w_df.sort_values(by=["wickets", "runs_conceded"], ascending=[False, True]).iloc[0]
