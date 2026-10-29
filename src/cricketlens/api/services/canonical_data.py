@@ -23,7 +23,7 @@ DERIVED_BUILD_COMMAND = "python -m cricketlens.derived_events --raw data/raw/ipl
 
 
 class DerivedDataUnavailable(RuntimeError):
-    """Raised when bowling statistics are requested but data/derived is missing or inconsistent."""
+    """Raised when bowling or boundary statistics are requested but data/derived is missing or inconsistent."""
 
 
 # 15 Canonical Franchises
@@ -235,10 +235,11 @@ class CanonicalAnalyticsEngine:
         self._deliveries["bowler_runs_conceded"] = (
             self._deliveries["runs_batter"] + self._deliveries["wides"] + self._deliveries["noballs"]
         )
-        # Bowler wickets come from the recorded dismissal kinds in data/derived/dismissals.csv
+        # Bowler wickets and non-boundary flags come from data/derived (built from the raw JSON)
         self._load_derived_events()
-        self._deliveries["is_four"] = self._deliveries["runs_batter"] == 4
-        self._deliveries["is_six"] = self._deliveries["runs_batter"] == 6
+        # A four or six off the bat is a boundary unless Cricsheet flags it non_boundary (e.g. an all-run four)
+        self._deliveries["is_four"] = (self._deliveries["runs_batter"] == 4) & ~self._deliveries["is_non_boundary"]
+        self._deliveries["is_six"] = (self._deliveries["runs_batter"] == 6) & ~self._deliveries["is_non_boundary"]
         self._deliveries["is_dot"] = (self._deliveries["runs_batter"] == 0) & (self._deliveries["legal_delivery"] == 1)
 
         # Seasons each franchise actually played, from canonical team names in matches.csv
@@ -256,61 +257,75 @@ class CanonicalAnalyticsEngine:
         self._build_player_index()
         self._initialized = True
 
-    def _load_derived_events(self) -> None:
-        """Attach bowler-credited wickets from data/derived to deliveries, keyed by DELIVERY_KEY.
+    def _read_derived(self, name: str, columns: List[str]) -> Optional[pd.DataFrame]:
+        """Read the ordinary-innings rows of a data/derived table; None if missing or not aligned."""
+        path = self.derived_dir / name
+        if not path.exists():
+            self._derived_error = f"{name} is missing from {self.derived_dir}."
+            return None
+        table = pd.read_csv(path, usecols=DELIVERY_KEY + ["is_super_over", "bowler"] + columns)
+        # Super overs are never part of ordinary match statistics.
+        table = table[~table["is_super_over"]]
+        joined = table.merge(
+            self._deliveries[DELIVERY_KEY + ["bowler"]], on=DELIVERY_KEY,
+            how="left", suffixes=("", "_delivery"), indicator=True,
+        )
+        matched = joined["_merge"] == "both"
+        unmatched = int((~matched).sum())
+        mismatched = int((joined.loc[matched, "bowler"] != joined.loc[matched, "bowler_delivery"]).sum())
+        if unmatched or mismatched:
+            self._derived_error = (
+                f"{name} does not match deliveries.csv ({unmatched} unmatched rows, {mismatched} bowler mismatches)."
+            )
+            return None
+        return table
 
-        The tables are rebuilt from the raw JSON by cricketlens.derived_events. If they are
-        missing or do not line up with deliveries.csv, bowling statistics are marked
-        unavailable instead of falling back to an estimate.
+    def _load_derived_events(self) -> None:
+        """Attach bowler-credited wickets and non-boundary flags from data/derived to deliveries.
+
+        The tables are rebuilt from the raw JSON by cricketlens.derived_events and joined on
+        DELIVERY_KEY. If either is missing or does not line up with deliveries.csv, bowling and
+        boundary statistics are marked unavailable instead of falling back to an estimate.
         """
         self._derived_error = None
-        path = self.derived_dir / "dismissals.csv"
-        if not path.exists():
-            self._derived_error = f"{path.name} is missing from {self.derived_dir}."
-        else:
-            dismissals = pd.read_csv(path, usecols=DELIVERY_KEY + ["is_super_over", "bowler", "bowler_credited"])
-            # Super overs are never part of ordinary match statistics.
-            dismissals = dismissals[~dismissals["is_super_over"]]
-            joined = dismissals.merge(
-                self._deliveries[DELIVERY_KEY + ["bowler"]], on=DELIVERY_KEY,
-                how="left", suffixes=("", "_delivery"), indicator=True,
-            )
-            unmatched = int((joined["_merge"] != "both").sum())
-            mismatched = int((joined.loc[joined["_merge"] == "both", "bowler"]
-                              != joined.loc[joined["_merge"] == "both", "bowler_delivery"]).sum())
-            if unmatched or mismatched:
-                self._derived_error = (
-                    f"{path.name} does not match deliveries.csv "
-                    f"({unmatched} unmatched rows, {mismatched} bowler mismatches)."
-                )
+        dismissals = self._read_derived("dismissals.csv", ["bowler_credited"])
+        non_boundary = self._read_derived("non_boundary_events.csv", []) if dismissals is not None else None
 
         if self._derived_error:
-            logger.error("%s Bowling statistics are unavailable.", self._derived_error)
-            # Placeholder only: every endpoint serving bowler wickets returns 503 until this is fixed.
+            logger.error("%s Bowling and boundary statistics are unavailable.", self._derived_error)
+            # Placeholders only: every endpoint serving these statistics returns 503 until this is fixed.
             self._deliveries["bowler_wickets"] = 0
+            self._deliveries["is_non_boundary"] = False
             return
 
+        key_types = {k: self._deliveries[k].dtype for k in DELIVERY_KEY}
         credited = (
             dismissals[dismissals["bowler_credited"]]
             .groupby(DELIVERY_KEY).size().rename("bowler_wickets").reset_index()
-            .astype({k: self._deliveries[k].dtype for k in DELIVERY_KEY})
+            .astype(key_types)
         )
-        self._deliveries = self._deliveries.merge(credited, on=DELIVERY_KEY, how="left")
+        flagged = non_boundary[DELIVERY_KEY].drop_duplicates().assign(is_non_boundary=True).astype(key_types)
+        self._deliveries = (
+            self._deliveries
+            .merge(credited, on=DELIVERY_KEY, how="left")
+            .merge(flagged, on=DELIVERY_KEY, how="left")
+        )
         self._deliveries["bowler_wickets"] = self._deliveries["bowler_wickets"].fillna(0).astype("int8")
+        self._deliveries["is_non_boundary"] = self._deliveries["is_non_boundary"].notna()
 
     def derived_status(self) -> Dict[str, Any]:
-        """Availability of the data/derived tables used for bowling statistics."""
+        """Availability of the data/derived tables used for bowling and boundary statistics."""
         self.ensure_loaded()
         if self._derived_error:
             return {"available": False, "detail": self._derived_error, "build_command": DERIVED_BUILD_COMMAND}
         return {"available": True, "detail": f"Loaded from {self.derived_dir}.", "build_command": DERIVED_BUILD_COMMAND}
 
     def require_derived(self) -> None:
-        """Raise DerivedDataUnavailable when bowling statistics cannot be served."""
+        """Raise DerivedDataUnavailable when bowling or boundary statistics cannot be served."""
         self.ensure_loaded()
         if self._derived_error:
             raise DerivedDataUnavailable(
-                f"Bowling statistics are unavailable: {self._derived_error} "
+                f"Bowling and boundary statistics are unavailable: {self._derived_error} "
                 f"Rebuild the derived tables with `{DERIVED_BUILD_COMMAND}` (see data/derived/README.md)."
             )
 
@@ -1176,9 +1191,8 @@ class CanonicalAnalyticsEngine:
             })
 
         # 4. Boundaries Analysis (Fours & Sixes by Season)
-        d_df_b = d_df[["season", "runs_batter", "runs_total"]].copy()
-        d_df_b["is_four"] = d_df_b["runs_batter"] == 4
-        d_df_b["is_six"] = d_df_b["runs_batter"] == 6
+        # is_four / is_six already exclude Cricsheet non-boundary runs
+        d_df_b = d_df[["season", "is_four", "is_six", "runs_total"]]
 
         boundaries_by_season = []
         for s, grp in d_df_b.groupby("season"):
