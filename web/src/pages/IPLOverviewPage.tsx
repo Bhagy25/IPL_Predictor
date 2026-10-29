@@ -39,6 +39,13 @@ export const IPLOverviewPage: React.FC = () => {
 
   const isConnected = !loading && !error && summary !== null;
 
+  // Archive line built from the API: matches, seasons, deliveries and runs
+  const metric = (id: string) => summary?.metrics.find((m) => m.id === id)?.value ?? '—';
+  const archiveLine = summary
+    ? `${metric('matches')} matches · ${summary.coverage.seasons_count} seasons (${summary.coverage.seasons_span}) · ` +
+      `${metric('deliveries')} recorded deliveries · ${metric('runs')} team runs verified.`
+    : '';
+
   return (
     <div className="space-y-12 sm:space-y-16">
       {/* 1. Cinematic Hero with Stadium, Trophy & Players Collage */}
@@ -116,7 +123,7 @@ export const IPLOverviewPage: React.FC = () => {
                     Backend connected &middot; Verified IPL historical archive
                   </p>
                   <p className="text-xs text-[#B9B9B3] mt-0.5">
-                    1,243 matches &middot; 19 seasons (2008–2026) &middot; 295,557 recorded deliveries &middot; 401,423 team runs verified.
+                    {archiveLine}
                   </p>
                 </div>
               </div>
@@ -143,7 +150,12 @@ export const IPLOverviewPage: React.FC = () => {
 
         {/* 5. Team Records Table */}
         <section aria-label="Verified Team Records">
-          <TeamRecordsTable records={charts?.team_records} loading={loading} />
+          <TeamRecordsTable
+            records={charts?.team_records}
+            window={charts?.team_records_window}
+            champions={charts?.champions}
+            loading={loading}
+          />
         </section>
 
         {/* 6. QA Component States Showcase (Hidden from standard view as per Stage 4.3A) */}

@@ -1,17 +1,41 @@
 import React from 'react';
 import { ShieldCheck, Trophy, Database } from 'lucide-react';
-import { TeamRecordItem } from '../types';
+import { OverviewTeamRecordsWindow, SeasonChampion, TeamRecordItem } from '../types';
 
 interface TeamRecordsTableProps {
   records?: TeamRecordItem[];
+  window?: OverviewTeamRecordsWindow;
+  champions?: SeasonChampion[];
   loading?: boolean;
 }
 
+/** "CSK (5), MI (5) · Defunct: Deccan Chargers (1)" from the computed champion of every season. */
+const titleSummary = (champions: SeasonChampion[], current: Set<string>): string => {
+  const counts = new Map<string, { label: string; titles: number; first: number }>();
+  champions.forEach((c) => {
+    if (!c.champion) return;
+    const entry = counts.get(c.champion) ?? {
+      label: current.has(c.champion) ? (c.champion_short_name ?? c.champion) : c.champion,
+      titles: 0,
+      first: c.season,
+    };
+    entry.titles += 1;
+    counts.set(c.champion, entry);
+  });
+  const ranked = [...counts.entries()].sort((a, b) => b[1].titles - a[1].titles || a[1].first - b[1].first);
+  const active = ranked.filter(([team]) => current.has(team)).map(([, e]) => `${e.label} (${e.titles})`);
+  const defunct = ranked.filter(([team]) => !current.has(team)).map(([, e]) => `${e.label} (${e.titles})`);
+  return active.join(', ') + (defunct.length ? ` · Defunct: ${defunct.join(', ')}` : '');
+};
+
 export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
   records = [],
+  window,
+  champions = [],
   loading = false,
 }) => {
   const hasRecords = records && records.length > 0;
+  const shortWindow = window ? `${window.first_season}–${String(window.last_season).slice(-2)}` : '';
 
   return (
     <div className="bg-[#151619] border border-white/[0.08] rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
@@ -25,12 +49,12 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
             </h3>
           </div>
           <p className="text-xs text-[#B9B9B3] mt-0.5">
-            Active 10-franchise performance with Super Over corrections &amp; championship titles.
+            {hasRecords ? `Active ${records.length}-franchise performance` : 'Active franchise performance'} with Super Over corrections &amp; championship titles.
           </p>
         </div>
 
         <span className="self-start sm:self-center inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-1 rounded-full border border-[#D9B15F]/20">
-          {hasRecords ? '10 active franchises' : 'Awaiting data'}
+          {hasRecords ? `${records.length} active franchises` : 'Awaiting data'}
         </span>
       </div>
 
@@ -40,7 +64,7 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
           <thead>
             <tr className="border-b border-white/[0.08] text-[#8E8E88] uppercase text-[10px] sm:text-[11px] tracking-wider font-semibold">
               <th className="py-3 px-3 sm:px-4">Franchise</th>
-              <th className="py-3 px-3 sm:px-4 text-center">Played (2022–25)</th>
+              <th className="py-3 px-3 sm:px-4 text-center">Played{window ? ` (${shortWindow})` : ''}</th>
               <th className="py-3 px-3 sm:px-4 text-center">Wins</th>
               <th className="py-3 px-3 sm:px-4 text-center">Losses</th>
               <th className="py-3 px-3 sm:px-4 text-center">Tied / NR</th>
@@ -95,7 +119,11 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
 
                   {/* Win % */}
                   <td className="py-3.5 px-3 sm:px-4 text-center font-mono text-[#D9B15F] font-bold">
-                    {r.win_pct.toFixed(1)}%
+                    {r.win_pct === null ? (
+                      <span title="No decided matches in this window">—</span>
+                    ) : (
+                      `${r.win_pct.toFixed(1)}%`
+                    )}
                   </td>
 
                   {/* Titles */}
@@ -141,12 +169,14 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
 
       {/* Footer Notes */}
       <div className="pt-2 border-t border-white/[0.04] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-[#8E8E88] gap-1">
-        <span>
-          Win rates calculated among decided matches (2022–2025 comparative window); includes Super Over eliminator victories.
+        <span title={window?.rule}>
+          Win rates calculated among decided matches{window ? ` (${window.label} comparative window)` : ''}; includes Super Over eliminator victories.
         </span>
-        <span className="font-mono text-[#D9B15F]/90">
-          Historical titles (19 seasons): CSK (5), MI (5), KKR (3), RCB (2), RR (1), SRH (1), GT (1) &middot; Defunct: Deccan Chargers (1)
-        </span>
+        {champions.length > 0 && (
+          <span className="font-mono text-[#D9B15F]/90">
+            Historical titles ({champions.length} seasons): {titleSummary(champions, new Set(records.map((r) => r.team)))}
+          </span>
+        )}
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import {
   Legend,
 } from 'recharts';
 import { OverviewChartsResponse } from '../types';
+import { fmtCount, fmtSeasons } from '../utils/format';
 
 interface PerspectiveChartsProps {
   chartsData?: OverviewChartsResponse | null;
@@ -61,6 +62,16 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
 
   const hasData = matchesPerSeason.length > 0;
 
+  // Every caption below is built from the API response; nothing is typed in
+  const counts = matchesPerSeason.map((s) => s.matches);
+  const totalMatches = counts.reduce((a, b) => a + b, 0);
+  const maxTeams = Math.max(0, ...matchesPerSeason.map((s) => s.teams));
+  const maxTeamSeasons = matchesPerSeason.filter((s) => s.teams === maxTeams).map((s) => s.season);
+  const trend = chartsData?.scoring_trend;
+  const outcomes = chartsData?.outcomes;
+  const scoring = chartsData?.scoring_summary;
+  const signed = (n: number) => `${n >= 0 ? '+' : ''}${n.toFixed(2)}`;
+
   return (
     <div className="space-y-6">
       {/* Section Header */}
@@ -72,7 +83,7 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
           </h2>
         </div>
         <span className="text-xs sm:text-sm font-medium text-[#B9B9B3]/75 ml-4 sm:ml-0">
-          Historical insights &middot; 2008 to present
+          Historical insights{hasData ? <> &middot; {matchesPerSeason[0].season} to present</> : null}
         </span>
       </div>
 
@@ -90,12 +101,14 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                 </h3>
               </div>
               <p className="text-xs text-[#B9B9B3] mt-0.5">
-                The evolution of the IPL schedule (57 to 76 matches/yr)
+                The evolution of the IPL schedule{hasData ? ` (${Math.min(...counts)} to ${Math.max(...counts)} matches/yr)` : ''}
               </p>
             </div>
-            <span className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20">
-              19 seasons &middot; 1,243 matches
-            </span>
+            {hasData && (
+              <span className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20">
+                {matchesPerSeason.length} seasons &middot; {fmtCount(totalMatches)} matches
+              </span>
+            )}
           </div>
 
           <div className="relative w-full h-64 sm:h-72 rounded-xl bg-[#0D0E10] border border-white/[0.04] p-2 sm:p-3 min-w-0">
@@ -114,7 +127,7 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                     tickLine={false}
                   />
                   <YAxis
-                    domain={[0, 85]}
+                    domain={[0, 'auto']}
                     tick={{ fill: '#8E8E88', fontSize: 10 }}
                     axisLine={{ stroke: '#2A2B30' }}
                     tickLine={false}
@@ -128,13 +141,15 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
             )}
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-[11px] text-[#B9B9B3]/75">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
-              <span>10-team expansion in 2011 and 2022–present</span>
+          {hasData && (
+            <div className="mt-3 flex items-center justify-between gap-2 text-[11px] text-[#B9B9B3]/75">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
+                <span>{maxTeams}-team seasons: {fmtSeasons(maxTeamSeasons)}</span>
+              </div>
+              <span className="font-mono text-[#D9B15F]">Total: {fmtCount(totalMatches)}</span>
             </div>
-            <span className="font-mono text-[#D9B15F]">Total: 1,243</span>
-          </div>
+          )}
         </div>
 
         {/* Chart 2: Season-wise scoring trends */}
@@ -151,9 +166,14 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                 Mean and median first-innings scores per season
               </p>
             </div>
-            <span className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20">
-              Mean: 168.6 runs
-            </span>
+            {trend && (
+              <span
+                title={`Mean of all ${fmtCount(trend.first_innings)} recorded first innings, ${trend.seasons_label}`}
+                className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20"
+              >
+                Mean: {trend.overall_mean.toFixed(1)} runs
+              </span>
+            )}
           </div>
 
           <div className="relative w-full h-64 sm:h-72 rounded-xl bg-[#0D0E10] border border-white/[0.04] p-2 sm:p-3 min-w-0">
@@ -172,7 +192,8 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                     tickLine={false}
                   />
                   <YAxis
-                    domain={[130, 210]}
+                    domain={[(min: number) => Math.floor(min / 10) * 10 - 10, (max: number) => Math.ceil(max / 10) * 10]}
+                    allowDecimals={false}
                     tick={{ fill: '#8E8E88', fontSize: 10 }}
                     axisLine={{ stroke: '#2A2B30' }}
                     tickLine={false}
@@ -211,13 +232,15 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
             )}
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-[11px] text-[#B9B9B3]/75">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
-              <span>Observational linear trend: +1.71 runs/season</span>
+          {trend && (
+            <div className="mt-3 flex items-center justify-between gap-2 text-[11px] text-[#B9B9B3]/75">
+              <div className="flex items-center gap-1.5" title={trend.definition}>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
+                <span>Observational linear trend ({trend.seasons_label}): {signed(trend.slope_runs_per_season)} runs/season</span>
+              </div>
+              <span className="font-mono text-[#D9B15F]">{trend.peak_season} Peak: {trend.peak_mean.toFixed(1)}</span>
             </div>
-            <span className="font-mono text-[#D9B15F]">2026 Peak: 193.0</span>
-          </div>
+          )}
         </div>
 
         {/* Chart 3: Historical match result distribution */}
@@ -234,9 +257,11 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                 Outcome categories: regulation wins, ties &amp; no results
               </p>
             </div>
-            <span className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20">
-              1,218 wins &middot; 16 ties &middot; 9 NR
-            </span>
+            {outcomes && (
+              <span className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20">
+                {fmtCount(outcomes.decided_in_regulation)} wins &middot; {fmtCount(outcomes.decided_by_super_over)} ties &middot; {fmtCount(outcomes.no_result)} NR
+              </span>
+            )}
           </div>
 
           <div className="relative w-full h-64 sm:h-72 rounded-xl bg-[#0D0E10] border border-white/[0.04] p-2 sm:p-3 min-w-0">
@@ -255,7 +280,7 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                     tickLine={false}
                   />
                   <YAxis
-                    domain={[0, 1300]}
+                    domain={[0, 'auto']}
                     tick={{ fill: '#8E8E88', fontSize: 10 }}
                     axisLine={{ stroke: '#2A2B30' }}
                     tickLine={false}
@@ -276,12 +301,19 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
             )}
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-[11px] text-[#B9B9B3]/75">
+          <div className="mt-3 flex items-center justify-between gap-2 text-[11px] text-[#B9B9B3]/75">
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
               <span>Super Over winners credited in final team records</span>
             </div>
-            <span className="font-mono text-[#D9B15F]">98.0% Decided</span>
+            {outcomes && outcomes.decided_pct !== null && (
+              <span
+                className="font-mono text-[#D9B15F]"
+                title={`${fmtCount(outcomes.decided)} of ${fmtCount(outcomes.matches)} matches had a winner (regulation, D/L or Super Over)`}
+              >
+                {outcomes.decided_pct.toFixed(1)}% Decided
+              </span>
+            )}
           </div>
         </div>
 
@@ -295,13 +327,16 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                   Overall IPL scoring distribution
                 </h3>
               </div>
-              <p className="text-xs text-[#B9B9B3] mt-0.5">
-                Histogram of first-innings score spans (1,237 recorded innings)
+              <p className="text-xs text-[#B9B9B3] mt-0.5" title={scoring?.eligibility_rule}>
+                Histogram of first-innings score spans
+                {scoring ? ` (${fmtCount(scoring.n)} completed innings of ${fmtCount(scoring.first_innings_recorded)} recorded)` : ''}
               </p>
             </div>
-            <span className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20">
-              IQR: 147–188 runs
-            </span>
+            {scoring && (
+              <span className="inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-0.5 rounded-full border border-[#D9B15F]/20">
+                IQR: {scoring.q1}–{scoring.q3} runs
+              </span>
+            )}
           </div>
 
           <div className="relative w-full h-64 sm:h-72 rounded-xl bg-[#0D0E10] border border-white/[0.04] p-2 sm:p-3 min-w-0">
@@ -320,7 +355,7 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
                     tickLine={false}
                   />
                   <YAxis
-                    domain={[0, 500]}
+                    domain={[0, 'auto']}
                     tick={{ fill: '#8E8E88', fontSize: 10 }}
                     axisLine={{ stroke: '#2A2B30' }}
                     tickLine={false}
@@ -341,13 +376,20 @@ export const PerspectiveCharts: React.FC<PerspectiveChartsProps> = ({
             )}
           </div>
 
-          <div className="mt-3 flex items-center justify-between text-[11px] text-[#B9B9B3]/75">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
-              <span>Modal category: 150–179 runs (35.4% of innings)</span>
+          {scoring && (
+            <div className="mt-3 flex items-center justify-between gap-2 text-[11px] text-[#B9B9B3]/75">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
+                <span>Modal category: {scoring.modal_span} runs ({scoring.modal_pct.toFixed(1)}% of innings)</span>
+              </div>
+              <span className="font-mono text-[#D9B15F]">Range: {scoring.min}–{scoring.max}</span>
             </div>
-            <span className="font-mono text-[#D9B15F]">Range: 56–287</span>
-          </div>
+          )}
+          {scoring && scoring.excluded.length > 0 && (
+            <p className="mt-1.5 text-[10px] text-[#8E8E88]">
+              Excludes {scoring.excluded.length} first innings cut short by a no-result abandonment.
+            </p>
+          )}
         </div>
 
       </div>

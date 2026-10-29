@@ -27,6 +27,7 @@ export interface OverviewSummaryResponse {
 export interface MatchesPerSeasonItem {
   season: number;
   matches: number;
+  teams: number;
 }
 
 export interface ScoringTrendItem {
@@ -56,18 +57,80 @@ export interface TeamRecordItem {
   wins: number;
   losses: number;
   tied_no_result: number;
-  win_pct: number;
+  win_pct: number | null;
   titles: number;
   title_years: number[];
   status: string;
 }
 
+export interface OverviewScoringTrend {
+  first_innings: number;
+  overall_mean: number;
+  slope_runs_per_season: number;
+  seasons_label: string;
+  peak_season: number;
+  peak_mean: number;
+  definition: string;
+}
+
+export interface OverviewOutcomes {
+  matches: number;
+  decided: number;
+  decided_in_regulation: number;
+  decided_by_super_over: number;
+  no_result: number;
+  other_not_recorded: number;
+  dl_method: number;
+  decided_pct: number | null;
+}
+
+export interface OverviewScoringSummary {
+  n: number;
+  first_innings_recorded: number;
+  eligibility_rule: string;
+  excluded: { match_id: number; date: string; season: number; batting_team: string; runs: number; wickets: number; legal_balls: number; reason: string }[];
+  mean: number;
+  median: number;
+  q1: number;
+  q3: number;
+  min: number;
+  max: number;
+  modal_span: string;
+  modal_pct: number;
+}
+
+export interface OverviewTeamRecordsWindow {
+  first_season: number;
+  last_season: number;
+  label: string;
+  rule: string;
+  win_pct_definition: string;
+  franchises: number;
+}
+
+export interface SeasonChampion {
+  season: number;
+  match_id: number;
+  date: string;
+  champion: string | null;
+  champion_short_name: string | null;
+  runner_up: string | null;
+  venue: string;
+  state: string | null;
+}
+
 export interface OverviewChartsResponse {
   matches_per_season: MatchesPerSeasonItem[];
   scoring_trends: ScoringTrendItem[];
+  scoring_trend: OverviewScoringTrend;
   result_distribution: MatchResultDistributionItem[];
+  outcomes: OverviewOutcomes;
   scoring_distribution: ScoringDistributionBin[];
+  scoring_summary: OverviewScoringSummary;
   team_records: TeamRecordItem[];
+  team_records_window: OverviewTeamRecordsWindow;
+  champions: SeasonChampion[];
+  champion_rule: string;
 }
 
 export interface ChartContainerProps {
