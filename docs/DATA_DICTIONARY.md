@@ -77,3 +77,39 @@ One eligible snapshot immediately after an over is fully completed, *before the 
 - `decided_by`: `regulation`, `super_over` or `no_result`.
 - `super_over_innings`: number of extra innings recorded as `super_over: true`. Excluded from normal innings/ball/player tables.
 - `outcome_method`: raw method string such as `D/L`; denotes match-result annotation, not reliable shortened-innings indicator.
+
+
+## `data/derived/` tables (website support)
+
+Built from the raw Cricsheet JSON by `python -m cricketlens.derived_events --raw data/raw/ipl_json --output data/derived`.
+They add what `deliveries.csv` does not carry (dismissal kind, player out, fielders, bowler registry IDs, the
+non-boundary flag, squads and substitutions) and a registry-ID player table. `data/derived/README.md` is the
+generated reference, with the SHA256 of each file; the rebuild reproduces the committed files exactly.
+
+Delivery key: `match_id`, `innings` (1-based position in the file; super-over innings keep their position and
+are flagged), `over_index` (0-based) and `delivery_index` (1-based, wides and no-balls included), the same
+convention as `deliveries.csv`. `season` is the year of the first match date. Team names use Stage 1's
+franchise mapping.
+
+| Table | Rows | One row per | Columns |
+|---|---:|---|---|
+| `dismissals.csv` | 14,705 | Wicket event, super overs included (flagged) | delivery key, `season`, `date`, `is_super_over`, `batting_team`, `bowling_team`, `batter`/`batter_id`, `non_striker`/`non_striker_id`, `player_out`/`player_out_id`, `kind`, `bowler`/`bowler_id`, `fielders`/`fielder_ids` (semicolon-separated, substitutes included), `bowler_credited`, `counts_as_batting_dismissal` |
+| `non_boundary_events.csv` | 29 | Delivery Cricsheet flags with `runs.non_boundary` (e.g. an all-run four) | delivery key, `season`, `date`, `is_super_over`, `batter`/`batter_id`, `bowler`/`bowler_id`, `runs_batter` |
+| `batting_appearances.csv` | 19,111 | Player per ordinary innings at the crease as striker or non-striker (or dismissed) | `match_id`, `season`, `date`, `innings`, `batting_team`, `player_id`, `player_name`, `balls_faced` (wides excluded), `runs`, `dismissed`, `dismissal_kind`, `faced_a_ball`, `on_strike` |
+| `match_players.csv` | 27,909 | Player per match in the official squad list (`info.players`), substitutes who came in included | `match_id`, `season`, `date`, `team`, `player_name`, `player_id` |
+| `match_replacements.csv` | 563 | Match-level substitution in `replacements.match` (Impact Player or concussion substitute) | delivery key, `season`, `date`, `is_super_over`, `team`, `reason`, `player_in`/`player_in_id`, `player_out`/`player_out_id` |
+| `people.csv` | 816 | Registry ID seen as a listed player or a fielder | `player_id`, `names` (every variant, semicolon-separated), `first_season`, `last_season`, `matches`, `teams` |
+
+Rules:
+
+- `bowler_credited` is True for bowled, caught, caught and bowled, lbw, stumped and hit wicket; False for run
+  out, retired hurt, retired out, obstructing the field and any other kind.
+- `counts_as_batting_dismissal` is True for every kind except retired hurt and retired not out, the same rule
+  Stage 1 uses for team wickets, so retired out counts as a dismissal.
+- In `batting_appearances.csv` a non-striker run out without facing a ball is an innings and a dismissal; the
+  rows with `on_strike` True are exactly Stage 1's `batter_innings.csv` rows.
+- `match_players.csv` holds each team's starting eleven plus every player who came in, so a team's list for a
+  match is 11 plus its substitutions. Mid-over role changes are not substitutions.
+- Substitute fielders who never appear in an official list have `matches` = 0 and empty seasons and teams in
+  `people.csv`.
+- Super-over rows are kept and flagged, never mixed into ordinary innings.
