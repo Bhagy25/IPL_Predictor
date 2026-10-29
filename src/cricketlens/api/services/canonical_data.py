@@ -10,6 +10,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Set, Tuple
 from collections import Counter, defaultdict
+from decimal import ROUND_HALF_UP, Decimal
 
 import numpy as np
 import pandas as pd
@@ -176,6 +177,75 @@ def bowling_table(spells: pd.DataFrame, by: Optional[str] = None, label: Optiona
 
 def _present(value: Any) -> bool:
     return value is not None and not (isinstance(value, float) and np.isnan(value))
+
+
+# ---------------------------------------------------------------- team analysis
+
+# Phases by Cricsheet's 0-based over_index
+PHASES = [
+    ("powerplay", "Powerplay (overs 1–6)", 0, 5),
+    ("middle", "Middle (overs 7–16)", 6, 15),
+    ("death", "Death (overs 17–20)", 16, 19),
+]
+
+TEAM_DEFINITIONS = {
+    "won": "Won in regulation play, by D/L method, or by winning the Super Over after a tie.",
+    "lost": "The opponent won in regulation play, by D/L method, or by winning the Super Over.",
+    "super_over": "A tie decided by a Super Over counts as a win or a loss and is also reported separately as "
+                  "'Tied → won/lost Super Over'.",
+    "tied": "A tie with no Super Over result recorded: not a win or a loss, but part of the win percentage denominator.",
+    "no_result": "Abandoned or no result: excluded from the win percentage and from batting-first/chasing records.",
+    "win_pct": "Wins ÷ (matches − no results), to one decimal; win_pct_denominator is the divisor.",
+    "innings_order": "Batting first or chasing from the regulation innings order (Super Over innings ignored); "
+                     "no-result matches are excluded and counted in innings_order_no_results.",
+    "runs_wickets": "Runs include extras. Team wickets come from team_wickets_on_ball: every dismissal except "
+                    "retired hurt and retired not out. Super overs are excluded.",
+    "phases": "Powerplay = overs 1–6 (over_index 0–5), middle = overs 7–16 (6–15), death = overs 17–20 (16–19).",
+    "run_rate": "Runs ÷ (legal balls / 6).",
+    "toss": "Results after winning the toss use the same win percentage rule, overall and by decision.",
+    "franchises": "Renamed franchises are one team: Delhi Daredevils → Delhi Capitals, Kings XI Punjab → Punjab "
+                  "Kings, Royal Challengers Bangalore → Royal Challengers Bengaluru, Rising Pune Supergiants → "
+                  "Rising Pune Supergiant. Deccan Chargers is a separate franchise from Sunrisers Hyderabad.",
+    "venues": "Canonical venue names; the minimum-matches filter counts matches in the current selection.",
+    "season_filter": "With a season selected, every number is computed from that season's matches only.",
+}
+
+TEAM_STATE_DEFINITIONS = {
+    "no_decided_matches": "Every match in this selection was a no result, so there is no win percentage.",
+    "no_legal_balls": "No legal ball in this selection, so the rate is undefined.",
+}
+
+
+def run_rate(runs: int, balls: int) -> Optional[float]:
+    """Runs per six legal balls; None when no legal ball was bowled."""
+    return round(runs / (balls / 6.0), 2) if balls else None
+
+
+def percentage(part: int, whole: int) -> Optional[float]:
+    """part / whole as a percentage to one decimal, rounding halves up exactly (9/16 = 56.25 -> 56.3)."""
+    if not whole:
+        return None
+    return float((Decimal(int(part) * 100) / Decimal(int(whole))).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
+
+
+def result_summary(rows: pd.DataFrame) -> Dict[str, Any]:
+    """Results for one team over a set of its team-match rows (see TEAM_DEFINITIONS)."""
+    counts = rows["result"].value_counts()
+    won, lost, tied, no_result = (int(counts.get(k, 0)) for k in ("won", "lost", "tied", "no_result"))
+    denominator = len(rows) - no_result
+    return {
+        "played": int(len(rows)),
+        "wins": won,
+        "losses": lost,
+        "ties": tied,
+        "no_results": no_result,
+        "results_not_recorded": int(len(rows)) - won - lost - tied - no_result,
+        "super_over_wins": int((rows["super_over"] == "won").sum()),
+        "super_over_losses": int((rows["super_over"] == "lost").sum()),
+        "win_pct": percentage(won, denominator),
+        "win_pct_denominator": denominator,
+        "win_pct_state": None if denominator else "no_decided_matches",
+    }
 
 
 class DerivedDataUnavailable(RuntimeError):
@@ -358,6 +428,8 @@ class CanonicalAnalyticsEngine:
         self._player_master_list: List[Dict[str, Any]] = []
         self._directory_counts: Dict[str, int] = {}
         self._franchise_seasons: Dict[str, List[int]] = {}
+        # One row per team per match (result, toss, innings order, runs, wickets, phase totals)
+        self._team_rows: pd.DataFrame = pd.DataFrame()
 
     def ensure_loaded(self) -> None:
         if self._initialized:
@@ -419,6 +491,7 @@ class CanonicalAnalyticsEngine:
             name: sorted(int(s) for s in seasons_by_team.get(name, []))
             for name in FRANCHISE_METADATA
         }
+        self._build_team_rows()
 
         # Build the player directory; without data/derived, player endpoints return 503 instead
         if not self._derived_error:
@@ -829,270 +902,250 @@ class CanonicalAnalyticsEngine:
         self.ensure_loaded()
         return [self._team_item(name) for name in FRANCHISE_METADATA]
 
-    def get_team_overview(self, team_slug_or_name: str, season: Optional[int] = None) -> Dict[str, Any]:
-        """Compute complete verified historical team performance."""
-        self.ensure_loaded()
-        canonical_name = TEAM_NAME_MAP.get(team_slug_or_name.lower())
-        if not canonical_name:
-            raise KeyError(f"Team '{team_slug_or_name}' not recognized among 15 canonical franchises.")
-
-        meta = FRANCHISE_METADATA[canonical_name]
-        team_item = self._team_item(canonical_name)
-        if season is not None and season not in team_item["active_seasons"]:
-            raise KeyError(f"{canonical_name} did not play in the {season} season.")
-
-        m_df = self._matches
-        i_df = self._innings
-        d_df = self._deliveries
-
-        # Filter by team
-        tm = m_df[(m_df["team1"] == canonical_name) | (m_df["team2"] == canonical_name)].copy()
-
-        # Optional season filtering
-        if season is not None:
-            tm = tm[tm["season"] == season].copy()
-            t_bat = i_df[(i_df["batting_team"] == canonical_name) & (i_df["season"] == season)]
-            t_bowl = i_df[(i_df["bowling_team"] == canonical_name) & (i_df["season"] == season)]
-            t_del = d_df[(d_df["batting_team"] == canonical_name) & (d_df["season"] == season)]
-        else:
-            t_bat = i_df[i_df["batting_team"] == canonical_name]
-            t_bowl = i_df[i_df["bowling_team"] == canonical_name]
-            t_del = d_df[d_df["batting_team"] == canonical_name]
-
-        total_played = len(tm)
-        wins = int((tm["final_winner"] == canonical_name).sum())
-        no_results = int((tm["regulation_result"] == "no result").sum())
-        losses = int(total_played - wins - no_results)
-        regulation_ties = int((tm["regulation_result"] == "tie").sum())
-        decided_matches = wins + losses
-        win_pct = round(wins / decided_matches * 100, 2) if decided_matches > 0 else 0.0
-
-        # Runs & Wickets
-        runs_scored = int(t_bat["runs"].sum())
-        runs_conceded = int(t_bowl["runs"].sum())
-        wickets_lost = int(t_bat["wickets"].sum())
-        wickets_taken = int(t_bowl["wickets"].sum())
-
-        # Batting 1st vs Chasing
-        inn1_match_ids = set(i_df[(i_df["innings"] == 1) & (i_df["batting_team"] == canonical_name)]["match_id"])
-        
-        bat1_matches = tm[tm["match_id"].isin(inn1_match_ids)]
-        bat1_wins = int((bat1_matches["final_winner"] == canonical_name).sum())
-        bat1_decided = int(bat1_matches["final_winner"].notna().sum())
-        bat1_losses = bat1_decided - bat1_wins
-        bat1_pct = round(bat1_wins / bat1_decided * 100, 2) if bat1_decided > 0 else 0.0
-
-        chase_matches = tm[~tm["match_id"].isin(inn1_match_ids)]
-        chase_wins = int((chase_matches["final_winner"] == canonical_name).sum())
-        chase_decided = int(chase_matches["final_winner"].notna().sum())
-        chase_losses = chase_decided - chase_wins
-        chase_pct = round(chase_wins / chase_decided * 100, 2) if chase_decided > 0 else 0.0
-
-        # Season history (evolution across seasons)
-        all_team_matches = m_df[(m_df["team1"] == canonical_name) | (m_df["team2"] == canonical_name)]
-        season_history = []
-        for s in sorted(all_team_matches["season"].unique()):
-            sm = all_team_matches[all_team_matches["season"] == s]
-            sw = int((sm["final_winner"] == canonical_name).sum())
-            snr = int((sm["regulation_result"] == "no result").sum())
-            sl = len(sm) - sw - snr
-            s_decided = sw + sl
-            s_pct = round(sw / s_decided * 100, 1) if s_decided > 0 else 0.0
-            season_history.append({
-                "season": int(s),
-                "played": int(len(sm)),
-                "wins": sw,
-                "losses": int(sl),
-                "win_pct": s_pct,
-            })
-
-        # Venue breakdown
-        venue_records = []
-        for vname, vgrp in tm.groupby("venue_canonical"):
-            vw = int((vgrp["final_winner"] == canonical_name).sum())
-            vnr = int((vgrp["regulation_result"] == "no result").sum())
-            vl = len(vgrp) - vw - vnr
-            vdec = vw + vl
-            vpct = round(vw / vdec * 100, 1) if vdec > 0 else 0.0
-            venue_records.append({
-                "venue": vname,
-                "played": int(len(vgrp)),
-                "wins": vw,
-                "losses": int(vl),
-                "win_pct": vpct,
-            })
-        venue_records.sort(key=lambda x: -x["played"])
-
-        # Toss statistics
-        tosses_won = int((tm["toss_winner"] == canonical_name).sum())
-        elected_field = int(((tm["toss_winner"] == canonical_name) & (tm["toss_decision"] == "field")).sum())
-        elected_bat = int(((tm["toss_winner"] == canonical_name) & (tm["toss_decision"] == "bat")).sum())
-        toss_and_match_won = int(((tm["toss_winner"] == canonical_name) & (tm["final_winner"] == canonical_name)).sum())
-        toss_match_win_rate = round(toss_and_match_won / tosses_won * 100, 1) if tosses_won > 0 else 0.0
-
-        # Phase Scoring (Powerplay, Middle, Death)
-        def get_phase(o):
-            if o <= 5: return "Powerplay (1-6)"
-            elif o <= 15: return "Middle (7-16)"
-            else: return "Death (17-20)"
-        
-        t_del_phase = t_del.copy()
-        t_del_phase["phase"] = t_del_phase["over_index"].apply(get_phase)
-        p_agg = t_del_phase.groupby("phase").agg(
-            runs=("runs_total", "sum"),
-            legal_balls=("legal_delivery", "sum"),
-            wickets=("team_wickets_on_ball", "sum"),
+    def _build_team_rows(self) -> None:
+        """One row per team per match: result, Super Over, toss, innings order, runs, wickets and phase totals."""
+        m = self._matches
+        cols = [
+            "match_id", "season", "date", "venue_canonical", "toss_winner", "toss_decision",
+            "outcome_type", "final_winner", "decided_by", "outcome_method",
+        ]
+        t = pd.concat([
+            m[cols].assign(team=m["team1"], opponent=m["team2"]),
+            m[cols].assign(team=m["team2"], opponent=m["team1"]),
+        ], ignore_index=True)
+        has_winner = t["final_winner"].notna()
+        t["result"] = np.select(
+            [t["outcome_type"] == "no result", has_winner & (t["final_winner"] == t["team"]), has_winner,
+             t["outcome_type"] == "tie"],
+            ["no_result", "won", "lost", "tied"],
+            default="not_recorded",
         )
-        
-        pp_runs = int(p_agg.loc["Powerplay (1-6)", "runs"]) if "Powerplay (1-6)" in p_agg.index else 0
-        pp_balls = int(p_agg.loc["Powerplay (1-6)", "legal_balls"]) if "Powerplay (1-6)" in p_agg.index else 1
-        pp_wkts = int(p_agg.loc["Powerplay (1-6)", "wickets"]) if "Powerplay (1-6)" in p_agg.index else 0
-        
-        mid_runs = int(p_agg.loc["Middle (7-16)", "runs"]) if "Middle (7-16)" in p_agg.index else 0
-        mid_balls = int(p_agg.loc["Middle (7-16)", "legal_balls"]) if "Middle (7-16)" in p_agg.index else 1
-        mid_wkts = int(p_agg.loc["Middle (7-16)", "wickets"]) if "Middle (7-16)" in p_agg.index else 0
-        
-        dth_runs = int(p_agg.loc["Death (17-20)", "runs"]) if "Death (17-20)" in p_agg.index else 0
-        dth_balls = int(p_agg.loc["Death (17-20)", "legal_balls"]) if "Death (17-20)" in p_agg.index else 1
-        dth_wkts = int(p_agg.loc["Death (17-20)", "wickets"]) if "Death (17-20)" in p_agg.index else 0
+        t["regulation_tie"] = t["outcome_type"] == "tie"
+        t["super_over"] = np.where((t["decided_by"] == "super_over") & has_winner, t["result"], "")
+        t["toss_won"] = t["toss_winner"] == t["team"]
+        first = self._innings[self._innings["innings"] == 1].set_index("match_id")["batting_team"]
+        t["batted_first"] = t["match_id"].map(first) == t["team"]
 
-        # 2022-2025 comparative window (if active)
-        comp_df = tm[(tm["season"] >= 2022) & (tm["season"] <= 2025)]
-        comp_played = len(comp_df)
-        comp_wins = int((comp_df["final_winner"] == canonical_name).sum())
-        comp_losses = comp_played - comp_wins - int((comp_df["regulation_result"] == "no result").sum())
-        comp_decided = comp_wins + comp_losses
-        comp_pct = round(comp_wins / comp_decided * 100, 2) if comp_decided > 0 else 0.0
+        # Innings totals as the batting side and as the fielding side
+        counts: List[str] = []
+        for team_col, names in (
+            ("batting_team", ["runs_scored", "wickets_lost", "balls_faced"]),
+            ("bowling_team", ["runs_conceded", "wickets_taken", "balls_bowled"]),
+        ):
+            agg = self._innings.groupby(["match_id", team_col])[["runs", "wickets", "legal_balls"]].sum()
+            agg.columns = names
+            agg.index.names = ["match_id", "team"]
+            t = t.merge(agg.reset_index(), on=["match_id", "team"], how="left")
+            counts += names
+
+        # Batting totals per phase
+        d = self._deliveries
+        stats = d[["match_id", "batting_team"]].assign(
+            phase=np.select([d["over_index"] <= PHASES[0][3], d["over_index"] <= PHASES[1][3]],
+                            [PHASES[0][0], PHASES[1][0]], PHASES[2][0]),
+            runs=d["runs_total"].astype("int64"),
+            balls=d["legal_delivery"].astype("int64"),
+            wickets=d["team_wickets_on_ball"].astype("int64"),
+        )
+        agg = stats.groupby(["match_id", "batting_team", "phase"])[["runs", "balls", "wickets"]].sum().unstack("phase", fill_value=0)
+        agg.columns = [f"bat_{phase}_{stat}" for stat, phase in agg.columns]
+        agg.index.names = ["match_id", "team"]
+        agg = agg.reset_index().astype({"match_id": "int64"})
+        t = t.merge(agg, on=["match_id", "team"], how="left")
+        counts += [c for c in agg.columns if c.startswith("bat_")]
+
+        # A team that never batted or bowled in a match (e.g. abandoned early) has zero totals
+        t[counts] = t[counts].fillna(0).astype("int64")
+        self._team_rows = t
+
+    def _resolve_team(self, key: str) -> str:
+        name = TEAM_NAME_MAP.get(key.lower())
+        if not name:
+            raise KeyError(f"Team '{key}' is not one of the {len(FRANCHISE_METADATA)} canonical franchises.")
+        return name
+
+    def _team_rows_for(self, name: str, season: Optional[int]) -> pd.DataFrame:
+        """The franchise's team-match rows, optionally for one season it played."""
+        if season is not None and season not in self._franchise_seasons[name]:
+            played = format_season_ranges(self._franchise_seasons[name])
+            raise KeyError(f"{name} did not play in the {season} season (seasons played: {played}).")
+        rows = self._team_rows[self._team_rows["team"] == name]
+        return rows if season is None else rows[rows["season"] == season]
+
+    @staticmethod
+    def _totals(rows: pd.DataFrame) -> Dict[str, int]:
+        return {k: int(rows[k].sum()) for k in ("runs_scored", "runs_conceded", "wickets_lost", "wickets_taken")}
+
+    @staticmethod
+    def _phase_records(rows: pd.DataFrame) -> List[Dict[str, Any]]:
+        records = []
+        for key, label, first_over, last_over in PHASES:
+            runs, balls, wickets = (int(rows[f"bat_{key}_{s}"].sum()) for s in ("runs", "balls", "wickets"))
+            records.append({
+                "phase": key, "label": label, "overs": f"{first_over + 1}–{last_over + 1}",
+                "batting_runs": runs, "batting_legal_balls": balls,
+                "batting_run_rate": run_rate(runs, balls),
+                "batting_run_rate_state": None if balls else "no_legal_balls",
+                "wickets_lost": wickets,
+                "wickets_lost_per_six": round(wickets / balls * 6, 3) if balls else None,
+            })
+        return records
+
+    @staticmethod
+    def _venue_records(rows: pd.DataFrame, min_matches: int) -> Tuple[List[Dict[str, Any]], int]:
+        """Venues with at least min_matches matches in these rows, most matches first; and the venue total."""
+        records = [{"venue": v, **result_summary(g)} for v, g in rows.groupby("venue_canonical")]
+        shown = sorted((r for r in records if r["played"] >= min_matches), key=lambda r: (-r["played"], r["venue"]))
+        return shown, len(records)
+
+    def get_team_overview(self, team_slug_or_name: str, season: Optional[int] = None) -> Dict[str, Any]:
+        """Franchise record for all seasons or one season; every number is recomputed for the selection."""
+        self.ensure_loaded()
+        name = self._resolve_team(team_slug_or_name)
+        team_item = self._team_item(name)
+        rows = self._team_rows_for(name, season)
+        seasons = sorted(int(s) for s in rows["season"].unique())
+        decided_order = rows[rows["result"] != "no_result"]
+        phases = self._phase_records(rows)
+        venues, _ = self._venue_records(rows, 3)
+        toss = rows[rows["toss_won"]]
+        window = rows[(rows["season"] >= 2022) & (rows["season"] <= 2025)]
 
         return {
             "team": team_item,
             "coverage": {
-                "season_filter": season if season is not None else f"All Seasons ({team_item['seasons_active']})",
-                "first_season": int(tm["season"].min()),
-                "last_season": int(tm["season"].max()),
+                "season_filter": season,
+                "seasons_in_scope": seasons,
+                "first_season": seasons[0],
+                "last_season": seasons[-1],
                 "total_seasons_participated": len(team_item["active_seasons"]),
             },
             "all_time": {
-                "played": total_played,
-                "wins": wins,
-                "losses": losses,
-                "regulation_ties": regulation_ties,
-                "no_results": no_results,
-                "win_pct": win_pct,
-                "runs_scored": runs_scored,
-                "runs_conceded": runs_conceded,
-                "wickets_lost": wickets_lost,
-                "wickets_taken": wickets_taken,
-                "denominator_description": "Wins divided by decided matches (matches with a confirmed winner), consistent with official IPL records.",
+                **result_summary(rows),
+                "regulation_ties": int(rows["regulation_tie"].sum()),
+                **self._totals(rows),
+                "denominator_description": TEAM_DEFINITIONS["win_pct"],
             },
             "comparative_2022_2025": {
-                "played": comp_played,
-                "wins": comp_wins,
-                "losses": comp_losses,
-                "win_pct": comp_pct,
-                "window": "2022–2025 (4-Year Comparative Era)",
-            } if meta["status"] == "Active" else None,
-            "batting_first": {
-                "played": bat1_decided,
-                "wins": bat1_wins,
-                "losses": bat1_losses,
-                "win_pct": bat1_pct,
-            },
-            "chasing": {
-                "played": chase_decided,
-                "wins": chase_wins,
-                "losses": chase_losses,
-                "win_pct": chase_pct,
-            },
+                **result_summary(window), "window": "2022–2025 (4-Year Comparative Era)",
+            } if season is None and len(window) else None,
+            "batting_first": result_summary(decided_order[decided_order["batted_first"]]),
+            "chasing": result_summary(decided_order[~decided_order["batted_first"]]),
+            "innings_order_no_results": int(len(rows) - len(decided_order)),
+            "season_history": [
+                {"season": int(s), **result_summary(g), "regulation_ties": int(g["regulation_tie"].sum()), **self._totals(g)}
+                for s, g in rows.groupby("season")
+            ],
+            "venue_records": venues,
+            "opponents": sorted(
+                ({"opponent": o, "opponent_short_name": FRANCHISE_METADATA[o]["short_name"], **result_summary(g)}
+                 for o, g in rows.groupby("opponent")),
+                key=lambda r: (-r["played"], r["opponent"]),
+            ),
+            "phases": phases,
+            # Flat batting phase rates the current page reads; the same values as phases
             "phase_scoring": {
-                "powerplay_run_rate": round(pp_runs / pp_balls * 6.0, 2),
-                "powerplay_wickets_per_six_balls": round(pp_wkts / pp_balls * 6.0, 3),
-                "middle_run_rate": round(mid_runs / mid_balls * 6.0, 2),
-                "middle_wickets_per_six_balls": round(mid_wkts / mid_balls * 6.0, 3),
-                "death_run_rate": round(dth_runs / dth_balls * 6.0, 2),
-                "death_wickets_per_six_balls": round(dth_wkts / dth_balls * 6.0, 3),
+                **{f"{p['phase']}_run_rate": p["batting_run_rate"] for p in phases},
+                **{f"{p['phase']}_wickets_per_six_balls": p["wickets_lost_per_six"] for p in phases},
             },
             "toss_stats": {
-                "tosses_won": tosses_won,
-                "elected_to_field": elected_field,
-                "elected_to_bat": elected_bat,
-                "toss_match_win_rate": toss_match_win_rate,
+                "tosses_won": int(len(toss)),
+                "elected_to_bat": int((toss["toss_decision"] == "bat").sum()),
+                "elected_to_field": int((toss["toss_decision"] == "field").sum()),
+                "toss_match_win_rate": result_summary(toss)["win_pct"],
+                "after_winning_toss": result_summary(toss),
+                "chose_to_bat": result_summary(toss[toss["toss_decision"] == "bat"]),
+                "chose_to_field": result_summary(toss[toss["toss_decision"] == "field"]),
             },
-            "season_history": season_history,
-            "venue_records": venue_records[:15],
+            "definitions": TEAM_DEFINITIONS,
+            "state_definitions": TEAM_STATE_DEFINITIONS,
         }
 
-    def get_head_to_head(self, team_a_key: str, team_b_key: str) -> Dict[str, Any]:
-        """Compute full head-to-head records between any two franchises across 2008–2026."""
+    def get_team_venues(self, team_slug_or_name: str, season: Optional[int] = None, min_matches: int = 3) -> Dict[str, Any]:
+        """Venue records for the selection, keeping venues with at least min_matches matches."""
         self.ensure_loaded()
-        team_a = TEAM_NAME_MAP.get(team_a_key.lower())
-        team_b = TEAM_NAME_MAP.get(team_b_key.lower())
-        if not team_a or not team_b:
-            raise KeyError(f"Invalid team keys: '{team_a_key}', '{team_b_key}'.")
+        name = self._resolve_team(team_slug_or_name)
+        rows = self._team_rows_for(name, season)
+        venues, total = self._venue_records(rows, min_matches)
+        return {
+            "team": self._team_item(name),
+            "season_filter": season,
+            "min_matches": min_matches,
+            "venues_total": total,
+            "venues_shown": len(venues),
+            "matches_shown": sum(v["played"] for v in venues),
+            "venues": venues,
+        }
+
+    def get_head_to_head(self, team_a_key: str, team_b_key: str, season: Optional[int] = None) -> Dict[str, Any]:
+        """Head-to-head record between two franchises, all seasons or one; B vs A mirrors A vs B."""
+        self.ensure_loaded()
+        team_a, team_b = self._resolve_team(team_a_key), self._resolve_team(team_b_key)
         if team_a == team_b:
             raise ValueError("Select two distinct franchises for Head-to-Head comparison.")
+        rows = self._team_rows_for(team_a, season)
+        self._team_rows_for(team_b, season)  # the opponent must also have played that season
+        rows = rows[rows["opponent"] == team_b].sort_values(["date", "match_id"], ascending=False)
+        mirror = rows.assign(result=rows["result"].replace({"won": "lost", "lost": "won"}),
+                             super_over=rows["super_over"].replace({"won": "lost", "lost": "won"}))
+        a, b = result_summary(rows), result_summary(mirror)
+        won, lost = rows["result"] == "won", rows["result"] == "lost"
 
-        m_df = self._matches
-        i_df = self._innings
+        scores = self._innings[self._innings["match_id"].isin(rows["match_id"])].sort_values("innings")
+        scorecards = {
+            mid: " vs ".join(f"{r.batting_team} {r.runs}/{r.wickets}" for r in grp.itertuples())
+            for mid, grp in scores.groupby("match_id")
+        }
+        first_runs = scores[scores["innings"] == 1].set_index("match_id")["runs"].to_dict()
+        second_runs = scores[scores["innings"] == 2].set_index("match_id")["runs"].to_dict()
 
-        h2h = m_df[
-            ((m_df["team1"] == team_a) & (m_df["team2"] == team_b))
-            | ((m_df["team1"] == team_b) & (m_df["team2"] == team_a))
-        ].sort_values("date", ascending=False).copy()
-
-        total = len(h2h)
-        a_wins = int((h2h["final_winner"] == team_a).sum())
-        b_wins = int((h2h["final_winner"] == team_b).sum())
-        ties = int((h2h["regulation_result"] == "tie").sum())
-        no_res = int((h2h["regulation_result"] == "no result").sum())
-
-        # Innings 1 vs 2 for team_a
-        inn1_map = dict(zip(i_df[i_df["innings"] == 1]["match_id"], i_df[i_df["innings"] == 1]["batting_team"]))
-        
-        a_bat1_wins = sum(1 for _, r in h2h.iterrows() if r["final_winner"] == team_a and inn1_map.get(r["match_id"]) == team_a)
-        a_chase_wins = sum(1 for _, r in h2h.iterrows() if r["final_winner"] == team_a and inn1_map.get(r["match_id"]) == team_b)
-        b_bat1_wins = sum(1 for _, r in h2h.iterrows() if r["final_winner"] == team_b and inn1_map.get(r["match_id"]) == team_b)
-        b_chase_wins = sum(1 for _, r in h2h.iterrows() if r["final_winner"] == team_b and inn1_map.get(r["match_id"]) == team_a)
-
-        team1_item = self._team_item(team_a)
-        team2_item = self._team_item(team_b)
-
-        recent_encounters = []
-        for _, r in h2h.iterrows():
-            mid = r["match_id"]
-            m_inns = i_df[i_df["match_id"] == mid].sort_values("innings")
-            i1_runs = int(m_inns[m_inns["innings"] == 1]["runs"].sum()) if len(m_inns[m_inns["innings"] == 1]) > 0 else 0
-            i2_runs = int(m_inns[m_inns["innings"] == 2]["runs"].sum()) if len(m_inns[m_inns["innings"] == 2]) > 0 else 0
-            scores = " vs ".join([f"{inn['batting_team']} {inn['runs']}/{inn['wickets']}" for _, inn in m_inns.iterrows()])
-            summary = f"{scores} ({r['decided_by']})" if pd.notna(r.get("decided_by")) else scores
-            
-            recent_encounters.append({
-                "match_id": int(mid),
-                "season": int(r["season"]),
-                "date": str(r["date"]),
-                "venue": str(r["venue_canonical"]),
-                "winner": str(r["final_winner"]) if pd.notna(r["final_winner"]) else None,
-                "margin_or_summary": summary,
-                "innings1_runs": i1_runs,
-                "innings2_runs": i2_runs,
+        meetings = []
+        for r in rows.itertuples():
+            if r.result == "no_result":
+                outcome = "No result"
+            elif r.result == "tied":
+                outcome = "Tied (no Super Over result recorded)"
+            else:
+                winner = team_a if r.result == "won" else team_b
+                how = " (Super Over)" if r.super_over else f" ({r.outcome_method})" if pd.notna(r.outcome_method) else ""
+                outcome = f"{winner} won{how}"
+            meetings.append({
+                "match_id": int(r.match_id),
+                "season": int(r.season),
+                "date": str(r.date),
+                "venue": str(r.venue_canonical),
+                "winner": str(r.final_winner) if pd.notna(r.final_winner) else None,
+                "result_text": outcome,
+                "super_over": bool(r.super_over),
+                "margin_or_summary": f"{scorecards.get(r.match_id, 'No innings recorded')} · {outcome}",
+                "innings1_runs": int(first_runs.get(r.match_id, 0)),
+                "innings2_runs": int(second_runs.get(r.match_id, 0)),
             })
 
+        span = format_season_ranges(sorted(int(s) for s in rows["season"].unique())) or "no seasons"
         return {
-            "team1": team1_item,
-            "team2": team2_item,
-            "total_matches": total,
-            "team1_wins": a_wins,
-            "team2_wins": b_wins,
-            "ties_super_overs": ties,
-            "no_results": no_res,
-            "team1_batting_first_wins": a_bat1_wins,
-            "team2_batting_first_wins": b_bat1_wins,
-            "team1_chasing_wins": a_chase_wins,
-            "team2_chasing_wins": b_chase_wins,
-            "recent_meetings": recent_encounters,
+            "team1": self._team_item(team_a),
+            "team2": self._team_item(team_b),
+            "season_filter": season,
+            "total_matches": a["played"],
+            "team1_wins": a["wins"],
+            "team2_wins": b["wins"],
+            "ties_super_overs": int(rows["regulation_tie"].sum()),
+            "unresolved_ties": a["ties"],
+            "team1_super_over_wins": a["super_over_wins"],
+            "team2_super_over_wins": b["super_over_wins"],
+            "no_results": a["no_results"],
+            "win_pct_denominator": a["win_pct_denominator"],
+            "team1_win_pct": a["win_pct"],
+            "team2_win_pct": b["win_pct"],
+            "team1_batting_first_wins": int((won & rows["batted_first"]).sum()),
+            "team2_batting_first_wins": int((lost & ~rows["batted_first"]).sum()),
+            "team1_chasing_wins": int((won & ~rows["batted_first"]).sum()),
+            "team2_chasing_wins": int((lost & rows["batted_first"]).sum()),
+            "recent_meetings": meetings,
             "notes": [
-                f"Historical record covers all {total} official matches between {team_a} and {team_b} from 2008 through 2026.",
-                "Ties decided by Super Over are credited to the Super Over winner for win percentages.",
+                f"{a['played']} matches between {team_a} and {team_b} ({span}).",
+                "A tie decided by a Super Over counts as a win for the Super Over winner and is also counted in ties_super_overs.",
             ],
         }
 

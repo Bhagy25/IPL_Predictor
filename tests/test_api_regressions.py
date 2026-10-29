@@ -3,6 +3,7 @@
 Expected values are computed here from the processed CSVs with plain pandas,
 independently of the analytics engine, rather than hard-coded.
 """
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 import pandas as pd
@@ -34,7 +35,10 @@ def team_record(matches: pd.DataFrame, team: str, season: int) -> dict:
     tm = matches[((matches["team1"] == team) | (matches["team2"] == team)) & (matches["season"] == season)]
     wins = int((tm["final_winner"] == team).sum())
     decided = int(tm["final_winner"].notna().sum())
-    return {"played": len(tm), "wins": wins, "losses": decided - wins, "win_pct": round(wins / decided * 100, 2)}
+    # Win % = wins / (matches - no results), one decimal, halves rounded up
+    denominator = len(tm) - int((tm["outcome_type"] == "no result").sum())
+    win_pct = float((Decimal(wins * 100) / Decimal(denominator)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
+    return {"played": len(tm), "wins": wins, "losses": decided - wins, "win_pct": win_pct}
 
 
 def player_id(name: str) -> str:

@@ -69,7 +69,9 @@ def test_team_overview_all_time_and_season_filter():
     assert data["all_time"]["played"] == 266
     assert data["all_time"]["wins"] == 148
     assert data["all_time"]["losses"] == 117
-    assert data["all_time"]["win_pct"] == 55.85
+    # Win % = wins / (matches - no results) to one decimal: 148 / 265 = 55.849...
+    assert data["all_time"]["no_results"] == 1 and data["all_time"]["win_pct_denominator"] == 265
+    assert data["all_time"]["win_pct"] == 55.8
     assert data["all_time"]["runs_scored"] > 40000
     assert data["all_time"]["runs_conceded"] > 39000
     assert data["all_time"]["wickets_lost"] > 1400

@@ -105,78 +105,117 @@ class TeamListItem(BaseModel):
     primary_color: str = Field(default="#D9B15F", description="Hex brand color")
 
 
-class TeamSeasonRecord(BaseModel):
+class TeamResultSummary(BaseModel):
+    played: int = Field(..., description="Matches in the selection")
+    wins: int = Field(..., description="Won in regulation, by D/L method or via a Super Over")
+    losses: int = Field(..., description="Lost in regulation, by D/L method or via a Super Over")
+    ties: int = Field(default=0, description="Ties with no Super Over result recorded")
+    no_results: int = Field(default=0, description="Abandoned or no result")
+    results_not_recorded: int = Field(default=0, description="Matches whose result is missing from the source")
+    super_over_wins: int = Field(default=0, description="Ties won in a Super Over (also counted in wins)")
+    super_over_losses: int = Field(default=0, description="Ties lost in a Super Over (also counted in losses)")
+    win_pct: Optional[float] = Field(None, description="Wins / (matches - no results), one decimal; null with win_pct_state when the divisor is 0")
+    win_pct_denominator: int = Field(default=0, description="Matches minus no results")
+    win_pct_state: Optional[str] = Field(None, description="'no_decided_matches' when win_pct is null")
+
+
+class TeamSeasonRecord(TeamResultSummary):
     season: int = Field(..., description="Tournament year")
-    played: int = Field(..., description="Matches played")
-    wins: int = Field(..., description="Matches won")
-    losses: int = Field(..., description="Matches lost")
-    tied_no_result: int = Field(default=0, description="Tied or abandoned matches")
-    win_pct: float = Field(..., description="Win percentage in season (%)")
+    regulation_ties: int = Field(default=0, description="Matches tied in regulation play")
+    runs_scored: int = Field(default=0, description="Runs scored, extras included")
+    runs_conceded: int = Field(default=0, description="Runs conceded, extras included")
+    wickets_lost: int = Field(default=0, description="Team wickets lost")
+    wickets_taken: int = Field(default=0, description="Team wickets taken")
 
 
-class TeamVenueRecord(BaseModel):
-    venue: str = Field(..., description="Canonical stadium name")
-    played: int = Field(..., description="Matches at this ground")
-    wins: int = Field(..., description="Wins at this ground")
-    losses: int = Field(..., description="Losses at this ground")
-    win_pct: float = Field(..., description="Win rate at this ground (%)")
+class TeamVenueRecord(TeamResultSummary):
+    venue: str = Field(..., description="Canonical venue name")
 
 
-class TeamConditionRecord(BaseModel):
-    played: int = Field(..., description="Matches in this condition")
-    wins: int = Field(..., description="Wins in this condition")
-    losses: int = Field(..., description="Losses in this condition")
-    win_pct: float = Field(..., description="Win rate (%)")
+class TeamOpponentRecord(TeamResultSummary):
+    opponent: str = Field(..., description="Opposing canonical franchise")
+    opponent_short_name: str = Field(..., description="Opponent's display code")
+
+
+class TeamPhaseRecord(BaseModel):
+    phase: str = Field(..., description="'powerplay', 'middle' or 'death'")
+    label: str = Field(..., description="Display label with overs")
+    overs: str = Field(..., description="Overs covered, e.g. '1–6'")
+    batting_runs: int = Field(..., description="Runs scored in the phase, extras included")
+    batting_legal_balls: int = Field(..., description="Legal balls faced in the phase")
+    batting_run_rate: Optional[float] = Field(None, description="Runs per 6 legal balls; null with no legal ball")
+    batting_run_rate_state: Optional[str] = Field(None, description="'no_legal_balls' when the run rate is null")
+    wickets_lost: int = Field(..., description="Team wickets lost in the phase")
+    wickets_lost_per_six: Optional[float] = Field(None, description="Wickets lost per 6 legal balls")
 
 
 class TeamPhaseScoring(BaseModel):
-    powerplay_run_rate: float = Field(..., description="Runs per 6 legal balls in Powerplay (overs 1-6)")
-    middle_run_rate: float = Field(..., description="Runs per 6 legal balls in Middle overs (overs 7-16)")
-    death_run_rate: float = Field(..., description="Runs per 6 legal balls in Death overs (overs 17-20)")
-    overall_run_rate: Optional[float] = Field(None, description="Overall tournament run rate")
-    wickets_lost_per_over: Optional[float] = Field(None, description="Average batting dismissals per over")
+    powerplay_run_rate: Optional[float] = Field(None, description="Batting run rate in overs 1-6 (same as phases)")
+    middle_run_rate: Optional[float] = Field(None, description="Batting run rate in overs 7-16 (same as phases)")
+    death_run_rate: Optional[float] = Field(None, description="Batting run rate in overs 17-20 (same as phases)")
     powerplay_wickets_per_six_balls: Optional[float] = Field(None, description="Powerplay wickets lost per 6 balls")
     middle_wickets_per_six_balls: Optional[float] = Field(None, description="Middle overs wickets lost per 6 balls")
     death_wickets_per_six_balls: Optional[float] = Field(None, description="Death overs wickets lost per 6 balls")
 
 
 class TeamTossStats(BaseModel):
-    tosses_won: int = Field(..., description="Total toss victories")
-    elected_to_bat: int = Field(default=0, description="Elected to bat first")
-    elected_to_field: int = Field(default=0, description="Elected to chase/field first")
-    toss_match_win_rate: float = Field(..., description="Win rate when winning the toss (%)")
+    tosses_won: int = Field(..., description="Tosses won")
+    elected_to_bat: int = Field(default=0, description="Chose to bat first after winning the toss")
+    elected_to_field: int = Field(default=0, description="Chose to field first after winning the toss")
+    toss_match_win_rate: Optional[float] = Field(None, description="Win percentage after winning the toss")
+    after_winning_toss: TeamResultSummary = Field(..., description="Results after winning the toss")
+    chose_to_bat: TeamResultSummary = Field(..., description="Results after winning the toss and batting first")
+    chose_to_field: TeamResultSummary = Field(..., description="Results after winning the toss and fielding first")
 
 
-class TeamSummaryRecord(BaseModel):
-    played: int = Field(..., description="Total matches played")
-    wins: int = Field(..., description="Total matches won")
-    losses: int = Field(..., description="Total matches lost")
-    ties: int = Field(default=0, description="Super Over or regulation ties")
-    regulation_ties: Optional[int] = Field(default=0, description="Regulation ties")
-    no_results: int = Field(default=0, description="Abandoned matches")
-    win_pct: float = Field(..., description="Win percentage (%)")
-    runs_scored: Optional[int] = Field(default=0, description="Total runs scored")
-    runs_conceded: Optional[int] = Field(default=0, description="Total runs conceded")
-    wickets_lost: Optional[int] = Field(default=0, description="Total batting wickets lost")
-    wickets_taken: Optional[int] = Field(default=0, description="Total bowling wickets taken")
-    denominator_description: str = Field(
-        default="Wins divided by decided matches (matches with a confirmed winner), consistent with official IPL records.",
-        description="Explicit definition of win percentage denominator"
-    )
+class TeamSummaryRecord(TeamResultSummary):
+    regulation_ties: int = Field(default=0, description="Matches tied in regulation play (Super Over decided or not)")
+    runs_scored: int = Field(default=0, description="Runs scored, extras included")
+    runs_conceded: int = Field(default=0, description="Runs conceded, extras included")
+    wickets_lost: int = Field(default=0, description="Team wickets lost (team_wickets_on_ball)")
+    wickets_taken: int = Field(default=0, description="Team wickets taken (team_wickets_on_ball)")
+    denominator_description: str = Field(..., description="Win percentage rule")
+
+
+class TeamComparativeRecord(TeamResultSummary):
+    window: str = Field(..., description="Fixed comparison window")
+
+
+class TeamCoverage(BaseModel):
+    season_filter: Optional[int] = Field(None, description="Season applied, or null for all seasons")
+    seasons_in_scope: List[int] = Field(..., description="Seasons the numbers are computed from")
+    first_season: int = Field(..., description="First season in scope")
+    last_season: int = Field(..., description="Last season in scope")
+    total_seasons_participated: int = Field(..., description="Seasons the franchise played in total")
 
 
 class TeamOverviewResponse(BaseModel):
     team: TeamListItem = Field(..., description="Franchise metadata")
-    coverage: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Active seasons coverage and filters")
-    all_time: TeamSummaryRecord = Field(..., description="All-time historical performance")
-    comparative_2022_2025: Optional[Dict[str, Any]] = Field(None, description="2022–2025 comparative window")
-    batting_first: TeamConditionRecord = Field(..., description="Performance when batting first")
-    chasing: TeamConditionRecord = Field(..., description="Performance when chasing")
-    season_history: List[TeamSeasonRecord] = Field(..., description="Year-by-year performance breakdown")
-    venue_records: List[TeamVenueRecord] = Field(..., description="Top venue performance records")
-    phase_scoring: TeamPhaseScoring = Field(..., description="Phase-by-phase scoring rates")
-    toss_stats: TeamTossStats = Field(..., description="Toss decision statistics")
+    coverage: TeamCoverage = Field(..., description="Seasons in scope")
+    all_time: TeamSummaryRecord = Field(..., description="Record for the selection (all seasons or one)")
+    comparative_2022_2025: Optional[TeamComparativeRecord] = Field(None, description="Fixed 2022–2025 window; all-season view only")
+    batting_first: TeamResultSummary = Field(..., description="Results when batting first (no results excluded)")
+    chasing: TeamResultSummary = Field(..., description="Results when chasing (no results excluded)")
+    innings_order_no_results: int = Field(default=0, description="No-result matches left out of batting first / chasing")
+    season_history: List[TeamSeasonRecord] = Field(..., description="Season-by-season record within the selection")
+    venue_records: List[TeamVenueRecord] = Field(..., description="Venues with at least 3 matches in the selection")
+    opponents: List[TeamOpponentRecord] = Field(default_factory=list, description="Record against every opponent")
+    phases: List[TeamPhaseRecord] = Field(default_factory=list, description="Batting by phase")
+    phase_scoring: TeamPhaseScoring = Field(..., description="Flat batting phase rates (same values as phases)")
+    toss_stats: TeamTossStats = Field(..., description="Toss decisions and results")
+    definitions: Dict[str, str] = Field(default_factory=dict, description="How every number is defined")
+    state_definitions: Dict[str, str] = Field(default_factory=dict, description="Meaning of each *_state value")
     notices: List[str] = Field(default_factory=list, description="Methodology, exclusions and rules")
+
+
+class TeamVenueResponse(BaseModel):
+    team: TeamListItem = Field(..., description="Franchise metadata")
+    season_filter: Optional[int] = Field(None, description="Season applied, or null for all seasons")
+    min_matches: int = Field(..., description="Minimum matches a venue needs to be listed")
+    venues_total: int = Field(..., description="Venues the team played at in the selection")
+    venues_shown: int = Field(..., description="Venues meeting the minimum")
+    matches_shown: int = Field(..., description="Matches at the venues shown")
+    venues: List[TeamVenueRecord] = Field(..., description="Venue records, most matches first")
 
 
 class HeadToHeadMeeting(BaseModel):
@@ -184,8 +223,10 @@ class HeadToHeadMeeting(BaseModel):
     season: int = Field(..., description="IPL season")
     date: str = Field(..., description="Date (YYYY-MM-DD)")
     venue: str = Field(..., description="Canonical venue")
-    winner: Optional[str] = Field(None, description="Match winner or null if no result")
-    margin_or_summary: str = Field(..., description="Outcome description or scoreline")
+    winner: Optional[str] = Field(None, description="Match winner (Super Over winner for a decided tie); null otherwise")
+    result_text: str = Field(..., description="Result in words, e.g. 'Mumbai Indians won (Super Over)'")
+    super_over: bool = Field(default=False, description="True when a Super Over decided the match")
+    margin_or_summary: str = Field(..., description="Scorecard and result")
     innings1_runs: int = Field(..., description="First innings score")
     innings2_runs: int = Field(..., description="Second innings score")
 
@@ -193,17 +234,24 @@ class HeadToHeadMeeting(BaseModel):
 class HeadToHeadResponse(BaseModel):
     team1: TeamListItem = Field(..., description="First selected franchise")
     team2: TeamListItem = Field(..., description="Second selected franchise")
-    total_matches: int = Field(..., description="Total encounters between teams")
-    team1_wins: int = Field(..., description="Wins by Team 1")
-    team2_wins: int = Field(..., description="Wins by Team 2")
-    ties_super_overs: int = Field(default=0, description="Super Over or regulation ties")
+    season_filter: Optional[int] = Field(None, description="Season applied, or null for all seasons")
+    total_matches: int = Field(..., description="Matches between the teams in the selection")
+    team1_wins: int = Field(..., description="Wins by Team 1 (Super Over wins included)")
+    team2_wins: int = Field(..., description="Wins by Team 2 (Super Over wins included)")
+    ties_super_overs: int = Field(default=0, description="Matches tied in regulation play")
+    unresolved_ties: int = Field(default=0, description="Ties with no Super Over result recorded")
+    team1_super_over_wins: int = Field(default=0, description="Ties Team 1 won in a Super Over")
+    team2_super_over_wins: int = Field(default=0, description="Ties Team 2 won in a Super Over")
     no_results: int = Field(default=0, description="Abandoned encounters")
+    win_pct_denominator: int = Field(default=0, description="Matches minus no results")
+    team1_win_pct: Optional[float] = Field(None, description="Team 1 wins / denominator, one decimal")
+    team2_win_pct: Optional[float] = Field(None, description="Team 2 wins / denominator, one decimal")
     team1_batting_first_wins: int = Field(default=0, description="Team 1 wins when batting first")
     team2_batting_first_wins: int = Field(default=0, description="Team 2 wins when batting first")
     team1_chasing_wins: int = Field(default=0, description="Team 1 wins when chasing")
     team2_chasing_wins: int = Field(default=0, description="Team 2 wins when chasing")
-    recent_meetings: List[HeadToHeadMeeting] = Field(default_factory=list, description="Recent encounters list")
-    notes: List[str] = Field(default_factory=list, description="Historical and Super Over notes")
+    recent_meetings: List[HeadToHeadMeeting] = Field(default_factory=list, description="Every meeting in the selection, most recent first")
+    notes: List[str] = Field(default_factory=list, description="Coverage and Super Over notes")
 
 
 class TeamListResponse(BaseModel):
