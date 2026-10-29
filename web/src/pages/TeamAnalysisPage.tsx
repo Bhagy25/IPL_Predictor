@@ -38,11 +38,7 @@ import {
 import { fetchTeams, fetchTeamOverview, fetchTeamVenues, fetchHeadToHead } from '../api/teams';
 import { Column, DataTable, Tabs } from '../components/player/ProfileSections';
 import { FOCUS_RING, Stat, plural } from '../components/player/playerFormat';
-
-// Interim formatting; values are shown as the API returns them
-const fmtCount = (n: number | null | undefined): string | null => (n == null ? null : String(n));
-const fmtRate = (n: number | null | undefined): string | null => (n == null ? null : String(n));
-const fmtPct = (n: number | null | undefined): string | null => (n == null ? null : `${n}%`);
+import { fmtCount, fmtPct, fmtRate, fmtShare } from '../utils/format';
 
 const VENUE_MINIMUMS = [1, 3, 5, 10];
 const DEFAULT_VENUE_MINIMUM = 3;
@@ -419,13 +415,13 @@ export const TeamAnalysisPage: React.FC = () => {
               note={allTime.super_over_wins ? `incl. ${plural(allTime.super_over_wins, 'Super Over win')}` : 'Regulation, D/L or Super Over'} />
             <KpiCard label="Lost" tone="text-rose-400" value={fmtCount(allTime.losses)}
               note={allTime.super_over_losses ? `incl. ${plural(allTime.super_over_losses, 'Super Over loss', 'Super Over losses')}` : 'Regulation, D/L or Super Over'} />
-            <KpiCard label="Tied · No result" value={`${allTime.ties} · ${allTime.no_results}`} note="Ties without a Super Over result · abandoned" />
+            <KpiCard label="Tied · No result" value={`${fmtCount(allTime.ties)} · ${fmtCount(allTime.no_results)}`} note="Ties without a Super Over result · abandoned" />
             <KpiCard label="Win %" highlight value={<Stat value={fmtPct(allTime.win_pct)} reason={stateText(allTime.win_pct_state)} />}
-              note={`${allTime.wins} / ${allTime.win_pct_denominator} (matches − no results)`} />
+              note={`${fmtCount(allTime.wins)} / ${fmtCount(allTime.win_pct_denominator)} (matches − no results)`} />
             <KpiCard label="Batting first" value={<Stat value={fmtPct(teamOverview.batting_first.win_pct)} reason={stateText(teamOverview.batting_first.win_pct_state)} />}
-              note={`${teamOverview.batting_first.wins} / ${teamOverview.batting_first.win_pct_denominator}`} />
+              note={`${fmtCount(teamOverview.batting_first.wins)} / ${fmtCount(teamOverview.batting_first.win_pct_denominator)}`} />
             <KpiCard label="Chasing" value={<Stat value={fmtPct(teamOverview.chasing.win_pct)} reason={stateText(teamOverview.chasing.win_pct_state)} />}
-              note={`${teamOverview.chasing.wins} / ${teamOverview.chasing.win_pct_denominator}`} />
+              note={`${fmtCount(teamOverview.chasing.wins)} / ${fmtCount(teamOverview.chasing.win_pct_denominator)}`} />
           </div>
 
           {(allTime.super_over_wins + allTime.super_over_losses + allTime.ties > 0 || teamOverview.innings_order_no_results > 0) && (
@@ -576,13 +572,13 @@ export const TeamAnalysisPage: React.FC = () => {
               <div className="bg-[#1A1B1F] p-3 rounded-lg border border-[#D9B15F]/15">
                 <span className="text-[#B9B9B3] block">Chose to field</span>
                 <span className="font-extrabold text-[#F6F6F3]">
-                  {plural(teamOverview.toss_stats.elected_to_field, 'toss', 'tosses')} ({shareOf(teamOverview.toss_stats.elected_to_field, teamOverview.toss_stats.tosses_won)})
+                  {plural(teamOverview.toss_stats.elected_to_field, 'toss', 'tosses')} (<Stat value={fmtShare(teamOverview.toss_stats.elected_to_field, teamOverview.toss_stats.tosses_won)} reason="No toss won in this selection" />)
                 </span>
               </div>
               <div className="bg-[#1A1B1F] p-3 rounded-lg border border-[#D9B15F]/15">
                 <span className="text-[#B9B9B3] block">Chose to bat</span>
                 <span className="font-extrabold text-[#F6F6F3]">
-                  {plural(teamOverview.toss_stats.elected_to_bat, 'toss', 'tosses')} ({shareOf(teamOverview.toss_stats.elected_to_bat, teamOverview.toss_stats.tosses_won)})
+                  {plural(teamOverview.toss_stats.elected_to_bat, 'toss', 'tosses')} (<Stat value={fmtShare(teamOverview.toss_stats.elected_to_bat, teamOverview.toss_stats.tosses_won)} reason="No toss won in this selection" />)
                 </span>
               </div>
             </div>
@@ -820,10 +816,6 @@ const DEFINITION_LABELS: Record<string, string> = {
   venues: 'Venues', season_filter: 'Season filter',
 };
 
-// Share of a total as a whole percentage, or an unavailable marker when the total is zero
-const shareOf = (part: number, total: number): string =>
-  total > 0 ? `${Math.round((part / total) * 100)}%` : '—';
-
 const KpiCard: React.FC<{ label: string; value: React.ReactNode; note: string; tone?: string; highlight?: boolean }> = ({ label, value, note, tone = 'text-[#F6F6F3]', highlight = false }) => (
   <div className={`${highlight ? 'bg-[#1D1E22] border-[#D9B15F]/40 shadow-sm' : 'bg-[#1A1B1F] border-[#D9B15F]/15'} border rounded-xl p-4`}>
     <span className={`text-[11px] uppercase tracking-wider font-semibold ${highlight ? 'text-[#D9B15F]' : 'text-[#B9B9B3]'}`}>{label}</span>
@@ -866,7 +858,7 @@ function resultColumns<T extends TeamResultSummary>(first: Column<T>, stateText:
       cell: r => (
         <span className="font-extrabold text-[#D9B15F]">
           <Stat value={fmtPct(r.win_pct)} reason={stateText(r.win_pct_state)} />
-          <span className="block text-[10px] font-normal text-[#8E8E88]">{r.wins} / {r.win_pct_denominator}</span>
+          <span className="block text-[10px] font-normal text-[#8E8E88]">{fmtCount(r.wins)} / {fmtCount(r.win_pct_denominator)}</span>
         </span>
       ),
     },
@@ -892,7 +884,7 @@ const tossColumns = (stateText: StateText): Column<TossRow>[] => [
     cell: row => (
       <span className="font-bold text-[#D9B15F]">
         <Stat value={fmtPct(row.r.win_pct)} reason={stateText(row.r.win_pct_state)} />{' '}
-        <span className="text-[10px] font-normal text-[#8E8E88]">{row.r.wins} / {row.r.win_pct_denominator}</span>
+        <span className="text-[10px] font-normal text-[#8E8E88]">{fmtCount(row.r.wins)} / {fmtCount(row.r.win_pct_denominator)}</span>
       </span>
     ),
   },
