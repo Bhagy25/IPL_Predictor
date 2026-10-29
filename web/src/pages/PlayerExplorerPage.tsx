@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   User,
   Search,
@@ -65,7 +65,12 @@ export const PlayerExplorerPage: React.FC = () => {
   // Loading and error states
   const [listLoading, setListLoading] = useState<boolean>(true);
   const [profileLoading, setProfileLoading] = useState<boolean>(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Only the latest request may update state, so a slow earlier response cannot overwrite it
+  const listRequest = useRef(0);
+  const profileRequest = useRef(0);
 
   // Debounce search query
   useEffect(() => {
@@ -78,6 +83,7 @@ export const PlayerExplorerPage: React.FC = () => {
 
   // Load players list
   const loadPlayers = useCallback(async () => {
+    const requestId = ++listRequest.current;
     setListLoading(true);
     setError(null);
     try {
@@ -89,6 +95,7 @@ export const PlayerExplorerPage: React.FC = () => {
         page_size: pageSize,
         sort_by: sortBy,
       });
+      if (requestId !== listRequest.current) return;
       setPlayers(res.players);
       setTotalCount(res.total_count);
 
@@ -98,9 +105,9 @@ export const PlayerExplorerPage: React.FC = () => {
         setSelectedPlayerId(res.players[0].player_id || res.players[0].batter_id);
       }
     } catch (err: any) {
-      setError(err?.message || 'Failed to load players directory');
+      if (requestId === listRequest.current) setError(err?.message || 'Failed to load players directory');
     } finally {
-      setListLoading(false);
+      if (requestId === listRequest.current) setListLoading(false);
     }
   }, [debouncedQuery, selectedRole, selectedTier, page, sortBy, selectedPlayerId]);
 
@@ -111,14 +118,20 @@ export const PlayerExplorerPage: React.FC = () => {
   // Load selected player profile
   const loadProfile = useCallback(async () => {
     if (!selectedPlayerId) return;
+    const requestId = ++profileRequest.current;
     setProfileLoading(true);
+    setProfileError(null);
     try {
       const data = await fetchPlayerOverview(selectedPlayerId);
-      setProfile(data);
-    } catch (err) {
-      console.error('Failed to load player profile:', err);
+      if (requestId === profileRequest.current) setProfile(data);
+    } catch (err: any) {
+      if (requestId === profileRequest.current) {
+        // Never leave the previous player's figures on screen after a failure
+        setProfile(null);
+        setProfileError(err?.message || 'Failed to load player profile');
+      }
     } finally {
-      setProfileLoading(false);
+      if (requestId === profileRequest.current) setProfileLoading(false);
     }
   }, [selectedPlayerId]);
 
@@ -704,7 +717,26 @@ export const PlayerExplorerPage: React.FC = () => {
               </div>
 
             </div>
-          ) : null}
+          ) : (
+            <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-12 sm:p-16 text-center flex flex-col items-center justify-center gap-3">
+              {profileError ? (
+                <>
+                  <AlertCircle className="w-7 h-7 text-red-400" />
+                  <p className="text-sm font-semibold text-red-200">Unable to load this player profile</p>
+                  <p className="text-xs text-red-300/75 max-w-md">{profileError}</p>
+                  <button
+                    onClick={loadProfile}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2A1B1E] hover:bg-[#3A2227] text-red-200 border border-red-500/40"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Retry</span>
+                  </button>
+                </>
+              ) : (
+                <p className="text-sm font-semibold text-[#B9B9B3]">Select a player to view their career profile.</p>
+              )}
+            </div>
+          )}
         </section>
 
       </div>
