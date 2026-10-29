@@ -49,13 +49,19 @@ async def list_players(
     "/{player_id}/overview",
     response_model=PlayerProfileResponse,
     summary="Get detailed career profile (Batting, Bowling, Match Logs) for a player",
-    description="Returns career batting figures, bowling figures, recent match appearances with batting & bowling columns, opposition splits, and venue records.",
+    description="Returns the career summary with teams and seasons, career and season-wise batting and bowling "
+                "figures, and splits by team, opposition and venue. With `season`, every number is computed "
+                "from that season only (404 if the player has no appearance in it).",
 )
-async def get_player_overview(player_id: str) -> PlayerProfileResponse:
+async def get_player_overview(
+    player_id: str,
+    season: Optional[int] = Query(None, description="Compute every number for this season only"),
+) -> PlayerProfileResponse:
     try:
-        return player_service.get_player_overview(player_id)
+        return player_service.get_player_overview(player_id, season=season)
     except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        # args[0] is the plain message; str(KeyError) would wrap it in quotes
+        raise HTTPException(status_code=404, detail=exc.args[0])
     except DerivedDataUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc))
     except Exception as exc:

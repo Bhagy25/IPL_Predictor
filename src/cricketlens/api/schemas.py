@@ -217,39 +217,80 @@ class TeamListResponse(BaseModel):
 # ==========================================
 
 class PlayerBattingSummary(BaseModel):
-    innings: int = Field(..., description="Recorded batting appearances")
-    runs: int = Field(..., description="Total runs scored")
-    balls_faced: int = Field(..., description="Deliveries faced")
-    dismissals: int = Field(..., description="Times out")
-    not_outs: int = Field(..., description="Innings remaining not out")
-    average: float = Field(..., description="Batting average (runs / dismissals)")
-    strike_rate: float = Field(..., description="Runs scored per 100 balls")
-    highest_score: str = Field(..., description="Highest score (e.g. '113*' or '94')")
-    fours: int = Field(default=0, description="Fours hit")
-    sixes: int = Field(default=0, description="Sixes hit")
-    ducks: int = Field(default=0, description="Dismissed for 0")
-    scores_30_plus: int = Field(default=0, description="Scores >= 30")
-    scores_50_plus: int = Field(default=0, description="Scores >= 50")
-    scores_100_plus: int = Field(default=0, description="Centuries (>= 100)")
+    innings: int = Field(..., description="Batting innings: ordinary innings at the crease as striker or non-striker")
+    runs: int = Field(..., description="Total runs scored off the bat")
+    balls_faced: int = Field(..., description="Deliveries faced as striker, excluding wides")
+    dismissals: int = Field(..., description="Times out (retired hurt and retired not out are not dismissals)")
+    not_outs: int = Field(..., description="Innings minus dismissals")
+    average: Optional[float] = Field(None, description="Runs / dismissals; null when never dismissed (see average_state)")
+    average_state: Optional[str] = Field(None, description="'no_dismissals' when average is null, else null")
+    strike_rate: Optional[float] = Field(None, description="Runs per 100 balls faced; null when no ball was faced")
+    strike_rate_state: Optional[str] = Field(None, description="'no_balls_faced' when strike_rate is null, else null")
+    highest_score: str = Field(..., description="Highest score; '*' marks not out (e.g. '113*' or '94')")
+    fours: int = Field(default=0, description="Fours off the bat (non-boundary all-run fours excluded)")
+    sixes: int = Field(default=0, description="Sixes off the bat")
+    ducks: int = Field(default=0, description="Innings dismissed for 0, including without facing a ball")
+    scores_30_plus: int = Field(default=0, description="Innings of 30 or more runs")
+    scores_50_plus: int = Field(default=0, description="Innings of 50 or more runs")
+    scores_100_plus: int = Field(default=0, description="Innings of 100 or more runs")
+
+
+class PlayerBattingSeason(PlayerBattingSummary):
+    season: int = Field(..., description="Season year")
+
+
+class PlayerBattingTeamSplit(PlayerBattingSummary):
+    team: str = Field(..., description="Player's canonical franchise")
+
+
+class PlayerBattingOppositionSplit(PlayerBattingSummary):
+    opposition: str = Field(..., description="Opposing canonical franchise")
+
+
+class PlayerBattingVenueSplit(PlayerBattingSummary):
+    venue: str = Field(..., description="Canonical venue name")
 
 
 class PlayerBowlingSummary(BaseModel):
-    innings: int = Field(..., description="Innings bowled")
+    innings: int = Field(..., description="Innings in which the player bowled at least one delivery")
     legal_deliveries: int = Field(..., description="Legal deliveries bowled (excludes wides & noballs)")
-    overs_bowled: str = Field(..., description="Overs bowled in cricket notation (e.g. '342.4')")
+    overs_bowled: str = Field(..., description="Overs bowled in cricket notation (e.g. 22 legal balls = '3.4')")
     runs_conceded: int = Field(..., description="Runs conceded off bat + wides + noballs")
     wickets: int = Field(
         ...,
         description="Bowler-credited wickets: bowled, caught, caught and bowled, lbw, stumped, hit wicket "
                     "(run outs, retirements and obstructing the field are not credited); super overs excluded",
     )
-    bowling_average: Optional[float] = Field(None, description="Runs conceded per bowler-credited wicket")
-    bowling_strike_rate: Optional[float] = Field(None, description="Legal balls bowled per bowler-credited wicket")
-    economy_rate: float = Field(..., description="Runs conceded per 6 legal balls")
+    bowling_average: Optional[float] = Field(None, description="Runs conceded per bowler-credited wicket; null when no wicket")
+    bowling_average_state: Optional[str] = Field(None, description="'no_wickets' when bowling_average is null, else null")
+    bowling_strike_rate: Optional[float] = Field(None, description="Legal balls bowled per bowler-credited wicket; null when no wicket")
+    bowling_strike_rate_state: Optional[str] = Field(None, description="'no_wickets' when bowling_strike_rate is null, else null")
+    economy_rate: Optional[float] = Field(None, description="Runs conceded per 6 legal balls; null when no legal ball was bowled")
+    economy_rate_state: Optional[str] = Field(None, description="'no_legal_balls' when economy_rate is null, else null")
     best_bowling: str = Field(default="—", description="Best innings figures as wickets/runs: most wickets, ties broken by fewest runs (e.g. '5/10')")
     three_wicket_hauls: int = Field(default=0, description="Innings with exactly 3 bowler-credited wickets")
     four_wicket_hauls: int = Field(default=0, description="Innings with exactly 4 bowler-credited wickets")
     five_wicket_hauls: int = Field(default=0, description="Innings with 5 or more bowler-credited wickets (counted here only, not as 3- or 4-wicket hauls)")
+
+
+class PlayerBowlingSeason(PlayerBowlingSummary):
+    season: int = Field(..., description="Season year")
+
+
+class PlayerBowlingOppositionSplit(PlayerBowlingSummary):
+    opposition: str = Field(..., description="Opposing (batting) canonical franchise")
+
+
+class PlayerBowlingVenueSplit(PlayerBowlingSummary):
+    venue: str = Field(..., description="Canonical venue name")
+
+
+class PlayerTeamSpell(BaseModel):
+    team: str = Field(..., description="Canonical franchise name")
+    short_name: Optional[str] = Field(None, description="Franchise short code")
+    seasons: List[int] = Field(..., description="Seasons with at least one match appearance for this franchise")
+    seasons_label: str = Field(..., description="Seasons as ranges, e.g. '2008–2010, 2014'")
+    matches: int = Field(..., description="Match appearances for this franchise")
 
 
 class PlayerMatchLogItem(BaseModel):
@@ -270,7 +311,7 @@ class PlayerMatchLogItem(BaseModel):
     overs_bowled: str = Field(..., description="Overs bowled (e.g. '4.0') or 'Did not bowl'")
     runs_conceded: Optional[int] = Field(None, description="Runs conceded or None if did not bowl")
     wickets: Optional[int] = Field(None, description="Bowler wickets or None if did not bowl")
-    economy: Optional[float] = Field(None, description="Innings economy rate or None if did not bowl")
+    economy: Optional[float] = Field(None, description="Innings economy rate; None if did not bowl or no legal ball")
 
 
 class PlayerListItem(BaseModel):
@@ -318,7 +359,7 @@ class PlayerListItem(BaseModel):
 class PlayerCareerSummary(BaseModel):
     innings: int = Field(..., description="Recorded batting appearances")
     total_runs: int = Field(..., description="Total runs scored")
-    avg_per_appearance: float = Field(..., description="Average runs per appearance")
+    avg_per_appearance: Optional[float] = Field(None, description="Batting average (runs / dismissals); null when never dismissed")
     milestone30_count: int = Field(default=0, description="Count of scores >= 30")
     milestone30_rate: float = Field(default=0.0, description="Rate of scoring 30+ runs")
     milestone50_count: int = Field(default=0, description="Count of scores >= 50")
@@ -341,20 +382,37 @@ class PlayerProfileResponse(BaseModel):
     batter_id: Optional[str] = Field(None, description="Backward compatible ID")
     name: str = Field(..., description="Most-used name variant; players sharing a name get franchise and season span added")
     name_variants: List[str] = Field(default_factory=list, description="Every name this registry ID was listed under")
-    matches: int = Field(default=0, description="Matches in an official squad list")
-    first_season: int = Field(default=2008, description="First IPL season")
-    last_season: int = Field(default=2026, description="Latest IPL season")
-    seasons_played: List[int] = Field(default_factory=list, description="Seasons active")
-    teams: List[str] = Field(default_factory=list, description="Teams represented")
-    career_batting: Optional[PlayerBattingSummary] = Field(None, description="Verified career batting figures")
-    career_bowling: Optional[PlayerBowlingSummary] = Field(None, description="Verified career bowling figures")
+    season_filter: Optional[int] = Field(None, description="Season every number is computed for, or null for the full career")
+    matches: int = Field(default=0, description="Match appearances: matches in an official squad list")
+    first_season: int = Field(default=2008, description="First season with a match appearance")
+    last_season: int = Field(default=2026, description="Latest season with a match appearance")
+    seasons_played: List[int] = Field(default_factory=list, description="Seasons with a match appearance")
+    seasons_count: int = Field(default=0, description="Number of seasons with a match appearance")
+    teams: List[str] = Field(default_factory=list, description="Canonical franchises represented, alphabetical")
+    team_history: List[PlayerTeamSpell] = Field(default_factory=list, description="Franchises with their seasons, in order first played")
+    batting_state: str = Field(default="did_not_bat", description="'batted' or 'did_not_bat' (career_batting is then null)")
+    bowling_state: str = Field(default="did_not_bowl", description="'bowled' or 'did_not_bowl' (career_bowling is then null)")
+    career_batting: Optional[PlayerBattingSummary] = Field(None, description="Career batting figures (or the filtered season's)")
+    career_bowling: Optional[PlayerBowlingSummary] = Field(None, description="Career bowling figures (or the filtered season's)")
+    batting_by_season: List[PlayerBattingSeason] = Field(default_factory=list, description="Batting figures per season, ascending")
+    batting_by_team: List[PlayerBattingTeamSplit] = Field(default_factory=list, description="Batting per franchise, most runs first")
+    batting_by_opposition: List[PlayerBattingOppositionSplit] = Field(default_factory=list, description="Batting per opposition, most runs first")
+    batting_by_venue: List[PlayerBattingVenueSplit] = Field(default_factory=list, description="Batting per venue, most runs first")
+    bowling_by_season: List[PlayerBowlingSeason] = Field(default_factory=list, description="Bowling figures per season, ascending")
+    bowling_by_opposition: List[PlayerBowlingOppositionSplit] = Field(default_factory=list, description="Bowling per opposition, most wickets first")
+    bowling_by_venue: List[PlayerBowlingVenueSplit] = Field(default_factory=list, description="Bowling per venue, most wickets first")
+    metric_definitions: Dict[str, str] = Field(default_factory=dict, description="How every statistic is defined")
+    state_definitions: Dict[str, str] = Field(default_factory=dict, description="Meaning of each *_state value")
     career_summary: Optional[PlayerCareerSummary] = Field(None, description="Backward-compatible batting summary")
     milestone_breakdown: Optional[PlayerMilestoneBreakdown] = Field(None, description="Score tier distribution")
     coverage_period: str = Field(default="2008–2026 Complete History", description="Data coverage span")
-    recent_matches: List[PlayerMatchLogItem] = Field(default_factory=list, description="Chronological match logs")
-    opposition_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Performance by opponent")
-    venue_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Performance by venue")
-    season_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Season-by-season figures")
+    recent_matches: List[PlayerMatchLogItem] = Field(
+        default_factory=list,
+        description="Every match appearance in the old row shape, most recent first",
+    )
+    opposition_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: top 10 of batting_by_opposition")
+    venue_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: top 10 of batting_by_venue")
+    season_splits: List[Dict[str, Any]] = Field(default_factory=list, description="Deprecated: use batting_by_season and bowling_by_season")
     notes: List[str] = Field(default_factory=list, description="Cricket context notes")
 
 

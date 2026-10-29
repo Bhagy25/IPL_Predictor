@@ -43,6 +43,132 @@ def derive_role(matches: int, batting_innings: int, balls_faced: int, bowling_in
     return "Bowler" if legal_balls > balls_faced else "Batter"
 
 
+# Why a profile value is null. A value that cannot be computed is never reported as 0.
+STATE_DEFINITIONS = {
+    "no_dismissals": "Never dismissed in these innings, so the batting average is undefined.",
+    "no_balls_faced": "No ball faced in these innings (non-striker only), so the strike rate is undefined.",
+    "no_wickets": "No bowler-credited wicket, so the bowling average and strike rate are undefined.",
+    "no_legal_balls": "No legal ball bowled (only wides or no-balls), so the economy rate is undefined.",
+    "not_recorded_in_source": "The raw Cricsheet match record does not contain this value.",
+}
+
+PROFILE_METRIC_DEFINITIONS = {
+    "matches": "Match appearances: matches in which the player is in the official player list (info.players), "
+               "including Impact Player and concussion substitutes who came in.",
+    "teams": "Canonical franchise names; Cricsheet renames (e.g. Delhi Daredevils) are mapped to the current franchise.",
+    "batting_innings": "One innings per ordinary innings in which the player was at the crease as striker or "
+                       "non-striker, or was dismissed. Super overs are excluded from every statistic.",
+    "not_outs": "Innings minus dismissals. Retired hurt and retired not out are not dismissals; retired out is.",
+    "balls_faced": "Deliveries faced as striker, excluding wides; no-balls count.",
+    "batting_average": "Runs / dismissals; null with state 'no_dismissals' when never dismissed.",
+    "batting_strike_rate": "Runs per 100 balls faced; null with state 'no_balls_faced' when no ball was faced.",
+    "highest_score": "Most runs in one innings; '*' marks not out (shown when that score was ever made not out).",
+    "fours_sixes": "Boundaries off the bat; runs Cricsheet flags non_boundary (e.g. an all-run four) are excluded.",
+    "ducks": "Innings dismissed for 0 runs, including dismissals without facing a ball (e.g. run out as non-striker). "
+             "Retired hurt on 0 is not a duck.",
+    "milestones": "Innings with at least 30, 50 or 100 runs; counts are cumulative (a 100 also counts as 50+ and 30+).",
+    "bowling_innings": "Innings in which the player bowled at least one delivery, wides and no-balls included.",
+    "legal_balls": "Deliveries that are neither wides nor no-balls.",
+    "overs": "Cricket notation: completed six-ball overs, then remaining legal balls (22 balls = '3.4').",
+    "runs_conceded": "Runs off the bat plus wide and no-ball extras; byes and leg byes are not charged to the bowler.",
+    "wickets": "Bowler-credited dismissals: bowled, caught, caught and bowled, lbw, stumped, hit wicket. "
+               "Run outs, retirements and obstructing the field are not credited.",
+    "bowling_average": "Runs conceded / wickets; null with state 'no_wickets' when no wicket was taken.",
+    "bowling_strike_rate": "Legal balls / wickets; null with state 'no_wickets' when no wicket was taken.",
+    "economy": "Runs conceded per six legal balls; null with state 'no_legal_balls' when none was bowled.",
+    "best_bowling": "Most wickets in one innings, ties broken by fewest runs conceded, as wickets/runs.",
+    "hauls": "3w: exactly 3 wickets in an innings; 4w: exactly 4; 5w: 5 or more (counted only as 5w).",
+    "splits": "Team: the player's franchise; opposition: the other franchise; venue: canonical venue name.",
+    "appearance_state": "playing_xi: listed and not substituted; substituted_in: came in as an Impact Player or "
+                        "concussion substitute; substituted_out: replaced during the match; substituted_in_and_out: both.",
+    "result": "Result for the player's team: won, lost, tied (decided by a super over; super_over_winner names "
+              "the winner) or no_result.",
+    "season_filter": "When a season is given, every number is computed from that season's matches only.",
+}
+
+
+def overs_notation(legal_balls: int) -> str:
+    """Overs in cricket notation: completed six-ball overs, then remaining balls (22 -> '3.4')."""
+    return f"{legal_balls // 6}.{legal_balls % 6}"
+
+
+def _grouped(rows: pd.DataFrame, by: Optional[str]) -> Tuple[pd.DataFrame, str]:
+    """The rows and grouping key; without a key every row falls in one career group."""
+    return (rows, by) if by else (rows.assign(_career=0), "_career")
+
+
+def batting_table(innings: pd.DataFrame, by: Optional[str] = None, label: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Batting figures from one row per batting innings, per value of `by` (or one career row)."""
+    if innings.empty:
+        return []
+    rows, key = _grouped(innings, by)
+    table = rows.groupby(key).agg(
+        innings=("runs", "size"), runs=("runs", "sum"), balls_faced=("balls_faced", "sum"),
+        dismissals=("dismissed", "sum"), fours=("fours", "sum"), sixes=("sixes", "sum"), ducks=("is_duck", "sum"),
+        scores_30_plus=("reached_30", "sum"), scores_50_plus=("reached_50", "sum"), scores_100_plus=("is_100", "sum"),
+    )
+    # Highest score per group; a score made both out and not out is shown not out
+    top = rows.sort_values(["runs", "dismissed"], ascending=[False, True]).drop_duplicates(key).set_index(key)
+    table["hs_runs"] = top["runs"]
+    table["hs_not_out"] = top["dismissed"] == 0
+    records = []
+    for group, r in zip(table.index, table.to_dict("records")):
+        inns, runs, balls, outs = int(r["innings"]), int(r["runs"]), int(r["balls_faced"]), int(r["dismissals"])
+        record = {
+            "innings": inns, "runs": runs, "balls_faced": balls, "dismissals": outs, "not_outs": inns - outs,
+            "average": round(runs / outs, 2) if outs else None,
+            "average_state": None if outs else "no_dismissals",
+            "strike_rate": round(runs / balls * 100, 2) if balls else None,
+            "strike_rate_state": None if balls else "no_balls_faced",
+            "highest_score": f"{int(r['hs_runs'])}{'*' if r['hs_not_out'] else ''}",
+            "fours": int(r["fours"]), "sixes": int(r["sixes"]), "ducks": int(r["ducks"]),
+            "scores_30_plus": int(r["scores_30_plus"]), "scores_50_plus": int(r["scores_50_plus"]),
+            "scores_100_plus": int(r["scores_100_plus"]),
+        }
+        if label:
+            record = {label: int(group) if label == "season" else group, **record}
+        records.append(record)
+    return records
+
+
+def bowling_table(spells: pd.DataFrame, by: Optional[str] = None, label: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Bowling figures from one row per bowling innings, per value of `by` (or one career row)."""
+    if spells.empty:
+        return []
+    rows, key = _grouped(spells, by)
+    table = rows.groupby(key).agg(
+        innings=("legal_balls", "size"), legal_balls=("legal_balls", "sum"), runs_conceded=("runs_conceded", "sum"),
+        wickets=("wickets", "sum"), hauls_3=("is_3w", "sum"), hauls_4=("is_4w", "sum"), hauls_5=("is_5w", "sum"),
+    )
+    # Best figures: most wickets, then fewest runs conceded
+    best = rows.sort_values(["wickets", "runs_conceded"], ascending=[False, True]).drop_duplicates(key).set_index(key)
+    table["best"] = best["wickets"].astype(int).astype(str) + "/" + best["runs_conceded"].astype(int).astype(str)
+    records = []
+    for group, r in zip(table.index, table.to_dict("records")):
+        balls, runs, wkts = int(r["legal_balls"]), int(r["runs_conceded"]), int(r["wickets"])
+        record = {
+            "innings": int(r["innings"]), "legal_deliveries": balls, "overs_bowled": overs_notation(balls),
+            "runs_conceded": runs, "wickets": wkts,
+            "bowling_average": round(runs / wkts, 2) if wkts else None,
+            "bowling_average_state": None if wkts else "no_wickets",
+            "bowling_strike_rate": round(balls / wkts, 2) if wkts else None,
+            "bowling_strike_rate_state": None if wkts else "no_wickets",
+            "economy_rate": round(runs / (balls / 6.0), 2) if balls else None,
+            "economy_rate_state": None if balls else "no_legal_balls",
+            "best_bowling": r["best"],
+            "three_wicket_hauls": int(r["hauls_3"]), "four_wicket_hauls": int(r["hauls_4"]),
+            "five_wicket_hauls": int(r["hauls_5"]),
+        }
+        if label:
+            record = {label: int(group) if label == "season" else group, **record}
+        records.append(record)
+    return records
+
+
+def _present(value: Any) -> bool:
+    return value is not None and not (isinstance(value, float) and np.isnan(value))
+
+
 class DerivedDataUnavailable(RuntimeError):
     """Raised when bowling or boundary statistics are requested but data/derived is missing or inconsistent."""
 
@@ -209,6 +335,14 @@ class CanonicalAnalyticsEngine:
         # Indexed structures (players are keyed by Cricsheet registry ID)
         self._match_players: pd.DataFrame = pd.DataFrame()
         self._batting_appearances: pd.DataFrame = pd.DataFrame()
+        self._replacements: pd.DataFrame = pd.DataFrame()
+        self._appearances: pd.DataFrame = pd.DataFrame()
+        # Row positions per registry ID, so a profile reads only its own rows
+        self._squad_rows: Dict[str, np.ndarray] = {}
+        self._bat_rows: Dict[str, np.ndarray] = {}
+        self._bowl_rows: Dict[str, np.ndarray] = {}
+        self._appearance_rows: Dict[str, np.ndarray] = {}
+        self._substitutions: Dict[Tuple[int, str], List[Dict[str, Any]]] = {}
         self._people_names: Dict[str, List[str]] = {}
         self._player_names_by_id: Dict[str, str] = {}
         self._player_ids_by_name: Dict[str, Set[str]] = {}
@@ -345,7 +479,9 @@ class CanonicalAnalyticsEngine:
         Names are only unique within a match (the same name can belong to different people across
         seasons), so bowlers are resolved through that match's squad list, never a global name lookup.
         """
-        paths = [self.derived_dir / name for name in ("match_players.csv", "people.csv", "batting_appearances.csv")]
+        paths = [self.derived_dir / name for name in (
+            "match_players.csv", "people.csv", "batting_appearances.csv", "match_replacements.csv",
+        )]
         missing = [p.name for p in paths if not p.exists()]
         if missing:
             self._derived_error = f"{', '.join(missing)} missing from {self.derived_dir}."
@@ -353,9 +489,13 @@ class CanonicalAnalyticsEngine:
             return
         squads = pd.read_csv(paths[0], usecols=["match_id", "season", "date", "team", "player_name", "player_id"])
         people = pd.read_csv(paths[1], usecols=["player_id", "names"])
+        replacements = pd.read_csv(paths[3], usecols=[
+            "match_id", "innings", "team", "reason", "player_in", "player_in_id", "player_out", "player_out_id",
+        ])
         # Every player at the crease (striker or non-striker) has a batting innings
         appearances = pd.read_csv(paths[2], usecols=[
             "match_id", "season", "date", "innings", "batting_team", "player_id", "balls_faced", "runs", "dismissed",
+            "dismissal_kind",
         ]).merge(
             self._innings[["match_id", "innings", "bowling_team", "venue_canonical"]], on=["match_id", "innings"], how="left",
         )
@@ -374,17 +514,27 @@ class CanonicalAnalyticsEngine:
             | set(appearances["player_id"])
         ) - known)
         orphan_innings = int(appearances["bowling_team"].isna().sum())
-        if ambiguous or unmapped or unknown or orphan_innings:
+        # Batting innings and both players of every substitution must be in that match's squad list
+        listed = set(zip(squads["match_id"], squads["player_id"]))
+        unlisted = sum(
+            (m, p) not in listed for m, p in [
+                *zip(appearances["match_id"], appearances["player_id"]),
+                *zip(replacements["match_id"], replacements["player_in_id"]),
+                *zip(replacements["match_id"], replacements["player_out_id"]),
+            ]
+        )
+        if ambiguous or unmapped or unknown or orphan_innings or unlisted:
             self._derived_error = (
                 f"Player identities do not resolve ({unmapped} unmapped deliveries, {ambiguous} ambiguous "
                 f"squad names, {unknown} IDs missing from people.csv, {orphan_innings} appearances "
-                f"without an innings in innings.csv)."
+                f"without an innings in innings.csv, {unlisted} batting or substitution rows outside the squad lists)."
             )
             logger.error("%s Player statistics are unavailable.", self._derived_error)
             return
         self._match_players = squads
         self._people_names = dict(zip(people["player_id"], people["names"].str.split(";")))
         self._batting_appearances = appearances
+        self._replacements = replacements
 
     def derived_status(self) -> Dict[str, Any]:
         """Availability of the data/derived tables used for bowling and boundary statistics."""
@@ -492,23 +642,22 @@ class CanonicalAnalyticsEngine:
             legal_balls=("legal_delivery", "sum"),
             runs_conceded=("bowler_runs_conceded", "sum"),
             wickets=("bowler_wickets", "sum"),
-            fours=("is_four", "sum"),
-            sixes=("is_six", "sum"),
-            wides=("wides", lambda x: (x > 0).sum()),
-            noballs=("noballs", lambda x: (x > 0).sum()),
         ).reset_index()
-        bowl_match_agg["overs"] = bowl_match_agg["legal_balls"].apply(lambda b: f"{b // 6}.{b % 6}")
-        bowl_match_agg["overs_exact"] = bowl_match_agg["legal_balls"] / 6.0
-        bowl_match_agg["economy"] = np.where(
-            bowl_match_agg["overs_exact"] > 0,
-            (bowl_match_agg["runs_conceded"] / bowl_match_agg["overs_exact"]).round(2),
-            0.0,
-        )
+        balls = bowl_match_agg["legal_balls"]
+        bowl_match_agg["overs"] = (balls // 6).astype(str) + "." + (balls % 6).astype(str)
         bowl_match_agg["is_3w"] = bowl_match_agg["wickets"] == 3
         bowl_match_agg["is_4w"] = bowl_match_agg["wickets"] == 4
         bowl_match_agg["is_5w"] = bowl_match_agg["wickets"] >= 5
         bowl_match_agg["bowler"] = bowl_match_agg["bowler_id"].map(self._player_names_by_id)
+        bowl_match_agg["venue_canonical"] = bowl_match_agg["match_id"].map(
+            dict(zip(self._matches["match_id"], self._matches["venue_canonical"]))
+        )
         self._bowler_matches = bowl_match_agg
+
+        self._squad_rows = squads.groupby("player_id").indices
+        self._bat_rows = self._batters_merged.groupby("player_id").indices
+        self._bowl_rows = bowl_match_agg.groupby("bowler_id").indices
+        self._build_appearance_log()
 
         # Bowling career aggregations (vectorized)
         bowl_grp = bowl_match_agg.groupby("bowler_id").agg(
@@ -595,6 +744,55 @@ class CanonicalAnalyticsEngine:
             "bowlers": sum(p["is_bowler"] for p in master_list),
             "all_rounders": sum(p["role"] == "All-Rounder" for p in master_list),
         }
+
+    def _build_appearance_log(self) -> None:
+        """One row per squad appearance with batting, bowling and the team's result, most recent first."""
+        as_int = {"match_id": "int64"}
+        matches = self._matches[[
+            "match_id", "venue_canonical", "team1", "team2", "outcome_type", "winner", "super_over_winner",
+            "outcome_method",
+        ]].astype(as_int)
+        log = self._match_players.astype(as_int).merge(matches, on="match_id", how="left", validate="many_to_one")
+        log["opposition"] = np.where(log["team"] == log["team1"], log["team2"], log["team1"])
+
+        batting = self._batters_merged[[
+            "match_id", "player_id", "runs", "balls_faced", "fours", "sixes", "dismissed", "dismissal_kind",
+        ]].astype(as_int).rename(columns=lambda c: c if c in ("match_id", "player_id") else f"bat_{c}")
+        bowling = self._bowler_matches[[
+            "match_id", "bowler_id", "legal_balls", "overs", "runs_conceded", "wickets",
+        ]].astype(as_int).rename(columns={"bowler_id": "player_id"}).rename(
+            columns=lambda c: c if c in ("match_id", "player_id") else f"bowl_{c}"
+        )
+        log = (
+            log.merge(batting, on=["match_id", "player_id"], how="left", validate="one_to_one")
+            .merge(bowling, on=["match_id", "player_id"], how="left", validate="one_to_one")
+        )
+
+        # Result for the player's team; an outcome type outside these is left unset
+        won = log["outcome_type"] == "win"
+        log["result"] = np.select(
+            [won & (log["winner"] == log["team"]), won, log["outcome_type"] == "tie", log["outcome_type"] == "no result"],
+            ["won", "lost", "tied", "no_result"],
+            default="",
+        )
+        log = log.drop(columns=["team1", "team2"]).sort_values(
+            ["player_id", "date", "match_id"], ascending=[True, False, False]
+        ).reset_index(drop=True)
+        self._appearances = log
+        self._appearance_rows = log.groupby("player_id").indices
+
+        # Each substitution gives the player who came in and the player replaced one entry each
+        substitutions: Dict[Tuple[int, str], List[Dict[str, Any]]] = defaultdict(list)
+        for r in self._replacements.to_dict("records"):
+            for direction, pid, other, other_id in (
+                ("in", r["player_in_id"], r["player_out"], r["player_out_id"]),
+                ("out", r["player_out_id"], r["player_in"], r["player_in_id"]),
+            ):
+                substitutions[(int(r["match_id"]), pid)].append({
+                    "direction": direction, "reason": r["reason"], "innings": int(r["innings"]),
+                    "counterpart_id": other_id, "counterpart_name": other,
+                })
+        self._substitutions = dict(substitutions)
 
     # ==========================================
     # TEAM ANALYSIS APIs
@@ -970,9 +1168,8 @@ class CanonicalAnalyticsEngine:
             "directory_counts": dict(self._directory_counts),
         }
 
-    def get_player_profile(self, player_id_or_name: str) -> Dict[str, Any]:
-        """Compute full historical player profile with Batting, Bowling, and Match Logs."""
-        self.require_derived()
+    def _resolve_player(self, player_id_or_name: str) -> Tuple[str, str]:
+        """Registry ID and display name for a player ID, or for a name variant that identifies one player."""
         pid = player_id_or_name.strip()
         name = self._player_names_by_id.get(pid)
         if not name:
@@ -987,215 +1184,186 @@ class CanonicalAnalyticsEngine:
                 name = self._player_names_by_id[pid]
         if not name:
             raise KeyError(f"Player '{player_id_or_name}' not found in canonical IPL directory.")
+        return pid, name
 
-        b_df = self._batters_merged[self._batters_merged["player_id"] == pid].copy()
-        w_df = self._bowler_matches[self._bowler_matches["bowler_id"] == pid].copy()
-
-        # Seasons, teams and matches come from the squad lists
-        squad = self._squad_info[pid]
-        seasons = squad["seasons"]
-        teams = squad["teams"]
-
-        # 1. Career Batting
-        career_batting = None
-        if len(b_df) > 0:
-            inn = len(b_df)
-            runs = int(b_df["runs"].sum())
-            balls = int(b_df["balls_faced"].sum())
-            dismissals = int(b_df["dismissed"].sum())
-            not_outs = inn - dismissals
-            avg = round(runs / dismissals, 2) if dismissals > 0 else float(runs)
-            sr = round(runs / balls * 100, 2) if balls > 0 else 0.0
-            
-            # Highest score
-            hs = int(b_df["runs"].max())
-            hs_not_out = (b_df[b_df["runs"] == hs]["dismissed"] == 0).any()
-            hs_str = f"{hs}*" if hs_not_out else f"{hs}"
-            
-            career_batting = {
-                "innings": inn,
-                "runs": runs,
-                "balls_faced": balls,
-                "dismissals": dismissals,
-                "not_outs": not_outs,
-                "average": avg,
-                "strike_rate": sr,
-                "highest_score": hs_str,
-                "fours": int(b_df["fours"].sum()),
-                "sixes": int(b_df["sixes"].sum()),
-                "ducks": int(((b_df["runs"] == 0) & (b_df["dismissed"] == 1)).sum()),
-                "scores_30_plus": int(b_df["reached_30"].sum()),
-                "scores_50_plus": int(b_df["reached_50"].sum()),
-                "scores_100_plus": int((b_df["runs"] >= 100).sum()),
-            }
-
-        # 2. Career Bowling
-        career_bowling = None
-        if len(w_df) > 0:
-            w_inn = len(w_df)
-            legal_balls = int(w_df["legal_balls"].sum())
-            runs_conc = int(w_df["runs_conceded"].sum())
-            wkts = int(w_df["wickets"].sum())
-            b_avg = round(runs_conc / wkts, 2) if wkts > 0 else None
-            b_sr = round(legal_balls / wkts, 2) if wkts > 0 else None
-            econ = round(runs_conc / (legal_balls / 6.0), 2) if legal_balls > 0 else 0.0
-            
-            top = w_df.sort_values(by=["wickets", "runs_conceded"], ascending=[False, True]).iloc[0]
-            bb = f"{int(top['wickets'])}/{int(top['runs_conceded'])}"
-            
-            career_bowling = {
-                "innings": w_inn,
-                "legal_deliveries": legal_balls,
-                "overs_bowled": f"{legal_balls // 6}.{legal_balls % 6}",
-                "runs_conceded": runs_conc,
-                "wickets": wkts,
-                "bowling_average": b_avg,
-                "bowling_strike_rate": b_sr,
-                "economy_rate": econ,
-                "best_bowling": bb,
-                "three_wicket_hauls": int((w_df["wickets"] == 3).sum()),
-                "four_wicket_hauls": int((w_df["wickets"] == 4).sum()),
-                "five_wicket_hauls": int((w_df["wickets"] >= 5).sum()),
-            }
-
-        # 3. Combined Chronological Match Appearances
-        # Union of matches where player batted or bowled
-        all_match_ids = sorted(
-            list(set(b_df["match_id"].tolist() + w_df["match_id"].tolist())),
-            reverse=True,
+    def _player_rows(self, pid: str, season: Optional[int]) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """The player's squad, batting-innings, bowling-innings and appearance-log rows, optionally for one season."""
+        none = np.array([], dtype=int)
+        frames = (
+            self._match_players.iloc[self._squad_rows.get(pid, none)],
+            self._batters_merged.iloc[self._bat_rows.get(pid, none)],
+            self._bowler_matches.iloc[self._bowl_rows.get(pid, none)],
+            self._appearances.iloc[self._appearance_rows.get(pid, none)],
         )
+        if season is None:
+            return frames
+        return tuple(f[f["season"] == season] for f in frames)
 
-        match_venue_map = dict(zip(self._matches["match_id"], self._matches["venue_canonical"]))
-        match_date_map = dict(zip(self._matches["match_id"], self._matches["date"]))
-        match_season_map = dict(zip(self._matches["match_id"], self._matches["season"]))
+    def _log_entry(self, r: Dict[str, Any]) -> Dict[str, Any]:
+        """One appearance-log row in API shape; columns missing after the left joins become explicit states."""
+        match_id, pid = int(r["match_id"]), r["player_id"]
 
-        b_map = {r["match_id"]: r for _, r in b_df.iterrows()}
-        w_map = {r["match_id"]: r for _, r in w_df.iterrows()}
+        if _present(r["bat_runs"]):
+            kind = r["bat_dismissal_kind"]
+            batting = {
+                "state": "batted", "runs": int(r["bat_runs"]), "balls_faced": int(r["bat_balls_faced"]),
+                "fours": int(r["bat_fours"]), "sixes": int(r["bat_sixes"]), "dismissed": bool(r["bat_dismissed"]),
+                "dismissal_kind": kind if _present(kind) else None,
+            }
+        else:
+            batting = {"state": "did_not_bat"}
 
-        match_logs = []
-        for mid in all_match_ids:
-            b_row = b_map.get(mid)
-            w_row = w_map.get(mid)
+        if _present(r["bowl_legal_balls"]):
+            balls, runs = int(r["bowl_legal_balls"]), int(r["bowl_runs_conceded"])
+            bowling = {
+                "state": "bowled", "legal_balls": balls, "overs": r["bowl_overs"],
+                "runs_conceded": runs, "wickets": int(r["bowl_wickets"]),
+                # Undefined for a spell of only wides or no-balls
+                "economy": round(runs / (balls / 6.0), 2) if balls else None,
+                "economy_state": None if balls else "no_legal_balls",
+            }
+        else:
+            bowling = {"state": "did_not_bowl"}
 
-            team = b_row["batting_team"] if b_row is not None else w_row["bowling_team"]
-            opp = b_row["bowling_team"] if b_row is not None else w_row["batting_team"]
-            venue = match_venue_map.get(mid, b_row["venue_canonical"] if b_row is not None else "Unknown Venue")
-            m_date = match_date_map.get(mid, str(b_row["date"] if b_row is not None else w_row["date"]))
-            m_season = match_season_map.get(mid, int(b_row["season"] if b_row is not None else w_row["season"]))
-
-            # Batting details
-            if b_row is not None:
-                runs_scored = int(b_row["runs"])
-                balls_faced = int(b_row["balls_faced"])
-                fours = int(b_row["fours"])
-                sixes = int(b_row["sixes"])
-                dismissed = int(b_row["dismissed"])
-                dismissal_status = "Out" if dismissed == 1 else "Not Out"
-                if runs_scored >= 50:
-                    badge = "50+ Milestone"
-                elif runs_scored >= 30:
-                    badge = "30–49 Runs"
-                else:
-                    badge = "Below 30"
+        outcome = r["result"] or None
+        result = {
+            "outcome": outcome,
+            "outcome_state": None if outcome else "not_recorded_in_source",
+            "winner": r["winner"] if _present(r["winner"]) else None,
+            "method": r["outcome_method"] if _present(r["outcome_method"]) else None,
+        }
+        if outcome == "tied":
+            so_winner = r["super_over_winner"] if _present(r["super_over_winner"]) else None
+            result["super_over_winner"] = so_winner
+            if so_winner:
+                result["super_over_outcome"] = "won" if so_winner == r["team"] else "lost"
             else:
-                runs_scored = None
-                balls_faced = None
-                fours = None
-                sixes = None
-                dismissal_status = "Did not bat"
-                badge = "DNB"
+                result["super_over_state"] = "not_recorded_in_source"
 
-            # Bowling details
-            if w_row is not None:
-                overs_bowled = str(w_row["overs"])
-                runs_conc = int(w_row["runs_conceded"])
-                wkts = int(w_row["wickets"])
-                econ = float(w_row["economy"])
-            else:
-                overs_bowled = "Did not bowl"
-                runs_conc = None
-                wkts = None
-                econ = None
+        substitutions = self._substitutions.get((match_id, pid), [])
+        directions = {s["direction"] for s in substitutions}
+        if not directions:
+            appearance_state = "playing_xi"
+        elif len(directions) == 2:
+            appearance_state = "substituted_in_and_out"
+        else:
+            appearance_state = f"substituted_{directions.pop()}"
 
-            match_logs.append({
-                "match_id": int(mid),
-                "date": m_date,
-                "season": m_season,
+        return {
+            "match_id": match_id, "date": r["date"], "season": int(r["season"]),
+            "team": r["team"], "opposition": r["opposition"], "venue": r["venue_canonical"],
+            "appearance_state": appearance_state, "substitutions": substitutions,
+            "batting": batting, "bowling": bowling, "result": result,
+        }
+
+    @staticmethod
+    def _legacy_log_item(entry: Dict[str, Any]) -> Dict[str, Any]:
+        """The pre-6A recent_matches row shape, built from a log entry (kept until the frontend moves over)."""
+        bat, bowl = entry["batting"], entry["bowling"]
+        runs = bat.get("runs")
+        if runs is None:
+            status, badge = "Did not bat", "DNB"
+        else:
+            status = "Out" if bat["dismissed"] else "Not Out"
+            badge = "50+ Milestone" if runs >= 50 else "30–49 Runs" if runs >= 30 else "Below 30"
+        return {
+            "match_id": entry["match_id"], "date": entry["date"], "season": entry["season"],
+            "team": entry["team"], "opponent": entry["opposition"], "venue": entry["venue"],
+            "runs": runs, "balls_faced": bat.get("balls_faced"), "fours": bat.get("fours"), "sixes": bat.get("sixes"),
+            "dismissal_status": status, "milestone_badge": badge,
+            "overs_bowled": bowl.get("overs") or "Did not bowl",
+            "runs_conceded": bowl.get("runs_conceded"), "wickets": bowl.get("wickets"), "economy": bowl.get("economy"),
+        }
+
+    def get_player_profile(self, player_id_or_name: str, season: Optional[int] = None) -> Dict[str, Any]:
+        """Career profile (or one season's): summary, batting and bowling figures, season tables and splits."""
+        self.require_derived()
+        pid, name = self._resolve_player(player_id_or_name)
+        squad, b_df, w_df, log = self._player_rows(pid, season)
+        if squad.empty:
+            played = format_season_ranges(self._squad_info[pid]["seasons"])
+            raise KeyError(f"{name} has no IPL match appearances in {season} (seasons played: {played}).")
+
+        # 1. Career summary from the squad lists
+        seasons = sorted(int(s) for s in squad["season"].unique())
+        team_history = []
+        for team, grp in squad.groupby("team"):
+            team_seasons = sorted(int(s) for s in grp["season"].unique())
+            team_history.append({
                 "team": team,
-                "opponent": opp,
-                "venue": venue,
-                # Batting
-                "runs": runs_scored,
-                "balls_faced": balls_faced,
-                "fours": fours,
-                "sixes": sixes,
-                "dismissal_status": dismissal_status,
-                "milestone_badge": badge,
-                # Bowling
-                "overs_bowled": overs_bowled,
-                "runs_conceded": runs_conc,
-                "wickets": wkts,
-                "economy": econ,
+                "short_name": FRANCHISE_METADATA.get(team, {}).get("short_name"),
+                "seasons": team_seasons,
+                "seasons_label": format_season_ranges(team_seasons),
+                "matches": int(grp["match_id"].nunique()),
             })
+        team_history.sort(key=lambda t: (t["seasons"][0], t["seasons"][-1], t["team"]))
 
-        # 4. Opposition & Venue Splits
-        opp_splits = []
-        if len(b_df) > 0:
-            for opp_team, grp in b_df.groupby("bowling_team"):
-                opp_splits.append({
-                    "opponent": opp_team,
-                    "innings": int(len(grp)),
-                    "runs": int(grp["runs"].sum()),
-                    "average": round(grp["runs"].sum() / max(1, grp["dismissed"].sum()), 2),
-                    "strike_rate": round(grp["runs"].sum() / max(1, grp["balls_faced"].sum()) * 100, 2),
-                })
-            opp_splits.sort(key=lambda x: -x["runs"])
+        # 2. Batting: career, per season and splits (largest run totals first)
+        career_batting = next(iter(batting_table(b_df)), None)
+        batting_by_season = batting_table(b_df, "season", "season")
+        batting_by_team = batting_table(b_df, "batting_team", "team")
+        batting_by_opposition = batting_table(b_df, "bowling_team", "opposition")
+        batting_by_venue = batting_table(b_df, "venue_canonical", "venue")
+        for table, label in ((batting_by_team, "team"), (batting_by_opposition, "opposition"), (batting_by_venue, "venue")):
+            table.sort(key=lambda r, label=label: (-r["runs"], r[label]))
 
-        venue_splits = []
-        if len(b_df) > 0:
-            for v_name, grp in b_df.groupby("venue_canonical"):
-                venue_splits.append({
-                    "venue": v_name,
-                    "innings": int(len(grp)),
-                    "runs": int(grp["runs"].sum()),
-                    "average": round(grp["runs"].sum() / max(1, grp["dismissed"].sum()), 2),
-                    "strike_rate": round(grp["runs"].sum() / max(1, grp["balls_faced"].sum()) * 100, 2),
-                })
-            venue_splits.sort(key=lambda x: -x["runs"])
+        # 3. Bowling: career, per season and splits (most wickets, then fewest runs, first)
+        career_bowling = next(iter(bowling_table(w_df)), None)
+        bowling_by_season = bowling_table(w_df, "season", "season")
+        bowling_by_opposition = bowling_table(w_df, "batting_team", "opposition")
+        bowling_by_venue = bowling_table(w_df, "venue_canonical", "venue")
+        for table, label in ((bowling_by_opposition, "opposition"), (bowling_by_venue, "venue")):
+            table.sort(key=lambda r, label=label: (-r["wickets"], r["runs_conceded"], r[label]))
 
-        # 5. Season-by-season performance
+        # 4. Fields the current frontend reads, derived from the tables above
+        recent_matches = [self._legacy_log_item(self._log_entry(r)) for r in log.to_dict("records")]
+        split_fields = ("innings", "runs", "average", "strike_rate")
+        bat_seasons = {r["season"]: r for r in batting_by_season}
+        bowl_seasons = {r["season"]: r for r in bowling_by_season}
         season_splits = []
         for s in seasons:
-            s_b = b_df[b_df["season"] == s]
-            s_w = w_df[w_df["season"] == s]
-            s_runs = int(s_b["runs"].sum()) if len(s_b) > 0 else 0
-            s_b_inn = len(s_b)
-            s_wkts = int(s_w["wickets"].sum()) if len(s_w) > 0 else 0
-            s_w_inn = len(s_w)
+            bat, bowl = bat_seasons.get(s), bowl_seasons.get(s)
             season_splits.append({
-                "season": int(s),
-                "batting_innings": s_b_inn,
-                "runs": s_runs,
-                "highest_score": int(s_b["runs"].max()) if s_b_inn > 0 else 0,
-                "bowling_innings": s_w_inn,
-                "wickets": s_wkts,
-                "economy": round(float(s_w["runs_conceded"].sum() / max(0.1, s_w["legal_balls"].sum() / 6.0)), 2) if s_w_inn > 0 else 0.0,
+                "season": s,
+                "batting_innings": bat["innings"] if bat else 0,
+                "runs": bat["runs"] if bat else 0,
+                "highest_score": bat["highest_score"] if bat else None,
+                "bowling_innings": bowl["innings"] if bowl else 0,
+                "wickets": bowl["wickets"] if bowl else 0,
+                "economy": bowl["economy_rate"] if bowl else None,
             })
 
         return {
             "player_id": pid,
             "name": name,
             "name_variants": sorted(self._people_names.get(pid, [])),
-            "matches": int(squad["matches"]),
+            "season_filter": season,
+            "coverage_period": f"{season} season only" if season is not None else "2008–2026 Complete History",
+            "matches": int(squad["match_id"].nunique()),
             "first_season": seasons[0],
             "last_season": seasons[-1],
             "seasons_played": seasons,
-            "teams": teams,
+            "seasons_count": len(seasons),
+            "teams": sorted(set(squad["team"])),
+            "team_history": team_history,
+            "batting_state": "batted" if career_batting else "did_not_bat",
+            "bowling_state": "bowled" if career_bowling else "did_not_bowl",
             "career_batting": career_batting,
             "career_bowling": career_bowling,
-            "recent_matches": match_logs,
-            "opposition_splits": opp_splits[:10],
-            "venue_splits": venue_splits[:10],
+            "batting_by_season": batting_by_season,
+            "batting_by_team": batting_by_team,
+            "batting_by_opposition": batting_by_opposition,
+            "batting_by_venue": batting_by_venue,
+            "bowling_by_season": bowling_by_season,
+            "bowling_by_opposition": bowling_by_opposition,
+            "bowling_by_venue": bowling_by_venue,
+            "metric_definitions": PROFILE_METRIC_DEFINITIONS,
+            "state_definitions": STATE_DEFINITIONS,
+            "recent_matches": recent_matches,
+            "opposition_splits": [
+                {"opponent": r["opposition"], **{k: r[k] for k in split_fields}} for r in batting_by_opposition[:10]
+            ],
+            "venue_splits": [{"venue": r["venue"], **{k: r[k] for k in split_fields}} for r in batting_by_venue[:10]],
             "season_splits": season_splits,
         }
 

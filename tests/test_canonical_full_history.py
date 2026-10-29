@@ -156,8 +156,11 @@ def test_player_profile_dual_career_kohli():
     assert bowl["wickets"] == 4
     assert bowl["innings"] == 26
 
-    # Match logs: every match in which he batted or bowled
-    assert len(data["recent_matches"]) == len(set(batted["match_id"]) | bowled_matches)
+    # Match logs: every squad appearance, which includes every match in which he batted or bowled
+    squads = pd.read_csv(DATA.parent / "derived" / "match_players.csv", usecols=["match_id", "player_id"])
+    logged = [m["match_id"] for m in data["recent_matches"]]
+    assert sorted(logged) == sorted(squads.loc[squads["player_id"] == "ba607b88", "match_id"])
+    assert set(batted["match_id"]) | bowled_matches <= set(logged)
     first_log = data["recent_matches"][0]
     assert "runs" in first_log
     assert "overs_bowled" in first_log

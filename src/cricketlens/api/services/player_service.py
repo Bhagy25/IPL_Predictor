@@ -61,9 +61,9 @@ class PlayerService:
             directory_counts=res["directory_counts"],
         )
 
-    def get_player_overview(self, player_id: str) -> PlayerProfileResponse:
+    def get_player_overview(self, player_id: str, season: Optional[int] = None) -> PlayerProfileResponse:
         canonical_engine.ensure_loaded()
-        data = canonical_engine.get_player_profile(player_id)
+        data = canonical_engine.get_player_profile(player_id, season=season)
         d_copy = dict(data)
         d_copy["batter_id"] = data["player_id"]
 
