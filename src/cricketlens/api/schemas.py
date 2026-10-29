@@ -46,6 +46,7 @@ class OverviewSummaryResponse(BaseModel):
 class MatchesPerSeasonItem(BaseModel):
     season: int = Field(..., description="IPL tournament year (2008–2026)")
     matches: int = Field(..., description="Total matches played in this season")
+    teams: int = Field(..., description="Franchises that played in this season")
 
 
 class ScoringTrendItem(BaseModel):
@@ -71,11 +72,11 @@ class ScoringDistributionBin(BaseModel):
 
 class TeamRecordItem(BaseModel):
     team: str = Field(..., description="Franchise name (normalized for renames)")
-    played: int = Field(..., description="Matches played in verification window (2022–2025 comparative)")
+    played: int = Field(..., description="Matches played in the comparative window (see team_records_window)")
     wins: int = Field(..., description="Wins including Super Over decisions")
     losses: int = Field(..., description="Losses in regulation and Super Overs")
     tied_no_result: int = Field(..., description="Unresolved or no-result matches")
-    win_pct: float = Field(..., description="Win percentage among decided matches (%)")
+    win_pct: Optional[float] = Field(..., description="Wins ÷ (matches − no results), %; null without decided matches")
     titles: int = Field(..., description="Historical IPL championship titles won")
     title_years: List[int] = Field(default_factory=list, description="Championship winning years")
     status: str = Field(default="Active", description="Active or Defunct franchise status")
@@ -84,9 +85,15 @@ class TeamRecordItem(BaseModel):
 class OverviewChartsResponse(BaseModel):
     matches_per_season: List[MatchesPerSeasonItem] = Field(..., description="Matches count per season")
     scoring_trends: List[ScoringTrendItem] = Field(..., description="Scoring trends across seasons")
+    scoring_trend: Dict[str, Any] = Field(..., description="Overall first-innings mean, OLS slope and peak season")
     result_distribution: List[MatchResultDistributionItem] = Field(..., description="Match result breakdown")
+    outcomes: Dict[str, Any] = Field(..., description="Shared outcome breakdown (decided, Super Over, no result)")
     scoring_distribution: List[ScoringDistributionBin] = Field(..., description="Score span distribution")
+    scoring_summary: Dict[str, Any] = Field(..., description="Histogram sample: n, eligibility rule, excluded innings")
     team_records: List[TeamRecordItem] = Field(..., description="Verified franchise records")
+    team_records_window: Dict[str, Any] = Field(..., description="Seasons of the team records and the rule")
+    champions: List[Dict[str, Any]] = Field(..., description="Champion of every season, from its final")
+    champion_rule: str = Field(..., description="How the champion of a season is identified")
 
 
 # ==========================================

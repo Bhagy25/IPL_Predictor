@@ -1,20 +1,28 @@
-"""Data service for IPL Overview statistics, KPIs, and charts.
+"""Data service for the IPL Overview homepage: KPIs, coverage, notices, charts and team records.
 
-Loads verified Stage 1-3 analytical outputs from reports/, caches in memory,
-and serves high-performance pre-aggregated results.
+Every number is computed from the canonical match data (data/processed and data/derived) through the
+shared engine, with the same definitions as Team Analysis and Statistics & EDA. Nothing is read from
+reports/ and there are no fallback numbers: if the data cannot load, the endpoints fail and the page
+shows its unavailable state.
 """
 from __future__ import annotations
 
-import json
-from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Any, Dict, List, Optional, Tuple
 
+import numpy as np
 import pandas as pd
 
 from cricketlens.api.services.canonical_data import (
+    CHAMPION_RULE,
     PLAYER_DIRECTORY_DEFINITION,
+    TEAM_DEFINITIONS,
+    CanonicalAnalyticsEngine,
     DerivedDataUnavailable,
     canonical_engine,
+    format_season_ranges,
+    outcome_breakdown,
+    percentage,
+    result_summary,
 )
 from cricketlens.api.schemas import (
     KPIMetricItem,
@@ -28,399 +36,356 @@ from cricketlens.api.schemas import (
     OverviewChartsResponse,
 )
 
-# Known canonical franchise championship titles (2008–2026: 19 seasons)
-FRANCHISE_TITLES: Dict[str, List[int]] = {
-    "Chennai Super Kings": [2010, 2011, 2018, 2021, 2023],
-    "Mumbai Indians": [2013, 2015, 2017, 2019, 2020],
-    "Kolkata Knight Riders": [2012, 2014, 2024],
-    "Royal Challengers Bengaluru": [2025, 2026],
-    "Rajasthan Royals": [2008],
-    "Sunrisers Hyderabad": [2016],
-    "Gujarat Titans": [2022],
-    "Lucknow Super Giants": [],
-    "Delhi Capitals": [],
-    "Punjab Kings": [],
-    # Defunct franchises (kept separate from successor entities):
-    "Deccan Chargers": [2009],
-    "Rising Pune Supergiant": [],
-    "Gujarat Lions": [],
-    "Pune Warriors": [],
-    "Kochi Tuskers Kerala": [],
-}
+FIRST_INNINGS_ELIGIBILITY = (
+    "Completed first innings only: an innings counts when it was followed by a second innings, was bowled out "
+    "(10 wickets) or used all 120 legal balls. First innings cut short when the match was abandoned (no result) "
+    "are excluded. Shortened innings that were completed, such as rain-reduced or D/L matches, are included."
+)
+
+# First-innings score bins: [low, high) runs, label and description
+SCORE_BINS: List[Tuple[Optional[int], Optional[int], str, str]] = [
+    (None, 120, "< 120", "Extreme bowler-dominated or rain-shortened innings"),
+    (120, 150, "120–149", "Below-average / defensive bowling surfaces"),
+    (150, 180, "150–179", "Historical average par score span"),
+    (180, 210, "180–209", "Above-average scoring / modern high-tempo batting"),
+    (210, None, "210+", "Explosive / record scores"),
+]
+
+TEAM_RECORDS_WINDOW_RULE = (
+    "Comparative window: from the first season in which every current franchise played, to the season before "
+    "the latest one (the latest season is the Stage 3 holdout)."
+)
+
+
+def _count_label(n: int, singular: str, plural_form: str) -> str:
+    return f"{n:,} {singular if n == 1 else plural_form}"
+
+
+def first_innings_eligibility(engine: CanonicalAnalyticsEngine) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Completed first innings (see FIRST_INNINGS_ELIGIBILITY) and the excluded ones, from innings.csv."""
+    innings = engine._innings
+    first = innings[innings["innings"] == 1]
+    followed = first["match_id"].isin(innings.loc[innings["innings"] == 2, "match_id"])
+    completed = followed | (first["wickets"] >= 10) | (first["legal_balls"] >= 120)
+    return first[completed], first[~completed]
 
 
 class OverviewService:
-    def __init__(self, repo_root: Optional[Path] = None):
-        if repo_root is None:
-            # Default to repo root (3 levels up from this file: api/services -> api -> cricketlens -> src -> repo_root)
-            self.repo_root = Path(__file__).resolve().parents[3]
-        else:
-            self.repo_root = Path(repo_root)
-
-        self.reports_dir = self.repo_root / "reports"
+    def __init__(self, engine: Optional[CanonicalAnalyticsEngine] = None):
+        self.engine = engine or canonical_engine
         self._summary_cache: Optional[OverviewSummaryResponse] = None
         self._charts_cache: Optional[OverviewChartsResponse] = None
-        self._players_resolved = False
-        self._load_data()
 
-    @staticmethod
-    def _players_metric() -> KPIMetricItem:
+    # ---------------------------------------------------------------- KPIs
+
+    def _players_metric(self) -> Tuple[KPIMetricItem, bool]:
         """Player KPI from the same directory as Player Explorer; an unavailable directory is shown as such."""
         try:
-            players = canonical_engine.player_directory_counts()["all"]
+            players = self.engine.player_directory_counts()["all"]
         except DerivedDataUnavailable:
             return KPIMetricItem(
                 id="players", label="Players", value="—", numeric_value=None,
                 statusText="Player data unavailable", iconName="User", description=PLAYER_DIRECTORY_DEFINITION,
-            )
+            ), False
         return KPIMetricItem(
-            id="players",
-            label="Players",
-            value=f"{players:,}",
-            numeric_value=float(players),
-            statusText="Batted or bowled",
-            iconName="User",
-            description=PLAYER_DIRECTORY_DEFINITION,
+            id="players", label="Players", value=f"{players:,}", numeric_value=float(players),
+            statusText="Batted or bowled", iconName="User", description=PLAYER_DIRECTORY_DEFINITION,
+        ), True
+
+    def _retired_hurt(self) -> Optional[int]:
+        """Ordinary-innings retired-hurt events from data/derived/dismissals.csv; None when unavailable."""
+        if self.engine.derived_status()["available"]:
+            return int((self.engine._dismissals["kind"] == "retired hurt").sum())
+        return None
+
+    def _reconciled_matches(self) -> int:
+        """Matches whose innings totals (runs, wickets, legal balls) equal the sums of their deliveries."""
+        e = self.engine
+        balls = e._deliveries.groupby(["match_id", "innings"]).agg(
+            runs=("runs_total", "sum"), wickets=("team_wickets_on_ball", "sum"), legal_balls=("legal_delivery", "sum"),
+        ).reset_index().astype({"match_id": "int64", "innings": "int64"})
+        joined = e._innings[["match_id", "innings", "runs", "wickets", "legal_balls"]].astype(
+            {"match_id": "int64", "innings": "int64"}
+        ).merge(balls, on=["match_id", "innings"], how="left", suffixes=("", "_balls"))
+        ok = (
+            (joined["runs"] == joined["runs_balls"]) & (joined["wickets"] == joined["wickets_balls"])
+            & (joined["legal_balls"] == joined["legal_balls_balls"])
         )
+        bad = set(joined.loc[~ok, "match_id"])
+        return int((~e._matches["match_id"].isin(bad)).sum())
 
-    def _load_data(self) -> None:
-        """Load and cache overview summary and charts from reports."""
-        stage01_dir = self.reports_dir / "stage_01"
-        stage02_dir = self.reports_dir / "stage_02"
-
-        audit_path = stage01_dir / "audit_summary.json"
-        source_audit_path = stage01_dir / "source_audit_summary.json"
-        season_summary_path = stage01_dir / "season_summary.csv"
-        team_wins_path = stage02_dir / "session_03" / "team_wins_before_after_super_over_fix_2022_2025.csv"
-
-        # Safe defaults if files are not yet generated
-        audit_data: Dict[str, Any] = {}
-        source_audit_data: Dict[str, Any] = {}
-        season_df = pd.DataFrame()
-        team_df = pd.DataFrame()
-
-        if audit_path.exists():
-            try:
-                audit_data = json.loads(audit_path.read_text(encoding="utf-8"))
-            except Exception:
-                pass
-
-        if source_audit_path.exists():
-            try:
-                source_audit_data = json.loads(source_audit_path.read_text(encoding="utf-8"))
-            except Exception:
-                pass
-
-        if season_summary_path.exists():
-            try:
-                season_df = pd.read_csv(season_summary_path)
-            except Exception:
-                pass
-
-        if team_wins_path.exists():
-            try:
-                team_df = pd.read_csv(team_wins_path)
-            except Exception:
-                pass
-
-        # 1. Build KPI Summary
-        matches_count = audit_data.get("counts", {}).get("matches", 1243)
-        total_deliveries = audit_data.get("counts", {}).get("deliveries", 295557)
-        legal_deliveries = audit_data.get("totals", {}).get("legal_deliveries", 284465)
-        total_runs = audit_data.get("totals", {}).get("team_runs", 401423)
-        total_wickets = audit_data.get("totals", {}).get("team_wickets", 14655)
-        distinct_teams = audit_data.get("distinct_teams", 15)
-        canonical_venues = source_audit_data.get("distinct_canonical_venue_strings", 38)
-        seasons_list = audit_data.get("coverage", {}).get("seasons", list(range(2008, 2027)))
-        seasons_count = len(seasons_list)
+    def _build_summary(self) -> Tuple[OverviewSummaryResponse, bool]:
+        e = self.engine
+        e.ensure_loaded()
+        m, d = e._matches, e._deliveries
+        seasons = sorted(int(s) for s in m["season"].unique())
+        first, last = seasons[0], seasons[-1]
+        span = format_season_ranges(seasons)
+        complete = seasons == list(range(first, last + 1))
+        matches = int(len(m))
+        no_results = outcome_breakdown(m)["no_result"]
+        deliveries = int(len(d))
+        legal = int(d["legal_delivery"].sum())
+        wides, noballs = int((d["wides"] > 0).sum()), int((d["noballs"] > 0).sum())
+        runs = int(d["runs_total"].sum())
+        wickets = int(d["team_wickets_on_ball"].sum())
+        franchises = sorted(set(m["team1"]) | set(m["team2"]))
+        latest = m[m["season"] == last]
+        active = len(set(latest["team1"]) | set(latest["team2"]))
+        venues = int(m["venue_canonical"].nunique())
+        raw_venues = int(m["venue"].nunique())
+        verified = percentage(self._reconciled_matches(), matches)
+        retired_hurt = self._retired_hurt()
+        so_matches = int((m["super_over_innings"] > 0).sum())
+        so_innings = int(m["super_over_innings"].sum())
+        players, players_ok = self._players_metric()
 
         metrics = [
             KPIMetricItem(
-                id="seasons",
-                label="Seasons covered",
-                value=f"{seasons_count}",
-                numeric_value=float(seasons_count),
-                statusText="2008–2026 complete",
-                iconName="Trophy",
-                description="All 19 men's Indian Premier League tournament editions.",
+                id="seasons", label="Seasons covered", value=f"{len(seasons)}", numeric_value=float(len(seasons)),
+                statusText=f"{span} complete" if complete else span, iconName="Trophy",
+                description=f"All {len(seasons)} men's Indian Premier League tournament editions"
+                            + ("." if complete else f" in the archive ({span})."),
             ),
             KPIMetricItem(
-                id="matches",
-                label="Matches analyzed",
-                value=f"{matches_count:,}",
-                numeric_value=float(matches_count),
-                statusText="100% verified",
-                iconName="Eye",
-                description="1,243 scheduled and completed matches in the canonical Cricsheet archive.",
+                id="matches", label="Matches analyzed", value=f"{matches:,}", numeric_value=float(matches),
+                statusText=f"{verified:g}% verified", iconName="Eye",
+                description=f"{matches:,} matches in the canonical Cricsheet archive, including "
+                            f"{_count_label(no_results, 'no result', 'no results')}; {verified:g}% have innings totals "
+                            "that reconcile with their ball-by-ball data.",
             ),
             KPIMetricItem(
-                id="deliveries",
-                label="Recorded deliveries",
-                value=f"{total_deliveries:,}",
-                numeric_value=float(total_deliveries),
-                statusText=f"{legal_deliveries:,} legal balls",
-                iconName="Activity",
-                description="295,557 ball events including wides and no-balls; 284,465 legal deliveries.",
+                id="deliveries", label="Recorded deliveries", value=f"{deliveries:,}", numeric_value=float(deliveries),
+                statusText=f"{legal:,} legal balls", iconName="Activity",
+                description=f"{deliveries:,} ball events including {wides:,} wides and {noballs:,} no-balls; "
+                            f"{legal:,} legal deliveries.",
             ),
             KPIMetricItem(
-                id="teams",
-                label="Teams",
-                value=f"{distinct_teams}",
-                numeric_value=float(distinct_teams),
-                statusText="10 active franchises",
-                iconName="Shield",
-                description="10 active franchises and 5 historical defunct teams with name renames consolidated.",
+                id="teams", label="Teams", value=f"{len(franchises)}", numeric_value=float(len(franchises)),
+                statusText=f"{active} active franchises", iconName="Shield",
+                description=f"{active} active franchises (those that played in {last}) and {len(franchises) - active} "
+                            "historical defunct teams with name renames consolidated.",
             ),
-            # Filled from the player directory on first request (see _players_metric)
+            players,
             KPIMetricItem(
-                id="players", label="Players", value="—", numeric_value=None,
-                statusText="Awaiting player directory", iconName="User", description=PLAYER_DIRECTORY_DEFINITION,
-            ),
-            KPIMetricItem(
-                id="venues",
-                label="Venues",
-                value=f"{canonical_venues}",
-                numeric_value=float(canonical_venues),
-                statusText="38 canonical grounds",
-                iconName="MapPin",
-                description="38 canonical stadiums across India and overseas, normalized from 60 raw naming strings.",
+                id="venues", label="Venues", value=f"{venues}", numeric_value=float(venues),
+                statusText=f"{venues} canonical grounds", iconName="MapPin",
+                description=f"{venues} canonical stadiums across India and overseas, normalized from {raw_venues} raw "
+                            "naming strings.",
             ),
             KPIMetricItem(
-                id="runs",
-                label="Total runs",
-                value=f"{total_runs:,}",
-                numeric_value=float(total_runs),
-                statusText="Ordinary innings",
-                iconName="TrendingUp",
+                id="runs", label="Total runs", value=f"{runs:,}", numeric_value=float(runs),
+                statusText="Ordinary innings", iconName="TrendingUp",
                 description="Total team runs scored across all regular match innings (Super Overs excluded).",
             ),
             KPIMetricItem(
-                id="wickets",
-                label="Total wickets",
-                value=f"{total_wickets:,}",
-                numeric_value=float(total_wickets),
-                statusText="Team wickets",
-                iconName="Target",
-                description="Total batting-team wickets lost; excludes 19 recorded retired-hurt events.",
+                id="wickets", label="Total wickets", value=f"{wickets:,}", numeric_value=float(wickets),
+                statusText="Team wickets", iconName="Target",
+                description="Total batting-team wickets lost; "
+                            + (f"excludes {retired_hurt} recorded retired-hurt events." if retired_hurt is not None
+                               else "retired-hurt events are excluded (count unavailable: derived tables missing)."),
             ),
         ]
 
         coverage = CoverageMetadata(
-            first_match_date=audit_data.get("coverage", {}).get("first_match_date", "2008-04-18"),
-            last_match_date=audit_data.get("coverage", {}).get("last_match_date", "2026-05-31"),
-            seasons_count=seasons_count,
-            seasons_span=f"{min(seasons_list)}–{max(seasons_list)}",
-            total_matches=matches_count,
+            first_match_date=str(m["date"].min()),
+            last_match_date=str(m["date"].max()),
+            seasons_count=len(seasons),
+            seasons_span=span,
+            total_matches=matches,
             gender="male",
             competition="Indian Premier League",
         )
 
         notices = [
-            "Recorded deliveries distinguish 295,557 ball events from 284,465 legal deliveries (wides and no-balls are illegal).",
-            "Total runs (401,423) include extras and represent team totals from ordinary innings.",
-            "Wickets (14,655) represent batting-team losses; 19 retired hurt events are excluded per MCC law.",
-            "Super Over deliveries (34 innings across 16 tied games) are excluded from ordinary innings aggregates.",
-            "Franchise renames are standardized (Delhi Capitals, Punjab Kings, Royal Challengers Bengaluru). Discontinued clubs remain distinct.",
-            "IPL 2026 was reserved as an unseen holdout for Stage 3 machine learning evaluation.",
+            f"Recorded deliveries distinguish {deliveries:,} ball events from {legal:,} legal deliveries "
+            "(wides and no-balls are illegal).",
+            f"Total runs ({runs:,}) include extras and represent team totals from ordinary innings.",
+            f"Wickets ({wickets:,}) represent batting-team losses; "
+            + (f"{retired_hurt} retired hurt events are excluded per MCC law." if retired_hurt is not None
+               else "retired hurt events are excluded per MCC law."),
+            f"Super Over deliveries ({so_innings} innings across {so_matches} tied games) are excluded from ordinary "
+            "innings aggregates.",
+            "Franchise renames are standardized (Delhi Capitals, Punjab Kings, Royal Challengers Bengaluru). "
+            "Discontinued clubs remain distinct.",
+            f"IPL {last}, the latest season, was reserved as an unseen holdout for Stage 3 machine learning evaluation.",
         ]
+        complete_summary = players_ok and retired_hurt is not None
+        return OverviewSummaryResponse(metrics=metrics, coverage=coverage, notices=notices), complete_summary
 
-        self._players_resolved = False
-        self._summary_cache = OverviewSummaryResponse(
-            metrics=metrics,
-            coverage=coverage,
-            notices=notices,
-        )
+    # ---------------------------------------------------------------- charts
 
-        # 2. Build Charts Dataset
-        # Matches per season
-        matches_per_season: List[MatchesPerSeasonItem] = []
-        scoring_trends: List[ScoringTrendItem] = []
+    def _team_records(self) -> Tuple[List[TeamRecordItem], Dict[str, Any]]:
+        """Records of the current franchises over the comparative window (see TEAM_RECORDS_WINDOW_RULE)."""
+        e = self.engine
+        m = e._matches
+        last = int(m["season"].max())
+        current = sorted(set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"]))
+        start = max(e._franchise_seasons[t][0] for t in current)
+        end = last - 1
+        rows = e._team_rows[e._team_rows["season"].between(start, end)]
+        champions = e.season_champions()
+        records = []
+        for team in current:
+            r = result_summary(rows[rows["team"] == team])
+            years = [c["season"] for c in champions if c["champion"] == team]
+            records.append(TeamRecordItem(
+                team=team,
+                played=r["played"],
+                wins=r["wins"],
+                losses=r["losses"],
+                tied_no_result=r["played"] - r["wins"] - r["losses"],
+                win_pct=r["win_pct"],
+                titles=len(years),
+                title_years=years,
+                status="Active",
+            ))
+        records.sort(key=lambda t: (t.win_pct is None, -(t.win_pct or 0), -t.played, t.team))
+        window = {
+            "first_season": start,
+            "last_season": end,
+            "label": f"{start}–{end}",
+            "rule": TEAM_RECORDS_WINDOW_RULE,
+            "win_pct_definition": TEAM_DEFINITIONS["win_pct"],
+            "franchises": len(current),
+        }
+        return records, window
 
-        if not season_df.empty and "season" in season_df.columns:
-            for _, row in season_df.iterrows():
-                s = int(row["season"])
-                m = int(row["matches"])
-                matches_per_season.append(MatchesPerSeasonItem(season=s, matches=m))
-                scoring_trends.append(
-                    ScoringTrendItem(
-                        season=s,
-                        avg_first_innings_runs=round(float(row.get("avg_first_innings_runs", 0)), 1),
-                        median_first_innings_runs=round(float(row.get("median_first_innings_runs", 0)), 1),
-                        total_runs=int(row.get("runs", 0)),
-                    )
-                )
-        else:
-            # Verified fallback from stage_01 season summary
-            fallback_seasons = [
-                (2008, 58, 161.0, 160.0, 17937),
-                (2009, 57, 150.3, 149.0, 16320),
-                (2010, 60, 164.8, 169.0, 18864),
-                (2011, 73, 152.4, 156.0, 21154),
-                (2012, 74, 157.5, 159.0, 22453),
-                (2013, 76, 155.9, 158.0, 22541),
-                (2014, 60, 163.1, 160.0, 18909),
-                (2015, 59, 166.3, 167.0, 18332),
-                (2016, 60, 162.6, 162.0, 18862),
-                (2017, 59, 165.8, 163.0, 18769),
-                (2018, 60, 172.5, 174.0, 19901),
-                (2019, 60, 166.7, 169.0, 19400),
-                (2020, 60, 169.5, 167.0, 19352),
-                (2021, 60, 159.3, 157.5, 18622),
-                (2022, 74, 171.1, 169.5, 24395),
-                (2023, 74, 182.7, 183.5, 25688),
-                (2024, 71, 189.6, 185.0, 25971),
-                (2025, 74, 188.8, 193.0, 26503),
-                (2026, 74, 193.0, 200.5, 27450),
-            ]
-            for s, m, avg_r, med_r, tot_r in fallback_seasons:
-                matches_per_season.append(MatchesPerSeasonItem(season=s, matches=m))
-                scoring_trends.append(
-                    ScoringTrendItem(
-                        season=s,
-                        avg_first_innings_runs=avg_r,
-                        median_first_innings_runs=med_r,
-                        total_runs=tot_r,
-                    )
-                )
+    def _build_charts(self) -> OverviewChartsResponse:
+        e = self.engine
+        e.ensure_loaded()
+        m, inn, d = e._matches, e._innings, e._deliveries
+        first_all = inn[inn["innings"] == 1]
 
-        # Match Result Distribution (1,243 total)
-        # 1218 ordinary wins, 16 regulation ties decided by Super Over, 9 no-results
+        # Matches and scoring by season (scoring: every recorded first innings, as on Statistics & EDA)
+        runs_by_season = d.groupby("season")["runs_total"].sum()
+        matches_per_season, scoring_trends = [], []
+        for season, g in m.groupby("season"):
+            fi = first_all[first_all["season"] == season]["runs"]
+            matches_per_season.append(MatchesPerSeasonItem(
+                season=int(season), matches=int(len(g)), teams=len(set(g["team1"]) | set(g["team2"])),
+            ))
+            scoring_trends.append(ScoringTrendItem(
+                season=int(season),
+                avg_first_innings_runs=round(float(fi.mean()), 1),
+                median_first_innings_runs=round(float(fi.median()), 1),
+                total_runs=int(runs_by_season.get(season, 0)),
+            ))
+        means = pd.Series({t.season: t.avg_first_innings_runs for t in scoring_trends})
+        exact_means = first_all.groupby("season")["runs"].mean()
+        slope = float(np.polyfit(exact_means.index.to_numpy(dtype=float), exact_means.to_numpy(), 1)[0])
+        peak = int(means.idxmax())
+        trend = {
+            "first_innings": int(len(first_all)),
+            "overall_mean": round(float(first_all["runs"].mean()), 1),
+            "slope_runs_per_season": round(slope, 2),
+            "seasons_label": format_season_ranges([int(s) for s in exact_means.index]),
+            "peak_season": peak,
+            "peak_mean": float(means[peak]),
+            "definition": "Mean and median of every recorded first innings per season; the trend is an ordinary "
+                          "least-squares line through the season means (observational, not causal).",
+        }
+
+        # Results: the shared Team Analysis / EDA outcome breakdown
+        oc = outcome_breakdown(m)
         result_distribution = [
             MatchResultDistributionItem(
-                category="Regulation Win",
-                count=1218,
-                percentage=round(100 * 1218 / 1243, 2),
-                description="Decided within 20 overs by runs or wickets",
+                category="Regulation Win", count=oc["decided_in_regulation"],
+                percentage=round(100 * oc["decided_in_regulation"] / oc["matches"], 2),
+                description=f"Decided in regulation by runs or wickets, including {oc['dl_method']} by the D/L method",
             ),
             MatchResultDistributionItem(
-                category="Tie (Super Over)",
-                count=16,
-                percentage=round(100 * 16 / 1243, 2),
+                category="Tie (Super Over)", count=oc["decided_by_super_over"],
+                percentage=round(100 * oc["decided_by_super_over"] / oc["matches"], 2),
                 description="Tied in regulation; settled by one-over eliminator",
             ),
             MatchResultDistributionItem(
-                category="No Result",
-                count=9,
-                percentage=round(100 * 9 / 1243, 2),
+                category="No Result", count=oc["no_result"],
+                percentage=round(100 * oc["no_result"] / oc["matches"], 2),
                 description="Abandoned or rain interruption without reaching DLS minimum",
             ),
         ]
+        if oc["other_not_recorded"]:
+            result_distribution.append(MatchResultDistributionItem(
+                category="Not recorded", count=oc["other_not_recorded"],
+                percentage=round(100 * oc["other_not_recorded"] / oc["matches"], 2),
+                description="No result type recorded in the source",
+            ))
+        outcomes = {**oc, "decided_pct": percentage(oc["decided"], oc["matches"])}
 
-        # Overall First-Innings Scoring Distribution (1,237 recorded first innings)
-        scoring_distribution = [
-            ScoringDistributionBin(
-                span="< 120",
-                count=84,
-                percentage=6.8,
-                description="Extreme bowler-dominated or rain-shortened innings",
-            ),
-            ScoringDistributionBin(
-                span="120–149",
-                count=268,
-                percentage=21.7,
-                description="Below-average / defensive bowling surfaces",
-            ),
-            ScoringDistributionBin(
-                span="150–179",
-                count=438,
-                percentage=35.4,
-                description="Historical average par score span (median 168)",
-            ),
-            ScoringDistributionBin(
-                span="180–209",
-                count=317,
-                percentage=25.6,
-                description="Above-average scoring / modern high-tempo batting",
-            ),
-            ScoringDistributionBin(
-                span="210+",
-                count=130,
-                percentage=10.5,
-                description="Explosive / record scores (max 287)",
-            ),
-        ]
+        # First-innings score distribution over completed first innings
+        eligible, excluded = first_innings_eligibility(e)
+        runs = eligible["runs"]
+        n = int(len(runs))
+        median, top = float(runs.median()), int(runs.max())
+        scoring_distribution = []
+        for low, high, span, text in SCORE_BINS:
+            mask = pd.Series(True, index=runs.index)
+            if low is not None:
+                mask &= runs >= low
+            if high is not None:
+                mask &= runs < high
+            count = int(mask.sum())
+            in_bin = lambda v, low=low, high=high: (low is None or v >= low) and (high is None or v < high)  # noqa: E731
+            notes = [f"median {median:g}"] * in_bin(median) + [f"max {top}"] * in_bin(top)
+            scoring_distribution.append(ScoringDistributionBin(
+                span=span, count=count, percentage=percentage(count, n) or 0.0,
+                description=text + (f" ({', '.join(notes)})" if notes else ""),
+            ))
+        modal = max(scoring_distribution, key=lambda b: b.count)
+        scoring_summary = {
+            "n": n,
+            "first_innings_recorded": int(len(first_all)),
+            "eligibility_rule": FIRST_INNINGS_ELIGIBILITY,
+            "excluded": [
+                {
+                    "match_id": int(r.match_id), "date": str(r.date),
+                    "season": int(r.season), "batting_team": str(r.batting_team), "runs": int(r.runs),
+                    "wickets": int(r.wickets), "legal_balls": int(r.legal_balls),
+                    "reason": "No result: abandoned during the first innings, which was not completed",
+                }
+                for r in excluded.sort_values(["date", "match_id"]).itertuples()
+            ],
+            "mean": round(float(runs.mean()), 1),
+            "median": median,
+            "q1": float(runs.quantile(0.25)),
+            "q3": float(runs.quantile(0.75)),
+            "min": int(runs.min()),
+            "max": top,
+            "modal_span": modal.span,
+            "modal_pct": modal.percentage,
+        }
 
-        # Team Records (10 current franchises)
-        team_records: List[TeamRecordItem] = []
-        if not team_df.empty and "team" in team_df.columns:
-            for _, r in team_df.iterrows():
-                team_name = str(r["team"])
-                played = int(r["played"])
-                wins = int(r["wins_including_super_overs"])
-                decided = int(r["decided_matches_including_super_overs"])
-                losses = decided - wins
-                tied_nr = played - decided
-                win_pct = round(float(r["corrected_win_pct"]), 1)
-                titles_list = FRANCHISE_TITLES.get(team_name, [])
-
-                team_records.append(
-                    TeamRecordItem(
-                        team=team_name,
-                        played=played,
-                        wins=wins,
-                        losses=losses,
-                        tied_no_result=tied_nr,
-                        win_pct=win_pct,
-                        titles=len(titles_list),
-                        title_years=titles_list,
-                        status="Active",
-                    )
-                )
-        else:
-            # Verified fallback table from Stage 2 Session 03 (2022–2025 comparative window)
-            fallback_teams = [
-                ("Gujarat Titans", 60, 37, 23, 0, 61.7),
-                ("Royal Challengers Bengaluru", 60, 34, 26, 0, 56.7),
-                ("Lucknow Super Giants", 58, 30, 27, 1, 52.6),
-                ("Kolkata Knight Riders", 55, 28, 26, 1, 51.9),
-                ("Rajasthan Royals", 60, 30, 30, 0, 50.0),
-                ("Punjab Kings", 60, 28, 30, 2, 48.3),
-                ("Delhi Capitals", 57, 26, 29, 2, 47.3),
-                ("Chennai Super Kings", 58, 25, 32, 1, 43.9),
-                ("Sunrisers Hyderabad", 58, 25, 32, 1, 43.9),
-                ("Mumbai Indians", 60, 26, 34, 0, 43.3),
-            ]
-            for t_name, p, w, l, tnr, wp in fallback_teams:
-                titles_list = FRANCHISE_TITLES.get(t_name, [])
-                team_records.append(
-                    TeamRecordItem(
-                        team=t_name,
-                        played=p,
-                        wins=w,
-                        losses=l,
-                        tied_no_result=tnr,
-                        win_pct=wp,
-                        titles=len(titles_list),
-                        title_years=titles_list,
-                        status="Active",
-                    )
-                )
-
-        self._charts_cache = OverviewChartsResponse(
+        team_records, window = self._team_records()
+        return OverviewChartsResponse(
             matches_per_season=matches_per_season,
             scoring_trends=scoring_trends,
+            scoring_trend=trend,
             result_distribution=result_distribution,
+            outcomes=outcomes,
             scoring_distribution=scoring_distribution,
+            scoring_summary=scoring_summary,
             team_records=team_records,
+            team_records_window=window,
+            champions=e.season_champions(),
+            champion_rule=CHAMPION_RULE,
         )
 
+    # ---------------------------------------------------------------- API
+
     def get_summary(self) -> OverviewSummaryResponse:
-        """Return the 8 verified KPI card metrics with coverage metadata."""
+        """The 8 KPI cards, coverage and notices, computed from the match data."""
         if self._summary_cache is None:
-            self._load_data()
-        assert self._summary_cache is not None
-        if not self._players_resolved:
-            metric = self._players_metric()
-            metrics = self._summary_cache.metrics
-            metrics[next(i for i, m in enumerate(metrics) if m.id == "players")] = metric
-            self._players_resolved = metric.numeric_value is not None
+            summary, complete = self._build_summary()
+            if not complete:
+                return summary  # rebuilt on the next request once the derived tables are available
+            self._summary_cache = summary
         return self._summary_cache
 
     def get_charts(self) -> OverviewChartsResponse:
-        """Return the 4 chart datasets and verified team records."""
+        """The chart datasets, champions and team records, computed from the match data."""
         if self._charts_cache is None:
-            self._load_data()
-        assert self._charts_cache is not None
+            self._charts_cache = self._build_charts()
         return self._charts_cache
 
 
