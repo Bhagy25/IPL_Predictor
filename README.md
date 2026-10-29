@@ -1,149 +1,366 @@
-# CricketLens — Men’s IPL Analytics & Prediction
+# CricketLens — Men's IPL Analytics & Prediction
 
-**IT462 Exploratory Data Analysis college project.** Development **Stage 2: Systematic EDA (INTERNALLY COMPLETE)**; Stage 1 dataset screening and cleaning is complete for EDA with documented exceptions. Files here also include explicitly labelled *preliminary* Stage 2 EDA and Stage 3 ML experiments. No completed dashboard or final trained model yet.
+CricketLens is an IT462 Exploratory Data Analysis course project. It cleans and audits every men's Indian
+Premier League match from 2008 to 2026 from Cricsheet ball-by-ball data, explores it systematically, trains
+two probability models, and serves all of it through a FastAPI backend and a six-tab React website:
+season and team analysis, a player explorer, a filterable statistics lab, next-over wicket and batter
+milestone predictions, and a tracker that scores predictions and replays the models' 2026 holdout season.
 
-## Agreed scope
-- Men's IPL matches 2008–2026; Cricsheet ball-by-ball JSON as source.
-- Six website tabs: IPL Overview; Team Analysis; Player Explorer; Statistics & EDA Lab; Prediction Arena; Prediction Tracker.
-- Model A: probability a batter scores 30+ and 50+ runs *before the match* (with suitable qualification for batting participation).
-- Model B: probability of at least one team wicket in the *next over* after a completed over.
-- No login/signup. First version stores predictions and user-entered outcomes in the browser; no automatic model retraining.
-- Development uses pre-2026 seasons; **2026 is reserved as an unseen test**, then a final model can be refit through 2026 for future predictions.
+## Contents
 
-## Stage definitions
-| Stage | Work | Status |
-|---|---|---|
-| **1** | Screen, clean, standardize and audit IPL data | **Complete for EDA; candidate ML labels require Stage 3 selection** |
-| **2** | Systematic EDA, descriptive statistics, plots and interpretations | **Internally complete**; Sessions 01–03, 20 figures, corrected Super Over outcomes; professor review pending |
-| **3** | Train/validate/test both ML models | Not formally complete; early next-over baseline validated on 2025 |
-| **4** | Build six-tab React dashboard | Not started |
-| **5** | FastAPI integration, tracker and historical replay | Not started |
-| **6** | Consolidate final academic report and demonstrate | Ongoing notes; final report not complete |
+1. [Features](#features)
+2. [Screenshots](#screenshots)
+3. [Data source](#data-source)
+4. [Architecture](#architecture)
+5. [Repository structure](#repository-structure)
+6. [Setup and run](#setup-and-run)
+7. [Reproducing the analysis stages](#reproducing-the-analysis-stages)
+8. [Key definitions](#key-definitions)
+9. [Machine-learning models](#machine-learning-models)
+10. [Verification approach](#verification-approach)
+11. [Limitations and known issues](#limitations-and-known-issues)
+12. [Project stages](#project-stages)
+13. [License and credits](#license-and-credits)
 
-For deliverables and completion criteria see [`docs/ROADMAP.md`](docs/ROADMAP.md), [`docs/STAGE_01_STATUS.md`](docs/STAGE_01_STATUS.md), and [`reports/REPORT_DRAFT.md`](reports/REPORT_DRAFT.md).
+## Features
 
-## Run the project locally (Python 3.10+)
+**IPL Overview (home)**
+- Archive figures: seasons, matches, deliveries, teams, players, venues, runs and wickets, each with its definition.
+- Matches and first-innings scoring by season with a fitted trend, the result distribution and a first-innings score histogram.
+- Team records of the ten current franchises over their shared seasons (2022–2026), with every season's champion.
 
-```bash
+**Team Analysis**
+- Any franchise, for all seasons or one season: results with Super Over and no-result handling, batting first vs chasing, toss outcomes, phases and season trends.
+- Records against every opponent, head-to-head between any two franchises and venue records with a minimum-matches filter.
+
+**Player Explorer**
+- Directory of 805 players keyed by Cricsheet registry ID, searchable by any name variant, with role and experience filters.
+- Career or single-season profiles: batting and bowling summaries, season charts, splits by team, opposition and venue, and a paginated match log.
+
+**Statistics & EDA**
+- Full-history analysis that recomputes for a season range, team and venue: scoring trends, phases, batting and bowling distributions, venues, toss, innings order, dismissals, boundaries, anomalies and correlations.
+- Player comparison, plus the static Stage 2 research figures with their coverage stated.
+
+**Prediction Arena**
+- Next-over wicket risk from a match situation you enter, and a batter's chance of 30+ and 50+ for a future match.
+- Results in plain language, with the 2026 base rate and model scores for context; warnings when inputs fall outside anything seen at that stage of an innings.
+
+**Prediction Tracker**
+- Save predictions in the browser, record what happened, and see Brier scores and hit rates; export and import as JSON.
+- 2026 Holdout Replay: every forecast the holdout models made for 2026, match by match, with calibration charts.
+
+## Screenshots
+
+| IPL Overview | Player Explorer (V Kohli) |
+|---|---|
+| ![IPL Overview](docs/screenshots/desktop-01-overview.png) | ![Player Explorer](docs/screenshots/desktop-03-player-explorer.png) |
+| **Prediction Arena (next-over wicket risk)** | **Prediction Tracker (2026 holdout replay)** |
+| ![Prediction Arena](docs/screenshots/desktop-05-prediction-arena.png) | ![Prediction Tracker](docs/screenshots/desktop-06-prediction-tracker.png) |
+| **Team Analysis** | **Statistics & EDA** |
+| ![Team Analysis](docs/screenshots/desktop-02-team-analysis.png) | ![Statistics & EDA](docs/screenshots/desktop-04-statistics-eda.png) |
+
+Mobile (390px): [IPL Overview](docs/screenshots/mobile-01-overview.png) ·
+[Player Explorer](docs/screenshots/mobile-03-player-explorer.png) ·
+[Prediction Arena](docs/screenshots/mobile-05-prediction-arena.png)
+
+## Data source
+
+All data comes from [Cricsheet](https://cricsheet.org/)'s IPL ball-by-ball JSON, which is stored in
+`data/raw/ipl_json/`. Thanks to Cricsheet for making it freely available.
+
+| Archive | Count |
+|---|---:|
+| Matches | 1,243 (18 April 2008 to 31 May 2026) |
+| Seasons | 19 (2008–2026) |
+| Ordinary innings | 2,480 |
+| Ball events (Super Overs excluded) | 295,557, of which 284,465 legal deliveries |
+| Runs | 401,423 (extras included) |
+| Team wickets | 14,655 |
+| Franchises | 15 (10 active in 2026, 5 defunct) |
+| Players (registry IDs who batted or bowled) | 805 |
+| Canonical venues | 38 |
+| No-result matches | 9 |
+| Matches decided by a Super Over | 16 |
+
+The processed tables are in `data/processed/` and the supplementary tables (dismissal kinds, squads,
+registry IDs, substitutions) in `data/derived/`. Both are committed, so the website and tests run from a
+fresh clone; `data/processed/README.md`, `data/derived/README.md` and `docs/DATA_DICTIONARY.md` describe
+them.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A["Cricsheet JSON<br/>data/raw/ipl_json"] --> B["Stage 1 pipeline<br/>cricketlens.pipeline"]
+    A --> C["Derived tables<br/>cricketlens.derived_events"]
+    B --> D["data/processed<br/>matches, innings, deliveries, ..."]
+    C --> E["data/derived<br/>dismissals, squads, people, ..."]
+    D --> F["Stage 2 EDA and<br/>Stage 3 models (models/)"]
+    D --> G["FastAPI backend<br/>src/cricketlens/api"]
+    E --> G
+    F --> G
+    G -->|"/api (port 8000)"| H["React + Vite website<br/>web/ (port 5173)"]
+```
+
+The backend loads the tables once into a single analytics engine and computes every statistic from them;
+apart from the captions of the static Stage 2 research figures, no number on the website is typed into the
+code. The prediction endpoints call the Stage 3
+inference functions with the saved models.
+
+| Endpoint group | What it serves |
+|---|---|
+| `/api/health` | Status, archive extent and model availability |
+| `/api/overview/*` | Homepage figures, charts, team records and champions |
+| `/api/teams/*` | Franchise list, team overview, venues, head-to-head |
+| `/api/players/*` | Player directory, profiles, match logs |
+| `/api/eda/*` | Filterable analysis, filter options, player comparison, Stage 2 figures and tables |
+| `/api/predict/*` | Prediction options, wicket and batter predictions, model evaluation, 2026 holdout replay |
+
+The full endpoint reference is in [`docs/STAGE_04_WEBSITE.md`](docs/STAGE_04_WEBSITE.md); interactive docs
+are at `http://127.0.0.1:8000/docs` while the backend runs.
+
+## Repository structure
+
+```
+data/raw/ipl_json/     Cricsheet IPL ball-by-ball JSON (source data)
+data/processed/        Stage 1 tables and the Stage 3 training tables
+data/derived/          Dismissals, squads, registry IDs and substitutions from the raw JSON
+src/cricketlens/       Stage 1-3 Python modules (pipeline, EDA, model training and inference)
+src/cricketlens/api/   FastAPI application: routes, schemas and services
+models/                The four trained models (2026 deployment and 2025 holdout versions)
+web/                   React + TypeScript + Vite + Tailwind website
+tests/                 pytest suite
+reports/               Stage reports (PDF), figures and evaluation outputs
+notebooks/             Stage 2 EDA notebooks
+docs/                  Stage documentation, data dictionary, website guide, screenshots
+pyproject.toml         Python package and dependencies
+LICENSE_NOTES.md       Data credit and image-rights notes
+```
+
+## Setup and run
+
+Requirements: **Python 3.11 or newer** and **Node.js 18 or newer** with npm (tested with Python 3.14 and
+Node.js 22). Run every command from the repository root unless a step says otherwise.
+
+### 1. Python environment
+
+Windows PowerShell:
+
+```powershell
 python -m venv .venv
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# macOS / Linux: source .venv/bin/activate
-pip install -e '.[dev]'
-pytest -q
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 ```
 
-Place your copy of the official `ipl_json.zip` in `data/raw/ipl_json.zip` (excluded from GitHub), then:
+macOS / Linux:
 
 ```bash
-python -m cricketlens.pipeline data/raw/ipl_json.zip --output data/processed
+python3 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -e ".[dev]"
+```
+
+The saved models were serialised with scikit-learn 1.8.0, which `pyproject.toml` pins.
+
+### 2. Backend (port 8000)
+
+Start it from the repository root (the Stage 2 figures are read relative to it):
+
+```powershell
+# Windows PowerShell
+.\.venv\Scripts\python.exe -m uvicorn cricketlens.api.app:app --host 127.0.0.1 --port 8000
+```
+
+```bash
+# macOS / Linux
+.venv/bin/python -m uvicorn cricketlens.api.app:app --host 127.0.0.1 --port 8000
+```
+
+Check it at `http://127.0.0.1:8000/api/health`; the first requests take a few seconds while the data loads.
+
+### 3. Frontend (port 5173)
+
+In a second terminal:
+
+```bash
+cd web
+npm ci
+npm run dev
+```
+
+Open `http://localhost:5173`. The dev server forwards `/api` requests to the backend on port 8000.
+`npm run build` type-checks and builds a production bundle into `web/dist/`.
+
+### 4. Tests
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest        # Windows PowerShell
+```
+
+```bash
+.venv/bin/python -m pytest                  # macOS / Linux
+```
+
+Type-check the website with `npx tsc --noEmit` in `web/`.
+
+### 5. Optional: rebuild the derived tables
+
+`data/derived/` is committed. To rebuild it from the raw JSON (the output is byte-identical; the SHA256 of
+each file is listed in `data/derived/README.md`):
+
+```bash
+python -m cricketlens.derived_events --raw data/raw/ipl_json --output data/derived
+```
+
+Use the virtual environment's Python (`.\.venv\Scripts\python.exe` or `.venv/bin/python`) for this and the
+commands below.
+
+## Reproducing the analysis stages
+
+The outputs of every stage are committed; these commands regenerate them. Each module accepts `--help`.
+
+**Stage 1 — screening and cleaning**
+
+```bash
+python -m cricketlens.stage01_review data/raw/ipl_json --output reports/stage_01
+python -m cricketlens.pipeline data/raw/ipl_json --output data/processed
 python -m cricketlens.data_audit --data data/processed --output reports/stage_01 --figures reports/figures
-python -m cricketlens.overview --data data/processed --output reports/stage_01/first_eda_numbers.json
 ```
 
-These commands create initial clean tables and audit outputs. The `reports/figures` charts are **preliminary Stage 2** work. If experimenting separately with the Stage 3 wicket baseline, run:
-
-```bash
-python -m cricketlens.train_wicket_baseline --input data/processed/next_over_samples.csv --output models
-```
-
-Do **not** evaluate or tune on the 2026 holdout while still selecting models. Code, tests, and reproducible summaries may go to GitHub; `data/raw/`, `data/processed/`, and `models/` are ignored.
-
-## Stage 1 audited evidence (2026-10-17)
-
-- 1,243 men’s IPL JSON matches, dates 2008–2026.
-- 295,557 recorded delivery events; 18,768 batter-innings records.
-- 44,706 **candidate** next-over windows; 548 flagged censored windows under the revised anomaly policy. Final ML eligibility is not yet decided.
-- 2,480 ordinary innings reconciled against delivery-level runs, wickets and legal-ball counts.
-- 9 synthetic-fixture software tests passed; raw source audit also completed.
-- **Preliminary** 2025-only wicket baseline: Brier score 0.19831 versus 0.20319 for a constant-rate baseline. No held-out 2026 results.
-
-Data source: [Cricsheet](https://cricsheet.org/). Credit Cricsheet and disclose any AI assistance in assessed work, consistent with your syllabus. Data is signed off for descriptive EDA; ML eligibility and leakage-safe player features remain Stage 3 work.
-
-### Stage 1 source-quality audit (completed for EDA)
-
-From project root after `pip install -e '.[dev]'`:
-
-```bash
-python -m cricketlens.stage01_review "data/raw/ipl_json.zip" --output reports/stage_01
-python -m cricketlens.pipeline "data/raw/ipl_json.zip" --output data/processed
-python -m cricketlens.data_audit --data data/processed --output reports/stage_01 --figures reports/figures
-pytest -q
-```
-
-Details, exclusions and limits: `docs/STAGE_01_STATUS.md` and `docs/STAGE_01_SESSION_03_FINDINGS.md`. The `data/processed` outputs are local and ignored by Git. No final trained model is claimed.
-
-## Stage 2 / Session 01 - Run reproducible EDA
-
-Following the completed Stage 1 audit, ensure the seven CSV files are stored locally in `data/processed/`. Then run:
+**Stage 2 — systematic EDA** (Sessions 01–03)
 
 ```bash
 python -m cricketlens.stage02_eda --data data/processed --output reports/stage_02/session_01 --figures reports/figures/stage_02
-pytest -q
-```
-
-The results are 11 real-data figures, comparison tables, and statistical summaries for 2008-2025; **2026 is intentionally kept out of development EDA** so it can remain the final ML test season. No ML model was retrained in this session. See `docs/STAGE_02_SESSION_01_FINDINGS.md` and `docs/STAGE_02_STATUS.md`.
-
-### Stage 2 - Session 02: deeper EDA
-
-With the audited local CSVs in `data/processed/`, run:
-
-```bash
 python -m cricketlens.stage02_deep_eda --data data/processed --output reports/stage_02/session_02 --figures reports/figures/stage_02
-pytest -q
-```
-
-This module reports full vs shortened first-innings scores, within-innings phase comparisons, venue associations adjusted for observed season means, toss-result cross-tabulations and missingness patterns. It never includes the 2026 holdout. Results are **exploratory**, not causal. Read `docs/STAGE_02_SESSION_02_FINDINGS.md` for interpretation and limitations. Session 02 is not yet Stage 2 completion.
-
-### Stage 2 / Session 03 — Outcome corrections + consolidated EDA
-
-On **`feature/stage-02-eda`**, rerun the source parser on `data/raw/ipl_json.zip` to add `final_winner` and related fields to local `data/processed/matches.csv`, then regenerate Session 01/02 EDA and run:
-
-```bash
 python -m cricketlens.stage02_final_eda --data data/processed --output reports/stage_02/session_03 --figures reports/figures/stage_02
-pytest -q
 ```
 
-The corrections now credit Super Over winners in team/toss statistics while retaining the regulation tie, preserve no-results and D/L markers, and exclude Super Over innings from ordinary batting/bowling. **Earlier Session 02 toss counts are superseded.** The canonical academic synthesis is `reports/Stage_02_Consolidated_EDA_Report.pdf`. No 2026 ML holdout data was used for analytical model development. Stage 3 can begin after this branch is reviewed and merged into main.
-
-## Stage 3 / Session 01 - Next-over wicket classifier
-
-See `docs/STAGE_03_STATUS.md` for exact eligibility rules, validation measurements, limitations and model inputs. The saved model is **development-only**, trained through 2024 and assessed on 2025. No 2026 outcome is used to select it.
+**Stage 3 — models.** Sessions 01–02 were development experiments (train through 2024, validate on 2025):
+`wicket_training_data`, `fit_wicket_models` and `stage03_diagnostics` for the wicket model;
+`batter_training_data`, `fit_batter_models` and `stage03_batter_diagnostics` for the batter model. The final
+models come from Session 03:
 
 ```bash
-# Run after building Stage 1 local data/processed/matches.csv and overs.csv
-python -m cricketlens.wicket_training_data
-python -m cricketlens.fit_wicket_models
-python -m cricketlens.stage03_diagnostics
-pytest -q
+# Selects on 2025, scores the 2026 holdout once, then refits through 2026.
+# It overwrites models/ and reports/stage_03/session_03/, so run it only to reproduce Stage 3.
+python -m cricketlens.stage03_full_history
 
-# Optional, hypothetical example - not a real upcoming match forecast
-python -m cricketlens.predict_wicket --batting-team "Mumbai Indians" --bowling-team "Chennai Super Kings" --venue "Wankhede Stadium" --innings 1 --completed-overs 13 --runs 108 --wickets 3 --last-over-runs 8 --last-over-wickets 0
+# Manual predictions from the command line, with the deployment models
+python -m cricketlens.predict_wicket --model models/wicket_deployment_through_2026.joblib --help
+python -m cricketlens.forecast_future_batter --help
 ```
 
-`data/processed/*.csv` and `models/*.joblib` are excluded from GitHub; use locally. Stage 3 figures, concise model-comparison summaries, scripts and tests belong in the `feature/stage-03-ml` branch **created from merged Stage 2 main**.
+Stage write-ups are in `docs/` (for example `docs/STAGE_03_SESSION_03_FULL_HISTORY.md`) and the stage
+reports in `reports/*.pdf`.
 
+## Key definitions
 
-## Stage 3 / Session 02 - Pre-match Batter Milestone Predictor
+- **Results.** A win counts regulation wins, D/L wins and Super Over wins after a tie; a tie decided by a
+  Super Over is also reported separately. A tie with no Super Over result is neither a win nor a loss.
+- **Win %** = wins ÷ (matches − no results), to one decimal with halves rounded up. No-result (abandoned)
+  matches are excluded from win percentages and from batting-first / chasing records.
+- **Super Overs** decide the winner but their balls are excluded from every batting, bowling and team
+  statistic.
+- **D/L.** D/L-marked results count normally in descriptive statistics. Both models exclude D/L-marked
+  matches from training and evaluation, and the batter model also excludes no-result matches.
+- **Team wickets** are every dismissal except retired hurt and retired not out.
+- **Bowler-credited wickets:** bowled, caught, caught and bowled, lbw, stumped and hit wicket. Run outs,
+  retirements and obstructing the field are not credited to the bowler.
+- **Batting innings:** one per innings in which the player was at the crease as striker or non-striker, or
+  was dismissed, so a non-striker run out without facing a ball is an innings and a dismissal.
+- **Duck:** dismissed for 0, including without facing a ball; retired hurt on 0 is not a duck.
+- **Batting average** = runs ÷ dismissals; shown as unavailable (not 0) when never dismissed.
+  **Strike rate** = runs per 100 balls faced (wides excluded).
+- **Phases:** powerplay overs 1–6, middle overs 7–16, death overs 17–20.
+- **Roles:** a player bowls regularly when they bowl in at least half their matches with at least 12 legal
+  balls per bowling innings, and bats regularly when they bat in at least half their matches facing at
+  least 8 balls per innings. Both make an all-rounder; if neither applies, the player is a bowler when they
+  bowled more legal balls than they faced, otherwise a batter.
+- **First-innings score histogram:** completed first innings only, meaning the second innings started,
+  ten wickets fell or 120 legal balls were bowled (1,239 of 1,243; four first innings ended by no result
+  are excluded).
+- **Champion:** the winner of each season's final (its last match).
+- **Franchise renames** are merged: Delhi Daredevils → Delhi Capitals, Kings XI Punjab → Punjab Kings,
+  Royal Challengers Bangalore → Royal Challengers Bengaluru, Rising Pune Supergiants → Rising Pune
+  Supergiant. Deccan Chargers and Sunrisers Hyderabad stay separate.
 
-This is a **development candidate**, not the final 2027 model. Train on eligible player innings through 2024, validate on 2025, leave 2026 held out. It uses strictly prior-match form features and one 3-category classifier to produce consistent P(30+) and P(50+).
+## Machine-learning models
 
-```bash
-# Requires the local audited Stage 1 batter_innings.csv and corrected matches.csv
-python -m cricketlens.batter_training_data
-python -m cricketlens.fit_batter_models
-python -m cricketlens.stage03_batter_diagnostics
-pytest -q
+| | Next-over wicket model | Batter milestone model |
+|---|---|---|
+| Predicts | P(at least one team wicket in the next over) | P(30+ runs) and P(50+ runs), from one three-class model so P(50+) ≤ P(30+) |
+| Algorithm | Logistic regression (`logistic_context_all_history`) | Random forest (`forest_full_history`) |
+| Inputs | Innings, completed overs, runs, wickets, run rate, last over's runs and wickets, batting and bowling team, phase, venue | Past-only form (career, last 5 and last 10 innings, record against the opponent and at the venue, days since the last innings) plus batting team, opponent and venue |
+| Eligible rows (2008–2026) | 44,161 next-over checkpoints | 18,429 batter innings |
 
-# Demonstration on a real 2025 validation innings (not a future match)
-python -m cricketlens.predict_batter --match-id 1473438 --player-id 29e95537
-```
+**Sequence.** Candidates were trained on 2008–2024 and compared on 2025 only, then the selected model was
+refit on 2008–2025 and scored **once** on the untouched 2026 season. After that test, a deployment model was
+refit on all of 2008–2026. The website's predictions use the deployment models; the 2026 numbers below
+evaluate the holdout models, since the deployment models have no out-of-sample test of their own.
 
-Find full methodology, sample sizes, caveats and metrics in `docs/STAGE_03_SESSION_02_BATTER_MODEL.md`. The resulting training CSV and `.joblib` model are ignored by Git and should be kept **locally**. The model forecasts milestones **assuming the batter appears and has a recorded batting innings**; it does not determine playing XI / DNB or know real future batting position.
+**2026 holdout results** (from `reports/stage_03/session_03/stage03_session03_final_results.json`; lower
+Brier and log loss are better, ROC AUC 0.5 means no ranking skill):
 
+| Model | Metric | Model | Constant-rate baseline |
+|---|---|---:|---:|
+| Next-over wicket (2,581 checkpoints, 73 matches) | Brier score | 0.2005 | 0.2049 |
+| | Log loss | 0.5898 | 0.6001 |
+| | ROC AUC | 0.5895 | 0.5000 |
+| Batter milestones (1,113 innings, 72 matches) | Brier 30+ | 0.1853 | 0.2096 |
+| | Brier 50+ | 0.1179 | 0.1291 |
+| | Log loss (3 classes) | 0.7431 | 0.8181 |
+| | ROC AUC 30+ / 50+ | 0.7088 / 0.7290 | 0.5000 / 0.5000 |
 
-## Stage 3 Session 03 — Full-history trained models
-- Reproduced full-history ML training with eligible seasons **2008–2025**, the **single held-out 2026 test**, and a separate final refit through **2026**.
-- `python -m cricketlens.stage03_full_history` and `python -m cricketlens.stage03_full_history_diagnostics` generate model artifacts, test forecasts, and diagnostics locally.
-- See `docs/STAGE_03_SESSION_03_FULL_HISTORY.md` for exact sample counts, scores, assumptions and limitations.
-- Manual inferences: `python -m cricketlens.predict_wicket --model models/wicket_deployment_through_2026.joblib --help` and `python -m cricketlens.forecast_future_batter --help`.
-- Local generated model artifacts and raw/processed CSVs remain **excluded from Git**.
+In 2026, 28.7% of eligible next overs had at least one wicket; 29.5% of eligible batter innings reached 30
+and 15.0% reached 50.
+
+## Verification approach
+
+- Statistics shown on the website are checked against independent calculations: tests recompute expected
+  values with pandas from `data/processed`, from `data/derived` or directly from the raw JSON, without the
+  backend's own code.
+- Prediction endpoints are checked against direct calls of the Stage 3 inference functions, and the replay
+  metrics are recomputed from the per-example holdout forecasts and compared with the official report.
+- Guard tests stop numbers from being typed into the homepage or health endpoint, and the model files'
+  SHA256 is checked before and after the test run.
+- Run the suite with `pytest` (385 tests at the time of writing). Website behaviour was checked in a
+  browser at 1440px and 390px widths.
+
+## Limitations and known issues
+
+- **The wicket model is only slightly better than a constant rate** (2026 Brier 0.2005 vs 0.2049, ROC AUC
+  0.59): treat its probabilities as broad context, not sharp forecasts.
+- **Batter forecasts are conditional on the player batting.** Selection in the playing XI and batting
+  position are not predicted, and a forecast for a player without a 2026 appearance assumes they play again.
+- **Manual inputs, no live data.** Predictions use only what you enter; inputs outside the observed range
+  for that stage of an innings are flagged as extrapolations.
+- **Tracker data stays in your browser** (localStorage); it is not shared or used to retrain the models.
+- **Hero artwork:** the homepage collage uses press photographs whose image rights were not verified; it is
+  included for academic demonstration only (see `LICENSE_NOTES.md`).
+- **npm audit** reports 2 moderate advisories in react-router 6 (an open redirect through a backslash in
+  links, and an issue in server-side rendering hydration). The site uses only fixed internal links and no
+  server-side rendering, so neither is reachable here; the fix needs a major upgrade to react-router 7.
+- **Data limitations:** Cricsheet records 4 overs with seven legal balls and 4 with none, which are kept as
+  recorded and excluded from model checkpoints after them; city is missing for some Dubai and Sharjah
+  matches; one player appears only at the non-striker's end; and two different people share the name
+  "Harmeet Singh", which the registry IDs keep apart.
+- The static Stage 2 research figures cover 2008–2025 or 2018–2025, as labelled: Stage 2 deliberately left
+  2026 out while it was reserved as the models' test season. Every live statistic includes 2026.
+
+## Project stages
+
+| Stage | Work | Status |
+|---|---|---|
+| 1 | Screen, clean, standardise and audit the IPL data | Complete |
+| 2 | Systematic EDA, descriptive statistics, figures and interpretation | Complete |
+| 3 | Train, validate and test both models; 2026 holdout; deployment refit | Complete |
+| 4 | Six-tab React website | Complete |
+| 5 | FastAPI integration, predictions, tracker and historical replay | Complete |
+| 6 | Final academic report and demonstration | In progress |
+
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) and the `docs/STAGE_0*_STATUS.md` files for detail.
+
+## License and credits
+
+Match data: [Cricsheet](https://cricsheet.org/). See [`LICENSE_NOTES.md`](LICENSE_NOTES.md) for data
+credit, licence notes and image rights.
