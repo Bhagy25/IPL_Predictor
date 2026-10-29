@@ -770,3 +770,161 @@ class BatterPredictionResponse(BaseModel):
     notice: str
     form_context: BatterFormContext
 
+
+class WicketEvaluationMetrics(BaseModel):
+    model: Optional[str] = None
+    training_rows: Optional[int] = None
+    rows: int
+    event_rate: float
+    brier_score: float
+    log_loss: float
+    roc_auc: Optional[float] = None
+
+
+class BatterEvaluationMetrics(BaseModel):
+    model: Optional[str] = None
+    training_rows: Optional[int] = None
+    rows: int
+    observed_30_rate: float
+    observed_50_rate: float
+    brier_30: float
+    brier_50: float
+    avg_milestone_brier: float
+    multiclass_log_loss: float
+    roc_auc_30: Optional[float] = None
+    roc_auc_50: Optional[float] = None
+
+
+class PredictionModelInfo(BaseModel):
+    kind: str
+    title: str
+    available: bool
+    status_detail: str
+    deployment_file: str
+    holdout_file: str
+    name: Optional[str] = None
+    version: Optional[str] = None
+    training_end: Optional[int] = None
+    training_span: Optional[str] = None
+    features: List[str]
+    classes: List[int]
+    condition: Optional[str] = None
+    selected_name: str = Field(..., description="Model chosen on 2025 validation only")
+    selection_metric: str
+    validation_2025: List[Dict[str, Any]]
+    validation_2025_constant: Dict[str, Any]
+    holdout_2026: Dict[str, Any] = Field(..., description="Holdout model trained through 2025, scored on 2026")
+    holdout_2026_constant: Dict[str, Any]
+    rows: Dict[str, int]
+    exclusions: Optional[str] = None
+    notes: List[str]
+
+
+class PredictionModelsResponse(BaseModel):
+    models: List[PredictionModelInfo]
+    holdout_statement: str
+    caveats: List[str]
+    source: str
+    report_created_utc: Optional[str] = None
+
+
+class CalibrationBin(BaseModel):
+    milestone: Optional[str] = None
+    bin: int
+    lower: float
+    upper: float
+    n: int
+    avg_predicted: float
+    observed_rate: float
+
+
+class MetricCheck(BaseModel):
+    matches_official: bool
+    compared: List[str]
+    mismatched: List[str]
+    tolerance: float
+
+
+class WicketReplayComputed(WicketEvaluationMetrics):
+    calibration: List[CalibrationBin]
+
+
+class BatterReplayComputed(BatterEvaluationMetrics):
+    calibration: List[CalibrationBin]
+
+
+class WicketReplaySummary(BaseModel):
+    computed: WicketReplayComputed = Field(..., description="Recomputed from the per-example holdout CSV")
+    official: WicketEvaluationMetrics
+    official_constant: WicketEvaluationMetrics
+    check: MetricCheck
+    matches_count: int
+    eligibility: str
+
+
+class BatterReplaySummary(BaseModel):
+    computed: BatterReplayComputed = Field(..., description="Recomputed from the per-example holdout CSV")
+    official: BatterEvaluationMetrics
+    official_constant: BatterEvaluationMetrics
+    check: MetricCheck
+    matches_count: int
+    eligibility: str
+
+
+class ReplayMatchItem(BaseModel):
+    match_id: int
+    date: str
+    team1: str
+    team2: str
+    team1_code: str
+    team2_code: str
+    venue: str
+    winner: Optional[str] = None
+    wicket_checkpoints: int
+    batter_forecasts: int
+
+
+class HoldoutReplayResponse(BaseModel):
+    label: str
+    statement: str
+    matches: List[ReplayMatchItem]
+    wicket: WicketReplaySummary
+    batter: BatterReplaySummary
+    sources: List[str]
+
+
+class ReplayBatterRow(BaseModel):
+    innings: int
+    batting_team: str
+    batter_id: str
+    batter: str
+    prior_innings: int
+    probability_30_plus: float
+    probability_50_plus: float
+    actual_runs: int
+    actual_30_plus: bool
+    actual_50_plus: bool
+
+
+class ReplayWicketRow(BaseModel):
+    innings: int
+    batting_team: str
+    completed_overs: int
+    next_over: int
+    phase: str
+    predicted_probability: float
+    wicket_fell: bool
+
+
+class HoldoutReplayMatchResponse(BaseModel):
+    label: str
+    match_id: int
+    date: str
+    team1: str
+    team2: str
+    venue: str
+    winner: Optional[str] = None
+    batters: List[ReplayBatterRow]
+    wickets: List[ReplayWicketRow]
+    wicket_summary: Optional[WicketEvaluationMetrics] = None
+    batter_summary: Optional[BatterEvaluationMetrics] = None

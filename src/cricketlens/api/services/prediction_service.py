@@ -1,11 +1,13 @@
-"""Predictions from the Stage 3 deployment models.
+"""Predictions from the Stage 3 deployment models and the official 2026 holdout evaluation.
 
 Every probability comes from the Stage 3 inference functions, predict_wicket.forecast() and
 forecast_future_batter.forecast(), called with the saved deployment artifacts. Nothing here builds
-model features, refits or re-saves a model. User inputs are neither logged nor stored.
+model features, refits or re-saves a model. Evaluation numbers are read from the Stage 3 Session 3
+report and its per-example 2026 holdout forecasts. User inputs are neither logged nor stored.
 """
 from __future__ import annotations
 
+import json
 import re
 import threading
 from datetime import date
@@ -14,15 +16,19 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import joblib
+import numpy as np
 import pandas as pd
 
 from cricketlens import forecast_future_batter, predict_wicket
+from cricketlens.fit_batter_models import calibration_table, metrics as batter_metrics
+from cricketlens.fit_wicket_models import measure as wicket_measure, reliability as wicket_reliability
 from cricketlens.wicket_training_data import phase_for_next_over
 from cricketlens.api.services.canonical_data import FRANCHISE_METADATA, DerivedDataUnavailable, canonical_engine
 
 ROOT = Path(__file__).resolve().parents[4]
 MODEL_DIR = ROOT / "models"
 DATA_DIR = ROOT / "data" / "processed"
+REPORT_DIR = ROOT / "reports" / "stage_03" / "session_03"
 
 DEPLOYMENT_VERSION = "deployment_refit_2008_2026"
 DEPLOYMENT_TRAIN_END = 2026
@@ -42,6 +48,16 @@ MODELS: Dict[str, Dict[str, str]] = {
         "title": "Batter milestones (30+ / 50+)",
     },
 }
+RESULTS_JSON = "stage03_session03_final_results.json"
+WICKET_HOLDOUT_CSV = Path("wicket") / "wicket_holdout_forecasts_2026.csv"
+BATTER_HOLDOUT_CSV = Path("batter") / "batter_holdout_forecasts_2026.csv"
+WICKET_CALIBRATION_CSV = Path("wicket") / "wicket_holdout_calibration_2026.csv"
+BATTER_CALIBRATION_CSV = Path("batter") / "batter_holdout_calibration_2026.csv"
+# Equal-width probability bins used by the Stage 3 calibration tables (reliability / calibration_table defaults)
+WICKET_CALIBRATION_BINS = 10
+BATTER_CALIBRATION_BINS = 8
+METRIC_TOLERANCE = 1e-6
+
 # The same eligibility rule forecast_future_batter.forecast() applies to a player's history
 DLS_METHODS = {"D/L", "DLS", "D/L METHOD", "DLS METHOD"}
 RECENT_INNINGS_SHOWN = 5
@@ -59,10 +75,23 @@ WICKET_RULES = {
 MANUAL_INPUT_NOTICE = "Manual input: these are the values you entered, not live match data."
 BATTER_SCOPE_NOTE = ("Conditional on the player batting in the match; whether the player is selected in the "
                      "playing XI, or bats at all, is not predicted.")
+HOLDOUT_LABEL = "2026 holdout replay — model trained through 2025"
+HOLDOUT_STATEMENT = (
+    "The 2026 holdout evaluates the holdout models trained on 2008–2025 data "
+    "(wicket_holdout_train_through_2025.joblib and batter_holdout_train_through_2025.joblib), never the "
+    "deployment models. The deployment models were refit through 2026 after that evaluation was saved, so "
+    "they have no out-of-sample evaluation of their own."
+)
+HOLDOUT_ELIGIBILITY = {
+    "wicket": "Every eligible 2026 next-over checkpoint: D/L-marked matches excluded; overs cut short are kept "
+              "only when a wicket fell in them.",
+    "batter": "Every eligible 2026 batting innings: D/L-marked and no-result matches excluded; form features use "
+              "only innings from earlier dates.",
+}
 
 
 class ModelUnavailable(Exception):
-    """A deployment artifact is missing or invalid (HTTP 503)."""
+    """A deployment artifact or a holdout report is missing or invalid (HTTP 503)."""
 
 
 class PredictionInputError(Exception):
@@ -71,6 +100,10 @@ class PredictionInputError(Exception):
     def __init__(self, errors: List[Dict[str, Any]]):
         super().__init__("; ".join(e["msg"] for e in errors))
         self.errors = errors
+
+
+class UnknownReplayMatch(KeyError):
+    """No 2026 holdout forecast exists for this match (HTTP 404)."""
 
 
 def _error(field: Optional[str], message: str) -> Dict[str, Any]:
@@ -102,16 +135,38 @@ def _categories(model: Any) -> Dict[str, List[str]]:
     return found
 
 
+def _wicket_metrics(values: Dict[str, Any]) -> Dict[str, Any]:
+    keys = ("model", "training_rows", "rows", "event_rate", "brier_score", "log_loss", "roc_auc")
+    return {k: values[k] for k in keys if k in values}
+
+
+def _batter_metrics(values: Dict[str, Any]) -> Dict[str, Any]:
+    keys = ("model", "training_rows", "rows", "observed_30_rate", "observed_50_rate", "brier_30", "brier_50",
+            "avg_milestone_brier", "multiclass_log_loss", "roc_auc_30", "roc_auc_50")
+    return {k: values[k] for k in keys if k in values}
+
+
+def _code(team: str) -> str:
+    return FRANCHISE_METADATA.get(str(team), {}).get("short_name", str(team))
+
+
+def _three_class(p30: np.ndarray, p50: np.ndarray) -> np.ndarray:
+    """Class probabilities (<30, 30-49, 50+) back from the saved P(30+) and P(50+)."""
+    return np.column_stack([1 - p30, p30 - p50, p50])
+
+
 class PredictionService:
-    def __init__(self, model_dir: Path = MODEL_DIR, data_dir: Path = DATA_DIR):
+    def __init__(self, model_dir: Path = MODEL_DIR, data_dir: Path = DATA_DIR, report_dir: Path = REPORT_DIR):
         self.model_dir = Path(model_dir)
         self.data_dir = Path(data_dir)
+        self.report_dir = Path(report_dir)
         self._lock = threading.Lock()
         self._loaded = False
         self._status: Dict[str, Dict[str, Any]] = {}
         self._meta: Dict[str, Dict[str, Any]] = {}
         self._options: Optional[Dict[str, Any]] = None
         self._history: Dict[str, pd.DataFrame] = {}
+        self._replay: Optional[Dict[str, Any]] = None
 
     # ------------------------------------------------------------------ deployment artifacts
 
@@ -371,6 +426,183 @@ class PredictionService:
                 "definition": "Eligible innings exclude D/L-marked and no-result matches, as in the model's "
                               "training data; all of them are before the match date.",
             },
+        }
+
+    # ------------------------------------------------------------------ evaluation report and holdout replay
+
+    def _report(self) -> Dict[str, Any]:
+        path = self.report_dir / RESULTS_JSON
+        if not path.is_file():
+            raise ModelUnavailable(f"The Stage 3 evaluation report {RESULTS_JSON} is not in {self.report_dir}.")
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def models(self) -> Dict[str, Any]:
+        self.ensure_loaded()
+        report = self._report()
+        items = []
+        for kind, spec in MODELS.items():
+            section = report[kind]
+            convert = _wicket_metrics if kind == "wicket" else _batter_metrics
+            meta = self._meta.get(kind, {})
+            items.append({
+                "kind": kind,
+                "title": spec["title"],
+                "available": self._status[kind]["available"],
+                "status_detail": self._status[kind]["detail"],
+                "deployment_file": spec["deployment"],
+                "holdout_file": spec["holdout"],
+                "name": meta.get("name"),
+                "version": meta.get("version"),
+                "training_end": meta.get("training_end"),
+                "training_span": meta.get("training_span"),
+                "features": meta.get("columns", []),
+                "classes": meta.get("classes", []),
+                "condition": meta.get("condition"),
+                "selected_name": section["selected_name_from_2025_only"],
+                "selection_metric": section["selection_metric"],
+                "validation_2025": [convert(c) for c in section["candidate_validation_2025"]],
+                "validation_2025_constant": convert(section["constant_validation_2025"]),
+                "holdout_2026": convert(section["holdout_2026"]),
+                "holdout_2026_constant": convert(section["holdout_constant"]),
+                "rows": {
+                    "train_2008_2024": section["train_2008_2024"],
+                    "validate_2025": section["validate_2025"],
+                    "refit_2008_2025_for_holdout": section["refit_2008_2025_for_holdout"],
+                    "test_2026_rows": section["test_2026_rows"],
+                    "test_2026_matches": section["test_2026_matches"],
+                    "final_refit_2008_2026": section["final_refit_2008_2026"],
+                },
+                "exclusions": section.get("exclusions"),
+                "notes": [v for v in (section.get("limitation"), section.get("assumption")) if v],
+            })
+        return {
+            "models": items,
+            "holdout_statement": HOLDOUT_STATEMENT,
+            "caveats": report.get("important_caveats", []),
+            "source": f"reports/stage_03/session_03/{RESULTS_JSON}",
+            "report_created_utc": report.get("created_utc"),
+        }
+
+    def _load_replay(self) -> Dict[str, Any]:
+        if self._replay is None:
+            paths = [self.report_dir / p for p in (WICKET_HOLDOUT_CSV, BATTER_HOLDOUT_CSV)]
+            if missing := [p.name for p in paths if not p.is_file()]:
+                raise ModelUnavailable(f"The 2026 holdout forecasts are missing: {missing}.")
+            # round_trip: probabilities are read back exactly as the Stage 3 run wrote them
+            wicket = pd.read_csv(paths[0], float_precision="round_trip")
+            batter = pd.read_csv(paths[1], dtype={"batter_id": str}, float_precision="round_trip")
+            innings = pd.read_csv(self.data_dir / "innings.csv", usecols=["match_id", "innings", "batting_team"])
+            matches = pd.read_csv(self.data_dir / "matches.csv",
+                                  usecols=["match_id", "date", "team1", "team2", "venue_canonical", "final_winner"])
+            self._replay = {
+                "wicket": wicket.merge(innings, on=["match_id", "innings"], how="left", validate="many_to_one"),
+                "batter": batter.merge(innings, on=["match_id", "innings"], how="left", validate="many_to_one"),
+                "matches": matches.set_index("match_id"),
+            }
+        return self._replay
+
+    def _wicket_summary(self, rows: pd.DataFrame) -> Dict[str, Any]:
+        y, p = rows.wicket_next_over.to_numpy(int), rows.predicted_wicket_probability.to_numpy(float)
+        bins = wicket_reliability(y, p, bins=WICKET_CALIBRATION_BINS)
+        return {
+            **_wicket_metrics(wicket_measure(y, p)),
+            "calibration": [
+                {"bin": int(b.bin), "lower": int(b.bin) / WICKET_CALIBRATION_BINS,
+                 "upper": (int(b.bin) + 1) / WICKET_CALIBRATION_BINS, "n": int(b.n),
+                 "avg_predicted": float(b.avg_predicted), "observed_rate": float(b.observed_frequency)}
+                for b in bins.itertuples(index=False)
+            ],
+        }
+
+    def _batter_summary(self, rows: pd.DataFrame) -> Dict[str, Any]:
+        p30, p50 = rows.probability_30_plus.to_numpy(float), rows.probability_50_plus.to_numpy(float)
+        y = rows.milestone_class.to_numpy(int)
+        calibration = []
+        for label, events, probs in (("30+", y >= 1, p30), ("50+", y == 2, p50)):
+            for b in calibration_table(events, probs, label, bins=BATTER_CALIBRATION_BINS).itertuples(index=False):
+                calibration.append({"milestone": label, "bin": int(b.bin), "lower": int(b.bin) / BATTER_CALIBRATION_BINS,
+                                    "upper": (int(b.bin) + 1) / BATTER_CALIBRATION_BINS, "n": int(b.n),
+                                    "avg_predicted": float(b.predicted), "observed_rate": float(b.actual_rate)})
+        return {**_batter_metrics(batter_metrics(y, _three_class(p30, p50))), "calibration": calibration}
+
+    @staticmethod
+    def _check(computed: Dict[str, Any], official: Dict[str, Any]) -> Dict[str, Any]:
+        keys = [k for k in official if k in computed and isinstance(official[k], (int, float))]
+        mismatched = [k for k in keys if abs(float(computed[k]) - float(official[k])) > METRIC_TOLERANCE]
+        return {"matches_official": not mismatched, "compared": keys, "mismatched": mismatched,
+                "tolerance": METRIC_TOLERANCE}
+
+    def replay_index(self) -> Dict[str, Any]:
+        replay, report = self._load_replay(), self._report()
+        wicket, batter, matches = replay["wicket"], replay["batter"], replay["matches"]
+        ids = sorted(set(wicket.match_id) | set(batter.match_id), key=lambda m: (str(matches.loc[m, "date"]), m))
+        w_counts, b_counts = wicket.groupby("match_id").size(), batter.groupby("match_id").size()
+        items = [{
+            "match_id": int(m), "date": str(matches.loc[m, "date"]), "team1": str(matches.loc[m, "team1"]),
+            "team2": str(matches.loc[m, "team2"]), "team1_code": _code(matches.loc[m, "team1"]),
+            "team2_code": _code(matches.loc[m, "team2"]), "venue": str(matches.loc[m, "venue_canonical"]),
+            "winner": None if pd.isna(matches.loc[m, "final_winner"]) else str(matches.loc[m, "final_winner"]),
+            "wicket_checkpoints": int(w_counts.get(m, 0)), "batter_forecasts": int(b_counts.get(m, 0)),
+        } for m in ids]
+        wicket_summary, batter_summary = self._wicket_summary(wicket), self._batter_summary(batter)
+        official_w = _wicket_metrics(report["wicket"]["holdout_2026"])
+        official_b = _batter_metrics(report["batter"]["holdout_2026"])
+        return {
+            "label": HOLDOUT_LABEL,
+            "statement": HOLDOUT_STATEMENT,
+            "matches": items,
+            "wicket": {
+                "computed": wicket_summary, "official": official_w,
+                "official_constant": _wicket_metrics(report["wicket"]["holdout_constant"]),
+                "check": self._check(wicket_summary, official_w), "matches_count": int(wicket.match_id.nunique()),
+                "eligibility": HOLDOUT_ELIGIBILITY["wicket"],
+            },
+            "batter": {
+                "computed": batter_summary, "official": official_b,
+                "official_constant": _batter_metrics(report["batter"]["holdout_constant"]),
+                "check": self._check(batter_summary, official_b), "matches_count": int(batter.match_id.nunique()),
+                "eligibility": HOLDOUT_ELIGIBILITY["batter"],
+            },
+            "sources": [f"reports/stage_03/session_03/{p.as_posix()}" for p in
+                        (WICKET_HOLDOUT_CSV, BATTER_HOLDOUT_CSV, WICKET_CALIBRATION_CSV, BATTER_CALIBRATION_CSV)]
+                       + [f"reports/stage_03/session_03/{RESULTS_JSON}"],
+        }
+
+    def replay_match(self, match_id: int) -> Dict[str, Any]:
+        replay = self._load_replay()
+        wicket = replay["wicket"][replay["wicket"].match_id == match_id].sort_values(["innings", "completed_overs"])
+        batter = replay["batter"][replay["batter"].match_id == match_id]
+        if wicket.empty and batter.empty:
+            raise UnknownReplayMatch(f"Match {match_id} has no 2026 holdout forecasts.")
+        info = replay["matches"].loc[match_id]
+        return {
+            "label": HOLDOUT_LABEL,
+            "match_id": int(match_id),
+            "date": str(info.date),
+            "team1": str(info.team1),
+            "team2": str(info.team2),
+            "venue": str(info.venue_canonical),
+            "winner": None if pd.isna(info.final_winner) else str(info.final_winner),
+            "batters": [{
+                "innings": int(r.innings), "batting_team": str(r.batting_team), "batter_id": str(r.batter_id),
+                "batter": str(r.batter), "prior_innings": int(r.prior_innings),
+                "probability_30_plus": float(r.probability_30_plus), "probability_50_plus": float(r.probability_50_plus),
+                "actual_runs": int(r.actual_runs), "actual_30_plus": bool(r.actual_30_plus),
+                "actual_50_plus": bool(r.actual_50_plus),
+            } for r in batter.itertuples(index=False)],
+            "wickets": [{
+                "innings": int(r.innings), "batting_team": str(r.batting_team), "completed_overs": int(r.completed_overs),
+                "next_over": int(r.completed_overs) + 1, "phase": str(r.phase),
+                "predicted_probability": float(r.predicted_wicket_probability),
+                "wicket_fell": bool(r.wicket_next_over),
+            } for r in wicket.itertuples(index=False)],
+            "wicket_summary": _wicket_metrics(wicket_measure(wicket.wicket_next_over.to_numpy(int),
+                                                            wicket.predicted_wicket_probability.to_numpy(float)))
+            if not wicket.empty else None,
+            "batter_summary": _batter_metrics(batter_metrics(
+                batter.milestone_class.to_numpy(int),
+                _three_class(batter.probability_30_plus.to_numpy(float), batter.probability_50_plus.to_numpy(float))))
+            if not batter.empty else None,
         }
 
 
