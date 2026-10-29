@@ -278,7 +278,13 @@ class PlayerListItem(BaseModel):
     batter_id: Optional[str] = Field(None, description="Backward-compatible batter ID alias")
     name: str = Field(..., description="Most-used name variant; players sharing a name get franchise and season span added")
     name_variants: List[str] = Field(default_factory=list, description="Every name this registry ID was listed under")
-    role: str = Field(default="Batter", description="'Batter', 'Bowler', or 'All-Rounder'")
+    role: str = Field(
+        default="Batter",
+        description="'Batter', 'Bowler' or 'All-Rounder', derived from the IPL playing record. Bowls regularly: "
+                    "bowled in >= 50% of matches and >= 12 legal balls per bowling innings. Bats regularly: batted "
+                    "in >= 50% of matches and faced >= 8 balls per batting innings. Both: All-Rounder; only bowling: "
+                    "Bowler; only batting: Batter; neither: Bowler if legal balls bowled exceed balls faced, else Batter.",
+    )
     is_batter: bool = Field(default=True, description="Whether player has batting records")
     is_bowler: bool = Field(default=False, description="Whether player has bowling records")
     matches: int = Field(default=0, description="Matches in an official squad list")

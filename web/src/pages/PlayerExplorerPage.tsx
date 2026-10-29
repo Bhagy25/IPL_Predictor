@@ -28,6 +28,11 @@ const ROLE_FILTERS: { id: string; label: string; countKey?: keyof DirectoryCount
   { id: 'all-rounders', label: 'All-Rounders' },
 ];
 
+// Same rule as the API's role definition (canonical_data.derive_role)
+const ROLE_RULE =
+  'Role derived from IPL playing record: bowls regularly = bowled in at least 50% of matches with 12+ legal balls per bowling innings; ' +
+  'bats regularly = batted in at least 50% of matches facing 8+ balls per innings; both = All-Rounder.';
+
 const EXPERIENCE_FILTERS = [
   { id: 'all', label: 'All Tiers' },
   { id: 'leaderboard_only', label: '40+ Innings' },
@@ -317,7 +322,7 @@ export const PlayerExplorerPage: React.FC = () => {
                           {p.name}
                         </span>
                         {p.role && (
-                          <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold uppercase ${
+                          <span title={ROLE_RULE} className={`text-[9px] px-1.5 py-0.2 rounded font-bold uppercase ${
                             p.role === 'All-Rounder'
                               ? 'bg-[#D9B15F]/15 text-[#D9B15F] border border-[#D9B15F]/30'
                               : p.role === 'Bowler'
@@ -715,6 +720,7 @@ export const PlayerExplorerPage: React.FC = () => {
                 <ul className="list-disc list-inside text-xs text-[#B9B9B3] space-y-1">
                   <li>Full career directory encompasses all {directoryCounts ? directoryCounts.all.toLocaleString() : '…'} players with recorded appearances across 19 tournament editions (2008–2026).</li>
                   <li>Batting averages represent career runs divided by verified dismissals; players remaining undefeated throughout their career show total runs.</li>
+                  <li>{ROLE_RULE}</li>
                   <li>Bowler statistics credit legal dismissals only (bowled, caught, lbw, stumped, hit wicket); run outs are strictly attributed to team fielding.</li>
                   <li>Overs bowled use standard cricket notation (e.g. 342.4 signifies 342 complete six-ball overs plus 4 balls).</li>
                 </ul>

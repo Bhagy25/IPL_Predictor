@@ -21,6 +21,28 @@ DELIVERY_KEY = ["match_id", "innings", "over_index", "delivery_index"]
 DERIVED_BUILD_COMMAND = "python -m cricketlens.derived_events --raw data/raw/ipl_json --output data/derived"
 
 
+ROLE_DEFINITION = (
+    "Role derived from the IPL playing record. Bowls regularly: bowled in at least 50% of matches and at least "
+    "12 legal balls per bowling innings. Bats regularly: batted in at least 50% of matches and faced at least "
+    "8 balls per batting innings. Both: All-Rounder; only bowling: Bowler; only batting: Batter; neither: Bowler "
+    "if legal balls bowled exceed balls faced, otherwise Batter."
+)
+
+
+def derive_role(matches: int, batting_innings: int, balls_faced: int, bowling_innings: int, legal_balls: int) -> str:
+    """Classify a player from their record (see ROLE_DEFINITION); no player is special-cased."""
+    matches = max(matches, 1)
+    bowls_regularly = bowling_innings > 0 and bowling_innings / matches >= 0.5 and legal_balls / bowling_innings >= 12
+    bats_regularly = batting_innings > 0 and batting_innings / matches >= 0.5 and balls_faced / batting_innings >= 8
+    if bowls_regularly and bats_regularly:
+        return "All-Rounder"
+    if bowls_regularly:
+        return "Bowler"
+    if bats_regularly:
+        return "Batter"
+    return "Bowler" if legal_balls > balls_faced else "Batter"
+
+
 class DerivedDataUnavailable(RuntimeError):
     """Raised when bowling or boundary statistics are requested but data/derived is missing or inconsistent."""
 
@@ -535,15 +557,7 @@ class CanonicalAnalyticsEngine:
             bowl_sr = round(legal_deliveries / total_wkts, 2) if total_wkts > 0 else None
             bowl_econ = round(runs_conc / (legal_deliveries / 6.0), 2) if legal_deliveries > 0 else 0.0
 
-            # Role classification
-            if is_batter and is_bowler and batting_inn >= 10 and bowl_inn >= 10:
-                role = "All-Rounder"
-            elif is_bowler and (bowl_inn > batting_inn * 1.5 or batting_inn < 5):
-                role = "Bowler"
-            elif is_batter:
-                role = "Batter"
-            else:
-                role = "All-Rounder"
+            role = derive_role(int(squad["matches"]), int(batting_inn), int(bat_balls), int(bowl_inn), int(legal_deliveries))
 
             item = {
                 "player_id": pid,
