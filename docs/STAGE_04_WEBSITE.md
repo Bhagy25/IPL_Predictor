@@ -49,10 +49,14 @@ a Python Vercel Function under `/api`.
   entrypoint before the root `pyproject.toml`, so matplotlib, uvicorn and the test tools are not installed.
   `api/.python-version` selects Python 3.14.
 - The function's `excludeFiles` removes everything outside `api/` and `src/`, and `includeFiles` adds back
-  exactly the 46 files the API opens: `data/processed/{matches,deliveries,innings,batter_innings,
+  the 46 files the API opens: `data/processed/{matches,deliveries,innings,batter_innings,
   stage03_wicket_full_history_2008_2026}.csv`, the six `data/derived` tables, the two deployment models, the
   Stage 1 audit files, seven Stage 2 tables, the Stage 3 results JSON and holdout forecasts, and the 20
-  Stage 2 figures. Nothing in `data/raw` is read at runtime. `maxDuration` is 60 seconds.
+  Stage 2 figures. Vercel's schema limits each glob to 256 characters, so the report files are matched by
+  folder (`reports/stage_01/*`, `reports/stage_02/session_0[12]/*`, `reports/stage_03/session_03/**`), which
+  also bundles 23 small unused report files (72 KB). `tests/test_vercel_config.py` checks the length limit
+  and that every runtime file is matched. Nothing in `data/raw` is read at runtime. `maxDuration` is 60
+  seconds.
 
 Environment variables: none required. `CORS_ALLOW_ORIGINS` and `VITE_API_BASE_URL` matter only when the
 frontend and the API are deployed on different origins; `CRICKETLENS_ROOT` only to read the data from
