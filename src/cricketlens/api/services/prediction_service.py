@@ -88,6 +88,23 @@ EXTRAPOLATION_WARNING = ("These inputs are outside anything seen in {span} at th
 MANUAL_INPUT_NOTICE = "Manual input: these are the values you entered, not live match data."
 BATTER_SCOPE_NOTE = ("Conditional on the player batting in the match; whether the player is selected in the "
                      "playing XI, or bats at all, is not predicted.")
+# The only ValueErrors from the Stage 3 functions that mean invalid input (returned as 422 with the message).
+# Any other failure is unexpected: it is logged with its traceback and returned as a 500 with PREDICTION_FAILED.
+STAGE3_INPUT_ERRORS = {
+    "wicket": {
+        "Predictions require 1–19 completed overs",          # predict_wicket.py:14
+        "Invalid innings, wickets or runs",                  # predict_wicket.py:16
+        "Invalid most-recent-over runs / wickets",           # predict_wicket.py:18
+        "Please supply distinct teams and a venue",          # predict_wicket.py:20
+    },
+    "batter": {
+        "A player ID, opponent, batting team and venue are required",                # forecast_future_batter.py:21
+        "Batting team and opponent must differ",                                     # forecast_future_batter.py:23
+        "No recorded eligible history for this player ID",                           # forecast_future_batter.py:37
+        "Future-match date must follow the latest eligible innings for this player",  # forecast_future_batter.py:39
+    },
+}
+PREDICTION_FAILED = "The prediction could not be completed. Please try again."
 HOLDOUT_LABEL = "2026 holdout replay — model trained through 2025"
 HOLDOUT_STATEMENT = (
     "The 2026 holdout evaluates the holdout models trained on 2008–2025 data "
@@ -117,6 +134,17 @@ class PredictionInputError(Exception):
 
 class UnknownReplayMatch(KeyError):
     """No 2026 holdout forecast exists for this match (HTTP 404)."""
+
+
+def _known_failure(kind: str, exc: Exception) -> Optional[Exception]:
+    """The service error for a recognised exception from a Stage 3 forecast; None for anything else."""
+    if isinstance(exc, ValueError) and str(exc) in STAGE3_INPUT_ERRORS[kind]:
+        return PredictionInputError([_error(None, str(exc))])
+    if isinstance(exc, FileNotFoundError):
+        # The artifact was validated at startup and has since been removed; the path stays out of the response
+        return ModelUnavailable(f"The {MODELS[kind]['title'].lower()} model file {MODELS[kind]['deployment']} is no "
+                                "longer available. No prediction can be made.")
+    return None
 
 
 def _error(field: Optional[str], message: str) -> Dict[str, Any]:
@@ -418,10 +446,10 @@ class PredictionService:
             raise PredictionInputError(errors)
         try:
             result = predict_wicket.forecast(self.model_dir / MODELS["wicket"]["deployment"], **inputs)
-        except ValueError as exc:
-            raise PredictionInputError([_error(None, str(exc))])
         except Exception as exc:
-            raise ModelUnavailable(f"The wicket model could not be run: {exc}")
+            if known := _known_failure("wicket", exc):
+                raise known from exc
+            raise
         return {
             **result,
             "probability_pct": as_percent(result["probability"]),
@@ -467,8 +495,8 @@ class PredictionService:
         try:
             # The batter forest has n_jobs=-1, so by default every predict_proba starts and terminates a
             # multiprocessing ThreadPool. On Windows two of the pool's own threads can write its notifier pipe
-            # at once and raise ValueError("concurrent send_bytes() calls are not supported"), which would be
-            # reported as a 422. One row needs no parallelism: the sequential backend (thread-local, this
+            # at once and raise ValueError("concurrent send_bytes() calls are not supported"), which would fail
+            # a valid prediction. One row needs no parallelism: the sequential backend (thread-local, this
             # call only) gives identical probabilities without starting a pool.
             with joblib.parallel_config(backend="sequential"):
                 result = forecast_future_batter.forecast(
@@ -477,10 +505,10 @@ class PredictionService:
                     matches_path=self.data_dir / "matches.csv",
                     batter_id=pid, opponent=inputs["opponent"], venue=inputs["venue"],
                     batting_team=inputs["batting_team"], match_date=inputs["match_date"])
-        except ValueError as exc:
-            raise PredictionInputError([_error(None, str(exc))])
         except Exception as exc:
-            raise ModelUnavailable(f"The batter model could not be run: {exc}")
+            if known := _known_failure("batter", exc):
+                raise known from exc
+            raise
         if not result["chance_50_plus"] <= result["chance_30_plus"]:
             raise RuntimeError("Milestone probabilities out of order: P(50+) exceeds P(30+)")
         history = self._batter_history()[pid]

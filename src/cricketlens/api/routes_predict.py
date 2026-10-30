@@ -5,6 +5,8 @@ request is logged or stored on the server.
 """
 from __future__ import annotations
 
+import logging
+
 from fastapi import APIRouter, HTTPException
 from cricketlens.api.schemas import (
     BatterPredictionRequest,
@@ -19,6 +21,7 @@ from cricketlens.api.schemas import (
 from cricketlens.api.services import prediction_service as service
 
 router = APIRouter(prefix="/api/predict", tags=["Predictions"])
+logger = logging.getLogger(__name__)
 
 
 def _call(action, *args):
@@ -31,6 +34,17 @@ def _call(action, *args):
         raise HTTPException(status_code=404, detail=exc.args[0])
     except service.ModelUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc))
+
+
+def _predict(action, request):
+    """_call for a prediction: any other failure is logged with its traceback and returned as a generic 500."""
+    try:
+        return _call(action, request.model_dump())
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Prediction failed")
+        raise HTTPException(status_code=500, detail=service.PREDICTION_FAILED)
 
 
 @router.get(
@@ -54,7 +68,7 @@ def get_options() -> PredictionOptionsResponse:
                 "Manual input, not live data.",
 )
 def post_wicket(request: WicketPredictionRequest) -> WicketPredictionResponse:
-    return _call(lambda s: s.predict_wicket, request.model_dump())
+    return _predict(lambda s: s.predict_wicket, request)
 
 
 @router.post(
@@ -66,7 +80,7 @@ def post_wicket(request: WicketPredictionRequest) -> WicketPredictionResponse:
                 "the player's latest eligible innings (422 otherwise).",
 )
 def post_batter(request: BatterPredictionRequest) -> BatterPredictionResponse:
-    return _call(lambda s: s.predict_batter, request.model_dump())
+    return _predict(lambda s: s.predict_batter, request)
 
 
 @router.get(

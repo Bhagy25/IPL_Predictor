@@ -266,6 +266,72 @@ def test_missing_and_mistyped_fields_are_422():
     assert client.post("/api/predict/batter", json={"player_id": "x"}).status_code == 422
 
 
+# ------------------------------------------------------------------ error classification
+
+GENERIC_FAILURE = "The prediction could not be completed. Please try again."
+# The Stage 3 functions' own messages for invalid inputs, copied here from the source files
+STAGE3_INPUT_MESSAGES = [
+    ("wicket", predict_wicket, "Predictions require 1–19 completed overs"),
+    ("wicket", predict_wicket, "Invalid innings, wickets or runs"),
+    ("wicket", predict_wicket, "Invalid most-recent-over runs / wickets"),
+    ("wicket", predict_wicket, "Please supply distinct teams and a venue"),
+    ("batter", forecast_future_batter, "A player ID, opponent, batting team and venue are required"),
+    ("batter", forecast_future_batter, "Batting team and opponent must differ"),
+    ("batter", forecast_future_batter, "No recorded eligible history for this player ID"),
+    ("batter", forecast_future_batter, "Future-match date must follow the latest eligible innings for this player"),
+]
+
+
+def _body(endpoint, batter_cases):
+    return WICKET_DEFAULT if endpoint == "wicket" else _batter_body(batter_cases[0])
+
+
+def _raise(exc):
+    def fail(*args, **kwargs):
+        raise exc
+    return fail
+
+
+def test_stage3_input_messages_exist_in_source():
+    """Each message classified as invalid input is raised verbatim by the Stage 3 function."""
+    for _, module, message in STAGE3_INPUT_MESSAGES:
+        assert f"raise ValueError('{message}')" in Path(module.__file__).read_text(encoding="utf-8"), message
+
+
+@pytest.mark.parametrize("endpoint, module, message", STAGE3_INPUT_MESSAGES,
+                         ids=[f"{e}-{i}" for i, (e, _, _) in enumerate(STAGE3_INPUT_MESSAGES)])
+def test_stage3_input_errors_are_422(endpoint, module, message, batter_cases, monkeypatch):
+    monkeypatch.setattr(module, "forecast", _raise(ValueError(message)))
+    r = client.post(f"/api/predict/{endpoint}", json=_body(endpoint, batter_cases))
+    assert r.status_code == 422, r.text
+    assert r.json()["detail"] == [{"loc": ["body"], "msg": message, "type": "value_error"}]
+
+
+@pytest.mark.parametrize("endpoint, module", [("wicket", predict_wicket), ("batter", forecast_future_batter)])
+@pytest.mark.parametrize("exc", [ValueError("could not convert string to float: 'C:\\\\internal\\\\x.csv'"),
+                                 RuntimeError("internal state C:\\internal\\models broken")],
+                         ids=["ValueError", "RuntimeError"])
+def test_unexpected_failure_is_500_without_internals(endpoint, module, exc, batter_cases, monkeypatch, caplog):
+    monkeypatch.setattr(module, "forecast", _raise(exc))
+    r = client.post(f"/api/predict/{endpoint}", json=_body(endpoint, batter_cases))
+    assert r.status_code == 500, r.text
+    assert r.json() == {"detail": GENERIC_FAILURE}
+    for leak in ("internal", "Traceback", type(exc).__name__, ".py"):
+        assert leak not in r.text, leak
+    # The full traceback goes to the server log instead
+    logged = [rec for rec in caplog.records if rec.exc_info and rec.exc_info[1] is exc]
+    assert logged and logged[0].levelname == "ERROR"
+
+
+def test_failure_after_the_forecast_is_500(batter_cases, monkeypatch):
+    """A failure in the service's own post-processing is not an input problem either."""
+    body = _batter_body(batter_cases[0])
+    out_of_order = dict(_direct_batter(body), chance_30_plus=0.1, chance_50_plus=0.99)
+    monkeypatch.setattr(forecast_future_batter, "forecast", lambda **kw: out_of_order)
+    r = client.post("/api/predict/batter", json=body)
+    assert r.status_code == 500 and r.json() == {"detail": GENERIC_FAILURE}
+
+
 # ------------------------------------------------------------------ options
 
 def test_options_match_model_categories(history):
@@ -409,7 +475,9 @@ def test_artifact_deleted_after_startup_returns_503(tmp_path, monkeypatch):
     service.ensure_loaded()
     (tmp_path / WICKET_MODEL.name).unlink()
     monkeypatch.setattr("cricketlens.api.services.prediction_service.prediction_service", service)
-    assert client.post("/api/predict/wicket", json=WICKET_DEFAULT).status_code == 503
+    r = client.post("/api/predict/wicket", json=WICKET_DEFAULT)
+    assert r.status_code == 503 and WICKET_MODEL.name in r.json()["detail"]
+    assert tmp_path.name not in r.text
 
 
 def test_health_reports_models_available():
