@@ -14,13 +14,14 @@ milestone predictions, and a tracker that scores predictions and replays the mod
 4. [Architecture](#architecture)
 5. [Repository structure](#repository-structure)
 6. [Setup and run](#setup-and-run)
-7. [Reproducing the analysis stages](#reproducing-the-analysis-stages)
-8. [Key definitions](#key-definitions)
-9. [Machine-learning models](#machine-learning-models)
-10. [Verification approach](#verification-approach)
-11. [Limitations and known issues](#limitations-and-known-issues)
-12. [Project stages](#project-stages)
-13. [License and credits](#license-and-credits)
+7. [Deploying to Vercel](#deploying-to-vercel)
+8. [Reproducing the analysis stages](#reproducing-the-analysis-stages)
+9. [Key definitions](#key-definitions)
+10. [Machine-learning models](#machine-learning-models)
+11. [Verification approach](#verification-approach)
+12. [Limitations and known issues](#limitations-and-known-issues)
+13. [Project stages](#project-stages)
+14. [License and credits](#license-and-credits)
 
 ## Features
 
@@ -127,6 +128,8 @@ data/processed/        Stage 1 tables and the Stage 3 training tables
 data/derived/          Dismissals, squads, registry IDs and substitutions from the raw JSON
 src/cricketlens/       Stage 1-3 Python modules (pipeline, EDA, model training and inference)
 src/cricketlens/api/   FastAPI application: routes, schemas and services
+api/                   Vercel function entrypoint and its runtime requirements
+vercel.json            Vercel build, rewrites and function configuration
 models/                The four trained models (2026 deployment and 2025 holdout versions)
 web/                   React + TypeScript + Vite + Tailwind website
 tests/                 pytest suite
@@ -164,7 +167,8 @@ The saved models were serialised with scikit-learn 1.8.0, which `pyproject.toml`
 
 ### 2. Backend (port 8000)
 
-Start it from the repository root (the Stage 2 figures are read relative to it):
+The backend finds `data/`, `models/` and `reports/` from the package location, so it works from any
+directory (set `CRICKETLENS_ROOT` to point it at another copy of them). From the repository root:
 
 ```powershell
 # Windows PowerShell
@@ -214,6 +218,94 @@ python -m cricketlens.derived_events --raw data/raw/ipl_json --output data/deriv
 
 Use the virtual environment's Python (`.\.venv\Scripts\python.exe` or `.venv/bin/python`) for this and the
 commands below.
+
+## Deploying to Vercel
+
+The repository deploys as **one Vercel project**: the React build is served as static files and the FastAPI
+app runs as a Python Vercel Function under `/api` on the same domain, so no CORS setup is needed. Everything
+is configured in the repository:
+
+| File | What it does |
+|---|---|
+| `vercel.json` | Framework "Other"; build `cd web && npm ci && npm run build`; output `web/dist`; rewrites `/api/*` to the function and every other path without a file extension to `/index.html`; the function's files and a 60 s maximum duration |
+| `api/index.py` | The function: imports the existing app from `src/cricketlens/api/app.py` |
+| `api/requirements.txt` | Only the packages the API imports at runtime, pinned (scikit-learn 1.8.0 for the saved models) |
+| `api/.python-version` | Python 3.14 |
+
+The function contains only the files the API reads: the 11 tables in `data/processed` and `data/derived`
+that it uses, the two deployment models, the Stage 1–3 report tables it serves and the 20 Stage 2 figures.
+`data/raw`, notebooks, docs, tests and the website sources are excluded.
+
+> **Before a public deployment:** a Vercel deployment is reachable by anyone with its URL. The homepage
+> hero artwork's image rights were not verified (see `LICENSE_NOTES.md`), so keep the deployment
+> protected or replace the artwork first.
+
+### Environment variables
+
+None are required. Optional:
+
+| Variable | When to set it |
+|---|---|
+| `CORS_ALLOW_ORIGINS` | Only if a frontend on another origin calls this API: comma-separated origins, e.g. `https://example.com`. Not needed on Vercel, where the site and the API share one origin. |
+| `VITE_API_BASE_URL` | Only for a frontend built separately from the API: the API's absolute base, e.g. `https://api.example.com/api`. Read at build time. |
+| `CRICKETLENS_ROOT` | Only to read `data/`, `models/` and `reports/` from another directory. Not needed on Vercel. |
+
+### (a) Vercel dashboard, imported from GitHub
+
+1. The owner of `Bhagy25/IPL_Predictor` must authorise the Vercel GitHub app for the repository (on the
+   Vercel import screen, or in GitHub under Settings → Applications), or the repository will not appear in
+   Vercel's list.
+2. In Vercel: **Add New… → Project**, and import `IPL_Predictor`.
+3. On the configuration screen, leave **Root Directory** as the repository root (`./`) and leave the
+   Framework Preset, build and output settings alone: `vercel.json` sets them. Add no environment variables.
+   Select **Deploy**.
+4. A new project's production branch is `main`, which does not contain this configuration, so the first
+   deployment builds the wrong branch. Open **Settings → Environments → Production → Branch Tracking**, set
+   the branch to `feature/cricketlens-final` and select **Save**.
+5. Open **Deployments → Create Deployment**, enter the branch `feature/cricketlens-final` and select
+   **Create Deployment**. From then on every push to that branch creates a production deployment, and
+   pushes to other branches create preview deployments.
+
+### (b) Vercel CLI from a local clone
+
+Deploy from a fresh clone, so that nothing outside the repository (such as `.venv/` or `node_modules/`) is
+uploaded:
+
+```bash
+git clone --branch feature/cricketlens-final https://github.com/Bhagy25/IPL_Predictor.git
+cd IPL_Predictor
+npm i -g vercel        # or run each command as `npx vercel`
+vercel login
+vercel                 # links or creates the project, then deploys (a new project's first deployment is production)
+vercel --prod          # later production deployments; plain `vercel` creates preview deployments
+```
+
+When `vercel` asks about the project settings, keep the code directory `./` and do not override the
+settings: `vercel.json` provides them.
+
+### Verify a deployment
+
+1. Open `https://<your-deployment>/api/health`. Expect `"status": "healthy"`, `"archive_matches": 1243`,
+   `archive.first_match_date` `"2008-04-18"` and `archive.last_match_date` `"2026-05-31"`,
+   `derived_tables.available: true`, and `prediction_models.wicket.available` and
+   `prediction_models.batter.available` both `true`. A JSON 404 or the website's HTML here means the
+   `/api` rewrite or the function is not working; `"degraded"` names the missing data or model.
+2. Open the site and refresh on a deep link such as `/players` or `/tracker`: the page must load, not a
+   404.
+3. Make a wicket and a batter prediction in the Prediction Arena.
+4. The first request after a deployment or an idle period starts the function and loads the data; expect
+   several seconds before it answers. Later requests are fast.
+
+### Measured limits
+
+Measured locally for this configuration (Vercel's own numbers will differ somewhat):
+
+| Measure | Result | Vercel limit |
+|---|---|---|
+| Function bundle, uncompressed (Linux wheels for Python 3.14 plus the included files) | 384.9 MB (330.3 MB packages, 54.6 MB data, models, figures and code) | 500 MB for Python |
+| Memory of the API process | 187 MB at start, 237 MB with all data loaded, 260 MB after 1,161 requests; peak 340 MB | 2 GB (Hobby) |
+| Cold start: process start to first response | median 7.4 s for `/api/overview/summary`, 8.7 s for a player profile (three runs each) | 60 s set (300 s maximum on Hobby) |
+| Largest response body (every endpoint and the main parameter variants) | 0.16 MB (`/api/predict/options`) | 4.5 MB |
 
 ## Reproducing the analysis stages
 
@@ -323,8 +415,8 @@ and 15.0% reached 50.
   metrics are recomputed from the per-example holdout forecasts and compared with the official report.
 - Guard tests stop numbers from being typed into the homepage or health endpoint, and the model files'
   SHA256 is checked before and after the test run.
-- Run the suite with `pytest` (385 tests at the time of writing). Website behaviour was checked in a
-  browser at 1440px and 390px widths.
+- Run the suite with `pytest` (395 tests at the time of writing). Website behaviour was checked in a
+  browser at 1440px and 390px widths, including the production build behind the same rewrites as on Vercel.
 
 ## Limitations and known issues
 

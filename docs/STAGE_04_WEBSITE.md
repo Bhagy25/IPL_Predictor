@@ -12,7 +12,8 @@ From the repository root, with the Python environment installed (`pip install -e
 README):
 
 ```bash
-# backend, port 8000 (run from the repository root)
+# backend, port 8000 (data, models and reports are found from the package location, so any
+# directory works; CRICKETLENS_ROOT overrides it)
 python -m uvicorn cricketlens.api.app:app --host 127.0.0.1 --port 8000
 
 # frontend, port 5173, in a second terminal
@@ -24,6 +25,94 @@ npm run dev
 The Vite dev server forwards `/api/*` to `http://127.0.0.1:8000` (`web/vite.config.ts`). `npm run build`
 runs `tsc` and writes a production bundle to `web/dist/` (git-ignored). Interactive API documentation is at
 `http://127.0.0.1:8000/docs`.
+
+The dev server listens on `localhost` only. The frontend calls the relative `/api` (`web/src/api/base.ts`);
+`VITE_API_BASE_URL` overrides it at build time for a frontend deployed apart from the API. The API allows
+cross-origin requests only from the origins in `CORS_ALLOW_ORIGINS` (comma-separated; default
+`http://localhost:5173` and `http://127.0.0.1:5173`), with GET and POST and no credentials.
+
+## Deploying to Vercel
+
+One Vercel project serves both parts on one domain: the React build as static files, and the FastAPI app as
+a Python Vercel Function under `/api`.
+
+- `vercel.json`: `"framework": null` (the root `pyproject.toml` lists FastAPI, which would otherwise select
+  the FastAPI preset and send every request to the app); build `cd web && npm ci && npm run build`; output
+  `web/dist`. Rewrites: `/api/(.*)` → `/api/index`, and every other path without a file extension →
+  `/index.html` for deep links. Existing static files are served before any rewrite, so the hero images,
+  `/figures/stage_02/*` and the JavaScript assets come from the static build, and a missing asset is a
+  404 rather than the app.
+- `api/index.py` adds `src/` to the import path and imports `app` from `cricketlens.api.app`; the app is
+  not duplicated.
+- `api/requirements.txt` lists only what the running API imports (FastAPI, Pydantic, pandas, NumPy, SciPy,
+  scikit-learn 1.8.0, joblib), pinned to the tested versions. Vercel reads the dependency file next to the
+  entrypoint before the root `pyproject.toml`, so matplotlib, uvicorn and the test tools are not installed.
+  `api/.python-version` selects Python 3.14.
+- The function's `excludeFiles` removes everything outside `api/` and `src/`, and `includeFiles` adds back
+  exactly the 46 files the API opens: `data/processed/{matches,deliveries,innings,batter_innings,
+  stage03_wicket_full_history_2008_2026}.csv`, the six `data/derived` tables, the two deployment models, the
+  Stage 1 audit files, seven Stage 2 tables, the Stage 3 results JSON and holdout forecasts, and the 20
+  Stage 2 figures. Nothing in `data/raw` is read at runtime. `maxDuration` is 60 seconds.
+
+Environment variables: none required. `CORS_ALLOW_ORIGINS` and `VITE_API_BASE_URL` matter only when the
+frontend and the API are deployed on different origins; `CRICKETLENS_ROOT` only to read the data from
+another directory.
+
+A Vercel deployment is reachable by anyone with its URL; the hero artwork's image rights were not verified
+(`LICENSE_NOTES.md`), so keep the deployment protected or replace the artwork before making it public.
+
+### (a) Dashboard import from GitHub
+
+1. The owner of `Bhagy25/IPL_Predictor` authorises the Vercel GitHub app for the repository (on Vercel's
+   import screen, or in GitHub under Settings → Applications).
+2. Vercel: **Add New… → Project** → import `IPL_Predictor`.
+3. Root Directory: the repository root (`./`). Leave the Framework Preset, build and output settings as
+   they are (`vercel.json` sets them) and add no environment variables. **Deploy**.
+4. New projects deploy `main` to production, and `main` does not contain this configuration. Set
+   **Settings → Environments → Production → Branch Tracking** to `feature/cricketlens-final` and **Save**.
+5. **Deployments → Create Deployment** → branch `feature/cricketlens-final` → **Create Deployment**. Later
+   pushes to that branch deploy to production automatically; other branches get preview deployments.
+
+### (b) Vercel CLI from a local clone
+
+From a fresh clone, so that `.venv/`, `node_modules/` and other local files are not uploaded:
+
+```bash
+git clone --branch feature/cricketlens-final https://github.com/Bhagy25/IPL_Predictor.git
+cd IPL_Predictor
+npm i -g vercel        # or prefix each command with npx
+vercel login
+vercel                 # link or create the project and deploy (the first deployment is production)
+vercel --prod          # later production deployments; plain `vercel` makes previews
+```
+
+Keep the code directory `./` and do not override the detected settings when asked.
+
+### Verifying a deployment
+
+- `GET /api/health`: `status` `"healthy"`; `archive_matches` 1243; `archive` 19 seasons, 2008-04-18 to
+  2026-05-31; `derived_tables.available` true; `prediction_models.wicket.available` and
+  `prediction_models.batter.available` true. A JSON 404 or the website's HTML instead means the `/api`
+  rewrite or the function is not working; `"degraded"` names the missing data or model.
+- Refresh on a deep link (`/players`, `/tracker`): the app loads, and an unknown path returns to the
+  homepage.
+- One wicket and one batter prediction in the Prediction Arena.
+
+### Measurements
+
+Measured locally for this configuration (a serverless instance will differ somewhat):
+
+| Measure | Result | Vercel limit |
+|---|---|---|
+| Function bundle, uncompressed: Linux wheels for CPython 3.14 (`pip install --target`) plus the bundled files | 384.9 MB: 330.3 MB packages (SciPy 132.8, pandas 69.0, NumPy 65.3, scikit-learn 42.7), 54.6 MB files | 500 MB (Python) |
+| API process memory | 187 MB once started, 237 MB with all data loaded, 260 MB after 1,161 requests; peak 340 MB | 2 GB (Hobby) |
+| Cold start, process start to first 200 | `/api/overview/summary` median 7.4 s; `/api/players/ba607b88/overview` median 8.7 s (three fresh processes each) | `maxDuration` 60 s |
+| Largest response body, over every operation, all 20 figures and parameter variants (1,161 requests) | 0.16 MB, `/api/predict/options` | 4.5 MB |
+
+The production build was also checked locally behind the same rewrites (`web/dist` served with
+`vercel.json`'s rules, `/api` proxied to the API started from another directory): every route by direct
+URL and after a refresh, navigation, back and forward, unknown URLs, both predictions and Tracker export
+and import, at 1440px and 390px, with no console errors or warnings.
 
 ## Frontend architecture
 
