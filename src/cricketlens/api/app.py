@@ -15,6 +15,7 @@ from cricketlens.api.routes_eda import router as eda_router
 from cricketlens.api.routes_predict import router as predict_router
 from cricketlens.api.services.canonical_data import canonical_engine
 from cricketlens.api.services import prediction_service
+from cricketlens.api.settings import cors_allow_origins
 
 
 @asynccontextmanager
@@ -33,19 +34,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS for local Vite development and staging
+# Cross-origin access for the local Vite dev server, or the origins in CORS_ALLOW_ORIGINS for a split
+# deployment; the same-origin production site needs none. The API uses no cookies or credentials.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "*",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=cors_allow_origins(),
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Accept", "Content-Type"],
 )
 
 
