@@ -22,13 +22,21 @@ const RouteLoading: React.FC = () => (
   </div>
 );
 
-/** Shown above any page while an API request has been pending for 5 s or more, as on a cold start of the API. */
+/**
+ * Shown while an API request has been pending for 5 s or more, as on a cold start of the API. It floats at the
+ * bottom of the viewport (centred on phones, bottom-right from sm up), so the page never moves; only the message
+ * box itself takes clicks.
+ */
 const ServerStartingNotice: React.FC = () => {
   const slow = useSyncExternalStore(subscribeSlowRequests, hasSlowRequest);
   return (
-    <div role="status" aria-live="polite" className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed z-40 bottom-4 inset-x-4 flex justify-center pointer-events-none sm:inset-x-auto sm:right-6 sm:bottom-6"
+    >
       {slow && (
-        <p className="pt-6 text-sm text-[#B9B9B3] flex items-center gap-2">
+        <p className="pointer-events-auto max-w-sm text-sm text-[#B9B9B3] flex items-center gap-2 bg-[#101114] border border-[#D9B15F]/30 rounded-xl px-3.5 py-2.5 shadow-lg shadow-black/50">
           <Loader2 className="w-4 h-4 shrink-0 animate-spin text-[#D9B15F]" aria-hidden="true" /> Loading the analytics
           server… The first request after a pause can take a few seconds.
         </p>
