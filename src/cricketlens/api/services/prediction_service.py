@@ -24,8 +24,9 @@ from cricketlens.fit_batter_models import calibration_table, metrics as batter_m
 from cricketlens.fit_wicket_models import measure as wicket_measure, reliability as wicket_reliability
 from cricketlens.wicket_training_data import phase_for_next_over
 from cricketlens.api.services.canonical_data import FRANCHISE_METADATA, DerivedDataUnavailable, canonical_engine
+from cricketlens.api.settings import PROJECT_ROOT
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = PROJECT_ROOT
 MODEL_DIR = ROOT / "models"
 DATA_DIR = ROOT / "data" / "processed"
 REPORT_DIR = ROOT / "reports" / "stage_03" / "session_03"

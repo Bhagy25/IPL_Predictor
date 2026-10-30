@@ -5,10 +5,10 @@ phase scoring patterns, venue scoring distributions, and missingness audits.
 """
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Dict, List, Any, Optional
 import pandas as pd
 
+from cricketlens.api.settings import PROJECT_ROOT
 from cricketlens.api.schemas import (
     EDAFigureItem,
     EDACatalogResponse,
@@ -394,7 +394,7 @@ class EDAService:
         if self._summary_data is not None:
             return self._summary_data
 
-        base_dir = Path.cwd()
+        base_dir = PROJECT_ROOT
         s1_dir = base_dir / "reports" / "stage_02" / "session_01"
         s2_dir = base_dir / "reports" / "stage_02" / "session_02"
 

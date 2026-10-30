@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
@@ -33,8 +32,9 @@ from cricketlens.api.services.canonical_data import (
     run_rate,
     toss_record,
 )
+from cricketlens.api.settings import PROJECT_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = PROJECT_ROOT
 
 # Correlations are never reported for fewer innings than this
 CORRELATION_MIN_N = 30

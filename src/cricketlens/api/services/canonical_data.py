@@ -14,6 +14,8 @@ from decimal import ROUND_HALF_UP, Decimal
 import numpy as np
 import pandas as pd
 
+from cricketlens.api.settings import PROJECT_ROOT
+
 logger = logging.getLogger(__name__)
 
 # Delivery key shared by deliveries.csv and the data/derived event tables
@@ -458,7 +460,7 @@ class CanonicalAnalyticsEngine:
 
     def __init__(self, data_dir: Optional[Path] = None, derived_dir: Optional[Path] = None):
         if data_dir is None:
-            self.data_dir = Path(__file__).resolve().parents[4] / "data" / "processed"
+            self.data_dir = PROJECT_ROOT / "data" / "processed"
         else:
             self.data_dir = Path(data_dir)
         self.derived_dir = Path(derived_dir) if derived_dir is not None else self.data_dir.parent / "derived"

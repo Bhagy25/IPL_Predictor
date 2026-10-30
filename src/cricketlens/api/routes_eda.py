@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import re
-from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
@@ -17,6 +16,7 @@ from cricketlens.api.schemas import (
 from cricketlens.api.services.eda_service import eda_service
 from cricketlens.api.services import eda_analysis
 from cricketlens.api.services.canonical_data import canonical_engine, DerivedDataUnavailable
+from cricketlens.api.settings import PROJECT_ROOT
 
 router = APIRouter(prefix="/api/eda", tags=["Statistics & EDA"])
 
@@ -127,7 +127,7 @@ async def get_eda_figure(figure_name: str):
     if not SAFE_FILENAME_RE.match(figure_name):
         raise HTTPException(status_code=400, detail="Invalid figure filename.")
 
-    fig_path = Path.cwd() / "reports" / "figures" / "stage_02" / figure_name
+    fig_path = PROJECT_ROOT / "reports" / "figures" / "stage_02" / figure_name
     if not fig_path.exists():
         raise HTTPException(status_code=404, detail=f"Figure '{figure_name}' not found.")
 
