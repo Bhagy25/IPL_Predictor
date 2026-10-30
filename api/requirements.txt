@@ -1,0 +1,9 @@
+# Runtime packages of the API function only (what the running app imports), pinned to the tested versions.
+# The models in models/*.joblib were serialised with scikit-learn 1.8.0.
+fastapi==0.162.0
+pydantic==2.14.1
+pandas==2.3.3
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.8.0
+joblib==1.6.0
