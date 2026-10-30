@@ -465,12 +465,18 @@ class PredictionService:
             raise PredictionInputError(errors)
         pid = str(inputs["player_id"]).strip()
         try:
-            result = forecast_future_batter.forecast(
-                model_path=self.model_dir / MODELS["batter"]["deployment"],
-                batters_path=self.data_dir / "batter_innings.csv",
-                matches_path=self.data_dir / "matches.csv",
-                batter_id=pid, opponent=inputs["opponent"], venue=inputs["venue"],
-                batting_team=inputs["batting_team"], match_date=inputs["match_date"])
+            # The batter forest has n_jobs=-1, so by default every predict_proba starts and terminates a
+            # multiprocessing ThreadPool. On Windows two of the pool's own threads can write its notifier pipe
+            # at once and raise ValueError("concurrent send_bytes() calls are not supported"), which would be
+            # reported as a 422. One row needs no parallelism: the sequential backend (thread-local, this
+            # call only) gives identical probabilities without starting a pool.
+            with joblib.parallel_config(backend="sequential"):
+                result = forecast_future_batter.forecast(
+                    model_path=self.model_dir / MODELS["batter"]["deployment"],
+                    batters_path=self.data_dir / "batter_innings.csv",
+                    matches_path=self.data_dir / "matches.csv",
+                    batter_id=pid, opponent=inputs["opponent"], venue=inputs["venue"],
+                    batting_team=inputs["batting_team"], match_date=inputs["match_date"])
         except ValueError as exc:
             raise PredictionInputError([_error(None, str(exc))])
         except Exception as exc:

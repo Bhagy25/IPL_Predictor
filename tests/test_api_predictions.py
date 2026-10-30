@@ -6,6 +6,7 @@ and are recomputed here from the per-example holdout CSVs with sklearn and numpy
 """
 import hashlib
 import json
+import multiprocessing.pool
 import shutil
 from datetime import date, timedelta
 from decimal import ROUND_HALF_UP, Decimal
@@ -144,6 +145,44 @@ def test_batter_endpoint_equals_stage3_forecast(batter_cases, history):
         assert got["form_context"]["latest_innings_date"] == rows.date.iloc[-1]
         assert [i["runs"] for i in got["form_context"]["recent_innings"]] == rows.runs.iloc[::-1].head(5).tolist()
         assert "playing XI" in got["scope"]
+
+
+def test_batter_prediction_starts_no_thread_pool(batter_cases, monkeypatch):
+    """The batter forest has n_jobs=-1, so by default each predict_proba starts and terminates a
+    multiprocessing ThreadPool. On Windows two of the pool's threads can write its change-notifier pipe at
+    the same time, which raises ValueError("concurrent send_bytes() calls are not supported"); the endpoint
+    reported that as a 422. The service runs the forecast on joblib's sequential backend instead."""
+    created = []
+    original = multiprocessing.pool.Pool.__init__
+
+    def record(self, *args, **kwargs):
+        created.append(type(self).__name__)
+        original(self, *args, **kwargs)
+
+    monkeypatch.setattr(multiprocessing.pool.Pool, "__init__", record)
+    for case in batter_cases:
+        r = client.post("/api/predict/batter", json=_batter_body(case))
+        assert r.status_code == 200, r.text
+    assert created == []
+
+
+def test_thread_pool_race_cannot_reach_the_batter_endpoint(batter_cases, monkeypatch):
+    """Any pool the forecast would start fails exactly as the race does; the prediction must not depend on one."""
+    def race(self, *args, **kwargs):
+        raise ValueError("concurrent send_bytes() calls are not supported")
+
+    monkeypatch.setattr(multiprocessing.pool.Pool, "__init__", race)
+    body = _batter_body(batter_cases[0])
+    r = client.post("/api/predict/batter", json=body)
+    assert r.status_code == 200, r.text
+    expected = _direct_batter_sequential(body)
+    assert (r.json()["chance_30_plus"], r.json()["chance_50_plus"]) == (expected["chance_30_plus"],
+                                                                        expected["chance_50_plus"])
+
+
+def _direct_batter_sequential(body):
+    with joblib.parallel_config(backend="sequential"):
+        return _direct_batter(body)
 
 
 def test_debutant_has_only_2026_history(batter_cases, history):
