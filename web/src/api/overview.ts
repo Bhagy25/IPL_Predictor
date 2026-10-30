@@ -1,6 +1,6 @@
 import { OverviewSummaryResponse, OverviewChartsResponse } from '../types';
 
-import { API_BASE } from './base';
+import { API_BASE, apiFetch } from './base';
 
 export interface HealthResponse {
   status: string;
@@ -22,7 +22,7 @@ export interface HealthResponse {
 }
 
 export async function fetchHealth(signal?: AbortSignal): Promise<HealthResponse> {
-  const res = await fetch(`${API_BASE}/health`, {
+  const res = await apiFetch(`${API_BASE}/health`, {
     signal,
     headers: { 'Accept': 'application/json' },
   });
@@ -33,7 +33,7 @@ export async function fetchHealth(signal?: AbortSignal): Promise<HealthResponse>
 }
 
 export async function fetchOverviewSummary(signal?: AbortSignal): Promise<OverviewSummaryResponse> {
-  const res = await fetch(`${API_BASE}/overview/summary`, {
+  const res = await apiFetch(`${API_BASE}/overview/summary`, {
     signal,
     headers: { 'Accept': 'application/json' },
   });
@@ -44,7 +44,7 @@ export async function fetchOverviewSummary(signal?: AbortSignal): Promise<Overvi
 }
 
 export async function fetchOverviewCharts(signal?: AbortSignal): Promise<OverviewChartsResponse> {
-  const res = await fetch(`${API_BASE}/overview/charts`, {
+  const res = await apiFetch(`${API_BASE}/overview/charts`, {
     signal,
     headers: { 'Accept': 'application/json' },
   });

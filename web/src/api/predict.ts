@@ -7,7 +7,7 @@ import {
   WicketPredictionResponse,
 } from '../types';
 
-import { API_BASE } from './base';
+import { API_BASE, apiFetch } from './base';
 
 /** A failed request: HTTP status (0 when the backend could not be reached) and any per-field messages from a 422. */
 export class ApiError extends Error {
@@ -52,7 +52,7 @@ async function toApiError(res: Response, what: string): Promise<ApiError> {
 async function request<T>(path: string, what: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_BASE}${path}`, { ...init, headers: { Accept: 'application/json', ...(init?.headers ?? {}) } });
+    res = await apiFetch(`${API_BASE}${path}`, { ...init, headers: { Accept: 'application/json', ...(init?.headers ?? {}) } });
   } catch (exc) {
     if ((exc as Error).name === 'AbortError') throw exc;
     throw new ApiError(0, `${what}: the analytical backend could not be reached`);

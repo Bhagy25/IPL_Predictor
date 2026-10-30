@@ -1,12 +1,12 @@
 import { HoldoutReplayMatchResponse, HoldoutReplayResponse } from '../types';
 import { ApiError } from './predict';
 
-import { API_BASE } from './base';
+import { API_BASE, apiFetch } from './base';
 
 async function get<T>(path: string, what: string, signal?: AbortSignal): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_BASE}${path}`, { signal, headers: { Accept: 'application/json' } });
+    res = await apiFetch(`${API_BASE}${path}`, { signal, headers: { Accept: 'application/json' } });
   } catch (exc) {
     if ((exc as Error).name === 'AbortError') throw exc;
     throw new ApiError(0, `${what}: the analytical backend could not be reached`);

@@ -1,8 +1,9 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useSyncExternalStore } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { hasSlowRequest, subscribeSlowRequests } from './api/base';
 
 // Each route is its own chunk, loaded the first time it is visited
 const IPLOverviewPage = lazy(() => import('./pages/IPLOverviewPage').then((m) => ({ default: m.IPLOverviewPage })));
@@ -21,6 +22,21 @@ const RouteLoading: React.FC = () => (
   </div>
 );
 
+/** Shown above any page while an API request has been pending for 5 s or more, as on a cold start of the API. */
+const ServerStartingNotice: React.FC = () => {
+  const slow = useSyncExternalStore(subscribeSlowRequests, hasSlowRequest);
+  return (
+    <div role="status" aria-live="polite" className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+      {slow && (
+        <p className="pt-6 text-sm text-[#B9B9B3] flex items-center gap-2">
+          <Loader2 className="w-4 h-4 shrink-0 animate-spin text-[#D9B15F]" aria-hidden="true" /> Loading the analytics
+          server… The first request after a pause can take a few seconds.
+        </p>
+      )}
+    </div>
+  );
+};
+
 export const App: React.FC = () => {
   return (
     // Opt in to the React Router v7 behaviour named by its future-flag warnings
@@ -31,6 +47,7 @@ export const App: React.FC = () => {
 
         {/* Dynamic Route Content */}
         <main className="flex-grow">
+          <ServerStartingNotice />
           <Suspense fallback={<RouteLoading />}>
             <Routes>
               <Route path="/" element={<IPLOverviewPage />} />

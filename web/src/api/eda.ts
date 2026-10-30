@@ -6,7 +6,7 @@ import {
   EDASummaryResponse,
 } from '../types';
 
-import { API_BASE } from './base';
+import { API_BASE, apiFetch } from './base';
 
 /** Query values for the full-history analysis; undefined values are left to the API defaults. */
 export interface EDAQuery {
@@ -29,7 +29,7 @@ const queryString = (params: Record<string, string | number | undefined>): strin
 };
 
 async function getJSON<T>(url: string, what: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(url, { signal, headers: { 'Accept': 'application/json' } });
+  const res = await apiFetch(url, { signal, headers: { 'Accept': 'application/json' } });
   if (!res.ok) {
     // The API explains invalid filters (422) in `detail`
     const detail = await res.json().then((b) => (typeof b?.detail === 'string' ? b.detail : null)).catch(() => null);

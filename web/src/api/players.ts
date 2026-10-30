@@ -1,6 +1,6 @@
 import { PlayerListResponse, PlayerMatchLogResponse, PlayerProfileResponse } from '../types';
 
-import { API_BASE } from './base';
+import { API_BASE, apiFetch } from './base';
 
 export interface PlayerSearchParams {
   query?: string;
@@ -26,7 +26,7 @@ export async function fetchPlayers(
   if (params?.min_innings) queryParams.set('min_innings', params.min_innings.toString());
 
   const url = `${API_BASE}/players?${queryParams.toString()}`;
-  const res = await fetch(url, {
+  const res = await apiFetch(url, {
     signal,
     headers: { 'Accept': 'application/json' },
   });
@@ -43,7 +43,7 @@ export async function fetchPlayerOverview(
   signal?: AbortSignal
 ): Promise<PlayerProfileResponse> {
   const query = season != null ? `?season=${season}` : '';
-  const res = await fetch(`${API_BASE}/players/${encodeURIComponent(playerId)}/overview${query}`, {
+  const res = await apiFetch(`${API_BASE}/players/${encodeURIComponent(playerId)}/overview${query}`, {
     signal,
     headers: { 'Accept': 'application/json' },
   });
@@ -69,7 +69,7 @@ export async function fetchPlayerMatches(
   if (params?.page) queryParams.set('page', params.page.toString());
   if (params?.page_size) queryParams.set('page_size', params.page_size.toString());
 
-  const res = await fetch(`${API_BASE}/players/${encodeURIComponent(playerId)}/matches?${queryParams.toString()}`, {
+  const res = await apiFetch(`${API_BASE}/players/${encodeURIComponent(playerId)}/matches?${queryParams.toString()}`, {
     signal,
     headers: { 'Accept': 'application/json' },
   });
