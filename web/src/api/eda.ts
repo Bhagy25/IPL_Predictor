@@ -6,7 +6,7 @@ import {
   EDASummaryResponse,
 } from '../types';
 
-const API_BASE = '/api';
+import { API_BASE } from './base';
 
 /** Query values for the full-history analysis; undefined values are left to the API defaults. */
 export interface EDAQuery {

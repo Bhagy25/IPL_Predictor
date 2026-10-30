@@ -104,7 +104,7 @@ export const IPLOverviewPage: React.FC = () => {
                     Analytical backend unreachable ({error})
                   </p>
                   <p className="text-xs text-red-300/75 mt-0.5">
-                    FastAPI server on 127.0.0.1:8000 is not responding. Please ensure the backend is running.
+                    The CricketLens API is not responding. Please ensure the backend is running.
                   </p>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export const IPLOverviewPage: React.FC = () => {
               <div className="flex items-center gap-2.5 self-start sm:self-center">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-[#0D0E10] text-[#D9B15F] border border-[#D9B15F]/40 shadow-gold-pill">
                   <span className="w-2 h-2 rounded-full bg-[#D9B15F]" />
-                  Historical archive connected &middot; Port 8000
+                  Historical archive connected
                 </span>
               </div>
             </div>

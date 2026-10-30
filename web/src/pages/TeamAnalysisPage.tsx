@@ -244,7 +244,7 @@ export const TeamAnalysisPage: React.FC = () => {
                   Analytical backend error ({teamsError || error})
                 </p>
                 <p className="text-xs text-red-300/75 mt-0.5">
-                  Unable to load franchise dataset from port 8000.
+                  Unable to load franchise dataset from the CricketLens API.
                 </p>
               </div>
             </div>

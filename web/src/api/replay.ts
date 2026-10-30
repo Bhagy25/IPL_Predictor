@@ -1,7 +1,7 @@
 import { HoldoutReplayMatchResponse, HoldoutReplayResponse } from '../types';
 import { ApiError } from './predict';
 
-const API_BASE = '/api';
+import { API_BASE } from './base';
 
 async function get<T>(path: string, what: string, signal?: AbortSignal): Promise<T> {
   let res: Response;

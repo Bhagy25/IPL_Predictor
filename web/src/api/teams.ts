@@ -1,6 +1,6 @@
 import { TeamListResponse, TeamOverviewResponse, TeamVenueResponse, HeadToHeadResponse } from '../types';
 
-const API_BASE = '/api';
+import { API_BASE } from './base';
 
 export async function fetchTeams(signal?: AbortSignal): Promise<TeamListResponse> {
   const res = await fetch(`${API_BASE}/teams`, {

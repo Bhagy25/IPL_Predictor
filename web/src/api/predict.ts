@@ -7,7 +7,7 @@ import {
   WicketPredictionResponse,
 } from '../types';
 
-const API_BASE = '/api';
+import { API_BASE } from './base';
 
 /** A failed request: HTTP status (0 when the backend could not be reached) and any per-field messages from a 422. */
 export class ApiError extends Error {
