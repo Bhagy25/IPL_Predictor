@@ -80,11 +80,11 @@ class ScoringDistributionBin(BaseModel):
 
 class TeamRecordItem(BaseModel):
     team: str = Field(..., description="Franchise name (normalized for renames)")
-    played: int = Field(..., description="Matches played in the comparative window (see team_records_window)")
+    played: int = Field(..., description="Matches the franchise played across the full IPL archive")
     wins: int = Field(..., description="Wins including Super Over decisions")
     losses: int = Field(..., description="Losses in regulation and Super Overs")
     tied_no_result: int = Field(..., description="Unresolved or no-result matches")
-    win_pct: Optional[float] = Field(..., description="Wins ÷ (matches − no results), %; null without decided matches")
+    win_pct: Optional[float] = Field(..., description="Wins ÷ (matches − no results), %; null when the denominator is zero")
     titles: int = Field(..., description="Historical IPL championship titles won")
     title_years: List[int] = Field(default_factory=list, description="Championship winning years")
     status: str = Field(default="Active", description="Active or Defunct franchise status")
@@ -98,8 +98,8 @@ class OverviewChartsResponse(BaseModel):
     outcomes: Dict[str, Any] = Field(..., description="Shared outcome breakdown (decided, Super Over, no result)")
     scoring_distribution: List[ScoringDistributionBin] = Field(..., description="Score span distribution")
     scoring_summary: Dict[str, Any] = Field(..., description="Histogram sample: n, eligibility rule, excluded innings")
-    team_records: List[TeamRecordItem] = Field(..., description="Verified franchise records")
-    team_records_window: Dict[str, Any] = Field(..., description="Seasons of the team records and the rule")
+    team_records: List[TeamRecordItem] = Field(..., description="Full-archive records for current and former IPL franchises")
+    team_records_window: Dict[str, Any] = Field(..., description="Archive season range, franchise count, and record definitions")
     champions: List[Dict[str, Any]] = Field(..., description="Champion of every season, from its final")
     champion_rule: str = Field(..., description="How the champion of a season is identified")
 

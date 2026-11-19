@@ -107,7 +107,7 @@ export const ChartFrame: React.FC<{
       </details>
       <p className="flex items-start gap-1.5 text-[10px] text-[#8E8E88]">
         <Database className="w-3 h-3 flex-shrink-0 mt-0.5" aria-hidden="true" />
-        <span>{area.source}</span>
+        <span>Source: Cricsheet IPL archive</span>
       </p>
     </footer>
   </section>

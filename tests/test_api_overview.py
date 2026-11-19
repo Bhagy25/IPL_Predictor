@@ -139,7 +139,7 @@ def test_kpi_status_and_descriptions(summary, m, inn, d):
     joined = inn.set_index(["match_id", "innings"])[["runs", "wickets", "legal_balls"]].join(sums, rsuffix="_d")
     bad = joined[(joined["runs"] != joined["runs_d"]) | (joined["wickets"] != joined["wickets_d"]) | (joined["legal_balls"] != joined["legal_balls_d"])]
     verified = pct(len(m) - bad.index.get_level_values(0).nunique(), len(m))
-    assert k["matches"]["statusText"] == f"{verified:g}% verified"
+    assert k["matches"]["statusText"] == f"{verified:g}% of match totals agree"
     nr = (m["outcome_type"] == "no result").sum()
     assert f"including {nr} no results" in k["matches"]["description"]
 
@@ -152,12 +152,12 @@ def test_kpi_status_and_descriptions(summary, m, inn, d):
     last = m["season"].max()
     active = len(set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"]))
     total = len(set(m["team1"]) | set(m["team2"]))
-    assert k["teams"]["statusText"] == f"{active} active franchises"
-    assert f"{active} active franchises (those that played in {last}) and {total - active} historical defunct" in k["teams"]["description"]
+    assert k["teams"]["statusText"] == f"{active} current · {total - active} former"
+    assert f"{active} franchises played in {last}" in k["teams"]["description"]
 
     venues, raw = m["venue_canonical"].nunique(), m["venue"].nunique()
-    assert k["venues"]["statusText"] == f"{venues} canonical grounds"
-    assert f"normalized from {raw} raw naming strings" in k["venues"]["description"]
+    assert k["venues"]["statusText"] == "India and overseas"
+    assert f"{raw} venue names in the source data represent {venues} distinct grounds" in k["venues"]["description"]
 
     dis = pd.read_csv(DERIVED / "dismissals.csv", usecols=["is_super_over", "kind"])
     hurt = ((~dis["is_super_over"]) & (dis["kind"] == "retired hurt")).sum()
@@ -221,8 +221,7 @@ def test_title_counts(charts, client, raw_finals):
     for team, t in teams.items():
         years = sorted(s for s, w in raw_finals.items() if w == team)
         assert (t["titles"], t["title_years"]) == (len(years), years), team
-        if team in records:
-            assert (records[team]["titles"], records[team]["title_years"]) == (len(years), years), team
+        assert (records[team]["titles"], records[team]["title_years"]) == (len(years), years), team
 
 
 # ---------------------------------------------------------------- charts
@@ -286,25 +285,34 @@ def test_score_histogram_eligibility(charts, first_innings, m):
     assert "6 matches abandoned" not in json.dumps(charts)
 
 
-def test_team_records_window_and_values(charts, m):
+def test_team_records_cover_the_full_archive(charts, m):
     w = charts["team_records_window"]
-    last = m["season"].max()
-    current = set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"])
-    start = max(m[(m["team1"] == t) | (m["team2"] == t)]["season"].min() for t in current)
-    # Descriptive records include the latest season (only model evaluation holds it out)
-    assert (w["first_season"], w["last_season"], w["franchises"]) == (start, last, len(current))
-    assert w["label"] == f"{start}–{last}"
-    window = m[m["season"].between(start, last)]
+    seasons = sorted(m["season"].unique())
+    franchises = set(m["team1"]) | set(m["team2"])
+    latest = m[m["season"] == seasons[-1]]
+    current = set(latest["team1"]) | set(latest["team2"])
+    assert (w["first_season"], w["last_season"], w["franchises"]) == (seasons[0], seasons[-1], len(franchises))
+    assert w["label"] == span(seasons) == "2008–2026"
     records = {t["team"]: t for t in charts["team_records"]}
-    assert set(records) == current
-    for team in current:
-        rows = window[(window["team1"] == team) | (window["team2"] == team)]
-        nr = (rows["outcome_type"] == "no result").sum()
-        wins = (rows["final_winner"] == team).sum()
-        losses = (rows["final_winner"].notna() & (rows["final_winner"] != team)).sum()
+    assert len(charts["team_records"]) == len(records) == 15
+    assert set(records) == franchises
+    assert sum(r["played"] for r in records.values()) == 2 * len(m)
+    for team in franchises:
+        rows = m[(m["team1"] == team) | (m["team2"] == team)]
+        eligible = rows[rows["outcome_type"] != "no result"]
+        # The final winner includes Super Overs. Ties without a winner stay in the denominator.
+        wins = (eligible["final_winner"] == team).sum()
+        losses = (eligible["final_winner"].notna() & (eligible["final_winner"] != team)).sum()
         r = records[team]
         assert (r["played"], r["wins"], r["losses"], r["tied_no_result"]) == (len(rows), wins, losses, len(rows) - wins - losses)
-        assert r["win_pct"] == pct(wins, len(rows) - nr)
+        assert r["win_pct"] == pct(wins, len(eligible))
+        assert r["status"] == ("Active" if team in current else "Defunct")
+
+    csk = records["Chennai Super Kings"]
+    assert (csk["played"], csk["wins"], csk["win_pct"]) == (266, 148, 55.8)
+    deccan = records["Deccan Chargers"]
+    assert (deccan["played"], deccan["wins"], deccan["win_pct"]) == (75, 29, 38.7)
+    assert (deccan["titles"], deccan["title_years"]) == (1, [2009])
 
 
 def test_service_caching():

@@ -28,10 +28,11 @@ milestone predictions, and a tracker that scores predictions and replays the mod
 **IPL Overview (home)**
 - Archive figures: seasons, matches, deliveries, teams, players, venues, runs and wickets, each with its definition.
 - Matches and first-innings scoring by season with a fitted trend, the result distribution and a first-innings score histogram.
-- Team records of the ten current franchises over their shared seasons (2022–2026), with every season's champion.
+- Full-archive records for all 15 current and former franchises (2008–2026). Each record covers the matches that franchise played, with title counts and winning years derived from the season champions.
 
 **Team Analysis**
 - Any franchise, for all seasons or one season: results with Super Over and no-result handling, batting first vs chasing, toss outcomes, phases and season trends.
+- A shared-season comparison for current franchises (2022–2026).
 - Records against every opponent, head-to-head between any two franchises and venue records with a minimum-matches filter.
 
 **Player Explorer**

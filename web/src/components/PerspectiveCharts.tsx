@@ -403,8 +403,7 @@ const EmptyStateNotice: React.FC = () => (
       <Database className="w-4 h-4" />
     </div>
     <div>
-      <h4 className="text-sm font-medium text-[#F6F6F3]">Awaiting historical data</h4>
-      <p className="text-xs text-[#B9B9B3]/75 mt-0.5">No verified data available to plot.</p>
+      <h4 className="text-sm font-medium text-[#F6F6F3]">No chart data available</h4>
     </div>
   </div>
 );

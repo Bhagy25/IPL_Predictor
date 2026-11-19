@@ -637,11 +637,11 @@ export const AnomaliesView: React.FC<{ data: Data<'anomalies'> }> = ({ data }) =
         <MatchList title="No-result matches" matches={data.lists.no_result} />
       </div>
       <div className="border border-dashed border-[#8E8E88]/40 rounded-xl p-3 sm:p-4 space-y-2 bg-[#101114]">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-[#B9B9B3]">{audit.label}</p>
-        <p className="text-[11px] text-[#8E8E88]">Coverage: {audit.coverage}. {audit.source}</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-[#B9B9B3]">Archive data quality audit</p>
+        <p className="text-[11px] text-[#8E8E88]">{audit.coverage} · Independent of the current filters</p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           <DataTable
-            caption="Stage 1 screening issues"
+            caption="Data quality checks"
             rows={Object.entries(audit.screening_issue_counts)}
             rowKey={([k]) => k}
             columns={[
@@ -650,7 +650,7 @@ export const AnomaliesView: React.FC<{ data: Data<'anomalies'> }> = ({ data }) =
             ]}
           />
           <DataTable
-            caption="Stage 1 missing fields"
+            caption="Missing fields"
             rows={audit.missingness}
             rowKey={(r) => `${r.table}.${r.column}`}
             columns={[

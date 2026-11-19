@@ -9,13 +9,12 @@ interface TeamRecordsTableProps {
   loading?: boolean;
 }
 
-/** "CSK (5), MI (5) · Defunct: Deccan Chargers (1)" from the computed champion of every season. */
-const titleSummary = (champions: SeasonChampion[], current: Set<string>): string => {
+const titleSummary = (champions: SeasonChampion[], activeFranchises: Set<string>): string => {
   const counts = new Map<string, { label: string; titles: number; first: number }>();
   champions.forEach((c) => {
     if (!c.champion) return;
     const entry = counts.get(c.champion) ?? {
-      label: current.has(c.champion) ? (c.champion_short_name ?? c.champion) : c.champion,
+      label: activeFranchises.has(c.champion) ? (c.champion_short_name ?? c.champion) : c.champion,
       titles: 0,
       first: c.season,
     };
@@ -23,9 +22,9 @@ const titleSummary = (champions: SeasonChampion[], current: Set<string>): string
     counts.set(c.champion, entry);
   });
   const ranked = [...counts.entries()].sort((a, b) => b[1].titles - a[1].titles || a[1].first - b[1].first);
-  const active = ranked.filter(([team]) => current.has(team)).map(([, e]) => `${e.label} (${e.titles})`);
-  const defunct = ranked.filter(([team]) => !current.has(team)).map(([, e]) => `${e.label} (${e.titles})`);
-  return active.join(', ') + (defunct.length ? ` · Defunct: ${defunct.join(', ')}` : '');
+  const active = ranked.filter(([team]) => activeFranchises.has(team)).map(([, e]) => `${e.label} (${e.titles})`);
+  const former = ranked.filter(([team]) => !activeFranchises.has(team)).map(([, e]) => `${e.label} (${e.titles}, former)`);
+  return [...active, ...former].join(', ');
 };
 
 export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
@@ -34,40 +33,35 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
   champions = [],
   loading = false,
 }) => {
-  const hasRecords = records && records.length > 0;
-  const shortWindow = window ? `${window.first_season}–${String(window.last_season).slice(-2)}` : '';
+  const hasRecords = records.length > 0;
+  const activeFranchises = new Set(records.filter((record) => record.status === 'Active').map((record) => record.team));
 
   return (
     <div className="bg-[#151619] border border-white/[0.08] rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/[0.06]">
-        <div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#D9B15F]" />
-            <h3 className="text-base sm:text-lg font-bold text-[#F6F6F3]">
-              Verified IPL team records
-            </h3>
-          </div>
-          <p className="text-xs text-[#B9B9B3] mt-0.5">
-            {hasRecords ? `Active ${records.length}-franchise performance` : 'Active franchise performance'} with Super Over corrections &amp; championship titles.
-          </p>
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-[#D9B15F]" aria-hidden="true" />
+          <h3 className="text-base sm:text-lg font-bold text-[#F6F6F3]">IPL Franchise Records</h3>
         </div>
 
-        <span className="self-start sm:self-center inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-1 rounded-full border border-[#D9B15F]/20">
-          {hasRecords ? `${records.length} active franchises` : 'Awaiting data'}
-        </span>
+        {window && (
+          <span className="self-start sm:self-center inline-flex items-center text-[10px] sm:text-[11px] font-medium text-[#D9B15F] bg-[#D9B15F]/10 px-2.5 py-1 rounded-full border border-[#D9B15F]/20">
+            {window.label}
+          </span>
+        )}
       </div>
 
       {/* Table Content */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs sm:text-[13px]">
+      <div className="overflow-x-auto" role="region" aria-label="Franchise records table" tabIndex={0}>
+        <table className="w-full text-left text-xs sm:text-[13px]" aria-busy={loading}>
           <thead>
             <tr className="border-b border-white/[0.08] text-[#8E8E88] uppercase text-[10px] sm:text-[11px] tracking-wider font-semibold">
               <th className="py-3 px-3 sm:px-4">Franchise</th>
-              <th className="py-3 px-3 sm:px-4 text-center">Played{window ? ` (${shortWindow})` : ''}</th>
+              <th className="py-3 px-3 sm:px-4 text-center">Played</th>
               <th className="py-3 px-3 sm:px-4 text-center">Wins</th>
               <th className="py-3 px-3 sm:px-4 text-center">Losses</th>
-              <th className="py-3 px-3 sm:px-4 text-center">Tied / NR</th>
+              <th className="py-3 px-3 sm:px-4 text-center" aria-label="Tied or no result">Tied / NR</th>
               <th className="py-3 px-3 sm:px-4 text-center">Win Rate</th>
               <th className="py-3 px-3 sm:px-4 text-center">IPL Titles</th>
             </tr>
@@ -92,10 +86,12 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
                   className="hover:bg-white/[0.02] transition-colors font-medium text-[#F6F6F3]"
                 >
                   {/* Franchise Name */}
-                  <td className="py-3.5 px-3 sm:px-4 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#D9B15F]" />
-                    <span className="font-semibold text-white">{r.team}</span>
-                  </td>
+                  <th scope="row" className="min-w-[9rem] py-3.5 px-3 sm:px-4">
+                    <span className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 shrink-0 rounded-full bg-[#D9B15F]" aria-hidden="true" />
+                      <span className="font-semibold text-white">{r.team}</span>
+                    </span>
+                  </th>
 
                   {/* Played */}
                   <td className="py-3.5 px-3 sm:px-4 text-center font-mono text-[#B9B9B3]">
@@ -120,7 +116,7 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
                   {/* Win % */}
                   <td className="py-3.5 px-3 sm:px-4 text-center font-mono text-[#D9B15F] font-bold">
                     {r.win_pct === null ? (
-                      <span title="No decided matches in this window">—</span>
+                      <span title="All matches ended with no result">—</span>
                     ) : (
                       `${r.win_pct.toFixed(1)}%`
                     )}
@@ -129,11 +125,11 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
                   {/* Titles */}
                   <td className="py-3.5 px-3 sm:px-4 text-center">
                     {r.titles > 0 ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold text-[#D9B15F] bg-[#D9B15F]/15 border border-[#D9B15F]/30 shadow-gold-pill">
-                        <Trophy className="w-3 h-3 text-[#D9B15F]" />
+                      <span className="inline-flex items-center gap-1.5 whitespace-nowrap px-2.5 py-0.5 rounded-full text-xs font-bold text-[#D9B15F] bg-[#D9B15F]/15 border border-[#D9B15F]/30 shadow-gold-pill">
+                        <Trophy className="w-3 h-3 text-[#D9B15F]" aria-hidden="true" />
                         <span>{r.titles}</span>
                         {r.title_years && r.title_years.length > 0 && (
-                          <span className="hidden md:inline text-[10px] text-[#D9B15F]/80">
+                          <span className="min-w-0 text-[10px] text-[#D9B15F]/80">
                             ({r.title_years.join(', ')})
                           </span>
                         )}
@@ -152,12 +148,7 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
                       <Database className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-[#F6F6F3]">
-                        No verified team records yet
-                      </p>
-                      <p className="text-xs text-[#B9B9B3]/75 mt-1 max-w-sm">
-                        Records will appear when the analytical backend is connected and verified.
-                      </p>
+                      <p className="text-sm font-semibold text-[#F6F6F3]">No team records available</p>
                     </div>
                   </div>
                 </td>
@@ -170,11 +161,11 @@ export const TeamRecordsTable: React.FC<TeamRecordsTableProps> = ({
       {/* Footer Notes */}
       <div className="pt-2 border-t border-white/[0.04] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-[#8E8E88] gap-1">
         <span title={window?.rule}>
-          Win rates calculated among decided matches{window ? ` (${window.label} comparative window)` : ''}; includes Super Over eliminator victories.
+          Win rate divides wins by matches played, excluding no results. Super Over wins count.
         </span>
         {champions.length > 0 && (
           <span className="font-mono text-[#D9B15F]/90">
-            Historical titles ({champions.length} seasons): {titleSummary(champions, new Set(records.map((r) => r.team)))}
+            IPL champions by titles · {titleSummary(champions, activeFranchises)}
           </span>
         )}
       </div>

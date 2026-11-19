@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Cpu, Loader2, Zap } from 'lucide-react';
+import { Loader2, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { fetchPredictModels, fetchPredictOptions } from '../api/predict';
 import { PredictionModelInfo, PredictionModelsResponse, PredictionOptionsResponse } from '../types';
 import { Tabs } from '../components/player/ProfileSections';
@@ -36,8 +37,8 @@ const EvaluationCard: React.FC<{ m: PredictionModelInfo }> = ({ m }) => {
         <h3 className="text-sm font-bold text-[#F6F6F3]">{m.title}</h3>
         <p className="text-[11px] text-[#8E8E88]">
           {m.available
-            ? <>Deployment model <span className="font-mono">{m.name}</span>, trained on {m.training_span} ({fmtCount(m.rows.final_refit_2008_2026)} rows).</>
-            : <span className="text-red-300">Unavailable: {m.status_detail}</span>}
+            ? <>The model used by this tool was trained on {m.training_span} ({fmtCount(m.rows.final_refit_2008_2026)} {m.kind === 'wicket' ? 'next-over examples' : 'innings'}).</>
+            : <span className="text-red-300">This prediction tool is currently unavailable.</span>}
         </p>
       </div>
       <table className="w-full text-xs">
@@ -62,7 +63,7 @@ const EvaluationCard: React.FC<{ m: PredictionModelInfo }> = ({ m }) => {
         </tbody>
       </table>
       <p className="text-[10px] text-[#8E8E88]">
-        Chosen on 2025 validation only ({m.selection_metric}). Brier and log loss: lower is better. ROC AUC: higher is better; 0.5 is no ranking skill.
+        Models were selected using 2025 results ({m.selection_metric}). Lower Brier scores and log loss are better. A higher ROC AUC is better, with 0.5 indicating no ranking skill.
       </p>
     </div>
   );
@@ -97,22 +98,16 @@ export const PredictionArenaPage: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#F6F6F3]">Prediction Arena</h1>
           </div>
           <p className="text-xs sm:text-sm text-[#B9B9B3] mt-1 ml-4 sm:ml-5">
-            Ask the two trained Stage 3 models about a situation you describe: wicket risk in the next over, and a batter's chance of 30+ and 50+.
+            Estimate the chance of a wicket in the next over or a batter reaching 30 or 50 runs.
           </p>
         </div>
-        {models && (
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#151619] border border-[#D9B15F]/30 text-xs font-medium text-[#D9B15F] self-start sm:self-center max-w-full">
-            <Cpu className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-            <span>{models.models.filter((m) => m.available).length} of {models.models.length} deployment models ready</span>
-          </div>
-        )}
       </div>
 
       <Disclaimer />
 
       {optionsError && <ErrorRetry message={optionsError} onRetry={() => setReload((n) => n + 1)} />}
       {!options && !optionsError && (
-        <p className="text-sm text-[#B9B9B3] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Loading teams, venues and players…</p>
+        <p role="status" className="text-sm text-[#B9B9B3] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Loading teams, venues and players…</p>
       )}
 
       {options && (
@@ -120,7 +115,7 @@ export const PredictionArenaPage: React.FC = () => {
           <Tabs label="Prediction tools" idPrefix="arena" tabs={TOOLS} active={tool} onChange={setTool}>
             {available === false && (
               <ErrorRetry
-                message={`The ${tool === 'wicket' ? 'wicket' : 'batter'} model is unavailable on the server, so no prediction can be made. ${model(tool)?.status_detail ?? ''}`}
+                message={`The ${tool === 'wicket' ? 'wicket risk' : 'batter milestone'} tool is currently unavailable.`}
                 onRetry={() => setReload((n) => n + 1)}
               />
             )}
@@ -142,11 +137,13 @@ export const PredictionArenaPage: React.FC = () => {
         {modelsError && <ErrorRetry message={modelsError} onRetry={() => setReload((n) => n + 1)} />}
         {models && (
           <>
-            <p className="text-xs sm:text-sm text-[#B9B9B3]">{models.holdout_statement}</p>
+            <p className="text-xs sm:text-sm text-[#B9B9B3]">
+              The 2026 evaluation used models trained through 2025. The prediction tools use models retrained through 2026. Those newer models have yet to be tested on unseen matches.
+            </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {models.models.map((m) => <EvaluationCard key={m.kind} m={m} />)}
             </div>
-            <Note>Source: {models.source}. The full replay of the 2026 holdout forecasts is on the Prediction Tracker page.</Note>
+            <Note>See the 2026 forecasts and match results in the <Link to="/tracker" className="text-[#D9B15F] underline">Prediction Tracker</Link>.</Note>
           </>
         )}
       </section>

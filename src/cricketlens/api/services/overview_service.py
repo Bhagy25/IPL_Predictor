@@ -14,6 +14,7 @@ import pandas as pd
 
 from cricketlens.api.services.canonical_data import (
     CHAMPION_RULE,
+    FRANCHISE_METADATA,
     PLAYER_DIRECTORY_DEFINITION,
     TEAM_DEFINITIONS,
     CanonicalAnalyticsEngine,
@@ -142,11 +143,11 @@ class OverviewService:
                             + ("." if complete else f" in the archive ({span})."),
             ),
             KPIMetricItem(
-                id="matches", label="Matches analyzed", value=f"{matches:,}", numeric_value=float(matches),
-                statusText=f"{verified:g}% verified", iconName="Eye",
-                description=f"{matches:,} matches in the canonical Cricsheet archive, including "
-                            f"{_count_label(no_results, 'no result', 'no results')}; {verified:g}% have innings totals "
-                            "that reconcile with their ball-by-ball data.",
+                id="matches", label="Matches", value=f"{matches:,}", numeric_value=float(matches),
+                statusText=f"{verified:g}% of match totals agree", iconName="Eye",
+                description=f"{matches:,} matches in the Cricsheet archive, including "
+                            f"{_count_label(no_results, 'no result', 'no results')}. In {verified:g}% of matches, "
+                            "the innings totals match the ball-by-ball records.",
             ),
             KPIMetricItem(
                 id="deliveries", label="Recorded deliveries", value=f"{deliveries:,}", numeric_value=float(deliveries),
@@ -155,17 +156,15 @@ class OverviewService:
                             f"{legal:,} legal deliveries.",
             ),
             KPIMetricItem(
-                id="teams", label="Teams", value=f"{len(franchises)}", numeric_value=float(len(franchises)),
-                statusText=f"{active} active franchises", iconName="Shield",
-                description=f"{active} active franchises (those that played in {last}) and {len(franchises) - active} "
-                            "historical defunct teams with name renames consolidated.",
+                id="teams", label="Franchises", value=f"{len(franchises)}", numeric_value=float(len(franchises)),
+                statusText=f"{active} current · {len(franchises) - active} former", iconName="Shield",
+                description=f"{active} franchises played in {last}. Teams that changed names count as one franchise.",
             ),
             players,
             KPIMetricItem(
                 id="venues", label="Venues", value=f"{venues}", numeric_value=float(venues),
-                statusText=f"{venues} canonical grounds", iconName="MapPin",
-                description=f"{venues} canonical stadiums across India and overseas, normalized from {raw_venues} raw "
-                            "naming strings.",
+                statusText="India and overseas", iconName="MapPin",
+                description=f"{raw_venues} venue names in the source data represent {venues} distinct grounds.",
             ),
             KPIMetricItem(
                 id="runs", label="Total runs", value=f"{runs:,}", numeric_value=float(runs),
@@ -211,15 +210,13 @@ class OverviewService:
     # ---------------------------------------------------------------- charts
 
     def _team_records(self) -> Tuple[List[TeamRecordItem], Dict[str, Any]]:
-        """Records of the current franchises over the comparative window (see COMPARATIVE_WINDOW_RULE)."""
+        """Records for each franchise across every match it played in the archive."""
         e = self.engine
-        comparative = e.comparative_window()
-        current, start, end = comparative["teams"], comparative["first_season"], comparative["last_season"]
-        rows = e._team_rows[e._team_rows["season"].between(start, end)]
+        seasons = sorted(int(season) for season in e._matches["season"].unique())
         champions = e.season_champions()
         records = []
-        for team in current:
-            r = result_summary(rows[rows["team"] == team])
+        for team, rows in e._team_rows.groupby("team"):
+            r = result_summary(rows)
             years = [c["season"] for c in champions if c["champion"] == team]
             records.append(TeamRecordItem(
                 team=team,
@@ -230,16 +227,16 @@ class OverviewService:
                 win_pct=r["win_pct"],
                 titles=len(years),
                 title_years=years,
-                status="Active",
+                status=FRANCHISE_METADATA[team]["status"],
             ))
         records.sort(key=lambda t: (t.win_pct is None, -(t.win_pct or 0), -t.played, t.team))
         window = {
-            "first_season": start,
-            "last_season": end,
-            "label": comparative["label"],
-            "rule": comparative["rule"],
+            "first_season": seasons[0],
+            "last_season": seasons[-1],
+            "label": format_season_ranges(seasons),
+            "rule": "Each franchise's record includes every match it played in the IPL archive.",
             "win_pct_definition": TEAM_DEFINITIONS["win_pct"],
-            "franchises": len(current),
+            "franchises": len(records),
         }
         return records, window
 

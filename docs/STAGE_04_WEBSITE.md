@@ -128,10 +128,10 @@ and import, at 1440px and 390px, with no console errors or warnings.
 
 | Path | Page | Content |
 |---|---|---|
-| `/` | `IPLOverviewPage` | Hero, archive figures, season charts, team records and champions |
+| `/` | `IPLOverviewPage` | Hero, archive figures, season charts, full-archive franchise records and champions |
 | `/teams` | `TeamAnalysisPage` | Franchise overview, season filter, opponents, head-to-head, venues |
 | `/players` | `PlayerExplorerPage` | Player directory and career or season profiles with a match log |
-| `/eda` | `StatisticsEDAPage` | Filterable full-history analysis, player comparison, Stage 2 research figures |
+| `/eda` | `StatisticsEDAPage` | Filterable full-history analysis, player comparison, and the Focused Studies archive |
 | `/predict` | `PredictionArenaPage` | Next-over wicket risk and batter milestone tools; model evaluation |
 | `/tracker` | `PredictionTrackerPage` | Saved predictions with outcomes and scores; 2026 holdout replay |
 
@@ -140,7 +140,7 @@ and import, at 1440px and 390px, with no console errors or warnings.
 ### Shared pieces
 
 - `components/Navbar.tsx`, `Footer.tsx`: the six-route navigation (a menu on narrow screens) and a footer
-  whose archive span and API status come from `/api/health`.
+  that credits Cricsheet and shows the archive span from `/api/health`.
 - `components/HeroCollage.tsx`: the approved hero artwork as one `<picture>` (desktop image from 768px,
   mobile image below), so only one PNG is downloaded.
 - `components/KPICards.tsx`, `PerspectiveCharts.tsx`, `TeamRecordsTable.tsx`, `ComponentStatesShowcase.tsx`:
@@ -191,8 +191,10 @@ is the authority.
 The definitions shown on the website come from the API responses and match the README's "Key definitions":
 results and Super Overs, win % = wins ÷ (matches − no results), team and bowler-credited wickets, batting
 innings including non-striker appearances, ducks, averages, phases, roles, the first-innings histogram
-eligibility, champions and franchise renames. The comparative window used by the homepage team records and
-Team Analysis runs from the first season every current franchise played to the latest season (2022–2026).
+eligibility, champions and franchise renames. The homepage covers all 15 current and former franchises in the
+2008–2026 archive. Each franchise's totals include only the matches it played, and title years come from the
+season champions. The archive span and franchise count come from the match data. Team Analysis uses a
+shared-season comparison that starts when all current franchises had joined (2022–2026).
 The 2026 holdout applies only to model evaluation; every descriptive statistic includes 2026.
 
 ## API endpoint reference
@@ -204,7 +206,7 @@ an optional query parameter.
 |---|---|---|---|---|
 | System | GET | `/api/health` | Health check and archive verification status | — |
 | Overview | GET | `/api/overview/summary` | Get 8 verified historical IPL KPI metrics and dataset coverage | — |
-| Overview | GET | `/api/overview/charts` | Get historical IPL charts and verified team records | — |
+| Overview | GET | `/api/overview/charts` | Get IPL charts and full-archive franchise records | — |
 | Teams | GET | `/api/teams` | List all canonical IPL franchises | — |
 | Teams | GET | `/api/teams/head-to-head` | Get head-to-head records between two franchises | `team1`, `team2`, `season?` |
 | Teams | GET | `/api/teams/{team_id}/overview` | Get comprehensive analytical profile for a team | `season?` |

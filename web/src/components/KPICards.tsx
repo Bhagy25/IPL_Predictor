@@ -18,9 +18,9 @@ interface KPICardsProps {
 
 const defaultMetrics: KPIMetric[] = [
   { id: 'seasons', label: 'Seasons covered', value: null, statusText: 'Awaiting data', iconName: 'Trophy' },
-  { id: 'matches', label: 'Matches analyzed', value: null, statusText: 'Awaiting data', iconName: 'Eye' },
+  { id: 'matches', label: 'Matches', value: null, statusText: 'Awaiting data', iconName: 'Eye' },
   { id: 'deliveries', label: 'Recorded deliveries', value: null, statusText: 'Awaiting data', iconName: 'Activity' },
-  { id: 'teams', label: 'Teams', value: null, statusText: 'Awaiting data', iconName: 'Shield' },
+  { id: 'teams', label: 'Franchises', value: null, statusText: 'Awaiting data', iconName: 'Shield' },
   { id: 'players', label: 'Players', value: null, statusText: 'Awaiting data', iconName: 'User' },
   { id: 'venues', label: 'Venues', value: null, statusText: 'Awaiting data', iconName: 'MapPin' },
   { id: 'runs', label: 'Total runs', value: null, statusText: 'Awaiting data', iconName: 'TrendingUp' },

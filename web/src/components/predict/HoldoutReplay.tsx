@@ -34,7 +34,7 @@ const CalibrationTooltip: React.FC<{ active?: boolean; payload?: { payload: Poin
 const Check: React.FC<{ ok: boolean; count: number }> = ({ ok, count }) => (
   <span className={`inline-flex items-center gap-1 text-[11px] font-semibold ${ok ? 'text-emerald-300' : 'text-red-300'}`}>
     {ok ? <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> : <XCircle className="w-3.5 h-3.5" aria-hidden="true" />}
-    {ok ? `Recomputed from the CSV: all ${count} metrics match the official report` : 'Recomputed metrics differ from the official report'}
+    {ok ? `All ${count} scores match the published evaluation.` : 'The scores differ from the published evaluation.'}
   </span>
 );
 
@@ -135,26 +135,21 @@ export const HoldoutReplay: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 id="replay-title" className="text-lg font-bold text-[#F6F6F3] flex items-center gap-2">
-            <History className="w-5 h-5 text-[#D9B15F]" aria-hidden="true" /> 2026 Holdout Replay — model trained through 2025
+            <History className="w-5 h-5 text-[#D9B15F]" aria-hidden="true" /> 2026 Forecast Replay
           </h2>
           <p className="text-xs text-[#B9B9B3] mt-1">
-            The official out-of-sample evaluation: forecasts the holdout models made for 2026 matches they never trained on, next to what happened.
-            These are separate from your saved predictions above.
+            Compare forecasts for 2026 matches with what happened. These forecasts came from models trained through 2025. The tools in Prediction Arena use models retrained through 2026.
           </p>
         </div>
-        <span className="self-start inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-[#101114] border border-[#D9B15F]/30 text-[#D9B15F] whitespace-nowrap">
-          Official evaluation
-        </span>
       </div>
 
       {indexError && <ErrorRetry message={indexError} onRetry={() => setIndexReload((n) => n + 1)} />}
       {!index && !indexError && (
-        <p className="text-sm text-[#B9B9B3] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Loading the 2026 holdout forecasts…</p>
+        <p role="status" className="text-sm text-[#B9B9B3] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Loading 2026 forecasts…</p>
       )}
 
       {index && points && (
         <>
-          <p className="text-xs text-[#8E8E88]">{index.statement}</p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="bg-[#101114] border border-white/5 rounded-xl p-4 space-y-2 min-w-0">
               <h3 className="text-sm font-bold text-[#F6F6F3]">Next-over wicket risk</h3>
@@ -183,9 +178,7 @@ export const HoldoutReplay: React.FC = () => {
           <div className="bg-[#101114] border border-white/5 rounded-xl p-4 space-y-3 min-w-0">
             <h3 className="text-sm font-bold text-[#F6F6F3]">Calibration: forecast vs what happened</h3>
             <p className="text-xs text-[#B9B9B3]">
-              Forecasts are grouped into equal-width probability bins: across is the bin's average forecast, up is the share of those
-              forecasts where the event happened. A well-calibrated model's points sit on the dashed diagonal: of the overs given about a
-              30% chance, about 30% had a wicket.
+              Each point compares the average forecast in a probability range with how often the event happened. A well-calibrated model follows the dashed line. For example, about 30% of overs given a 30% chance of a wicket should have one.
             </p>
             <div className="h-72 sm:h-80" role="img" aria-label="Calibration chart of the 2026 holdout forecasts; the bin tables below list every value">
               <ResponsiveContainer width="100%" height="100%">
@@ -287,7 +280,6 @@ export const HoldoutReplay: React.FC = () => {
               </div>
             )}
           </div>
-          <Note>Sources: {index.sources.join(', ')}.</Note>
         </>
       )}
     </section>

@@ -19,7 +19,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: 'IPL Overview (Home)', shortName: 'IPL Overview', path: '/', icon: Home },
+  { name: 'IPL Overview', shortName: 'IPL Overview', path: '/', icon: Home },
   { name: 'Team Analysis', shortName: 'Teams', path: '/teams', icon: Users },
   { name: 'Player Explorer', shortName: 'Players', path: '/players', icon: User },
   { name: 'Statistics & EDA', shortName: 'Statistics & EDA', path: '/eda', icon: BarChart2 },

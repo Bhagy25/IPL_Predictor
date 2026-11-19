@@ -48,19 +48,20 @@ def test_team_overview_endpoint():
     assert 40.0 < data["all_time"]["win_pct"] < 65.0
     assert "denominator_description" in data["all_time"]
 
-    # Comparative window for an active team: the homepage window, counted here from matches.csv
+    # Team Analysis still compares the seasons shared by all current franchises.
     m = pd.read_csv(DATA / "matches.csv")
     last = m["season"].max()
     current = set(m.loc[m["season"] == last, "team1"]) | set(m.loc[m["season"] == last, "team2"])
     start = max(m[(m["team1"] == t) | (m["team2"] == t)]["season"].min() for t in current)
     rows = m[m["season"].between(start, last) & ((m["team1"] == "Chennai Super Kings") | (m["team2"] == "Chennai Super Kings"))]
     c = data["comparative_window"]
-    assert (c["first_season"], c["last_season"], c["window"]) == (start, last, f"{start}–{last}")
+    assert (c["first_season"], c["last_season"], c["window"]) == (start, last, "2022–2026")
     assert c["played"] == len(rows)
     assert c["wins"] == (rows["final_winner"] == "Chennai Super Kings").sum()
     assert c["losses"] == (rows["final_winner"].notna() & (rows["final_winner"] != "Chennai Super Kings")).sum()
-    homepage = {r["team"]: r for r in client.get("/api/overview/charts").json()["team_records"]}["Chennai Super Kings"]
-    assert (c["played"], c["wins"], c["losses"], c["win_pct"]) == (homepage["played"], homepage["wins"], homepage["losses"], homepage["win_pct"])
+    eligible = (rows["outcome_type"] != "no result").sum()
+    assert c["win_pct_denominator"] == eligible
+    assert c["win_pct"] == round(100 * c["wins"] / eligible, 1)
 
     # Conditions & Phase
     assert data["batting_first"]["played"] > 0

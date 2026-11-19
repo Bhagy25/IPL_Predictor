@@ -25,8 +25,9 @@ export class ApiError extends Error {
 
 interface ValidationItem { loc?: (string | number)[]; msg?: string }
 
-/** Reads FastAPI's error body: a list of {loc, msg} (422) or a single detail string. */
+/** Keeps input feedback from 422 responses and uses a public message for other failures. */
 async function toApiError(res: Response, what: string): Promise<ApiError> {
+  if (res.status !== 422) return new ApiError(res.status, what);
   let detail: unknown = null;
   try {
     detail = (await res.json())?.detail;
@@ -43,29 +44,27 @@ async function toApiError(res: Response, what: string): Promise<ApiError> {
       if (field) (fieldErrors[field] ??= []).push(msg);
       else generalErrors.push(msg);
     });
-    return new ApiError(res.status, `${what}: please correct the highlighted inputs`, fieldErrors, generalErrors);
+    return new ApiError(res.status, what, fieldErrors, generalErrors);
   }
-  const text = typeof detail === 'string' ? detail : `HTTP ${res.status}`;
-  return new ApiError(res.status, `${what}: ${text}`);
+  return new ApiError(res.status, what, {}, ['Check the prediction inputs and try again.']);
 }
 
 async function request<T>(path: string, what: string, init?: RequestInit): Promise<T> {
-  let res: Response;
   try {
-    res = await apiFetch(`${API_BASE}${path}`, { ...init, headers: { Accept: 'application/json', ...(init?.headers ?? {}) } });
+    const res = await apiFetch(`${API_BASE}${path}`, { ...init, headers: { Accept: 'application/json', ...(init?.headers ?? {}) } });
+    if (!res.ok) throw await toApiError(res, what);
+    return await res.json();
   } catch (exc) {
-    if ((exc as Error).name === 'AbortError') throw exc;
-    throw new ApiError(0, `${what}: the analytical backend could not be reached`);
+    if (exc instanceof ApiError || (exc as Error).name === 'AbortError') throw exc;
+    throw new ApiError(0, what);
   }
-  if (!res.ok) throw await toApiError(res, what);
-  return res.json();
 }
 
 export const fetchPredictOptions = (signal?: AbortSignal) =>
-  request<PredictionOptionsResponse>('/predict/options', 'Could not load prediction inputs', { signal });
+  request<PredictionOptionsResponse>('/predict/options', 'Couldn’t load the prediction tools.', { signal });
 
 export const fetchPredictModels = (signal?: AbortSignal) =>
-  request<PredictionModelsResponse>('/predict/models', 'Could not load model evaluation', { signal });
+  request<PredictionModelsResponse>('/predict/models', 'Couldn’t load the model evaluation.', { signal });
 
 const post = (body: unknown, signal?: AbortSignal): RequestInit => ({
   method: 'POST',
@@ -75,7 +74,7 @@ const post = (body: unknown, signal?: AbortSignal): RequestInit => ({
 });
 
 export const predictWicket = (body: WicketPredictionRequest, signal?: AbortSignal) =>
-  request<WicketPredictionResponse>('/predict/wicket', 'Wicket prediction failed', post(body, signal));
+  request<WicketPredictionResponse>('/predict/wicket', 'Couldn’t calculate wicket risk.', post(body, signal));
 
 export const predictBatter = (body: BatterPredictionRequest, signal?: AbortSignal) =>
-  request<BatterPredictionResponse>('/predict/batter', 'Batter prediction failed', post(body, signal));
+  request<BatterPredictionResponse>('/predict/batter', 'Couldn’t calculate batter milestones.', post(body, signal));

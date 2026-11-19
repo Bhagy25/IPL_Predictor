@@ -235,7 +235,7 @@ export const WicketTool: React.FC<{
               </div>
             )}
             <p className="text-sm text-[#F6F6F3]">
-              Out of 100 similar situations, about <strong>{Math.round(result.probability * 100)}</strong> had at least one wicket in the next over.
+              The model estimates about a <strong>{Math.round(result.probability * 100)} in 100</strong> chance of at least one wicket in this situation.
             </p>
             <p className="text-xs text-[#B9B9B3]">
               {teamCode(result.inputs.batting_team)} {result.inputs.runs}/{result.inputs.wickets} after {result.inputs.completed_overs} overs
@@ -253,11 +253,10 @@ export const WicketTool: React.FC<{
                 </p>
               </div>
             ) : (
-              <Note>The evaluation report could not be loaded, so the base rate is not shown.</Note>
+              <Note>The 2026 comparison is currently unavailable.</Note>
             )}
             <p className="text-[11px] text-[#8E8E88]">
-              Model <span className="font-mono text-[#B9B9B3]">{result.model}</span> · deployment model trained on {result.training_span} data
-              ({result.model_file}). {result.notice}
+              Wicket risk model trained on {result.training_span} data. {result.notice}
             </p>
             <div className="flex flex-wrap items-center gap-3">
               {savedId ? (

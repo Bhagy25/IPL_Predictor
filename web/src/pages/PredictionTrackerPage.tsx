@@ -6,7 +6,7 @@ import { fmtCount } from '../utils/format';
 import { DANGER_BUTTON, INPUT, Note, SECONDARY_BUTTON, dec4, inputBorder, pct1 } from '../components/predict/shared';
 import { HoldoutReplay } from '../components/predict/HoldoutReplay';
 import {
-  BatterEntry, BinaryForecast, MAX_RUNS, STORAGE_KEY, TrackerEntry, WicketEntry, brier, clearAll, exportFile, hitRateBins,
+  BatterEntry, BinaryForecast, MAX_RUNS, TrackerEntry, WicketEntry, brier, clearAll, exportFile, hitRateBins,
   importEntries, parseTrackerFile, removeEntry, resolvedForecasts, setOutcome, useTracker,
 } from '../components/predict/trackerStore';
 
@@ -262,7 +262,7 @@ export const PredictionTrackerPage: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#F6F6F3]">Prediction Tracker</h1>
           </div>
           <p className="text-xs sm:text-sm text-[#B9B9B3] mt-1 ml-4 sm:ml-5">
-            Record what happened after your saved predictions and see how they score, next to the official 2026 holdout replay.
+            Record outcomes for your saved predictions and see how they scored. Explore the 2026 forecasts match by match.
           </p>
         </div>
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#151619] border border-[#D9B15F]/30 text-xs font-medium text-[#D9B15F] self-start sm:self-center max-w-full">
@@ -274,10 +274,10 @@ export const PredictionTrackerPage: React.FC = () => {
       <section aria-labelledby="saved-title" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-4 sm:p-5 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 id="saved-title" className="text-lg font-bold text-[#F6F6F3]">Your saved predictions</h2>
+            <h2 id="saved-title" className="text-lg font-bold text-[#F6F6F3]">Saved predictions</h2>
             <p className="text-xs text-[#B9B9B3] mt-1 flex items-start gap-1.5">
               <HardDrive className="w-3.5 h-3.5 flex-shrink-0 mt-px text-[#D9B15F]" aria-hidden="true" />
-              <span><strong className="text-[#F6F6F3]">Stored only in this browser. Not shared, not used to retrain models.</strong></span>
+              <span><strong className="text-[#F6F6F3]">Your saved predictions stay in this browser.</strong></span>
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -307,8 +307,7 @@ export const PredictionTrackerPage: React.FC = () => {
         )}
         {unreadable !== null && (
           <div role="alert" className="bg-[#2A2414] border border-[#D9B15F]/40 rounded-xl p-3 text-xs text-[#E5C687]">
-            Saved data in this browser could not be read (it does not match the expected format). A copy was kept under the key
-            <span className="font-mono"> {STORAGE_KEY}.unreadable</span>, and the tracker starts empty.
+            The tracker couldn’t read your saved predictions and opened an empty list.
           </div>
         )}
         {confirmClear && (

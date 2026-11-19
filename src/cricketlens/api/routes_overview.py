@@ -24,8 +24,8 @@ async def get_overview_summary() -> OverviewSummaryResponse:
 @router.get(
     "/charts",
     response_model=OverviewChartsResponse,
-    summary="Get historical IPL charts and verified team records",
-    description="Returns data for matches per season, scoring trends, result distribution, score spans, and franchise records.",
+    summary="Get IPL charts and full-archive franchise records",
+    description="Returns season and scoring charts, match results, and records for all current and former IPL franchises.",
 )
 async def get_overview_charts() -> OverviewChartsResponse:
     try:

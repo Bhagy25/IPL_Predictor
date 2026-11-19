@@ -91,8 +91,8 @@ export const TeamAnalysisPage: React.FC = () => {
       if (res.teams.length > 0 && !res.teams.some(t => t.id === selectedTeamId)) {
         setSelectedTeamId(res.teams[0].id);
       }
-    } catch (err: any) {
-      setTeamsError(err?.message || 'Failed to load teams list');
+    } catch {
+      setTeamsError('Couldn’t load the franchise list.');
     }
   }, []);
 
@@ -109,11 +109,11 @@ export const TeamAnalysisPage: React.FC = () => {
     try {
       const data = await fetchTeamOverview(selectedTeamId, seasonNumber);
       if (requestId === overviewRequest.current) setTeamOverview(data);
-    } catch (err: any) {
+    } catch {
       if (requestId === overviewRequest.current) {
         // Never leave the previous franchise's numbers on screen after a failure
         setTeamOverview(null);
-        setError(err?.message || 'Failed to load team analytics');
+        setError('Couldn’t load franchise records.');
       }
     } finally {
       if (requestId === overviewRequest.current) setLoading(false);
@@ -132,10 +132,10 @@ export const TeamAnalysisPage: React.FC = () => {
     try {
       const data = await fetchTeamVenues(selectedTeamId, seasonNumber, venueMinimum);
       if (requestId === venuesRequest.current) setVenues(data);
-    } catch (err: any) {
+    } catch {
       if (requestId === venuesRequest.current) {
         setVenues(null);
-        setVenuesError(err?.message || 'Failed to load venue records');
+        setVenuesError('Couldn’t load venue records.');
       }
     } finally {
       if (requestId === venuesRequest.current) setVenuesLoading(false);
@@ -155,10 +155,10 @@ export const TeamAnalysisPage: React.FC = () => {
     try {
       const res = await fetchHeadToHead(selectedTeamId, opponentId, seasonNumber);
       if (requestId === h2hRequest.current) setH2H(res);
-    } catch (err: any) {
+    } catch {
       if (requestId === h2hRequest.current) {
         setH2H(null);
-        setH2HError(err?.message || 'Failed to load head-to-head records');
+        setH2HError('Couldn’t load head-to-head records.');
       }
     } finally {
       if (requestId === h2hRequest.current) setH2HLoading(false);
@@ -224,7 +224,7 @@ export const TeamAnalysisPage: React.FC = () => {
               </h1>
             </div>
             <p className="text-xs sm:text-sm text-[#B9B9B3] mt-1 ml-4 sm:ml-5">
-              Franchise results, batting first and chasing, phase scoring and conceding, toss outcomes, venues and head-to-head records for every season or one season.
+              Explore franchise results, scoring by phase, toss outcomes, venue records and head-to-head matchups.
             </p>
           </div>
 
@@ -241,10 +241,7 @@ export const TeamAnalysisPage: React.FC = () => {
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs sm:text-sm font-semibold text-red-200">
-                  Analytical backend error ({teamsError || error})
-                </p>
-                <p className="text-xs text-red-300/75 mt-0.5">
-                  Unable to load franchise dataset from the CricketLens API.
+                  {teamsError || error}
                 </p>
               </div>
             </div>
@@ -278,7 +275,7 @@ export const TeamAnalysisPage: React.FC = () => {
                         : 'text-[#B9B9B3] hover:text-[#F6F6F3]'
                     }`}
                   >
-                    {cat === 'Defunct' ? 'Historical / Retired' : cat}{count !== null ? ` (${count})` : ''}
+                    {cat === 'Defunct' ? 'Former' : cat}{count !== null ? ` (${count})` : ''}
                   </button>
                 );
               })}
@@ -334,7 +331,7 @@ export const TeamAnalysisPage: React.FC = () => {
       {loading && !teamOverview ? (
         <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3 animate-pulse">
           <Loader2 className="w-8 h-8 text-[#D9B15F] animate-spin" />
-          <p className="text-sm font-semibold text-[#F6F6F3]">Loading verified franchise records...</p>
+          <p className="text-sm font-semibold text-[#F6F6F3]">Loading franchise records…</p>
         </div>
       ) : currentTeam && allTime ? (
         <section aria-label="Team Overview" aria-busy={loading} className={`bg-[#151619] border border-[#D9B15F]/30 rounded-2xl p-6 sm:p-8 space-y-6 transition-opacity ${loading ? 'opacity-60' : ''}`}>
@@ -468,7 +465,7 @@ export const TeamAnalysisPage: React.FC = () => {
             <div>
               <h3 className="text-base sm:text-lg font-bold text-[#F6F6F3] flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#D9B15F]" />
-                Season-wise Performance &amp; Trends
+                Season Trends
               </h3>
               <p className="text-xs text-[#B9B9B3] mt-0.5">Win %, run rate and economy for each season · {scopeLabel}</p>
             </div>
@@ -538,7 +535,7 @@ export const TeamAnalysisPage: React.FC = () => {
           <div>
             <h3 className="text-base sm:text-lg font-bold text-[#F6F6F3] flex items-center gap-2">
               <Flame className="w-4 h-4 text-[#D9B15F]" />
-              Phase Scoring &amp; Conceding
+              Scoring by Phase
             </h3>
             <p className="text-xs text-[#B9B9B3] mt-0.5">Runs per 6 legal balls when batting and when bowling, by phase · {scopeLabel}</p>
           </div>
@@ -652,9 +649,9 @@ export const TeamAnalysisPage: React.FC = () => {
         <div>
           <h3 className="text-base sm:text-lg font-bold text-[#F6F6F3] flex items-center gap-2">
             <Users className="w-4 h-4 text-[#D9B15F]" />
-            Record Against Every Opponent
+            Opponent Records
           </h3>
-          <p className="text-xs text-[#B9B9B3] mt-0.5">Same result rules as above · {scopeLabel}</p>
+          <p className="text-xs text-[#B9B9B3] mt-0.5">{scopeLabel}</p>
         </div>
         {overviewReady && teamOverview ? (
           <DataTable
@@ -904,15 +901,14 @@ const SectionState: React.FC<SectionStateProps> = ({ loading, error, onRetry, cl
     body = (
       <>
         <Loader2 className="w-6 h-6 text-[#D9B15F] animate-spin" />
-        <p className="text-xs font-semibold text-[#F6F6F3]">Loading verified franchise records...</p>
+        <p className="text-xs font-semibold text-[#F6F6F3]">Loading franchise records…</p>
       </>
     );
   } else if (error) {
     body = (
       <>
         <AlertCircle className="w-5 h-5 text-red-400" />
-        <p className="text-xs font-semibold text-red-200">Unable to load this section</p>
-        <p className="text-[11px] text-red-300/75 max-w-sm">{error}</p>
+        <p className="text-xs font-semibold text-red-200">{error}</p>
         <button
           onClick={onRetry}
           className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2A1B1E] hover:bg-[#3A2227] text-red-200 border border-red-500/40 transition-colors ${FOCUS_RING}`}
@@ -928,12 +924,12 @@ const SectionState: React.FC<SectionStateProps> = ({ loading, error, onRetry, cl
         <div className="w-9 h-9 rounded-xl bg-black/50 border border-[#D9B15F]/25 flex items-center justify-center text-[#D9B15F] shadow-gold-pill">
           <Database className="w-4 h-4" />
         </div>
-        <p className="text-xs font-semibold text-[#F6F6F3]">No verified data available</p>
+        <p className="text-xs font-semibold text-[#F6F6F3]">No data available</p>
       </>
     );
   }
   return (
-    <div className={`flex flex-col items-center justify-center text-center gap-2 py-8 ${className}`} role={error ? 'alert' : undefined}>
+    <div className={`flex flex-col items-center justify-center text-center gap-2 py-8 ${className}`} role={error ? 'alert' : loading ? 'status' : undefined}>
       {body}
     </div>
   );

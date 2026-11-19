@@ -140,10 +140,10 @@ export const StatisticsEDAPage: React.FC = () => {
     setError(null);
     fetchEDAAnalysis(query, controller.signal)
       .then((res) => { if (id === requestId.current) setAnalysis(res); })
-      .catch((err) => {
+      .catch(() => {
         if (id !== requestId.current || controller.signal.aborted) return;
         setAnalysis(null);
-        setError(err?.message || 'Failed to load the full-history analysis');
+        setError('Couldn’t load the IPL analysis.');
       })
       .finally(() => { if (id === requestId.current) setLoading(false); });
     return () => controller.abort();
@@ -167,11 +167,11 @@ export const StatisticsEDAPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <span className="w-1.5 h-6 bg-[#D9B15F] rounded-full inline-block" />
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#F6F6F3]">
-                Statistics &amp; EDA Lab
+                Statistics &amp; EDA
               </h1>
             </div>
             <p className="text-xs sm:text-sm text-[#B9B9B3] mt-1 ml-4 sm:ml-5">
-              Filterable exploratory analysis of every IPL season{first ? ` (${first}–${last})` : ''}, recomputed from ball-by-ball data, alongside the Stage 2 research archive.
+              Explore IPL scoring, batting and bowling{first ? ` from ${first}–${last}` : ''}. Filter the archive by season, team or venue.
             </p>
           </div>
 
@@ -179,7 +179,7 @@ export const StatisticsEDAPage: React.FC = () => {
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#151619] border border-[#D9B15F]/30 text-xs font-medium text-[#D9B15F] self-start sm:self-center shadow-gold-pill max-w-full">
               <Layers className="w-3.5 h-3.5 text-[#D9B15F] flex-shrink-0" />
               <span>
-                {areas?.matches_runs.coverage?.seasons.length ?? 0} seasons &middot; {fmtCount(totals.matches)} matches &middot; {fmtCount(totals.deliveries)} balls
+                {areas?.matches_runs.coverage?.seasons.length ?? 0} seasons &middot; {fmtCount(totals.matches)} matches &middot; {fmtCount(totals.deliveries)} deliveries
               </span>
             </div>
           )}
@@ -187,12 +187,12 @@ export const StatisticsEDAPage: React.FC = () => {
       </div>
 
       {/* 2. Mode navigation: live full history vs the static Stage 2 archive */}
-      <section aria-label="EDA Primary Tabs" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-3 sm:p-4">
+      <section aria-label="Statistics views" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-3 sm:p-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="inline-flex flex-wrap rounded-xl bg-[#101114] p-1 border border-[#D9B15F]/20 max-w-full">
             {([
-              ['full_history', <BarChart2 key="i" className="w-3.5 h-3.5" />, `Full-History Analysis${first ? ` (${first}–${last})` : ''}`],
-              ['focused_studies', <Archive key="i" className="w-3.5 h-3.5" />, 'Focused Studies (Stage 2 research archive)'],
+              ['full_history', <BarChart2 key="i" className="w-3.5 h-3.5" />, 'Full History'],
+              ['focused_studies', <Archive key="i" className="w-3.5 h-3.5" />, 'Focused Studies'],
             ] as const).map(([id, icon, label]) => (
               <button
                 key={id}
@@ -209,7 +209,7 @@ export const StatisticsEDAPage: React.FC = () => {
             ))}
           </div>
           <span className="text-xs text-[#8E8E88] font-mono px-2">
-            {activeTab === 'full_history' ? 'Live: every chart recomputes for the filters' : 'Static research figures: not affected by filters'}
+            {activeTab === 'full_history' ? 'Filter by season, team or venue' : 'Each study shows the seasons it covers'}
           </span>
         </div>
       </section>
@@ -265,7 +265,7 @@ export const StatisticsEDAPage: React.FC = () => {
             </div>
             <p className="text-[11px] text-[#B9B9B3] flex flex-wrap items-center gap-2" aria-live="polite">
               {loading ? (
-                <><Loader2 className="w-3.5 h-3.5 animate-spin text-[#D9B15F]" aria-hidden="true" /> Recomputing…</>
+                <><Loader2 className="w-3.5 h-3.5 animate-spin text-[#D9B15F]" aria-hidden="true" /> Updating charts…</>
               ) : filters ? (
                 <>
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#D9B15F]" aria-hidden="true" />
@@ -281,8 +281,7 @@ export const StatisticsEDAPage: React.FC = () => {
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
                 <div>
-                  <p className="text-xs sm:text-sm font-semibold text-red-200">Unable to load the full-history analysis</p>
-                  <p className="text-xs text-red-300/80 mt-0.5">{error}</p>
+                  <p className="text-xs sm:text-sm font-semibold text-red-200">{error}</p>
                 </div>
               </div>
               <button
@@ -299,7 +298,7 @@ export const StatisticsEDAPage: React.FC = () => {
           {!analysis && loading && (
             <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3 animate-pulse">
               <Loader2 className="w-8 h-8 text-[#D9B15F] animate-spin" />
-              <p className="text-sm font-semibold text-[#F6F6F3]">Computing full-history metrics…</p>
+              <p className="text-sm font-semibold text-[#F6F6F3]">Loading IPL statistics…</p>
             </div>
           )}
 
@@ -395,7 +394,7 @@ const FocusedStudies: React.FC = () => {
     setError(null);
     Promise.all([fetchEDACatalog(controller.signal), fetchEDASummary(controller.signal)])
       .then(([c, s]) => { setCatalog(c); setSummary(s); })
-      .catch((err) => { if (!controller.signal.aborted) setError(err?.message || 'Failed to load the Stage 2 archive'); });
+      .catch(() => { if (!controller.signal.aborted) setError('Couldn’t load the focused studies.'); });
     return () => controller.abort();
   }, [reload]);
 
@@ -414,12 +413,10 @@ const FocusedStudies: React.FC = () => {
         <div className="min-w-0">
           <h2 id="focused-studies-title" className="flex items-center gap-2 text-sm font-bold uppercase text-[#D9B15F]">
             <Archive className="w-4 h-4 text-[#D9B15F]" />
-            Focused Studies (Stage 2 research archive)
+            Focused Studies
           </h2>
           <p className="text-xs text-[#B9B9B3] mt-1 max-w-2xl">
-            The 20 figures and tables of the Stage 2 exploratory study used to plan the Stage 3 models. Each is a static research
-            artifact with its own season coverage (shown on every figure); none of them reacts to the filters of the live analysis.
-            All of them exclude the 2026 holdout season.
+            Charts and tables from the research behind the prediction tools. Each study shows its own season range. All use data through 2025 and are independent of the Full History filters.
           </p>
         </div>
         <div className="inline-flex rounded-lg bg-[#101114] p-1 border border-[#D9B15F]/20 self-start sm:self-center">
@@ -444,6 +441,12 @@ const FocusedStudies: React.FC = () => {
             <RefreshCw className="w-3.5 h-3.5" /> Retry
           </button>
         </div>
+      )}
+
+      {!catalog && !error && (
+        <p role="status" className="text-sm text-[#B9B9B3] flex items-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Loading focused studies…
+        </p>
       )}
 
       {subView === 'gallery' && catalog && (
@@ -509,8 +512,8 @@ const FocusedStudies: React.FC = () => {
               <TableIcon className="w-4 h-4 text-[#D9B15F]" />
               First-Innings Pearson Correlation Matrix
             </h3>
-            <p className="text-[11px] text-[#8E8E88]">Coverage: 2018–2025 first innings (n = {fmtCount(summary.correlations.sample_size)}). Static research table — not affected by filters.</p>
-            <div className="overflow-x-auto" role="region" aria-label="Stage 2 correlation matrix" tabIndex={0}>
+            <p className="text-[11px] text-[#8E8E88]">{fmtCount(summary.correlations.sample_size)} first innings from 2018–2025.</p>
+            <div className="overflow-x-auto" role="region" aria-label="Correlation matrix" tabIndex={0}>
               <table className="w-full text-left text-xs">
                 <thead className="bg-[#101114] text-[#B9B9B3] uppercase font-bold tracking-wider border-b border-[#D9B15F]/20">
                   <tr>
@@ -544,8 +547,8 @@ const FocusedStudies: React.FC = () => {
               <CheckCircle2 className="w-4 h-4 text-[#D9B15F]" />
               Match-Field Missingness Audit
             </h3>
-            <p className="text-[11px] text-[#8E8E88]">Coverage: 2008–2025 matches (Stage 2 development data). Static research table — not affected by filters.</p>
-            <div className="overflow-x-auto" role="region" aria-label="Stage 2 missingness audit" tabIndex={0}>
+            <p className="text-[11px] text-[#8E8E88]">Matches from 2008–2025.</p>
+            <div className="overflow-x-auto" role="region" aria-label="Missing data audit" tabIndex={0}>
               <table className="w-full text-left text-xs">
                 <thead className="bg-[#101114] text-[#B9B9B3] uppercase font-bold tracking-wider border-b border-[#D9B15F]/20">
                   <tr>
@@ -595,7 +598,7 @@ const FocusedStudies: React.FC = () => {
               )}
               <p className="flex items-start gap-1.5 text-[11px] text-[#8E8E88] pt-1">
                 <Link2 className="w-3 h-3 mt-0.5 flex-shrink-0" aria-hidden="true" />
-                Coverage evidence: {selected.coverage_evidence} Source: reports/stage_02 · {selected.source_file}. {selected.static_note}.
+                Source: Cricsheet IPL archive. Coverage: {selected.coverage_span}.
               </p>
             </div>
           </div>

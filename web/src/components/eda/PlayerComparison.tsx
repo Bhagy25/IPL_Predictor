@@ -62,7 +62,7 @@ export const PlayerComparison: React.FC<{
       venue: filters.venue ?? undefined,
     }, controller.signal)
       .then((res) => { if (id === requestId.current) setComparison(res); })
-      .catch((err) => { if (id === requestId.current && !controller.signal.aborted) { setComparison(null); setError(err?.message ?? 'Unable to load the comparison'); } })
+      .catch(() => { if (id === requestId.current && !controller.signal.aborted) { setComparison(null); setError('Couldn’t load the player comparison.'); } })
       .finally(() => { if (id === requestId.current) setLoading(false); });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps

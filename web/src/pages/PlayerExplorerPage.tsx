@@ -154,8 +154,8 @@ export const PlayerExplorerPage: React.FC = () => {
       if (res.players.length > 0 && !res.players.some(p => (p.player_id || p.batter_id) === activeId)) {
         selectPlayer(res.players[0].player_id || res.players[0].batter_id);
       }
-    } catch (err: any) {
-      if (requestId === listRequest.current) setError(err?.message || 'Failed to load players directory');
+    } catch {
+      if (requestId === listRequest.current) setError('Couldn’t load the player directory.');
     } finally {
       if (requestId === listRequest.current) setListLoading(false);
     }
@@ -177,11 +177,11 @@ export const PlayerExplorerPage: React.FC = () => {
         setProfile(data);
         if (profileSeason === null) setCareerSeasons({ playerId: selectedPlayerId, seasons: data.seasons_played });
       }
-    } catch (err: any) {
+    } catch {
       if (requestId === profileRequest.current) {
         // Never leave the previous player's figures on screen after a failure
         setProfile(null);
-        setProfileError(err?.message || 'Failed to load player profile');
+        setProfileError('Couldn’t load this player profile.');
       }
     } finally {
       if (requestId === profileRequest.current) setProfileLoading(false);
@@ -214,13 +214,13 @@ export const PlayerExplorerPage: React.FC = () => {
               </h1>
             </div>
             <p className="text-xs sm:text-sm text-[#B9B9B3] mt-1 ml-4 sm:ml-5">
-              Complete 2008–2026 IPL player directory: verified career batting &amp; bowling statistics, chronological match logs, and split records.
+              Find IPL players and explore their batting, bowling and match-by-match records from 2008–2026.
             </p>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#151619] border border-[#D9B15F]/30 text-xs font-medium text-[#D9B15F] self-start sm:self-center shadow-gold-pill">
             <User className="w-3.5 h-3.5 text-[#D9B15F]" />
-            <span>{directoryCounts ? plural(directoryCounts.all, 'verified player') : '…'} &middot; 2008–2026 history</span>
+            <span>{directoryCounts ? plural(directoryCounts.all, 'player') : 'Player directory'}</span>
           </div>
         </div>
 
@@ -376,7 +376,7 @@ export const PlayerExplorerPage: React.FC = () => {
           {listLoading ? (
             <div className="p-10 text-center flex flex-col items-center justify-center gap-2 text-xs text-[#B9B9B3]">
               <Loader2 className="w-5 h-5 text-[#D9B15F] animate-spin" />
-              <span>Fetching player registry...</span>
+              <span>Loading players…</span>
             </div>
           ) : players.length === 0 ? (
             <div className="p-8 text-center text-xs text-[#B9B9B3]">
@@ -471,7 +471,7 @@ export const PlayerExplorerPage: React.FC = () => {
           {profileLoading && !profile ? (
             <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3 animate-pulse">
               <Loader2 className="w-8 h-8 text-[#D9B15F] animate-spin" />
-              <p className="text-sm font-semibold text-[#F6F6F3]">Loading career profile...</p>
+              <p className="text-sm font-semibold text-[#F6F6F3]">Loading player profile…</p>
             </div>
           ) : profile ? (
             <div className={`space-y-6 transition-opacity ${profileLoading ? 'opacity-60' : ''}`} aria-busy={profileLoading}>
@@ -519,7 +519,7 @@ export const PlayerExplorerPage: React.FC = () => {
                           : 'bg-[#101114] text-[#D9B15F] border-[#D9B15F]/30'
                       }`}
                     >
-                      {profileLoading ? 'Updating…' : `Every number below: ${scopeLabel.toLowerCase()}`}
+                      {profileLoading ? 'Updating…' : scopeLabel}
                     </span>
                   </div>
                 </div>
@@ -546,7 +546,7 @@ export const PlayerExplorerPage: React.FC = () => {
               <div className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-5 space-y-2">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#D9B15F] flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#D9B15F]" />
-                  Data Integrity Disclosures
+                  How player records are counted
                 </h4>
                 <ul className="list-disc list-inside text-xs text-[#B9B9B3] space-y-1">
                   <li>The directory lists {directoryCounts ? plural(directoryCounts.all, 'player') : 'every player'} who batted or bowled in at least one IPL match in the archive, each identified by Cricsheet registry ID.</li>
@@ -563,8 +563,7 @@ export const PlayerExplorerPage: React.FC = () => {
               {profileError ? (
                 <>
                   <AlertCircle className="w-7 h-7 text-red-400" />
-                  <p className="text-sm font-semibold text-red-200">Unable to load this player profile</p>
-                  <p className="text-xs text-red-300/75 max-w-md">{profileError}</p>
+                  <p role="alert" className="text-sm font-semibold text-red-200">{profileError}</p>
                   <button
                     onClick={loadProfile}
                     className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#2A1B1E] hover:bg-[#3A2227] text-red-200 border border-red-500/40"

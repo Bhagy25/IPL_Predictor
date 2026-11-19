@@ -37,8 +37,7 @@ const ServerStartingNotice: React.FC = () => {
     >
       {slow && (
         <p className="pointer-events-auto max-w-sm text-sm text-[#B9B9B3] flex items-center gap-2 bg-[#101114] border border-[#D9B15F]/30 rounded-xl px-3.5 py-2.5 shadow-lg shadow-black/50">
-          <Loader2 className="w-4 h-4 shrink-0 animate-spin text-[#D9B15F]" aria-hidden="true" /> Loading the analytics
-          server… The first request after a pause can take a few seconds.
+          <Loader2 className="w-4 h-4 shrink-0 animate-spin text-[#D9B15F]" aria-hidden="true" /> IPL data is taking longer than usual to load…
         </p>
       )}
     </div>

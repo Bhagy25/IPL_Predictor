@@ -275,7 +275,7 @@ export const BatterTool: React.FC<{
       <section aria-label="Batter milestone result" aria-live="polite" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-4 sm:p-5 space-y-4 min-w-0">
         {failure && lastPayload.current && <ErrorRetry message={failure} onRetry={() => run(lastPayload.current as BatterPredictionRequest)} />}
         {loading && !result && (
-          <p className="text-xs text-[#B9B9B3] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Asking the batter model…</p>
+          <p className="text-xs text-[#B9B9B3] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Estimating batter milestones…</p>
         )}
         {!result && !loading && !failure && (
           <p className="text-sm text-[#8E8E88]">Pick a player, the teams, a venue and a date, then press <span className="text-[#F6F6F3] font-semibold">Predict milestones</span>.</p>
@@ -290,8 +290,8 @@ export const BatterTool: React.FC<{
               <BigNumber value={result.chance_50_plus_pct} label="chance of 50 or more runs" />
             </div>
             <p className="text-sm text-[#F6F6F3]">
-              Out of 100 similar innings, about <strong>{Math.round(result.chance_30_plus * 100)}</strong> reached 30 or more and about{' '}
-              <strong>{Math.round(result.chance_50_plus * 100)}</strong> reached 50 or more.
+              In 100 similar innings, the model estimates that about <strong>{Math.round(result.chance_30_plus * 100)}</strong> would score at least 30 runs and about{' '}
+              <strong>{Math.round(result.chance_50_plus * 100)}</strong> would score at least 50.
             </p>
             <p className="text-xs text-[#B9B9B3]">
               For {result.batting_team} against {result.opponent} at {result.venue}. {result.scope}
@@ -326,11 +326,10 @@ export const BatterTool: React.FC<{
                 </p>
               </div>
             ) : (
-              <Note>The evaluation report could not be loaded, so the base rates are not shown.</Note>
+              <Note>The 2026 comparison is currently unavailable.</Note>
             )}
             <p className="text-[11px] text-[#8E8E88]">
-              Model <span className="font-mono text-[#B9B9B3]">{result.model}</span> · deployment model trained on {result.training_span} data
-              ({result.model_file}). {result.notice}
+              Batter milestone model trained on {result.training_span} data. {result.notice}
             </p>
             <div className="flex flex-wrap items-center gap-3">
               {savedId ? (

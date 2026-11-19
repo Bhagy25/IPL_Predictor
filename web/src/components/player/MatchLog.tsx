@@ -102,10 +102,10 @@ export const MatchLog: React.FC<{ playerId: string; season: number | null; scope
         setData(res);
         setTotalPages(res.total_pages);
       }
-    } catch (err: any) {
+    } catch {
       if (requestId === request.current) {
         setData(null);
-        setError(err?.message || 'Failed to load the match log');
+        setError('Couldn’t load this page of the match log.');
       }
     } finally {
       if (requestId === request.current) setLoading(false);
@@ -121,15 +121,14 @@ export const MatchLog: React.FC<{ playerId: string; season: number | null; scope
     body = (
       <div className="p-10 flex flex-col items-center gap-2 text-xs text-[#B9B9B3]" role="status">
         <Loader2 className="w-5 h-5 text-[#D9B15F] animate-spin" />
-        <span>Loading page {page} of the match log...</span>
+        <span>Loading page {page} of the match log…</span>
       </div>
     );
   } else if (error) {
     body = (
       <div className="p-8 flex flex-col items-center gap-2 text-center" role="alert">
         <AlertCircle className="w-5 h-5 text-red-400" />
-        <p className="text-xs font-semibold text-red-200">Unable to load this page of the match log</p>
-        <p className="text-[11px] text-red-300/75 max-w-sm">{error}</p>
+        <p className="text-xs font-semibold text-red-200">{error}</p>
         <button
           type="button"
           onClick={load}
