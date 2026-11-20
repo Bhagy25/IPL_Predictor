@@ -1,0 +1,108 @@
+{
+  "seed": 42,
+  "tuning_years": [
+    2018,
+    2019,
+    2020
+  ],
+  "validation_years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "holdout_year": 2026,
+  "training_fractions": [
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "versions": {
+    "python": "3.14.3",
+    "numpy": "2.5.5",
+    "pandas": "2.3.3",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.8.0",
+    "matplotlib": "3.11.2"
+  },
+  "tasks": {
+    "wicket": {
+      "selected": "Histogram gradient boosting",
+      "selected_setting": 0,
+      "params": {
+        "max_leaf_nodes": 7,
+        "max_iter": 60,
+        "l2_regularization": 2.0
+      },
+      "target": "wicket_next_over",
+      "features": [
+        "innings",
+        "completed_overs",
+        "runs",
+        "wickets",
+        "run_rate",
+        "last_over_runs",
+        "last_over_wickets",
+        "batting_team",
+        "bowling_team",
+        "phase",
+        "venue_canonical"
+      ],
+      "chosen_settings": {
+        "Histogram gradient boosting": 0,
+        "Random forest": 2,
+        "Multilayer perceptron": 1,
+        "Logistic regression": 1,
+        "Decision tree": 0,
+        "Class-prior baseline": 0,
+        "Gaussian naive Bayes": 2
+      },
+      "input_sha256": "0bc347f2c3db87954e85acc34c88292fdd1831354a4bd84ef10efcd1e435a85d"
+    },
+    "batter": {
+      "selected": "Histogram gradient boosting",
+      "selected_setting": 0,
+      "params": {
+        "max_leaf_nodes": 7,
+        "max_iter": 60,
+        "l2_regularization": 2.0
+      },
+      "target": "milestone_class",
+      "features": [
+        "prior_innings",
+        "career_avg_runs",
+        "career_30_rate",
+        "career_50_rate",
+        "recent5_avg_runs",
+        "recent5_30_rate",
+        "recent5_50_rate",
+        "recent10_avg_runs",
+        "recent10_30_rate",
+        "recent10_50_rate",
+        "opposition_prior_innings",
+        "opposition_avg_runs",
+        "opposition_30_rate",
+        "venue_prior_innings",
+        "venue_avg_runs",
+        "venue_30_rate",
+        "days_since_previous_innings",
+        "batting_team",
+        "bowling_team",
+        "venue_canonical"
+      ],
+      "chosen_settings": {
+        "Class-prior baseline": 0,
+        "Logistic regression": 1,
+        "Decision tree": 0,
+        "Random forest": 0,
+        "Histogram gradient boosting": 0,
+        "Gaussian naive Bayes": 2,
+        "Multilayer perceptron": 2
+      },
+      "input_sha256": "b357a3dc6b8068551e10114f96725b4bcf10842cf49ee4cf53539fb29a7cb179"
+    }
+  }
+}

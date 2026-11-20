@@ -1,0 +1,103 @@
+{
+  "wicket": {
+    "model": "Histogram gradient boosting",
+    "params": {
+      "max_leaf_nodes": 7,
+      "max_iter": 60,
+      "l2_regularization": 2.0
+    },
+    "year": 2026,
+    "train_start": "2008-04-18",
+    "train_end": "2025-06-03",
+    "train_rows": 41580,
+    "train_matches": 1147,
+    "evaluation_rows": 2581,
+    "evaluation_matches": 73,
+    "fit_warnings": [],
+    "class_counts": {
+      "0": 1839,
+      "1": 742
+    },
+    "confusion_matrix": [
+      [
+        1805,
+        34
+      ],
+      [
+        688,
+        54
+      ]
+    ],
+    "metrics": {
+      "brier": 0.19818852642456758,
+      "log_loss": 0.5845694204336138,
+      "accuracy": 0.7202634637737311,
+      "balanced_accuracy": 0.5271439857299687,
+      "macro_f1": 0.4817269076305221,
+      "roc_auc": 0.5994988780085273,
+      "average_precision": 0.3912608589508726,
+      "brier_wicket": 0.19818852642456758,
+      "roc_auc_wicket": 0.5994988780085273,
+      "average_precision_wicket": 0.3912608589508726,
+      "observed_rate_wicket": 0.2874854707477722,
+      "mean_probability_wicket": 0.2859685877292061
+    }
+  },
+  "batter": {
+    "model": "Histogram gradient boosting",
+    "params": {
+      "max_leaf_nodes": 7,
+      "max_iter": 60,
+      "l2_regularization": 2.0
+    },
+    "year": 2026,
+    "train_start": "2008-04-18",
+    "train_end": "2025-06-03",
+    "train_rows": 17316,
+    "train_matches": 1139,
+    "evaluation_rows": 1113,
+    "evaluation_matches": 72,
+    "fit_warnings": [],
+    "class_counts": {
+      "0": 785,
+      "1": 161,
+      "2": 167
+    },
+    "confusion_matrix": [
+      [
+        778,
+        0,
+        7
+      ],
+      [
+        160,
+        0,
+        1
+      ],
+      [
+        161,
+        0,
+        6
+      ]
+    ],
+    "metrics": {
+      "brier": 0.1514022377691272,
+      "log_loss": 0.7455477532872868,
+      "accuracy": 0.7044025157232704,
+      "balanced_accuracy": 0.34233698208678187,
+      "macro_f1": 0.29740022599930405,
+      "roc_auc": 0.7177207359286495,
+      "average_precision": 0.384617802927879,
+      "brier_30": 0.18554838923920988,
+      "roc_auc_30": 0.7077889544819016,
+      "average_precision_30": 0.46206712721826515,
+      "observed_rate_30": 0.29469901168014373,
+      "mean_probability_30": 0.2810259789113353,
+      "brier_50": 0.11725608629904449,
+      "roc_auc_50": 0.7276525173753973,
+      "average_precision_50": 0.30716847863749286,
+      "observed_rate_50": 0.1500449236298293,
+      "mean_probability_50": 0.13150458490479136
+    }
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "archive": {
+    "raw_json_files": 1243,
+    "raw_base_tables_rebuilt_and_matched": true,
+    "counts": {
+      "matches": 1243,
+      "innings": 2480,
+      "overs": 47756,
+      "batter_innings": 18768,
+      "deliveries": 295557
+    },
+    "date_min": "2008-04-18",
+    "date_max": "2026-05-31",
+    "event": [
+      "Indian Premier League"
+    ],
+    "gender": [
+      "male"
+    ],
+    "match_missing": {
+      "city": 51,
+      "winner": 25,
+      "final_winner": 9,
+      "super_over_winner": 1227,
+      "outcome_method": 1220
+    },
+    "outcome_methods": {
+      "(blank)": 1220,
+      "D/L": 23
+    },
+    "decided_by": {
+      "regulation": 1218,
+      "super_over": 16,
+      "no_result": 9
+    }
+  },
+  "wicket": {
+    "builder_counts": {
+      "innings_seen": 2480,
+      "considered_completed_checkpoints": 45268,
+      "excluded_dls_checkpoints": 619,
+      "excluded_anomalous_or_gapped": 14,
+      "censored_no_wicket_short_next_over": 474,
+      "witnessed_wicket_short_next_over": 237,
+      "full_next_over_examples": 43924,
+      "eligible_rows": 44161,
+      "eligible_before_2026": 41580,
+      "policy": "exclude D/L-marked matches; observed short-over positives retained; censored negatives excluded"
+    },
+    "checks": {
+      "delivery_verified_rows": 44161,
+      "checkpoint_legal_balls_differ_from_six_times_completed_overs": 27
+    },
+    "model_columns_missing": {},
+    "matches": 1220,
+    "class_counts_by_split": {
+      "pre2026": {
+        "0": 30038,
+        "1": 11542
+      },
+      "2026": {
+        "0": 1839,
+        "1": 742
+      },
+      "all": {
+        "0": 31877,
+        "1": 12284
+      }
+    },
+    "retained_match_outcomes": {
+      "regulation": 43430,
+      "super_over": 608,
+      "no_result": 123
+    },
+    "retained_outcome_methods": {
+      "(blank)": 44161
+    },
+    "rows_with_unseen_categories": {
+      "2018": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 0
+      },
+      "2019": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 0
+      },
+      "2020": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 0
+      },
+      "2021": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 179
+      },
+      "2022": {
+        "batting_team": 575,
+        "bowling_team": 570,
+        "phase": 0,
+        "venue_canonical": 0
+      },
+      "2023": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 318
+      },
+      "2024": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 187
+      },
+      "2025": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 0
+      },
+      "2026": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "phase": 0,
+        "venue_canonical": 0
+      }
+    }
+  },
+  "batter": {
+    "builder_counts": {
+      "excluded_dls_batter_innings": 276,
+      "excluded_no_result_batter_innings": 63,
+      "development_train_rows_through_2024": 16231,
+      "development_validation_rows_2025": 1085,
+      "cold_start_rows_no_prior_innings": 736,
+      "unique_batters": 736,
+      "target_class_counts": {
+        "0": 13725,
+        "1": 2624,
+        "2": 2080
+      },
+      "policy": "exclude D/L and no-result matches in this first model cohort; same-date history excluded; batting appearance conditioned",
+      "source_rows": 18768,
+      "eligible_rows": 18429
+    },
+    "checks": {
+      "strictly_prior_history_verified_rows": 18429,
+      "cohort_rows_with_zero_balls_faced": 5,
+      "cold_start_rows": 736,
+      "cold_start_rows_2026": 34
+    },
+    "model_columns_missing": {},
+    "matches": 1211,
+    "class_counts_by_split": {
+      "pre2026": {
+        "0": 12940,
+        "1": 2463,
+        "2": 1913
+      },
+      "2026": {
+        "0": 785,
+        "1": 161,
+        "2": 167
+      },
+      "all": {
+        "0": 13725,
+        "1": 2624,
+        "2": 2080
+      }
+    },
+    "retained_match_outcomes": {
+      "regulation": 18172,
+      "super_over": 257
+    },
+    "retained_outcome_methods": {
+      "(blank)": 18429
+    },
+    "rows_with_unseen_categories": {
+      "2018": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 0
+      },
+      "2019": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 0
+      },
+      "2020": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 0
+      },
+      "2021": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 74
+      },
+      "2022": {
+        "batting_team": 225,
+        "bowling_team": 250,
+        "venue_canonical": 0
+      },
+      "2023": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 137
+      },
+      "2024": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 92
+      },
+      "2025": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 0
+      },
+      "2026": {
+        "batting_team": 0,
+        "bowling_team": 0,
+        "venue_canonical": 0
+      }
+    }
+  },
+  "archived_stage03": {
+    "wicket": {
+      "holdout_artifact_train_end": 2025,
+      "deployment_artifact_train_end": 2026,
+      "deployment_estimator": "LogisticRegression",
+      "archived_holdout_scores_reproduced": {
+        "rows": 2581,
+        "event_rate": 0.287485,
+        "brier_score": 0.200519,
+        "log_loss": 0.589813,
+        "roc_auc": 0.589476
+      }
+    },
+    "batter": {
+      "holdout_artifact_train_end": 2025,
+      "deployment_artifact_train_end": 2026,
+      "deployment_estimator": "RandomForestClassifier",
+      "archived_holdout_scores_reproduced": {
+        "rows": 1113,
+        "observed_30_rate": 0.294699,
+        "observed_50_rate": 0.150045,
+        "brier_30": 0.185299,
+        "brier_50": 0.117947,
+        "avg_milestone_brier": 0.151623,
+        "multiclass_log_loss": 0.743083,
+        "roc_auc_30": 0.708762,
+        "roc_auc_50": 0.728988
+      }
+    }
+  }
+}
