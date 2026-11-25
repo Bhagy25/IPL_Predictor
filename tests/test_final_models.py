@@ -3,7 +3,6 @@
 Expected values come from the benchmark's saved files (selection.json, holdout_2026.json and the
 per-example 2026 forecasts) and the modelling tables, with metrics recomputed here with sklearn.
 """
-import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -16,6 +15,7 @@ from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
 
 from cricketlens import final_models
 from cricketlens.api.services.prediction_service import PredictionService
+from cricketlens.hashing import file_sha256, table_sha256
 from cricketlens.model_benchmark import TASKS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,10 +34,6 @@ ARCHIVED = {
 }
 
 pytestmark = pytest.mark.skipif(not FINAL.is_dir(), reason="final model artifacts not available")
-
-
-def _sha(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 def _table(task):
@@ -88,14 +84,14 @@ def test_artifacts_carry_the_frozen_selection(task):
         assert saved["train_rows"] == len(train) and saved["train_matches"] == train.match_id.nunique()
         assert saved["train_start"] == "2008-04-18"
         assert saved["train_end_date"] == train.date.max().date().isoformat()
-        assert saved["input_sha256"] == choice["input_sha256"] == _sha(DATA / task.path)
+        assert saved["input_sha256"] == choice["input_sha256"] == table_sha256(DATA / task.path)
         assert saved["version"] == ("deployment_refit_2008_2026" if end == 2026 else "holdout_train_2008_2025")
 
 
 def test_summary_file_describes_the_artifacts_on_disk():
     for name, task in SUMMARY["tasks"].items():
         for entry in task["artifacts"].values():
-            assert _sha(ROOT / entry["file"]) == entry["sha256"]
+            assert file_sha256(ROOT / entry["file"]) == entry["sha256"]
         assert task["holdout_reproduction"]["max_abs_forecast_difference"] == 0
         assert task["determinism"]["holdout_refit_identical"] and task["determinism"]["final_refit_identical"]
         assert task["params"] == SELECTION["tasks"][name]["params"]
@@ -111,7 +107,7 @@ def test_a_fresh_fit_through_the_benchmark_code_equals_the_saved_holdout_model()
 
 
 def test_archived_stage3_artifacts_are_unchanged():
-    assert {p.name: _sha(p) for p in sorted((ROOT / "models").glob("*.joblib"))} == ARCHIVED
+    assert {p.name: file_sha256(p) for p in sorted((ROOT / "models").glob("*.joblib"))} == ARCHIVED
 
 
 # ------------------------------------------------------------------ the API serves only the final models

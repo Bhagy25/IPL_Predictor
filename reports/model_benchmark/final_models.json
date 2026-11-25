@@ -43,7 +43,7 @@
       "artifacts": {
         "holdout": {
           "file": "models/final/wicket_hgb_through_2025.joblib",
-          "sha256": "c16088b7e2078344484df8913e3c68f9c6108f1f9f4a7806b81e100bb85bfa84",
+          "sha256": "567c71b02dc45312ce686a14f90a5738265c017d5d85341bf1b7a4044ce7a745",
           "version": "holdout_train_2008_2025",
           "train_start": "2008-04-18",
           "train_end": "2025-06-03",
@@ -52,7 +52,7 @@
         },
         "final": {
           "file": "models/final/wicket_hgb_through_2026.joblib",
-          "sha256": "61c25f0f71cdaed0b2de37c6425be304fdcfffa3032748362a5ab9d733ce9709",
+          "sha256": "41f63650462d31e8ff0dcc4cded9aa3f7b4df24e0d54898aecc3dded164bde25",
           "version": "deployment_refit_2008_2026",
           "train_start": "2008-04-18",
           "train_end": "2026-05-31",
@@ -143,7 +143,7 @@
       "artifacts": {
         "holdout": {
           "file": "models/final/batter_hgb_through_2025.joblib",
-          "sha256": "abc8e76380be19e5f2cf2f335740abcc9c0b3a256c55bc37161538318745b9a7",
+          "sha256": "a8ed92c45e534192e22d52d631d79d29c7b05b5e49a41a77946a17415b254a7b",
           "version": "holdout_train_2008_2025",
           "train_start": "2008-04-18",
           "train_end": "2025-06-03",
@@ -152,7 +152,7 @@
         },
         "final": {
           "file": "models/final/batter_hgb_through_2026.joblib",
-          "sha256": "7f2c246cd8e52945eb0a31b2e2688fb8ef406eef001f00d9094c8ff44d82ae4b",
+          "sha256": "319a8b80225ec45741670edcef97fcc7a290d7c0b31886dae448d046ed261e6d",
           "version": "deployment_refit_2008_2026",
           "train_start": "2008-04-18",
           "train_end": "2026-05-31",

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import platform
@@ -39,6 +38,7 @@ from cricketlens.fit_batter_models import (
 from cricketlens.fit_wicket_models import (
     ADDED_NUM, BASIC_CAT, BASIC_NUM, ENHANCED_CAT, TARGET, make_logistic as wicket_logistic,
 )
+from cricketlens.hashing import table_sha256
 
 SEED = 42
 TUNING_YEARS = (2018, 2019, 2020)
@@ -397,7 +397,7 @@ def main():
     selection_path = args.output / "selection.json"
     tables = {task.name: data_for(task, args.data) for task in TASKS}
     fingerprints = {
-        task.name: hashlib.sha256((args.data / task.path).read_bytes()).hexdigest() for task in TASKS
+        task.name: table_sha256(args.data / task.path) for task in TASKS
     }
     with threadpool_limits(limits=1):
         if args.phase in {"all", "development"}:

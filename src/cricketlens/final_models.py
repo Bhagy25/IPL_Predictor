@@ -20,7 +20,6 @@ copies no estimator and changes no prediction. The run also records a class-prio
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import platform
 from pathlib import Path
@@ -36,6 +35,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.pipeline import Pipeline
 from threadpoolctl import threadpool_limits
 
+from cricketlens.hashing import file_sha256, table_sha256
 from cricketlens.model_benchmark import (
     SEED, TASKS, TEST_YEAR, data_for, fit, fold_info, probabilities, score, split, write_json,
 )
@@ -59,10 +59,6 @@ TASK_DETAILS = {
 }
 
 
-def sha256(path: Path) -> str:
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-
-
 def library_versions() -> Dict[str, str]:
     return {"python": platform.python_version(), "numpy": np.__version__, "pandas": pd.__version__,
             "scipy": scipy.__version__, "scikit-learn": sklearn.__version__, "joblib": joblib.__version__,
@@ -74,7 +70,7 @@ def load_selection(selection_path: Path, data_dir: Path) -> Dict[str, Any]:
     selection = json.loads(Path(selection_path).read_text(encoding="utf-8"))
     for task in TASKS:
         choice = selection["tasks"][task.name]
-        if choice["input_sha256"] != sha256(data_dir / task.path):
+        if choice["input_sha256"] != table_sha256(data_dir / task.path):
             raise ValueError(f"{task.path} differs from the table the benchmark selection was made on")
         if choice["features"] != task.features or choice["target"] != task.target:
             raise ValueError(f"Feature or target schema differs from the frozen selection for {task.name}")
@@ -205,7 +201,7 @@ def run(data_dir: Path, model_dir: Path, benchmark_dir: Path, output: Path) -> D
             "algorithm": choice["selected"], "estimator": ALGORITHM, "params": choice["params"],
             "features": task.features, "target": task.target, "classes": list(task.classes),
             "artifacts": {
-                kind: {"file": f"models/final/{names[kind]}", "sha256": sha256(paths[kind]),
+                kind: {"file": f"models/final/{names[kind]}", "sha256": file_sha256(paths[kind]),
                        "version": HOLDOUT_VERSION if kind == "holdout" else FINAL_VERSION,
                        **fold_info(frame, frame, TEST_YEAR - 1 if kind == "holdout" else TEST_YEAR)}
                 for kind, frame in (("holdout", train), ("final", data))
