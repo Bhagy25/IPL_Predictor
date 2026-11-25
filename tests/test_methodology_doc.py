@@ -130,3 +130,42 @@ def test_final_artifacts_reproduce_exactly():
     for task in ("wicket", "batter"):
         assert FINAL["tasks"][task]["holdout_reproduction"]["max_abs_forecast_difference"] == 0
     assert "maximum absolute difference 0" in DOC
+
+
+def test_report_final_decision_numbers():
+    report = (ROOT / "reports" / "REPORT_DRAFT.md").read_text(encoding="utf-8")
+    section = report[report.index("### 8.9 Final model decision"):]
+    assert "weak evidence for switching" not in report
+    for task in ("wicket", "batter"):
+        artifact = FINAL["tasks"][task]["artifacts"]["final"]
+        assert f"{artifact['train_rows']:,}" in section
+        plateau = SUMMARY["tasks"][task]["convergence"]["selected_plateau"]
+        assert f"{plateau['change_50_to_75']:+.6f}".replace("-", "−") in section
+        assert f"{plateau['change_75_to_100']:+.6f}".replace("-", "−") in section
+        hgb = SUMMARY["tasks"][task]["algorithms"]["Histogram gradient boosting"]["evidence"]
+        assert f"{hgb['excess_train_validation_gap']:.6f}" in section
+        m, base = HOLDOUT[task]["metrics"]["brier"], FINAL["tasks"][task]["baseline_2026"]["metrics"]["brier"]
+        assert f"{m:.5f} vs {base:.5f}" in section
+        assert f"{SUMMARY['tasks'][task]['class_balance']['majority_class_accuracy_mean']:.2%}" in section
+        gap = SUMMARY["tasks"][task]["convergence"]["paired_gaps_vs_selected"]["Random forest"]["mean"]
+        assert f"{gap:.6f}".rstrip("0") in section
+    assert STAGE3["wicket"]["holdout_2026"]["brier_score"] > HOLDOUT["wicket"]["metrics"]["brier"]
+    assert STAGE3["batter"]["holdout_2026"]["avg_milestone_brier"] > HOLDOUT["batter"]["metrics"]["brier"]
+
+
+def test_readme_model_tables():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    w, b = (pd.read_csv(BENCH / f"{t}_comparison.csv").set_index("model") for t in ("wicket", "batter"))
+    for model in w.index:
+        mark = "✓" if model == "Histogram gradient boosting" else ""
+        row = (f"| {model} | {w.loc[model, 'brier_mean']:.5f} ± {w.loc[model, 'brier_std']:.5f} | "
+               f"{b.loc[model, 'brier_mean']:.5f} ± {b.loc[model, 'brier_std']:.5f} | {mark} |")
+        assert row.replace("|  |", "| |") in readme, row
+    hw, hb = HOLDOUT["wicket"]["metrics"], HOLDOUT["batter"]["metrics"]
+    bw, bb = (FINAL["tasks"][t]["baseline_2026"]["metrics"] for t in ("wicket", "batter"))
+    assert f"| Brier score | {hw['brier']:.4f} | {bw['brier']:.4f} |" in readme
+    assert f"| Log loss | {hw['log_loss']:.4f} | {bw['log_loss']:.4f} |" in readme
+    assert f"| Brier 30+ | {hb['brier_30']:.4f} | {bb['brier_30']:.4f} |" in readme
+    assert f"| Brier 50+ | {hb['brier_50']:.4f} | {bb['brier_50']:.4f} |" in readme
+    assert f"| Log loss (3 classes) | {hb['log_loss']:.4f} | {bb['log_loss']:.4f} |" in readme
+    assert f"| ROC AUC 30+ / 50+ | {hb['roc_auc_30']:.4f} / {hb['roc_auc_50']:.4f} |" in readme

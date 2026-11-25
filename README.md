@@ -131,7 +131,8 @@ src/cricketlens/       Stage 1-3 Python modules (pipeline, EDA, model training a
 src/cricketlens/api/   FastAPI application: routes, schemas and services
 api/                   Vercel function entrypoint and its runtime requirements
 vercel.json            Vercel build, rewrites and function configuration
-models/                The four trained models (2026 deployment and 2025 holdout versions)
+models/final/          The final gradient boosting models (through 2026 for the website, through 2025 for the 2026 test)
+models/                The archived Stage 3 models (development history)
 web/                   React + TypeScript + Vite + Tailwind website
 tests/                 pytest suite
 reports/               Stage reports (PDF), figures and evaluation outputs
@@ -331,16 +332,25 @@ python -m cricketlens.stage02_final_eda --data data/processed --output reports/s
 **Stage 3 — models.** Sessions 01–02 were development experiments (train through 2024, validate on 2025):
 `wicket_training_data`, `fit_wicket_models` and `stage03_diagnostics` for the wicket model;
 `batter_training_data`, `fit_batter_models` and `stage03_batter_diagnostics` for the batter model. The final
-models come from Session 03:
+Stage 3 models came from Session 03 and are kept as development history:
 
 ```bash
-# Selects on 2025, scores the 2026 holdout once, then refits through 2026.
-# It overwrites models/ and reports/stage_03/session_03/, so run it only to reproduce Stage 3.
+# Stage 3 Session 03 (history): selects on 2025, scores 2026 once, refits through 2026.
+# It overwrites the archived models/*.joblib and reports/stage_03/session_03/, so run it only to reproduce Stage 3.
 python -m cricketlens.stage03_full_history
+```
 
-# Manual predictions from the command line, with the deployment models
-python -m cricketlens.predict_wicket --model models/wicket_deployment_through_2026.joblib --help
-python -m cricketlens.forecast_future_batter --help
+**Final models — seven-algorithm benchmark.**
+
+```bash
+python -m cricketlens.model_benchmark               # tuning 2018-2020, ranking 2021-2025, learning curves, 2026 test (about 7 minutes)
+python -m cricketlens.model_benchmark_audit --verify-raw
+python -m cricketlens.final_models                  # models/final/*.joblib, checked against the benchmark's 2026 forecasts
+python -m cricketlens.model_assumptions             # reports/model_benchmark/assumptions/
+
+# Manual predictions from the command line, with the final models
+python -m cricketlens.predict_wicket --model models/final/wicket_hgb_through_2026.joblib --help
+python -m cricketlens.forecast_future_batter --model models/final/batter_hgb_through_2026.joblib --help
 ```
 
 Stage write-ups are in `docs/` (for example `docs/STAGE_03_SESSION_03_FULL_HISTORY.md`) and the stage
@@ -379,41 +389,68 @@ reports in `reports/*.pdf`.
 
 ## Machine-learning models
 
+Both forecasts use **Histogram gradient boosting**, the algorithm a chronological benchmark of seven
+algorithms selected. The full workflow, the assumptions of every algorithm and the evidence on whether they
+hold are in [docs/MODEL_METHODOLOGY.md](docs/MODEL_METHODOLOGY.md).
+
 | | Next-over wicket model | Batter milestone model |
 |---|---|---|
 | Predicts | P(at least one team wicket in the next over) | P(30+ runs) and P(50+ runs), from one three-class model so P(50+) ≤ P(30+) |
-| Algorithm | Logistic regression (`logistic_context_all_history`) | Random forest (`forest_full_history`) |
+| Algorithm | Histogram gradient boosting (7 leaves, 60 iterations, L2 2.0, learning rate 0.06) | The same algorithm and settings |
 | Inputs | Innings, completed overs, runs, wickets, run rate, last over's runs and wickets, batting and bowling team, phase, venue | Past-only form (career, last 5 and last 10 innings, record against the opponent and at the venue, days since the last innings) plus batting team, opponent and venue |
 | Eligible rows (2008–2026) | 44,161 next-over checkpoints | 18,429 batter innings |
+| Website model | `models/final/wicket_hgb_through_2026.joblib` | `models/final/batter_hgb_through_2026.joblib` |
 
-**Sequence.** Candidates were trained on 2008–2024 and compared on 2025 only, then the selected model was
-refit on 2008–2025 and scored **once** on the untouched 2026 season. After that test, a deployment model was
-refit on all of 2008–2026. The website's predictions use the deployment models; the 2026 numbers below
-evaluate the holdout models, since the deployment models have no out-of-sample test of their own.
+**How the algorithm was chosen.** Each algorithm's settings were tuned on 2018–2020, then every algorithm was
+trained on all earlier seasons and scored on each of 2021–2025. The rule, fixed in advance, was the lowest
+mean validation Brier score (log loss as tie-break). Mean validation Brier ± SD across the five seasons
+(lower is better; from `reports/model_benchmark/*_comparison.csv`):
 
-**2026 holdout results** (from `reports/stage_03/session_03/stage03_session03_final_results.json`; lower
-Brier and log loss are better, ROC AUC 0.5 means no ranking skill):
+| Algorithm | Wicket Brier | Batter Brier (mean of 30+ and 50+) | Selected |
+|---|---:|---:|:---:|
+| Histogram gradient boosting | 0.19579 ± 0.00280 | 0.13937 ± 0.01157 | ✓ |
+| Random forest | 0.19595 ± 0.00276 | 0.13941 ± 0.01191 | |
+| Multilayer perceptron | 0.19626 ± 0.00286 | 0.13953 ± 0.01209 | |
+| Logistic regression | 0.19655 ± 0.00308 | 0.14092 ± 0.01086 | |
+| Decision tree | 0.19677 ± 0.00295 | 0.14053 ± 0.01201 | |
+| Class-prior baseline | 0.20318 ± 0.00196 | 0.15203 ± 0.01269 | |
+| Gaussian naive Bayes | 0.22610 ± 0.00794 | 0.26919 ± 0.01618 | |
 
-| Model | Metric | Model | Constant-rate baseline |
+The top three are close: random forest is within 0.00016 (wicket) and 0.00004 (batter) mean Brier, so
+boosting is the choice under the pre-specified rule rather than a demonstrably better algorithm. Accuracy
+cannot separate the models, since always predicting the majority class already scores about 72–73%.
+
+**2026 retrospective test** (the same algorithm and settings trained on 2008–2025, scored once on 2026, from
+`reports/model_benchmark/holdout_2026.json` and `final_models.json`; lower Brier and log loss are better,
+ROC AUC 0.5 means no ranking skill):
+
+| Model | Metric | Gradient boosting | Class-prior baseline |
 |---|---|---:|---:|
-| Next-over wicket (2,581 checkpoints, 73 matches) | Brier score | 0.2005 | 0.2049 |
-| | Log loss | 0.5898 | 0.6001 |
-| | ROC AUC | 0.5895 | 0.5000 |
-| Batter milestones (1,113 innings, 72 matches) | Brier 30+ | 0.1853 | 0.2096 |
-| | Brier 50+ | 0.1179 | 0.1291 |
-| | Log loss (3 classes) | 0.7431 | 0.8181 |
-| | ROC AUC 30+ / 50+ | 0.7088 / 0.7290 | 0.5000 / 0.5000 |
+| Next-over wicket (2,581 checkpoints, 73 matches) | Brier score | 0.1982 | 0.2049 |
+| | Log loss | 0.5846 | 0.6001 |
+| | ROC AUC | 0.5995 | 0.5000 |
+| Batter milestones (1,113 innings, 72 matches) | Brier 30+ | 0.1855 | 0.2096 |
+| | Brier 50+ | 0.1173 | 0.1291 |
+| | Log loss (3 classes) | 0.7455 | 0.8181 |
+| | ROC AUC 30+ / 50+ | 0.7078 / 0.7277 | 0.5000 / 0.5000 |
 
 In 2026, 28.7% of eligible next overs had at least one wicket; 29.5% of eligible batter innings reached 30
-and 15.0% reached 50.
+and 15.0% reached 50. The 2026 season had been examined during Stage 3 development, so this is a
+retrospective chronological test. The website's models were refitted on all of 2008–2026 afterwards and
+have no independent test season yet.
+
+**Development history.** Stage 3 first chose a contextual logistic regression (wickets) and a random forest
+(batters) on the 2025 season alone. Those archived artifacts stay in `models/` unchanged, with their reports
+in `reports/stage_03/`. The seven-algorithm benchmark (`reports/model_benchmark/`) replaced that choice.
 
 ## Verification approach
 
 - Statistics shown on the website are checked against independent calculations: tests recompute expected
   values with pandas from `data/processed`, from `data/derived` or directly from the raw JSON, without the
   backend's own code.
-- Prediction endpoints are checked against direct calls of the Stage 3 inference functions, and the replay
-  metrics are recomputed from the per-example holdout forecasts and compared with the official report.
+- Prediction endpoints are checked against direct calls of the Stage 3 inference functions with the final
+  models, and the replay metrics are recomputed from the benchmark's per-example 2026 forecasts and compared
+  with `holdout_2026.json`. The final models' 2025 versions reproduce those forecasts exactly.
 - Guard tests stop numbers from being typed into the homepage or health endpoint, and the model files'
   SHA256 is checked before and after the test run.
 - Run the suite with `pytest` (395 tests at the time of writing). Website behaviour was checked in a
