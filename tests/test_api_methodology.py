@@ -150,3 +150,15 @@ def test_missing_report_is_503(tmp_path, monkeypatch):
     monkeypatch.setattr("cricketlens.api.services.methodology_service.methodology_service", service)
     r = client.get("/api/methodology")
     assert r.status_code == 503 and str(tmp_path) not in r.text
+
+
+def test_limitations_quote_the_assumption_summary(body):
+    text = " ".join(body["limitations"])
+    labels = SUMMARY["tasks"]["wicket"]["label_selection"]
+    assert f"{labels['eligible']['event_rate']:.2%}" in text and f"{labels['complete_overs_only']['event_rate']:.2%}" in text
+    edges = [e["at_edge"] for t in TASKS for e in SUMMARY["tasks"][t]["tuning_grid_edges"].values()]
+    assert f"{sum(edges)} of the {len(edges)} chosen settings" in text
+    no_result = next(r["count"] for r in SUMMARY["eligibility"] if r["rule"] == "eligible rows from no-result matches (kept)")
+    assert f"{no_result} wicket rows come from no-result matches" in text
+    mlp = next(a for a in body["algorithms"] if a["name"] == "Multilayer perceptron")
+    assert "not used as evidence" in mlp["evidence"][0] and "unconverged" not in mlp["decision"]

@@ -214,8 +214,8 @@ export const MethodologyPage: React.FC = () => {
 
           <Section id="convergence" number={6} title="Learning curves and convergence" icon={<TrendingUp className="w-4 h-4 text-[#D9B15F]" aria-hidden="true" />}
             intro={<>
-              <strong className="text-[#F6F6F3]">What "convergence" means here:</strong> as more past seasons are used for training, the validation score stops improving
-              (a plateau) and the gaps between the leading algorithms become small. It is shown with data, not proved mathematically, and it does not say how the models
+              <strong className="text-[#F6F6F3]">What "convergence" means here:</strong> whether, as more past seasons are used for training, the validation score stops improving
+              (a plateau) and the gaps between the leading algorithms become small. It is examined with data, not proved mathematically, and it does not say how the models
               will do in seasons after 2026.
             </>}>
             <LearningCurves curves={data.learning_curves} convergence={data.convergence} />

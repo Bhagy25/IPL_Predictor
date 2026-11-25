@@ -184,6 +184,81 @@
         "2025": 0,
         "2026": 0
       },
+      "unseen_level_rows": {
+        "2018": 0,
+        "2019": 0,
+        "2020": 0,
+        "2021": 179,
+        "2022": 1076,
+        "2023": 318,
+        "2024": 187,
+        "2025": 0,
+        "2026": 0
+      },
+      "label_selection": {
+        "short_overs_kept_with_wicket": 237,
+        "eligible": {
+          "rows": 44161,
+          "event_rate": 0.278164
+        },
+        "complete_overs_only": {
+          "rows": 43924,
+          "event_rate": 0.274269
+        },
+        "late_second_innings_from_completed_over": 15,
+        "late_second_innings_eligible": {
+          "rows": 4468,
+          "event_rate": 0.416517
+        },
+        "late_second_innings_complete_overs_only": {
+          "rows": 4309,
+          "event_rate": 0.394987
+        }
+      },
+      "tuning_grid_edges": {
+        "Logistic regression": {
+          "ordered_by": "C",
+          "chosen": 0.05,
+          "position": 1,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Decision tree": {
+          "ordered_by": "max_depth",
+          "chosen": 3,
+          "position": 1,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Random forest": {
+          "ordered_by": "max_depth",
+          "chosen": 12,
+          "position": 3,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Histogram gradient boosting": {
+          "ordered_by": "max_leaf_nodes",
+          "chosen": 7,
+          "position": 1,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Gaussian naive Bayes": {
+          "ordered_by": "var_smoothing",
+          "chosen": 0.2,
+          "position": 3,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Multilayer perceptron": {
+          "ordered_by": "max_iter",
+          "chosen": 35,
+          "position": 2,
+          "settings": 3,
+          "at_edge": false
+        }
+      },
       "convergence": {
         "leaders": [
           "Histogram gradient boosting",
@@ -548,7 +623,7 @@
           }
         },
         "Multilayer perceptron": {
-          "verdict": "Partially holds",
+          "verdict": "Holds",
           "evidence": {
             "chosen_setting": {
               "hidden_layer_sizes": [
@@ -567,6 +642,15 @@
               "tuning": 9,
               "validation": 5,
               "learning": 25
+            },
+            "epoch_cap_design": {
+              "n_iter_no_change": 46,
+              "max_iter_grid": [
+                25,
+                35,
+                45
+              ],
+              "every_fit_runs_to_its_cap": true
             },
             "other_models_fit_warnings": 0,
             "seed_brier_range_2025": 0.000408,
@@ -705,6 +789,61 @@
         "2024": 92,
         "2025": 0,
         "2026": 0
+      },
+      "unseen_level_rows": {
+        "2018": 0,
+        "2019": 0,
+        "2020": 0,
+        "2021": 74,
+        "2022": 444,
+        "2023": 137,
+        "2024": 92,
+        "2025": 0,
+        "2026": 0
+      },
+      "tuning_grid_edges": {
+        "Logistic regression": {
+          "ordered_by": "C",
+          "chosen": 0.05,
+          "position": 1,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Decision tree": {
+          "ordered_by": "max_depth",
+          "chosen": 3,
+          "position": 1,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Random forest": {
+          "ordered_by": "max_depth",
+          "chosen": 8,
+          "position": 2,
+          "settings": 3,
+          "at_edge": false
+        },
+        "Histogram gradient boosting": {
+          "ordered_by": "max_leaf_nodes",
+          "chosen": 7,
+          "position": 1,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Gaussian naive Bayes": {
+          "ordered_by": "var_smoothing",
+          "chosen": 0.2,
+          "position": 3,
+          "settings": 3,
+          "at_edge": true
+        },
+        "Multilayer perceptron": {
+          "ordered_by": "max_iter",
+          "chosen": 45,
+          "position": 3,
+          "settings": 3,
+          "at_edge": true
+        }
       },
       "convergence": {
         "leaders": [
@@ -1129,6 +1268,15 @@
               "validation": 5,
               "learning": 25
             },
+            "epoch_cap_design": {
+              "n_iter_no_change": 46,
+              "max_iter_grid": [
+                25,
+                35,
+                45
+              ],
+              "every_fit_runs_to_its_cap": true
+            },
             "other_models_fit_warnings": 0,
             "seed_brier_range_2025": 0.001251,
             "seed_brier_sd_2025": 0.000535,
@@ -1182,7 +1330,7 @@
       {
         "assumption": "Category levels seen in training",
         "verdict": "Partially holds",
-        "evidence": "Rows with a level unseen in training: 2021: 253, 2022: 1,620, 2023: 455, 2024: 279",
+        "evidence": "Rows with at least one category level unseen in training: wicket 2021: 179, 2022: 1,076, 2023: 318, 2024: 187; batter 2021: 74, 2022: 444, 2023: 137, 2024: 92; none in 2025 or 2026",
         "consequence": "Unseen levels (the two 2022 franchises, new venues) are encoded as all-zero, so those rows fall back on the other inputs."
       },
       {
@@ -1195,7 +1343,7 @@
         "assumption": "Eligibility rules applied",
         "verdict": "Holds",
         "evidence": "Wicket: 44,161 rows after removing D/L matches and censored overs; batter: 18,429 innings after removing D/L and no-result matches; super-over innings never enter",
-        "consequence": "The forecasts describe ordinary, uninterrupted innings, not D/L-shortened ones."
+        "consequence": "D/L-marked matches are excluded, but some rain-affected innings without a D/L mark remain (123 wicket rows come from no-result matches)."
       }
     ],
     "algorithms": [
@@ -1238,7 +1386,7 @@
       {
         "model": "Multilayer perceptron",
         "verdict": "Partially holds",
-        "wicket_verdict": "Partially holds",
+        "wicket_verdict": "Holds",
         "batter_verdict": "Partially holds"
       }
     ]

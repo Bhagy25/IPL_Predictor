@@ -466,7 +466,7 @@ class EDAService:
 
         notices = [
             "All figures and summary statistics are derived strictly from pre-2026 development data.",
-            "IPL 2026 was strictly isolated as an unseen holdout to prevent data leakage.",
+            "IPL 2026 was left out of these Stage 2 figures and kept for model evaluation.",
             "Statistical associations are observational and descriptive; they do not imply causal mechanisms.",
             "Venue and phase comparisons include all recorded first innings (full, shortened, and all-out).",
         ]

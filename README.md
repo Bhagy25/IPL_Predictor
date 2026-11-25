@@ -488,8 +488,13 @@ in `reports/stage_03/`. The seven-algorithm benchmark (`reports/model_benchmark/
 
 ## Limitations and known issues
 
-- **The wicket model is only slightly better than a constant rate** (2026 Brier 0.2005 vs 0.2049, ROC AUC
-  0.59): treat its probabilities as broad context, not sharp forecasts.
+- **The wicket model is only slightly better than a constant rate** (2026 Brier 0.1982 vs 0.2049, ROC-AUC
+  0.60): treat its probabilities as broad context, not sharp forecasts.
+- **Wicket labels lean slightly high.** A short next over is kept only when a wicket fell in it, so the
+  training event rate is 27.82% against 27.43% on complete overs alone (41.65% against 39.50% late in a
+  chase); see `docs/MODEL_METHODOLOGY.md`, Section 2.
+- **Narrow tuning grids.** Each algorithm was tuned over three settings, and 10 of the 12 chosen settings lie
+  at an edge of their grid, so better settings may lie outside the ranges searched.
 - **Batter forecasts are conditional on the player batting.** Selection in the playing XI and batting
   position are not predicted, and a forecast for a player without a 2026 appearance assumes they play again.
 - **Manual inputs, no live data.** Predictions use only what you enter; inputs outside the observed range

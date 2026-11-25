@@ -201,8 +201,8 @@ class OverviewService:
             "innings aggregates.",
             "Franchise renames are standardized (Delhi Capitals, Punjab Kings, Royal Challengers Bengaluru). "
             "Discontinued clubs remain distinct.",
-            f"IPL {last}, the latest season, was held out only to evaluate the Stage 3 machine learning models; "
-            "every descriptive statistic here includes it.",
+            f"IPL {last}, the latest season, was the retrospective test season for the prediction models, which were "
+            "then refitted including it; every descriptive statistic here includes it.",
         ]
         complete_summary = players_ok and retired_hurt is not None
         return OverviewSummaryResponse(metrics=metrics, coverage=coverage, notices=notices), complete_summary

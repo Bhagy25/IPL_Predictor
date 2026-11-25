@@ -54,6 +54,9 @@ export const LearningCurves: React.FC<{
   const fmt = (v: number) => (spec.percent ? `${(v * 100).toFixed(1)}%` : v.toFixed(4));
   const c = convergence[task];
   const plateau = c.selected_plateau;
+  const seasonChanges = Object.values(plateau.per_season_change_75_to_100);
+  const seasonsLower = seasonChanges.filter((v) => v < 0).length;
+  const forestGap = c.paired_gaps_vs_selected['Random forest'].mean;
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -89,6 +92,9 @@ export const LearningCurves: React.FC<{
         <p>
           <strong className="text-[#F6F6F3]">Plateau:</strong> the selected model's validation Brier improved by {signed(plateau.change_10_to_50)} from 10% to 50% of the history,
           then changed by {signed(plateau.change_50_to_75)} (50→75%) and {signed(plateau.change_75_to_100)} (75→100%).
+          {seasonsLower === seasonChanges.length
+            ? ` It is still improving slightly: the 75→100% change is negative in all ${seasonChanges.length} validation seasons and larger than boosting's mean lead over the random forest (${num(forestGap, 6)}).`
+            : ` Beyond half of the history it is flat: the 75→100% change is negative in ${seasonsLower} of ${seasonChanges.length} validation seasons.`}
           The top three algorithms end {num(c.leader_brier_spread_by_fraction['1.0'], 6)} apart in mean Brier, against {num(c.leader_brier_spread_by_fraction['0.1'], 6)} at 10%.
         </p>
         <p>

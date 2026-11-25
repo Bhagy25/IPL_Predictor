@@ -27,8 +27,8 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from threadpoolctl import threadpool_limits
 
 from cricketlens.model_benchmark import (
-    SEED, TASKS, TEST_YEAR, TRAIN_FRACTIONS, TUNING_YEARS, VALIDATION_YEARS, data_for, event_probabilities, fit,
-    probabilities, score, search_space, split, write_json,
+    SEED, TASKS, TEST_YEAR, TRAIN_FRACTIONS, TUNING_YEARS, VALIDATION_YEARS, data_for, estimator,
+    event_probabilities, fit, probabilities, score, search_space, split, write_json,
 )
 
 matplotlib.use("Agg")
@@ -48,6 +48,12 @@ EPP_MIN = 10.0                           # events per model parameter, the usual
 CORR_STRONG = 0.5                        # within-class correlation that contradicts conditional independence
 SKEW_STRONG, KURT_STRONG = 1.0, 3.0      # |skewness| and excess kurtosis far from a normal distribution
 ALPHA = 0.05
+# Second-innings checkpoints after at least this many completed overs (the next over is one of overs 16-20)
+LATE_CHASE_FROM_OVER = 15
+# The setting each tuning grid is ordered by, to tell whether the chosen setting lies at an edge of the grid
+GRID_ORDER = {"Logistic regression": "C", "Decision tree": "max_depth", "Random forest": "max_depth",
+              "Histogram gradient boosting": "max_leaf_nodes", "Gaussian naive Bayes": "var_smoothing",
+              "Multilayer perceptron": "max_iter"}
 COLORS = {"Class-prior baseline": "#8E8E88", "Logistic regression": "#4C78A8", "Decision tree": "#72B7B2",
           "Random forest": "#54A24B", "Histogram gradient boosting": "#C8962E", "Gaussian naive Bayes": "#E45756",
           "Multilayer perceptron": "#B279A2"}
@@ -255,6 +261,56 @@ def unseen_levels(task, data) -> pd.DataFrame:
             rows.append({"task": task.name, "season": year, "feature": col, "unseen_rows": int(unseen.sum()),
                          "unseen_levels": ", ".join(sorted(valid.loc[unseen, col].unique()))})
     return pd.DataFrame(rows)
+
+
+def unseen_level_rows(task, data) -> Dict[str, int]:
+    """Distinct evaluation rows with at least one category level absent from that fold's training rows.
+
+    unseen_levels() counts row-by-column cases (a 2022 row can hold a new franchise as both the batting and the
+    bowling team); this counts each row once.
+    """
+    counts = {}
+    for year in EVAL_YEARS:
+        train, valid = split(data, year)
+        mask = np.zeros(len(valid), dtype=bool)
+        for col in task.categorical:
+            mask |= ~valid[col].isin(set(train[col])).to_numpy()
+        counts[str(year)] = int(mask.sum())
+    return counts
+
+
+def label_selection(data) -> Dict[str, Any]:
+    """Wicket labels: an over cut short is kept only when a wicket fell in it, which raises the event rate.
+
+    Compares all eligible rows with the complete six-ball next overs alone, overall and late in a chase.
+    """
+    complete = data[data.next_over_legal_balls == 6]
+
+    def late(frame):
+        return frame[(frame.innings == 2) & (frame.completed_overs >= LATE_CHASE_FROM_OVER)]
+
+    def rate(frame):
+        return {"rows": int(len(frame)), "event_rate": fmt(frame.wicket_next_over.mean(), 6)}
+
+    return {"short_overs_kept_with_wicket": int(len(data) - len(complete)),
+            "eligible": rate(data), "complete_overs_only": rate(complete),
+            "late_second_innings_from_completed_over": LATE_CHASE_FROM_OVER,
+            "late_second_innings_eligible": rate(late(data)),
+            "late_second_innings_complete_overs_only": rate(late(complete))}
+
+
+def grid_edges(task, chosen: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    """Position of each tuned setting in its three-setting grid, ordered by GRID_ORDER.
+
+    A choice at either end means the best value may lie outside the range searched.
+    """
+    grids, out = search_space(task), {}
+    for model, key in GRID_ORDER.items():
+        values = sorted(g[key] for g in grids[model])
+        position = values.index(chosen[model][key]) + 1
+        out[model] = {"ordered_by": key, "chosen": chosen[model][key], "position": position,
+                      "settings": len(values), "at_edge": position in (1, len(values))}
+    return out
 
 
 # ------------------------------------------------------------------ algorithm assumptions
@@ -576,6 +632,10 @@ def analyse(root: Path, out: Path) -> Dict[str, Any]:
         expected = audit[task.name]["rows_with_unseen_categories"]
         if {str(y): sum(v.values()) for y, v in ((int(k), v) for k, v in expected.items())} != t["unseen_levels"]:
             raise ValueError("Unseen-level counts differ from data_audit.json")
+        t["unseen_level_rows"] = unseen_level_rows(task, data)
+        if task.name == "wicket":
+            t["label_selection"] = label_selection(data)
+        t["tuning_grid_edges"] = grid_edges(task, chosen)
         tables["scales"].append(pd.DataFrame(
             [{"task": task.name, "column": c, "role": "target" if c == task.target else "feature",
               "scale": scale_of(c)[0], "meaning": scale_of(c)[1]} for c in [*task.features, task.target]]))
@@ -705,8 +765,9 @@ def analyse(root: Path, out: Path) -> Dict[str, Any]:
             logistic_verdict = "Partially holds"
         tree_sd = sd_brier("Decision tree")
         tree_settings = tuning_effect(task, tuning, "Decision tree")
-        # Tree: piecewise-constant axis-aligned splits are adequate if the tree is not beaten by the forest in
-        # every season; Partially holds when it is (the ensemble removes a consistent error)
+        # Tree: this rule measures variance, not the piecewise-constant form itself. Averaging many trees (the
+        # forest) reduces variance; if that wins in every season, the single tree's variance costs accuracy and
+        # the verdict is Partially holds; otherwise Holds
         tree_vs_forest = gaps["Decision tree"] - gaps["Random forest"]
         tree_verdict = "Partially holds" if (tree_vs_forest > 0).all() else "Holds"
         # Forest: averaging should cut the single tree's error: Holds if it beats the tree in every season
@@ -720,11 +781,17 @@ def analyse(root: Path, out: Path) -> Dict[str, Any]:
         # inputs correlates at |r| >= 0.5 (the one-hot columns are binary, so the Gaussian form fails for them in
         # any case); Partially holds if only the Gaussian shape fails; Holds otherwise
         nb_verdict = ("Violated" if len(strong) else "Partially holds" if len(nonnormal) or one_hot else "Holds")
-        # MLP: Partially holds if the epoch cap stopped fits or seeds move Brier by more than the gap to boosting
+        # MLP: the epoch cap is a deliberate design choice. n_iter_no_change exceeds every max_iter in the grid,
+        # so each fit trains for exactly max_iter epochs and ends with a convergence warning by construction;
+        # the warnings are therefore not used as evidence. The verdict rests on seed sensitivity only:
+        # Partially holds if five seeds move the 2025 Brier by more than the perceptron's gap to boosting
         seed_range = float(seeds.brier.max() - seeds.brier.min())
-        capped = sum(mlp_warn.values())
         mlp_gap = mean_brier("Multilayer perceptron") - mean_brier(SELECTED)
-        mlp_verdict = ("Holds" if capped == 0 and seed_range < abs(mlp_gap) else "Partially holds")
+        mlp_verdict = ("Holds" if seed_range < abs(mlp_gap) else "Partially holds")
+        mlp_estimator = estimator(task, "Multilayer perceptron", chosen["Multilayer perceptron"])[-1]
+        max_iters = sorted(g["max_iter"] for g in grids["Multilayer perceptron"])
+        epoch_design = {"n_iter_no_change": int(mlp_estimator.n_iter_no_change), "max_iter_grid": max_iters,
+                        "every_fit_runs_to_its_cap": bool(mlp_estimator.n_iter_no_change > max(max_iters))}
         t["algorithms"] = {
             "Class-prior baseline": {"verdict": prior_verdict, "evidence": {"homogeneity": hom}},
             "Logistic regression": {"verdict": logistic_verdict, "evidence": {
@@ -768,7 +835,7 @@ def analyse(root: Path, out: Path) -> Dict[str, Any]:
                 "calibration_2025": calib, "mean_validation_brier": fmt(mean_brier("Gaussian naive Bayes"), 6)}},
             "Multilayer perceptron": {"verdict": mlp_verdict, "evidence": {
                 "chosen_setting": chosen["Multilayer perceptron"], "inputs_standardised": True,
-                "fits_stopped_by_epoch_cap": mlp_warn, "mlp_fits": mlp_fits,
+                "fits_stopped_by_epoch_cap": mlp_warn, "mlp_fits": mlp_fits, "epoch_cap_design": epoch_design,
                 "other_models_fit_warnings": other_warn,
                 "seed_brier_range_2025": fmt(seed_range, 6), "seed_brier_sd_2025": fmt(seeds.brier.std(), 6),
                 "seeds": list(MLP_SEEDS), "gap_to_selected_mean_brier": fmt(mlp_gap, 6),
@@ -833,7 +900,10 @@ def verdict_tables(summary: Dict[str, Any]) -> Dict[str, List[Dict[str, str]]]:
     drift_v = [drift_verdict(w["drift"]), drift_verdict(b["drift"])]
     order = ["Holds", "Partially holds", "Violated"]
     worst_drift = max(drift_v, key=order.index)
-    unseen_rows = {k: w["unseen_levels"][k] + b["unseen_levels"][k] for k in w["unseen_levels"]}
+    unseen_cases = {k: w["unseen_levels"][k] + b["unseen_levels"][k] for k in w["unseen_levels"]}
+
+    def unseen_text(t):
+        return ", ".join(f"{k}: {v:,}" for k, v in t["unseen_level_rows"].items() if v)
     data = [
         {"assumption": "Chronological order, no leakage", "verdict": "Holds",
          "evidence": (f"{w['chronology']['folds_checked']} folds per task: every training date precedes every "
@@ -863,8 +933,9 @@ def verdict_tables(summary: Dict[str, Any]) -> Dict[str, List[Dict[str, str]]]:
                       f"{b['defaults']['cold_start_rows_prior_innings_0']:,} batter rows with no earlier innings use "
                       f"defaults ({b['defaults']['cold_start_rows_2026']} in 2026)"),
          "consequence": "A debutant's 0.0 history rates are a code for 'no history', not an observed zero; prior_innings = 0 lets trees separate the two."},
-        {"assumption": "Category levels seen in training", "verdict": "Partially holds" if any(unseen_rows.values()) else "Holds",
-         "evidence": "Rows with a level unseen in training: " + ", ".join(f"{k}: {v:,}" for k, v in unseen_rows.items() if v),
+        {"assumption": "Category levels seen in training", "verdict": "Partially holds" if any(unseen_cases.values()) else "Holds",
+         "evidence": (f"Rows with at least one category level unseen in training: wicket {unseen_text(w)}; "
+                      f"batter {unseen_text(b)}; none in 2025 or 2026"),
          "consequence": "Unseen levels (the two 2022 franchises, new venues) are encoded as all-zero, so those rows fall back on the other inputs."},
         {"assumption": "Measurement scales respected", "verdict": "Holds",
          "evidence": "Counts and rates are ratio-scale numbers; teams and venues are nominal (one-hot); phase is ordinal, one-hot encoded",
@@ -873,7 +944,9 @@ def verdict_tables(summary: Dict[str, Any]) -> Dict[str, List[Dict[str, str]]]:
          "evidence": (f"Wicket: {w_e(summary, 'eligible rows'):,} rows after removing D/L matches and censored overs; "
                       f"batter: {b_e(summary, 'eligible rows'):,} innings after removing D/L and no-result matches; "
                       f"super-over innings never enter"),
-         "consequence": "The forecasts describe ordinary, uninterrupted innings, not D/L-shortened ones."},
+         "consequence": (f"D/L-marked matches are excluded, but some rain-affected innings without a D/L mark remain "
+                         f"({w_e(summary, 'eligible rows from no-result matches (kept)'):,} wicket rows come from "
+                         f"no-result matches).")},
     ]
     algos = []
     for model in MODELS:

@@ -114,20 +114,35 @@ ALGORITHMS = {
                "with the Adam optimiser and an L2 penalty.",
         "formula": "h = max(0, W_1·x + b_1),  p = softmax(W_2·h + b_2)",
         "assumptions": ["Inputs are standardised.",
-                        "The optimiser reaches a good, seed-insensitive solution within the epoch budget.",
+                        "Different random seeds give similar solutions within the fixed epoch budget.",
                         "There is enough data for the number of weights."],
     },
 }
-LIMITATIONS = [
-    "Five validation seasons give a rough spread, not a confidence interval, and they share training history.",
-    "Scoring and batter milestone rates have risen; a future season may differ again.",
-    "The leading algorithms are statistically close; a different reasonable rule could pick the random forest.",
-    "D/L-shortened innings and censored overs are excluded, so the forecasts describe ordinary innings.",
-    "The batter forecast assumes the player bats; selection and batting position are not modelled.",
-    "Debutants, new franchises and new venues rely on default values and the other inputs.",
-    "2026 had been examined during development, so its score is a retrospective test; the models refitted "
-    "through 2026 have no independent test season yet.",
-]
+def limitations(summary: Dict[str, Any]) -> List[str]:
+    """The limitations, with every figure read from the assumption summary."""
+    no_result = next(r["count"] for r in summary["eligibility"]
+                     if r["scope"] == "wicket" and r["rule"] == "eligible rows from no-result matches (kept)")
+    labels = summary["tasks"]["wicket"]["label_selection"]
+    edges = [e["at_edge"] for t in TASKS for e in summary["tasks"][t]["tuning_grid_edges"].values()]
+    return [
+        "Five validation seasons give a rough spread, not a confidence interval, and they share training history.",
+        "Scoring and batter milestone rates have risen; a future season may differ again.",
+        "The leading algorithms are statistically close; a different reasonable rule could pick the random forest.",
+        "D/L-marked matches and censored overs are excluded, but some rain-affected innings without a D/L mark "
+        f"remain ({no_result:,} wicket rows come from no-result matches).",
+        f"A short next over is kept only when a wicket fell in it ({labels['short_overs_kept_with_wicket']} rows), "
+        f"which raises the wicket rate: {labels['eligible']['event_rate']:.2%} on all eligible rows against "
+        f"{labels['complete_overs_only']['event_rate']:.2%} on complete six-ball overs alone, and "
+        f"{labels['late_second_innings_eligible']['event_rate']:.2%} against "
+        f"{labels['late_second_innings_complete_overs_only']['event_rate']:.2%} for second-innings checkpoints "
+        f"after {labels['late_second_innings_from_completed_over']} or more completed overs.",
+        f"Each algorithm was tuned over only three settings, and {sum(edges)} of the {len(edges)} chosen settings lie "
+        "at an edge of their grid, so better settings may lie outside the range searched.",
+        "The batter forecast assumes the player bats; selection and batting position are not modelled.",
+        "Debutants, new franchises and new venues rely on default values and the other inputs.",
+        "2026 had been examined during development, so its score is a retrospective test; the models refitted "
+        "through 2026 have no independent test season yet.",
+    ]
 
 
 class MethodologyUnavailable(Exception):
@@ -202,7 +217,7 @@ class MethodologyService:
             "convergence": {t: self._convergence(summary["tasks"][t]["convergence"]) for t in TASKS},
             "holdout": {t: self._holdout(holdout[t], final["tasks"][t], calibration[t]) for t in TASKS},
             "final_models": {t: final["tasks"][t]["artifacts"] for t in TASKS},
-            "limitations": LIMITATIONS,
+            "limitations": limitations(summary),
             "sources": ["reports/model_benchmark/selection.json", "reports/model_benchmark/holdout_2026.json",
                         "reports/model_benchmark/final_models.json", "reports/model_benchmark/*_comparison.csv",
                         "reports/model_benchmark/*_learning.csv", "reports/model_benchmark/*_paired_brier_gaps.csv",
@@ -313,17 +328,20 @@ class MethodologyService:
         if name == "Logistic regression":
             return [f"Log-odds linearity rejected for {len(w['clearly_nonlinear_features'])} of {w['features_tested']} "
                     f"wicket and {len(b['clearly_nonlinear_features'])} of {b['features_tested']} batter numeric "
-                    f"inputs (nested likelihood-ratio test).",
+                    f"inputs. Each input is tested on its own against the first outcome (a wicket; 30+ runs for "
+                    f"batters) with a nested likelihood-ratio test.",
                     f"Largest variance inflation factor {w['max_vif']} ({w['max_vif_feature']}) and {b['max_vif']} "
                     f"({b['max_vif_feature']}); above 10 means serious collinearity.",
                     f"Events per weight {w['events_per_parameter']['events_per_parameter']} (wicket) and "
                     f"{b['events_per_parameter']['events_per_parameter']} (batter; below the usual 10).",
-                    f"Tuning chose the strongest penalty, C = {w['chosen_setting']['C']}, for both tasks."]
+                    f"Tuning chose the strongest of the three penalties tried, C = {w['chosen_setting']['C']}, for "
+                    f"both tasks; that is an edge of the grid."]
         if name == "Decision tree":
-            return [f"Tuning chose the shallowest tree (depth {w['chosen_setting']['max_depth']}, "
-                    f"{w['chosen_setting']['min_samples_leaf']} rows per leaf) for both tasks.",
-                    f"The random forest beat it in {w['seasons_forest_beats_tree']} of 5 wicket and "
-                    f"{b['seasons_forest_beats_tree']} of 5 batter seasons."]
+            return [f"Tuning chose the shallowest tree tried (depth {w['chosen_setting']['max_depth']}, "
+                    f"{w['chosen_setting']['min_samples_leaf']} rows per leaf) for both tasks, an edge of the grid.",
+                    f"The random forest, which averages many trees to reduce variance, beat it in "
+                    f"{w['seasons_forest_beats_tree']} of 5 wicket and {b['seasons_forest_beats_tree']} of 5 batter "
+                    f"seasons: the single tree's variance costs accuracy."]
         if name == "Random forest":
             return [f"Beat the single tree in {w['seasons_forest_beats_tree']} of 5 wicket and "
                     f"{b['seasons_forest_beats_tree']} of 5 batter seasons (mean Brier gain "
@@ -348,8 +366,11 @@ class MethodologyService:
                     f"{cw[SELECTED]['expected_calibration_error']} and {cb[SELECTED]['expected_calibration_error']} "
                     f"for boosting."]
         if name == "Multilayer perceptron":
-            capped = w["fits_stopped_by_epoch_cap"]["tuning"] + w["fits_stopped_by_epoch_cap"]["learning"]
-            return [f"All {capped} perceptron fits per task stopped at the epoch cap before converging.",
+            design = w["epoch_cap_design"]
+            return [f"By design each fit trains for a fixed number of epochs "
+                    f"({', '.join(map(str, design['max_iter_grid']))}): the no-improvement stop "
+                    f"({design['n_iter_no_change']} epochs) is longer than any cap, so every fit ends at its cap "
+                    f"with a convergence warning. The cap is a design choice and is not used as evidence.",
                     f"Five seeds on the 2025 fold moved Brier by {w['seed_brier_range_2025']:.6f} (wicket) and "
                     f"{b['seed_brier_range_2025']:.6f} (batter); the gap to boosting is "
                     f"{w['gap_to_selected_mean_brier']:.6f} and {b['gap_to_selected_mean_brier']:.6f}.",
@@ -362,9 +383,10 @@ class MethodologyService:
         w, b = results["wicket"], results["batter"]
         ranks = f"Ranked {w['rank']} (wicket) and {b['rank']} (batter) of 7 on mean validation Brier."
         if name == SELECTED:
-            return (f"Selected. {ranks} Lowest mean Brier for both tasks under the rule fixed in advance, with a flat "
-                    "learning curve and a small train–validation gap.")
-        gap = (f"Boosting was better in {w['seasons_selected_better']} of 5 wicket and {b['seasons_selected_better']} "
+            return (f"Selected. {ranks} Lowest mean Brier for both tasks under the rule fixed in advance, with a "
+                    "small train–validation gap. Its wicket learning curve is flat beyond half of the history; its "
+                    "batter curve was still improving slightly at full history.")
+        gap = (f"Boosting had the lower Brier in {w['seasons_selected_better']} of 5 wicket and {b['seasons_selected_better']} "
                f"of 5 batter seasons (mean paired gap {w['paired_gap_mean']:.6f} and {b['paired_gap_mean']:.6f}).")
         reason = {
             "Class-prior baseline": "Not selected: it is the reference, with no ability to rank situations.",
@@ -375,8 +397,9 @@ class MethodologyService:
                              "boosting, which the pre-specified rule ranks first.",
             "Gaussian naive Bayes": "Not selected: its independence and normality assumptions fail and its "
                                     "probabilities are badly calibrated, worse than the baseline.",
-            "Multilayer perceptron": "Not selected: slightly higher mean Brier, unconverged optimisation, and "
-                                     "seed sensitivity comparable to or larger than its gap to the leader.",
+            "Multilayer perceptron": "Not selected: slightly higher mean Brier, and changing the random seed "
+                                     "moves its score by about as much as (wicket) or more than (batter) its "
+                                     "gap to the leader.",
         }[name]
         return f"{reason} {ranks} {gap}"
 

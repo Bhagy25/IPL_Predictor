@@ -11,8 +11,8 @@ key numbers in this document against those files.
 **Final decision.** Both forecasts use **Histogram gradient boosting** with the frozen settings
 `max_leaf_nodes=7`, `max_iter=60`, `l2_regularization=2.0` (plus the benchmark's fixed `learning_rate=0.06`,
 `min_samples_leaf=50`, no early stopping, seed 42). It had the lowest mean validation Brier score of the
-seven algorithms over 2021–2025 for both tasks, which is the selection rule fixed before any 2026 score was
-computed. The leading three algorithms are close, and the evidence below says exactly how close.
+seven algorithms over 2021–2025 for both tasks, which is the selection rule fixed before the benchmark's 2026
+test was run (2026 had been examined in Stage 3). The leading three algorithms are close, and the evidence below says exactly how close.
 
 ---
 
@@ -54,6 +54,12 @@ Source: Cricsheet ball-by-ball JSON for men's IPL, 1,243 matches from 2008-04-18
 An over cut short with no wicket is censored: the wicket might have fallen had the over finished, so it is
 dropped rather than labelled 0. An over cut short *by* a wicket has an observed positive and is kept.
 
+**Label selection.** Keeping a short next over only when a wicket fell in it raises the event rate: 27.82% on
+all 44,161 eligible rows against 27.43% on the 43,924 complete six-ball overs alone, and 41.65% against 39.50%
+for second-innings checkpoints after 15 or more completed overs (4,468 and 4,309 rows), where chases end early
+(`assumptions/summary.json`, `label_selection`). The model therefore learns a slightly higher wicket rate than
+complete overs show, most of all late in a chase.
+
 ## 3. Features and leakage prevention
 
 **Wicket (11 inputs).** Known at the checkpoint: `innings`, `completed_overs`, `runs`, `wickets`,
@@ -87,9 +93,9 @@ Verdicts and evidence from `reports/model_benchmark/assumptions/summary.json` (t
 | Stationary seasons | Violated | Wicket `run_rate` shifts by SMD 0.842 in 2026 against all earlier seasons (PSI 0.791); in 3 (wicket) and 6 (batter) of the six 2021–2026 seasons some feature has PSI ≥ 0.25. The wicket rate is stable (26.0%–28.9%, χ² p = 0.47) but the batter 30+ rate is not (21.4%–31.2%, χ² p = 1.3e-07) | Expanding-window training and season-by-season evaluation measure the effect of drift instead of assuming it away |
 | Classes adequately represented | Partially holds | Wicket 72.18% / 27.82%; batter 74.48% / 14.24% / 11.29%. Always predicting the majority class gives 71.65% (wicket) and 72.87% (batter) accuracy over 2021–2025 | Accuracy hardly separates models; Brier score and log loss do |
 | Complete inputs; sensible defaults | Partially holds | 0 missing model inputs; 736 batter rows have no earlier innings (34 in 2026) and use default values (0.0 rates, 3,650 days) | A debutant's 0.0 rates code "no history"; `prior_innings = 0` lets trees separate the two |
-| Category levels seen in training | Partially holds | Rows with a level unseen in training: 2021: 253, 2022: 1,620 (the two new franchises), 2023: 455, 2024: 279; none in 2026 | Unseen levels are all-zero after one-hot encoding, so those rows rely on the other inputs |
+| Category levels seen in training | Partially holds | Distinct rows with at least one level unseen in training: wicket 2021: 179, 2022: 1,076 (the two new franchises), 2023: 318, 2024: 187; batter 2021: 74, 2022: 444, 2023: 137, 2024: 92; none in 2025 or 2026 | Unseen levels are all-zero after one-hot encoding, so those rows rely on the other inputs |
 | Measurement scales respected | Holds | Counts, runs, rates and days are ratio scale; teams and venues nominal (one-hot); `phase` ordinal, one-hot encoded; `milestone_class` ordinal target | No arithmetic on nominal codes |
-| Eligibility rules applied | Holds | Counts in Section 2 add up exactly | Forecasts describe ordinary, uninterrupted innings |
+| Eligibility rules applied | Holds | Counts in Section 2 add up exactly | D/L-marked matches are excluded, but some rain-reduced innings without a D/L mark remain (123 wicket rows from no-result matches) |
 
 Figures: `reports/model_benchmark/assumptions/drift_wicket.png`, `drift_batter.png`.
 
@@ -175,19 +181,23 @@ Accuracy SDs are percentage points. Tuning trials: `reports/model_benchmark/{wic
 - **Assumptions.** Log-odds linear in each numeric input; little multicollinearity; independent observations;
   enough events per parameter; a suitable penalty.
 - **Evidence.**
-  - Linearity (nested likelihood-ratio test of a straight line against line + bin indicators, Bonferroni
-    α): 4 of 6 testable wicket features (`completed_overs`, `runs`, `wickets`, `run_rate`) and all 17 batter
-    form features depart significantly (`assumptions/linearity.csv`, `logit_linearity_*.png`).
+  - Linearity: each numeric feature is tested on its own, in a one-feature logistic regression of the first
+    outcome (a wicket; 30+ runs for batters). A likelihood-ratio test compares a straight line in the feature
+    with the same line plus bin indicators (Bonferroni α). 4 of 6 testable wicket features (`completed_overs`,
+    `runs`, `wickets`, `run_rate`) and all 17 batter form features depart significantly
+    (`assumptions/linearity.csv`, `logit_linearity_*.png`). The test does not check linearity given the other
+    inputs, or for the 50+ outcome.
   - Multicollinearity: largest VIF 19.61 (`completed_overs`, wicket) and 50.46 (`recent10_avg_runs`, batter);
     2 wicket and 7 batter features exceed 10 (`assumptions/vif.csv`).
   - Independence: see Section 4 (slight batter clustering).
   - Events per parameter: 146.1 (wicket: 11,542 events, 79 parameters) but 7.41 (batter: 1,913 50+ events,
     258 multinomial parameters), below the usual 10.
-  - Penalty: tuning chose C = 0.05 for both tasks, the strongest of the three values, consistent with the
-    collinearity.
+  - Penalty: tuning chose C = 0.05 for both tasks, the strongest of the three values tried. That is an edge of
+    the grid, so a stronger penalty was not tested (Section 10).
 - **Verdict.** **Violated** (both tasks).
-- **Results.** Rank 4 (wicket, Brier 0.19655) and 5 (batter, 0.14092). Boosting is better in all 5 seasons for
-  both tasks (mean paired gap 0.000754 and 0.001551).
+- **Results.** Rank 4 (wicket, Brier 0.19655) and 5 (batter, 0.14092). Boosting has the lower Brier in all 5
+  seasons for both tasks (mean paired gap 0.000754 and 0.001551); on log loss, logistic regression is better in
+  1 of the 5 wicket seasons.
 - **Why not selected.** The non-linear, interacting effects (a wicket late in an innings, form saturating) are
   what a linear log-odds model cannot represent; it ranks well on ROC-AUC but not on probability accuracy.
 
@@ -196,8 +206,10 @@ Accuracy SDs are percentage points. Tuning trials: `reports/model_benchmark/{wic
   predicts its class shares.
 - **Assumptions.** None about distributions. It assumes the signal is well approximated by a few axis-aligned
   thresholds (a piecewise-constant surface), and a single tree has high variance.
-- **Evidence.** Tuning chose the shallowest setting (depth 3, 100 rows per leaf) for both tasks; deeper trees
-  scored worse in tuning. The forest beats the tree in all 5 seasons for both tasks.
+- **Evidence.** Tuning chose the shallowest setting (depth 3, 100 rows per leaf) for both tasks, an edge of
+  the grid; deeper trees scored worse in tuning. The verdict measures variance: averaging many trees (the
+  forest) reduces variance and beats the single tree in all 5 seasons for both tasks, so the single tree's
+  variance costs accuracy. It does not test the piecewise-constant form directly.
 - **Verdict.** **Partially holds.**
 - **Results.** Rank 5 (wicket, 0.19677) and 4 (batter, 0.14053); best wicket accuracy (72.25%) but weak ranking
   (ROC-AUC 0.5931).
@@ -227,12 +239,15 @@ Accuracy SDs are percentage points. Tuning trials: `reports/model_benchmark/{wic
     are binned losslessly; the rest (e.g. `run_rate`, career averages) are binned at quantiles.
   - Overfitting: train–validation Brier gap 0.006335 (wicket) and 0.013725 (batter); the class-prior baseline
     has gaps of 0.003413 and 0.011795 from season drift alone, so the excess is 0.002922 and 0.001931.
-  - Plateau: validation Brier changes by −0.000021 (wicket) and −0.000315 (batter) from 75% to 100% of history.
-  - Tuning chose the smallest of three settings (7 leaves, 60 iterations, L2 2.0) for both tasks.
+  - Learning curve: validation Brier changes by −0.000021 (wicket) and −0.000315 (batter) from 75% to 100% of
+    history. The wicket curve is flat beyond 50%; the batter curve is still improving (lower in all 5 seasons,
+    by more than boosting's mean lead over the forest), so more batter history still helps slightly.
+  - The chosen setting (7 leaves, 60 iterations, L2 2.0) is the smallest of the three tried for both tasks,
+    an edge of the grid. It is not counted as evidence against overfitting (Section 10).
 - **Verdict.** **Holds** (both tasks).
 - **Results.** Rank 1 for both tasks: Brier 0.19579 ± 0.00280 (wicket) and 0.13937 ± 0.01157 (batter).
-- **Why selected.** Lowest mean validation Brier for both tasks, with a small excess train–validation gap and a
-  flat learning curve. Its lead over the runner-up is small (0.000161 and 0.00004); see Section 7.
+- **Why selected.** Lowest mean validation Brier for both tasks, with a small excess train–validation gap; its
+  wicket learning curve is flat beyond half of the history and its batter curve still improves slightly. Its lead over the runner-up is small (0.000161 and 0.00004); see Section 7.
 
 ### 6.6 Gaussian naive Bayes
 - **How it works.** P(y=k|x) ∝ πₖ Πⱼ N(xⱼ; μⱼₖ, σ²ⱼₖ + ε): class prior times independent normal densities per
@@ -257,16 +272,18 @@ Accuracy SDs are percentage points. Tuning trials: `reports/model_benchmark/{wic
   fitted with Adam on log loss + α‖W‖².
 - **Assumptions.** Standardised inputs; the non-convex optimisation reaches a good, seed-insensitive solution
   within the epoch budget; enough data for the parameters.
-- **Evidence.** Inputs are standardised. Every one of the 34 distinct perceptron fits per task (9 tuning + 25
-  learning-curve, which include the 5 validation fits) stopped at its epoch cap (25, 35 or 45 epochs) with a
-  convergence warning; no other algorithm raised one. The 5 seed refits below also reached the cap. Refitting the selected setting on the 2025 fold with
-  5 seeds moved Brier by 0.000408 (wicket) and 0.001251 (batter); the batter spread exceeds the perceptron's
-  gap to boosting (0.000162). Parameters: 1,921 (wicket) and 3,187 (batter) for 39,019 and 16,231 training
-  rows.
-- **Verdict.** **Partially holds.**
+- **Evidence.** Inputs are standardised. The epoch cap is a deliberate design choice: the benchmark sets
+  `n_iter_no_change=46`, longer than every `max_iter` in the grid (25, 35, 45), so each of the 34 distinct
+  perceptron fits per task (9 tuning + 25 learning-curve, which include the 5 validation fits) trains for
+  exactly its cap and ends with a convergence warning by construction; no other algorithm raised one. The
+  warnings are therefore not used as evidence. The verdict rests on seed sensitivity: refitting the selected
+  setting on the 2025 fold with 5 seeds moved Brier by 0.000408 (wicket) and 0.001251 (batter). The batter
+  spread exceeds the perceptron's gap to boosting (0.000162); the wicket spread is just below its gap
+  (0.000471). Parameters: 1,921 (wicket) and 3,187 (batter) for 39,019 and 16,231 training rows.
+- **Verdict.** **Partially holds** (holds for wickets; partially holds for batters).
 - **Results.** Rank 3 for both tasks (0.19626 and 0.13953); highest ROC-AUC on both.
-- **Why not selected.** Slightly worse mean Brier, unconverged optimisation and seed sensitivity of the same
-  size as the gap to the leader.
+- **Why not selected.** Slightly worse mean Brier, and seed sensitivity about as large as (wicket) or larger
+  than (batter) its gap to the leader.
 
 **Table 6.3. Algorithm assumption verdicts** (`assumptions/summary.json`)
 
@@ -278,7 +295,7 @@ Accuracy SDs are percentage points. Tuning trials: `reports/model_benchmark/{wic
 | Random forest | Holds | Holds |
 | Histogram gradient boosting | Holds | Holds |
 | Gaussian naive Bayes | Violated | Violated |
-| Multilayer perceptron | Partially holds | Partially holds |
+| Multilayer perceptron | Holds | Partially holds |
 
 ## 7. Convergence and learning curves
 
@@ -294,9 +311,11 @@ matches 94 → 932 for wickets, 94 → 928 for batters):
 | Wicket | 0.197114 | 0.196439 | 0.195617 | 0.195813 | 0.195792 |
 | Batter | 0.144347 | 0.140821 | 0.139552 | 0.139682 | 0.139367 |
 
-- **Plateau.** From 10% to 50% the Brier improves by 0.001498 (wicket) and 0.004795 (batter). After that it
-  is flat: +0.000196 then −0.000021 (wicket) and +0.000130 then −0.000315 (batter) for 50→75% and 75→100%.
-  Gains from more history have levelled off over the sizes measured.
+- **Plateau.** From 10% to 50% the Brier improves by 0.001498 (wicket) and 0.004795 (batter). For wickets it
+  is flat after that: +0.000196 then −0.000021 for 50→75% and 75→100% (lower in 4 of 5 seasons from 75% to
+  100%). For batters it is still improving: +0.000130 then −0.000315, and the 75→100% change is negative in
+  all 5 seasons and larger than boosting's mean lead over the random forest (0.000040). Wicket gains have
+  levelled off over the sizes measured; more batter history still helps slightly.
 - **Leaders.** The spread of mean Brier among the top three (boosting, forest, perceptron) is 0.000657 at 10%
   and 0.000471 at 100% for wickets, and narrows from 0.004805 to 0.000162 for batters. Their order does not
   settle: for batters the forest has the lowest mean Brier at 10% and 25% and the perceptron at 50% and 75%;
@@ -317,13 +336,14 @@ matches 94 → 932 for wickets, 94 → 928 for batters):
 **What this shows.**
 - Accuracy alone cannot pick a model: predicting the majority class already scores 71.65% (wicket) and 72.87%
   (batter), and six of seven algorithms are within one percentage point of that.
-- Brier and log loss separate the models: boosting beats the baseline, logistic regression and the tree in
-  every season for both tasks.
+- Brier and log loss separate the models: boosting has a lower Brier than the baseline, logistic regression
+  and the tree in every season for both tasks (on log loss, logistic regression is better in 1 of the 5 wicket
+  seasons).
 - The top three are close. Against the random forest the mean gap is smaller than its season-to-season SD,
   and the forest wins 2 of 5 batter seasons: the data do not show boosting is better than the forest, only that
   it is no worse and ranks first under the rule fixed in advance.
 - Boosting is still the justified choice because the rule (lowest mean validation Brier, tie-break log loss)
-  was set before the comparison, it ranks first for both tasks at full history, its learning curve is flat, its excess
+  was set before the comparison, it ranks first for both tasks at full history, its wicket learning curve is flat, its excess
   train–validation gap is small, and its 2026 test (Section 8) beats the class-prior baseline and the archived
   Stage 3 models on Brier.
 
@@ -376,11 +396,19 @@ this evidence interactively.
   again. The class-prior baseline's own train–validation gap measures part of this.
 - The leading algorithms are statistically close; another reasonable rule (for example log loss for batters)
   would have chosen the random forest.
-- Eligibility excludes D/L matches and censored overs; forecasts do not cover rain-shortened innings. The
-  batter forecast assumes the player bats; selection and batting position are not modelled.
+- Eligibility excludes D/L-marked matches and censored overs, but some rain-reduced innings without a D/L
+  mark remain (123 wicket rows from no-result matches). The batter forecast assumes the player bats; selection
+  and batting position are not modelled.
+- Wicket label selection: keeping a short over only when a wicket fell in it raises the event rate (27.82%
+  against 27.43% on complete overs; 41.65% against 39.50% late in a chase), so wicket probabilities lean
+  slightly high (Section 2).
+- Tuning grids: each algorithm was tuned over three settings, and 10 of the 12 chosen settings (6 tuned
+  algorithms × 2 tasks) lie at an edge of their grid (only the wicket perceptron and the batter forest chose
+  the middle setting). Better settings may lie outside the ranges searched, and an edge choice is not evidence
+  about the assumptions (`assumptions/summary.json`, `tuning_grid_edges`).
 - Cold starts and new franchises or venues fall back on defaults and the other inputs.
 - The 2026 test is retrospective; the final models have no independent test yet.
-- The perceptron results describe finite-budget fits that did not converge.
+- The perceptron results describe fixed-budget fits (25–45 epochs by design), not fully optimised networks.
 
 ## 11. Reproduction
 

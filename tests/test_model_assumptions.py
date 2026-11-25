@@ -114,3 +114,53 @@ def test_eligibility_counts_add_up():
     assert rows[("archive", "D/L-marked matches")] == (matches.outcome_method == "D/L").sum()
     assert rows[("wicket", "eligible rows")] == len(pd.read_csv(DATA / TABLES["wicket"][0], usecols=["match_id"]))
     assert rows[("batter", "eligible rows")] == len(pd.read_csv(DATA / TABLES["batter"][0], usecols=["match_id"]))
+
+
+def test_label_selection_rates_recomputed_from_the_table():
+    w = pd.read_csv(DATA / TABLES["wicket"][0])
+    complete = w[w.next_over_legal_balls == 6]
+    late = (w.innings == 2) & (w.completed_overs >= 15)
+    late_complete = (complete.innings == 2) & (complete.completed_overs >= 15)
+    got = SUMMARY["tasks"]["wicket"]["label_selection"]
+    assert got["short_overs_kept_with_wicket"] == len(w) - len(complete) == int((w.label_evidence != "complete_six_legal_deliveries").sum())
+    # Every short over that was kept has a wicket: that is the selection being disclosed
+    assert w.loc[w.next_over_legal_balls < 6, "wicket_next_over"].eq(1).all()
+    assert got["eligible"] == {"rows": len(w), "event_rate": round(w.wicket_next_over.mean(), 6)}
+    assert got["complete_overs_only"] == {"rows": len(complete), "event_rate": round(complete.wicket_next_over.mean(), 6)}
+    assert got["late_second_innings_eligible"]["event_rate"] == round(w[late].wicket_next_over.mean(), 6)
+    assert got["late_second_innings_complete_overs_only"]["event_rate"] == round(complete[late_complete].wicket_next_over.mean(), 6)
+    assert got["eligible"]["event_rate"] > got["complete_overs_only"]["event_rate"]
+
+
+@pytest.mark.parametrize("kind", ["wicket", "batter"])
+def test_unseen_level_rows_count_each_row_once(kind):
+    name, _ = TABLES[kind]
+    data = pd.read_csv(DATA / name, parse_dates=["date"])
+    categorical = (["batting_team", "bowling_team", "phase", "venue_canonical"] if kind == "wicket"
+                   else ["batting_team", "bowling_team", "venue_canonical"])
+    got = SUMMARY["tasks"][kind]["unseen_level_rows"]
+    for year, count in got.items():
+        train, valid = data[data.season < int(year)], data[data.season == int(year)]
+        unseen = np.zeros(len(valid), dtype=bool)
+        for col in categorical:
+            unseen |= ~valid[col].isin(set(train[col])).to_numpy()
+        assert count == int(unseen.sum()) <= SUMMARY["tasks"][kind]["unseen_levels"][year]
+
+
+def test_tuning_grid_edges_and_the_perceptron_epoch_design():
+    selection = json.loads((BENCH / "selection.json").read_text(encoding="utf-8"))
+    from cricketlens.model_benchmark import TASKS, search_space
+    order = {"Logistic regression": "C", "Decision tree": "max_depth", "Random forest": "max_depth",
+             "Histogram gradient boosting": "max_leaf_nodes", "Gaussian naive Bayes": "var_smoothing",
+             "Multilayer perceptron": "max_iter"}
+    at_edge = 0
+    for task in TASKS:
+        grid, chosen = search_space(task), selection["tasks"][task.name]["chosen_settings"]
+        for model, key in order.items():
+            values = sorted(g[key] for g in grid[model])
+            edge = grid[model][chosen[model]][key] in (values[0], values[-1])
+            assert SUMMARY["tasks"][task.name]["tuning_grid_edges"][model]["at_edge"] == edge
+            at_edge += edge
+        design = SUMMARY["tasks"][task.name]["algorithms"]["Multilayer perceptron"]["evidence"]["epoch_cap_design"]
+        assert design["n_iter_no_change"] > max(design["max_iter_grid"]) and design["every_fit_runs_to_its_cap"]
+    assert at_edge == 10

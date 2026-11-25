@@ -169,3 +169,40 @@ def test_readme_model_tables():
     assert f"| Brier 50+ | {hb['brier_50']:.4f} | {bb['brier_50']:.4f} |" in readme
     assert f"| Log loss (3 classes) | {hb['log_loss']:.4f} | {bb['log_loss']:.4f} |" in readme
     assert f"| ROC AUC 30+ / 50+ | {hb['roc_auc_30']:.4f} / {hb['roc_auc_50']:.4f} |" in readme
+
+
+def test_label_selection_unseen_rows_and_grid_edges_are_quoted():
+    labels = SUMMARY["tasks"]["wicket"]["label_selection"]
+    flat = " ".join(DOC.split())
+    for doc in (DOC, (ROOT / "README.md").read_text(encoding="utf-8"),
+                (ROOT / "reports" / "REPORT_DRAFT.md").read_text(encoding="utf-8")):
+        doc = " ".join(doc.split())
+        assert f"{pct(labels['eligible']['event_rate'])} on all" in doc or f"{pct(labels['eligible']['event_rate'])} against" in doc
+        assert pct(labels["complete_overs_only"]["event_rate"]) in doc
+        assert f"{pct(labels['late_second_innings_eligible']['event_rate'])} against {pct(labels['late_second_innings_complete_overs_only']['event_rate'])}" in doc
+    edges = [e["at_edge"] for t in ("wicket", "batter") for e in SUMMARY["tasks"][t]["tuning_grid_edges"].values()]
+    assert f"{sum(edges)} of the {len(edges)} chosen settings" in flat
+    for task in ("wicket", "batter"):
+        rows = SUMMARY["tasks"][task]["unseen_level_rows"]
+        assert f"{task} 2021: {rows['2021']:,}, 2022: {rows['2022']:,}" in flat
+    no_result = next(r["count"] for r in SUMMARY["eligibility"] if r["rule"] == "eligible rows from no-result matches (kept)")
+    assert f"({no_result} wicket rows from no-result matches)" in flat
+    assert "uninterrupted" not in DOC and "fixed before any 2026 score" not in DOC
+
+
+def test_learning_curve_wording_matches_the_per_season_changes():
+    w, b = (SUMMARY["tasks"][t]["convergence"]["selected_plateau"] for t in ("wicket", "batter"))
+    batter_lower = sum(v < 0 for v in b["per_season_change_75_to_100"].values())
+    wicket_lower = sum(v < 0 for v in w["per_season_change_75_to_100"].values())
+    forest = SUMMARY["tasks"]["batter"]["convergence"]["paired_gaps_vs_selected"]["Random forest"]["mean"]
+    assert batter_lower == 5 and abs(b["change_75_to_100"]) > forest
+    assert f"lower in {wicket_lower} of 5 seasons from 75% to\n  100%" in DOC
+    assert "negative in\n  all 5 seasons" in DOC
+
+
+def test_readme_limitation_quotes_the_final_model():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    m = HOLDOUT["wicket"]["metrics"]
+    base = FINAL["tasks"]["wicket"]["baseline_2026"]["metrics"]["brier"]
+    assert f"(2026 Brier {m['brier']:.4f} vs {base:.4f}, ROC-AUC\n  {m['roc_auc']:.2f})" in readme
+    assert "0.2005" not in readme
