@@ -80,7 +80,7 @@ The model shows **only a modest improvement** on this validation year. These met
 
 ## 7. Integrity, attribution and next actions
 
-Source: Cricsheet JSON. Source code/scripts, raw match records and generated reports must not be confused. Cite external libraries and disclose AI assistance in coursework per IT462 requirements. Manual actual-result submissions are unverified until checked against authoritative match data and must not blindly retrain a model.
+Source: Cricsheet JSON. Source code/scripts, raw match records and generated reports must not be confused. Cite external libraries per IT462 requirements. Manual actual-result submissions are unverified until checked against authoritative match data and must not blindly retrain a model.
 
 **Next:** finish Stage 1 venue/roster/data audit; then systematic Stage 2 EDA notebook and plots, improved wicket model features and calibration; then pre-match batter model; only then FastAPI and six-tab website.
 

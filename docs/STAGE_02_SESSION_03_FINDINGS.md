@@ -63,7 +63,7 @@ Eight matches before 2026 are `no result` and have no invented winner. Retain re
 
 ## Academic integrity and limitations
 
-This is observational analysis, not a controlled experiment. Selection into full-length or death-phase samples can bias group comparisons. Cricsheet coverage and team-era changes limit generalization. The 2026 holdout was **not examined for exploratory outcome comparisons** here; all 2026-level counts above are mechanical archive completeness checks. Instructor approval of the data source and acknowledgment of AI assistance remain important.
+This is observational analysis, not a controlled experiment. Selection into full-length or death-phase samples can bias group comparisons. Cricsheet coverage and team-era changes limit generalization. The 2026 holdout was **not examined for exploratory outcome comparisons** here; all 2026-level counts above are mechanical archive completeness checks. Instructor approval of the data source remains important.
 
 ## Reproduce
 

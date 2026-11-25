@@ -46,4 +46,4 @@ The last command validates on 2025. **Do not add `--evaluate-test-2026` now.** W
 - Recorded IPL archives can contain discontinued teams; current-team dropdowns will be built later and must not rewrite historical identity.
 - The 2025 wicket-model validation demonstrates a small improvement over a constant-frequency baseline, not a robust production predictor.
 - Browser tracker, feedback verification and optional manual retraining are future features, not built yet.
-- Maintain citations to Cricsheet and disclosure of AI support according to your course rules.
+- Maintain citations to Cricsheet according to your course rules.
