@@ -317,19 +317,19 @@ export const BatterTool: React.FC<{
             {holdout && constant ? (
               <div className="bg-[#101114] border border-white/5 rounded-xl p-3 text-xs text-[#B9B9B3] space-y-1">
                 <p>
-                  <span className="text-[#F6F6F3] font-semibold">For context:</span> of the {fmtCount(Number(holdout.rows))} eligible innings in the 2026 holdout season,{' '}
+                  <span className="text-[#F6F6F3] font-semibold">For context:</span> of the {fmtCount(Number(holdout.rows))} eligible innings in the 2026 test season,{' '}
                   {pct1(Number(holdout.observed_30_rate))} reached 30+ and {pct1(Number(holdout.observed_50_rate))} reached 50+.
                 </p>
                 <p>
-                  The holdout version of this model (trained through 2025) scored Brier {dec4(Number(holdout.brier_30))} (30+) and {dec4(Number(holdout.brier_50))} (50+),
-                  against {dec4(Number(constant.brier_30))} and {dec4(Number(constant.brier_50))} for constant-rate forecasts (lower is better).
+                  The same algorithm trained through 2025 scored Brier {dec4(Number(holdout.brier_30))} (30+) and {dec4(Number(holdout.brier_50))} (50+),
+                  against {dec4(Number(constant.brier_30))} and {dec4(Number(constant.brier_50))} for constant-rate (class-prior) forecasts (lower is better).
                 </p>
               </div>
             ) : (
               <Note>The 2026 comparison is currently unavailable.</Note>
             )}
             <p className="text-[11px] text-[#8E8E88]">
-              Batter milestone model trained on {result.training_span} data. {result.notice}
+              {result.model} batter milestone model trained on {result.training_span} data. {result.notice}
             </p>
             <div className="flex flex-wrap items-center gap-3">
               {savedId ? (

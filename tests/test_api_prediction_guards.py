@@ -1,6 +1,6 @@
 """Prediction guards: extrapolation warnings, impossible inputs, future batter dates and the active-player list.
 
-Observed ranges are computed here from the deployment model's training rows, the archive end from
+Observed ranges are computed here from the final model's training rows, the archive end from
 matches.csv and latest-season appearances from the match squads; none of it reuses the service.
 """
 from datetime import date, timedelta
@@ -16,11 +16,11 @@ from cricketlens.api.app import app
 client = TestClient(app)
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed"
-WICKET_MODEL = ROOT / "models" / "wicket_deployment_through_2026.joblib"
+WICKET_MODEL = ROOT / "models" / "final" / "wicket_hgb_through_2026.joblib"
 TRAINING_ROWS = DATA / "stage03_wicket_full_history_2008_2026.csv"
 
 pytestmark = pytest.mark.skipif(not (WICKET_MODEL.is_file() and TRAINING_ROWS.is_file()),
-                                reason="deployment model or its training rows not available")
+                                reason="final model or its training rows not available")
 
 BASE = dict(batting_team="Mumbai Indians", bowling_team="Chennai Super Kings", venue="Wankhede Stadium", innings=1)
 
@@ -44,10 +44,12 @@ def _assert_probability_unchanged(body, response):
     assert response.json()["probability"] == predict_wicket.forecast(WICKET_MODEL, **body)["probability"]
 
 
-def test_training_rows_are_the_deployment_training_set():
-    import json
-    report = json.loads((ROOT / "reports" / "stage_03" / "session_03" / "stage03_session03_final_results.json").read_text())
-    assert len(pd.read_csv(TRAINING_ROWS, usecols=["season"])) == report["wicket"]["final_refit_2008_2026"]
+def test_training_rows_are_the_final_model_training_set():
+    import joblib
+    rows = pd.read_csv(TRAINING_ROWS, usecols=["match_id", "date"])
+    saved = joblib.load(WICKET_MODEL)
+    assert len(rows) == saved["train_rows"] and rows.match_id.nunique() == saved["train_matches"]
+    assert (rows.date.min(), rows.date.max()) == (saved["train_start"], saved["train_end_date"])
 
 
 def test_in_range_inputs_have_no_warning(ranges):

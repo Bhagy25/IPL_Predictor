@@ -244,19 +244,19 @@ export const WicketTool: React.FC<{
             {holdout && constant ? (
               <div className="bg-[#101114] border border-white/5 rounded-xl p-3 text-xs text-[#B9B9B3] space-y-1">
                 <p>
-                  <span className="text-[#F6F6F3] font-semibold">For context:</span> in the {fmtCount(Number(holdout.rows))} eligible next overs of the 2026 holdout season,{' '}
+                  <span className="text-[#F6F6F3] font-semibold">For context:</span> in the {fmtCount(Number(holdout.rows))} eligible next overs of the 2026 test season,{' '}
                   {pct1(Number(holdout.event_rate))} had at least one wicket.
                 </p>
                 <p>
-                  On that season the holdout version of this model (trained through 2025) scored Brier {dec4(Number(holdout.brier_score))} against{' '}
-                  {dec4(Number(constant.brier_score))} for a constant-rate forecast (lower is better).
+                  On that season the same algorithm trained through 2025 scored Brier {dec4(Number(holdout.brier_score))} against{' '}
+                  {dec4(Number(constant.brier_score))} for a constant-rate (class-prior) forecast (lower is better).
                 </p>
               </div>
             ) : (
               <Note>The 2026 comparison is currently unavailable.</Note>
             )}
             <p className="text-[11px] text-[#8E8E88]">
-              Wicket risk model trained on {result.training_span} data. {result.notice}
+              {result.model} wicket model trained on {result.training_span} data. {result.notice}
             </p>
             <div className="flex flex-wrap items-center gap-3">
               {savedId ? (

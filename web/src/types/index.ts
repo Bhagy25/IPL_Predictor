@@ -991,6 +991,28 @@ export interface BatterEvaluationMetrics {
   roc_auc_50?: number | null;
 }
 
+/** One algorithm's mean and SD over the 2021–2025 validation seasons (reports/model_benchmark). */
+export interface BenchmarkComparisonRow {
+  rank: number;
+  model: string;
+  setting: number;
+  selected: boolean;
+  brier_mean: number;
+  brier_std: number;
+  log_loss_mean: number;
+  log_loss_std: number;
+  accuracy_mean: number;
+  accuracy_std: number;
+  balanced_accuracy_mean: number;
+  balanced_accuracy_std: number;
+  macro_f1_mean: number;
+  macro_f1_std: number;
+  roc_auc_mean: number;
+  roc_auc_std: number;
+  average_precision_mean: number;
+  average_precision_std: number;
+}
+
 export interface PredictionModelInfo {
   kind: 'wicket' | 'batter';
   title: string;
@@ -999,6 +1021,8 @@ export interface PredictionModelInfo {
   deployment_file: string;
   holdout_file: string;
   name: string | null;
+  algorithm: string;
+  params: Record<string, number | string | boolean>;
   version: string | null;
   training_end: number | null;
   training_span: string | null;
@@ -1007,10 +1031,11 @@ export interface PredictionModelInfo {
   condition: string | null;
   selected_name: string;
   selection_metric: string;
-  validation_2025: Record<string, number | string>[];
-  validation_2025_constant: Record<string, number | string>;
+  benchmark: BenchmarkComparisonRow[];
   holdout_2026: Record<string, number | string>;
   holdout_2026_constant: Record<string, number | string>;
+  confusion_matrix_2026: number[][];
+  class_counts_2026: Record<string, number>;
   rows: Record<string, number>;
   exclusions: string | null;
   notes: string[];

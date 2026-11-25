@@ -1,8 +1,9 @@
-"""Prediction endpoints checked against the Stage 3 inference functions and the Stage 3 reports.
+"""Prediction endpoints checked against the Stage 3 inference functions and the benchmark reports.
 
 Expected probabilities come from calling predict_wicket.forecast() and forecast_future_batter.forecast()
-directly with the deployment artifacts; expected evaluation numbers come from the official report JSON
-and are recomputed here from the per-example holdout CSVs with sklearn and numpy, not the service.
+directly with the final artifacts (models/final); expected evaluation numbers come from
+reports/model_benchmark (holdout_2026.json, selection.json, the comparison tables) and are recomputed
+here from the per-example 2026 forecasts and the modelling tables with sklearn and numpy, not the service.
 """
 import hashlib
 import json
@@ -26,15 +27,16 @@ from cricketlens.api.services.prediction_service import PredictionService
 
 client = TestClient(app)
 ROOT = Path(__file__).resolve().parents[1]
-MODELS = ROOT / "models"
+MODELS = ROOT / "models" / "final"
 DATA = ROOT / "data" / "processed"
-REPORT = ROOT / "reports" / "stage_03" / "session_03"
-WICKET_MODEL = MODELS / "wicket_deployment_through_2026.joblib"
-BATTER_MODEL = MODELS / "batter_deployment_through_2026.joblib"
-ARTIFACTS = sorted(MODELS.glob("*.joblib"))
+REPORT = ROOT / "reports" / "model_benchmark"
+WICKET_MODEL = MODELS / "wicket_hgb_through_2026.joblib"
+BATTER_MODEL = MODELS / "batter_hgb_through_2026.joblib"
+# The final artifacts and the archived Stage 3 artifacts
+ARTIFACTS = sorted(MODELS.glob("*.joblib")) + sorted(MODELS.parent.glob("*.joblib"))
 
 pytestmark = pytest.mark.skipif(not (WICKET_MODEL.is_file() and BATTER_MODEL.is_file()),
-                                reason="deployment model artifacts not available")
+                                reason="final model artifacts not available")
 
 
 def _sha(paths):
@@ -43,7 +45,10 @@ def _sha(paths):
 
 # Taken when this module is imported, before any test in the session runs
 HASHES_BEFORE = _sha(ARTIFACTS)
-OFFICIAL = json.loads((REPORT / "stage03_session03_final_results.json").read_text(encoding="utf-8"))
+HOLDOUT = json.loads((REPORT / "holdout_2026.json").read_text(encoding="utf-8"))
+SELECTION = json.loads((REPORT / "selection.json").read_text(encoding="utf-8"))
+TABLES = {"wicket": DATA / "stage03_wicket_full_history_2008_2026.csv",
+          "batter": DATA / "stage03_batter_full_history_2008_2026.csv"}
 
 WICKET_CASES = [
     dict(batting_team="Mumbai Indians", bowling_team="Chennai Super Kings", venue="Wankhede Stadium", innings=1,
@@ -121,9 +126,16 @@ def test_wicket_endpoint_equals_stage3_forecast(case):
 
 
 def test_wicket_teams_are_not_swapped():
-    """Swapping the two teams changes the inputs the function sees, so the service must pass them through as named."""
-    case = WICKET_CASES[1]
-    swapped = dict(case, batting_team=case["bowling_team"], bowling_team=case["batting_team"])
+    """Swapping the two teams changes the inputs the function sees, so the service must pass them through as named.
+
+    The final model can give a pair of teams the same rounded probability either way round, so the check uses
+    the first case and team pair (in a fixed order) whose two directions differ in the Stage 3 function itself.
+    """
+    teams = [t["name"] for t in client.get("/api/predict/options").json()["teams"]]
+    pairs = ((dict(base, batting_team=a, bowling_team=b), dict(base, batting_team=b, bowling_team=a))
+             for base in WICKET_CASES for a in teams for b in teams if a < b)
+    case, swapped = next((one, other) for one, other in pairs if predict_wicket.forecast(WICKET_MODEL, **one)[
+        "probability"] != predict_wicket.forecast(WICKET_MODEL, **other)["probability"])
     a, b = (client.post("/api/predict/wicket", json=c).json()["probability"] for c in (case, swapped))
     assert a == predict_wicket.forecast(WICKET_MODEL, **case)["probability"]
     assert b == predict_wicket.forecast(WICKET_MODEL, **swapped)["probability"]
@@ -148,10 +160,9 @@ def test_batter_endpoint_equals_stage3_forecast(batter_cases, history):
 
 
 def test_batter_prediction_starts_no_thread_pool(batter_cases, monkeypatch):
-    """The batter forest has n_jobs=-1, so by default each predict_proba starts and terminates a
-    multiprocessing ThreadPool. On Windows two of the pool's threads can write its change-notifier pipe at
-    the same time, which raises ValueError("concurrent send_bytes() calls are not supported"); the endpoint
-    reported that as a 422. The service runs the forecast on joblib's sequential backend instead."""
+    """A joblib thread pool started per call (the archived Stage 3 forest used n_jobs=-1) can fail on Windows
+    with ValueError("concurrent send_bytes() calls are not supported"). The service runs every batter forecast
+    on joblib's sequential backend, so no prediction starts a pool."""
     created = []
     original = multiprocessing.pool.Pool.__init__
 
@@ -200,8 +211,13 @@ def test_p50_never_exceeds_p30(history):
                     venue="Wankhede Stadium", match_date="2027-04-10")
         got = client.post("/api/predict/batter", json=body).json()
         assert got["chance_50_plus"] <= got["chance_30_plus"], pid
-    holdout = pd.read_csv(REPORT / "batter" / "batter_holdout_forecasts_2026.csv")
-    assert (holdout.probability_50_plus <= holdout.probability_30_plus).all()
+    holdout = pd.read_csv(REPORT / "batter_holdout_forecasts.csv")
+    assert (holdout.p_50 <= holdout.p_30).all()
+    # Every row the final batter model was trained on
+    saved = joblib.load(BATTER_MODEL)
+    rows = pd.read_csv(TABLES["batter"])
+    p = saved["model"].predict_proba(rows[saved["columns"]])
+    assert (p[:, 2] <= p[:, 1] + p[:, 2]).all() and np.allclose(p.sum(axis=1), 1, atol=1e-12)
 
 
 # ------------------------------------------------------------------ validation
@@ -337,7 +353,7 @@ def test_failure_after_the_forecast_is_500(batter_cases, monkeypatch):
 def test_options_match_model_categories(history):
     o = client.get("/api/predict/options").json()
     saved = joblib.load(WICKET_MODEL)
-    enc = saved["model"].named_steps["features"].named_transformers_["categories"]
+    enc = saved["model"].named_steps["features"].named_transformers_["categorical"]
     cats = dict(zip(["batting_team", "bowling_team", "phase", "venue_canonical"], enc.categories_))
     assert len(o["teams"]) == 10
     assert {t["name"] for t in o["teams"]} <= set(cats["batting_team"])
@@ -354,20 +370,59 @@ def test_options_match_model_categories(history):
 
 # ------------------------------------------------------------------ metadata and holdout replay
 
-def test_models_metadata_equals_report():
+def _class_prior_scores(kind):
+    """The class-prior baseline on 2026, computed here: class shares of the 2008–2025 rows as constant forecasts."""
+    rows = pd.read_csv(TABLES[kind])
+    target = "wicket_next_over" if kind == "wicket" else "milestone_class"
+    train, test = rows[rows.season < 2026], rows[rows.season == 2026]
+    y = test[target].to_numpy()
+    if kind == "wicket":
+        p = np.full(len(y), train[target].mean())
+        return {"rows": len(y), "training_rows": len(train), "event_rate": y.mean(),
+                "brier_score": np.mean((p - y) ** 2), "log_loss": -np.mean(y * np.log(p) + (1 - y) * np.log(1 - p))}
+    shares = np.array([(train[target] == c).mean() for c in (0, 1, 2)])
+    p30, p50 = shares[1] + shares[2], shares[2]
+    b30, b50 = np.mean((p30 - (y >= 1)) ** 2), np.mean((p50 - (y == 2)) ** 2)
+    return {"rows": len(y), "training_rows": len(train), "brier_30": b30, "brier_50": b50,
+            "avg_milestone_brier": (b30 + b50) / 2, "multiclass_log_loss": -np.mean(np.log(shares[y]))}
+
+
+def test_models_metadata_equals_benchmark_reports():
     m = client.get("/api/predict/models").json()
-    assert "not the deployment" in m["holdout_statement"] or "never the deployment" in m["holdout_statement"]
+    statement = m["holdout_statement"]
+    assert "retrospective" in statement and "no independent test season" in statement
     for item in m["models"]:
-        section = OFFICIAL[item["kind"]]
-        assert item["selected_name"] == section["selected_name_from_2025_only"] == item["name"]
-        for api_key, json_key in (("holdout_2026", "holdout_2026"), ("holdout_2026_constant", "holdout_constant"),
-                                  ("validation_2025_constant", "constant_validation_2025")):
-            assert item[api_key] == section[json_key]
-        assert item["validation_2025"] == section["candidate_validation_2025"]
-        assert item["rows"]["test_2026_rows"] == section["test_2026_rows"]
-        assert item["rows"]["final_refit_2008_2026"] == section["final_refit_2008_2026"]
-        assert item["features"] == section["selected_features"]
-        assert item["training_end"] == 2026 and item["available"]
+        kind, choice, test = item["kind"], SELECTION["tasks"][item["kind"]], HOLDOUT[item["kind"]]
+        saved = joblib.load(MODELS / f"{kind}_hgb_through_2026.joblib")
+        assert item["name"] == item["algorithm"] == item["selected_name"] == choice["selected"] == test["model"]
+        assert item["params"] == choice["params"] == test["params"] == saved["params"]
+        assert item["features"] == choice["features"] == saved["columns"]
+        assert item["training_end"] == 2026 and item["available"] and item["training_span"] == "2008–2026"
+        assert item["confusion_matrix_2026"] == test["confusion_matrix"]
+        rows = pd.read_csv(TABLES[kind], usecols=["match_id", "season"])
+        assert item["rows"] == {
+            "train_2008_2025": int((rows.season < 2026).sum()), "test_2026_rows": int((rows.season == 2026).sum()),
+            "test_2026_matches": rows[rows.season == 2026].match_id.nunique(),
+            "final_refit_2008_2026": len(rows), "final_refit_matches": rows.match_id.nunique()}
+        assert item["rows"]["train_2008_2025"] == test["train_rows"]
+        # The 2026 scores are holdout_2026.json's, under the API's field names
+        h = item["holdout_2026"]
+        if kind == "wicket":
+            assert (h["brier_score"], h["log_loss"], h["roc_auc"]) == (
+                test["metrics"]["brier"], test["metrics"]["log_loss"], test["metrics"]["roc_auc"])
+        else:
+            assert (h["brier_30"], h["brier_50"], h["avg_milestone_brier"], h["multiclass_log_loss"]) == (
+                test["metrics"]["brier_30"], test["metrics"]["brier_50"], test["metrics"]["brier"],
+                test["metrics"]["log_loss"])
+        for key, value in _class_prior_scores(kind).items():
+            assert item["holdout_2026_constant"][key] == pytest.approx(value, abs=1e-12), (kind, key)
+        # The comparison table is the benchmark's, best mean Brier first, the selected row flagged
+        table = pd.read_csv(REPORT / f"{kind}_comparison.csv", float_precision="round_trip")
+        assert [b["model"] for b in item["benchmark"]] == table.model.tolist()
+        assert [b["brier_mean"] for b in item["benchmark"]] == table.brier_mean.tolist()
+        assert [b["accuracy_std"] for b in item["benchmark"]] == table.accuracy_std.tolist()
+        assert [b["model"] for b in item["benchmark"] if b["selected"]] == [choice["selected"]]
+        assert item["benchmark"][0]["selected"]
 
 
 def _calibration(y, p, bins):
@@ -378,55 +433,67 @@ def _calibration(y, p, bins):
 
 def test_replay_summary_recomputed_from_csv_equals_official():
     r = client.get("/api/predict/holdout-replay").json()
-    assert r["label"] == "2026 holdout replay — model trained through 2025"
-    w = pd.read_csv(REPORT / "wicket" / "wicket_holdout_forecasts_2026.csv")
-    y, p = w.wicket_next_over.to_numpy(), np.clip(w.predicted_wicket_probability.to_numpy(), 1e-6, 1 - 1e-6)
-    official = OFFICIAL["wicket"]["holdout_2026"]
+    assert r["label"] == "2026 retrospective test — model trained through 2025"
+    w = pd.read_csv(REPORT / "wicket_holdout_forecasts.csv")
+    y, p = w.wicket_next_over.to_numpy(), w.p_class_1.to_numpy()
+    official = HOLDOUT["wicket"]["metrics"]
     mine = {"rows": len(w), "event_rate": y.mean(), "brier_score": np.mean((p - y) ** 2),
             "log_loss": -np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)), "roc_auc": roc_auc_score(y, p)}
+    names = {"rows": None, "event_rate": "observed_rate_wicket", "brier_score": "brier", "log_loss": "log_loss",
+             "roc_auc": "roc_auc"}
+    assert mine["rows"] == HOLDOUT["wicket"]["evaluation_rows"]
     for k, v in mine.items():
-        assert v == pytest.approx(official[k], abs=1e-6), k
-        assert r["wicket"]["computed"][k] == pytest.approx(official[k], abs=1e-6), k
+        if names[k]:
+            assert v == pytest.approx(official[names[k]], abs=1e-12), k
+        assert r["wicket"]["computed"][k] == pytest.approx(v, abs=1e-6), k
     assert r["wicket"]["check"]["matches_official"] and r["wicket"]["check"]["mismatched"] == []
 
-    b = pd.read_csv(REPORT / "batter" / "batter_holdout_forecasts_2026.csv")
-    p30, p50, cls = b.probability_30_plus.to_numpy(), b.probability_50_plus.to_numpy(), b.milestone_class.to_numpy()
-    probs = np.clip(np.column_stack([1 - p30, p30 - p50, p50]), 1e-8, 1)
-    probs = probs / probs.sum(axis=1, keepdims=True)
-    official = OFFICIAL["batter"]["holdout_2026"]
-    mine = {"rows": len(b), "observed_30_rate": (cls >= 1).mean(), "observed_50_rate": (cls == 2).mean(),
+    b = pd.read_csv(REPORT / "batter_holdout_forecasts.csv")
+    p30, p50, cls = b.p_30.to_numpy(), b.p_50.to_numpy(), b.milestone_class.to_numpy()
+    probs = b[["p_class_0", "p_class_1", "p_class_2"]].to_numpy()
+    official = HOLDOUT["batter"]["metrics"]
+    mine = {"observed_30_rate": (cls >= 1).mean(), "observed_50_rate": (cls == 2).mean(),
             "brier_30": np.mean((p30 - (cls >= 1)) ** 2), "brier_50": np.mean((p50 - (cls == 2)) ** 2),
             "multiclass_log_loss": -np.mean(np.log(probs[np.arange(len(cls)), cls])),
             "roc_auc_30": roc_auc_score(cls >= 1, p30), "roc_auc_50": roc_auc_score(cls == 2, p50)}
     mine["avg_milestone_brier"] = (mine["brier_30"] + mine["brier_50"]) / 2
+    names = {"observed_30_rate": "observed_rate_30", "observed_50_rate": "observed_rate_50", "brier_30": "brier_30",
+             "brier_50": "brier_50", "multiclass_log_loss": "log_loss", "roc_auc_30": "roc_auc_30",
+             "roc_auc_50": "roc_auc_50", "avg_milestone_brier": "brier"}
     for k, v in mine.items():
-        assert v == pytest.approx(official[k], abs=1e-6), k
-        assert r["batter"]["computed"][k] == pytest.approx(official[k], abs=1e-6), k
+        assert v == pytest.approx(official[names[k]], abs=1e-12), k
+        assert r["batter"]["computed"][k] == pytest.approx(v, abs=1e-6), k
+    assert r["batter"]["computed"]["rows"] == len(b) == HOLDOUT["batter"]["evaluation_rows"]
     assert r["batter"]["check"]["matches_official"]
 
-    # Calibration bins equal the saved Stage 3 calibration tables and an independent binning
-    saved_w = pd.read_csv(REPORT / "wicket" / "wicket_holdout_calibration_2026.csv")
+    # Calibration bins equal the benchmark's saved calibration tables and an independent binning
+    saved = pd.read_csv(REPORT / "wicket_holdout_calibration.csv")
     api_w = r["wicket"]["computed"]["calibration"]
-    assert [c["bin"] for c in api_w] == saved_w.bin.tolist() and [c["n"] for c in api_w] == saved_w.n.tolist()
-    assert np.allclose([c["observed_rate"] for c in api_w], saved_w.observed_frequency, atol=1e-12)
-    mine_w = _calibration(w.wicket_next_over, w.predicted_wicket_probability, 10)
-    assert mine_w.n.tolist() == saved_w.n.tolist()
-    saved_b = pd.read_csv(REPORT / "batter" / "batter_holdout_calibration_2026.csv")
+    assert [c["bin"] for c in api_w] == saved.bin.tolist() and [c["n"] for c in api_w] == saved.rows.tolist()
+    assert np.allclose([c["observed_rate"] for c in api_w], saved.observed_rate, atol=1e-12)
+    assert np.allclose([c["avg_predicted"] for c in api_w], saved.mean_probability, atol=1e-12)
+    assert _calibration(y, p, 10).n.tolist() == saved.rows.tolist()
+    saved = pd.read_csv(REPORT / "batter_holdout_calibration.csv")
     api_b = r["batter"]["computed"]["calibration"]
-    assert [(c["milestone"], c["bin"], c["n"]) for c in api_b] == list(zip(saved_b.milestone, saved_b.bin, saved_b.n))
-    assert np.allclose([c["avg_predicted"] for c in api_b], saved_b.predicted, atol=1e-12)
+    assert [(c["milestone"], c["bin"], c["n"]) for c in api_b] == [
+        (f"{event}+", int(index), int(n)) for event, index, n in zip(saved.event, saved.bin, saved.rows)]
+    assert np.allclose([c["avg_predicted"] for c in api_b], saved.mean_probability, atol=1e-12)
+    assert np.allclose([c["observed_rate"] for c in api_b], saved.observed_rate, atol=1e-12)
 
 
 def test_replay_matches_and_rows_equal_csv():
     r = client.get("/api/predict/holdout-replay").json()
-    # round_trip: compare the exact probabilities written by Stage 3
-    w = pd.read_csv(REPORT / "wicket" / "wicket_holdout_forecasts_2026.csv", float_precision="round_trip")
-    b = pd.read_csv(REPORT / "batter" / "batter_holdout_forecasts_2026.csv", dtype={"batter_id": str},
-                    float_precision="round_trip")
+    # round_trip: compare the exact probabilities written by the benchmark
+    w = pd.read_csv(REPORT / "wicket_holdout_forecasts.csv", float_precision="round_trip")
+    b = pd.read_csv(REPORT / "batter_holdout_forecasts.csv", dtype={"batter_id": str}, float_precision="round_trip")
+    # Actual runs and names straight from the batting records, not the modelling table the service joins
+    runs = pd.read_csv(DATA / "batter_innings.csv", dtype={"batter_id": str})
+    b = b.merge(runs[["match_id", "innings", "batter_id", "runs", "batter"]], on=["match_id", "innings", "batter_id"],
+                validate="one_to_one")
     ids = [m["match_id"] for m in r["matches"]]
     assert set(ids) == set(w.match_id) | set(b.match_id)
-    assert len(set(w.match_id)) == OFFICIAL["wicket"]["test_2026_matches"]
-    assert len(set(b.match_id)) == OFFICIAL["batter"]["test_2026_matches"]
+    assert len(set(w.match_id)) == HOLDOUT["wicket"]["evaluation_matches"]
+    assert len(set(b.match_id)) == HOLDOUT["batter"]["evaluation_matches"]
     assert sum(m["wicket_checkpoints"] for m in r["matches"]) == len(w)
     assert sum(m["batter_forecasts"] for m in r["matches"]) == len(b)
     innings = pd.read_csv(DATA / "innings.csv")
@@ -434,10 +501,14 @@ def test_replay_matches_and_rows_equal_csv():
         d = client.get(f"/api/predict/holdout-replay/{mid}").json()
         rows_w, rows_b = w[w.match_id == mid], b[b.match_id == mid]
         assert len(d["wickets"]) == len(rows_w) and len(d["batters"]) == len(rows_b)
-        assert sorted(x["predicted_probability"] for x in d["wickets"]) == sorted(rows_w.predicted_wicket_probability)
+        assert sorted(x["predicted_probability"] for x in d["wickets"]) == sorted(rows_w.p_class_1)
         assert sum(x["wicket_fell"] for x in d["wickets"]) == rows_w.wicket_next_over.sum()
-        assert [x["actual_runs"] for x in d["batters"]] == rows_b.actual_runs.tolist()
-        assert [x["probability_30_plus"] for x in d["batters"]] == rows_b.probability_30_plus.tolist()
+        assert all(x["phase"] == ("powerplay" if x["completed_overs"] <= 5 else
+                                  "middle" if x["completed_overs"] <= 14 else "death") for x in d["wickets"])
+        assert [x["actual_runs"] for x in d["batters"]] == rows_b.runs.tolist()
+        assert [x["batter"] for x in d["batters"]] == rows_b.batter.tolist()
+        assert [x["probability_30_plus"] for x in d["batters"]] == rows_b.p_30.tolist()
+        assert [x["actual_50_plus"] for x in d["batters"]] == (rows_b.runs >= 50).tolist()
         teams = innings[innings.match_id == mid].set_index("innings").batting_team
         assert all(x["batting_team"] == teams[x["innings"]] for x in d["wickets"] + d["batters"])
     assert client.get("/api/predict/holdout-replay/1").status_code == 404
@@ -447,7 +518,7 @@ def test_replay_matches_and_rows_equal_csv():
 
 @pytest.fixture
 def broken_models(tmp_path, monkeypatch):
-    """A service whose model folder has the batter deployment model only with a wrong version, and no wicket model."""
+    """A service whose model folder has the batter final model only with a wrong version, and no wicket model."""
     saved = joblib.load(BATTER_MODEL)
     joblib.dump(dict(saved, version="holdout_eval_pre2026"), tmp_path / BATTER_MODEL.name)
     service = PredictionService(model_dir=tmp_path)
@@ -489,5 +560,5 @@ def test_health_reports_models_available():
 # ------------------------------------------------------------------ the models are never modified
 
 def test_zz_model_files_unchanged():
-    assert len(ARTIFACTS) == 4
+    assert len(ARTIFACTS) == 8
     assert _sha(ARTIFACTS) == HASHES_BEFORE

@@ -809,18 +809,21 @@ class PredictionModelInfo(BaseModel):
     deployment_file: str
     holdout_file: str
     name: Optional[str] = None
+    algorithm: str = Field(..., description="Algorithm frozen by the benchmark (selection.json)")
+    params: Dict[str, Any] = Field(..., description="Frozen hyperparameters of the selected algorithm")
     version: Optional[str] = None
     training_end: Optional[int] = None
     training_span: Optional[str] = None
     features: List[str]
     classes: List[int]
     condition: Optional[str] = None
-    selected_name: str = Field(..., description="Model chosen on 2025 validation only")
+    selected_name: str = Field(..., description="Algorithm chosen by the 2018–2025 benchmark")
     selection_metric: str
-    validation_2025: List[Dict[str, Any]]
-    validation_2025_constant: Dict[str, Any]
+    benchmark: List[Dict[str, Any]] = Field(..., description="All seven algorithms: mean and SD over the 2021–2025 validation seasons")
     holdout_2026: Dict[str, Any] = Field(..., description="Holdout model trained through 2025, scored on 2026")
-    holdout_2026_constant: Dict[str, Any]
+    holdout_2026_constant: Dict[str, Any] = Field(..., description="Class-prior baseline trained through 2025, scored on 2026")
+    confusion_matrix_2026: List[List[int]] = Field(..., description="Rows: actual class; columns: most probable class")
+    class_counts_2026: Dict[str, int]
     rows: Dict[str, int]
     exclusions: Optional[str] = None
     notes: List[str]

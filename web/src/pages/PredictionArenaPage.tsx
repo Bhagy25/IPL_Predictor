@@ -14,7 +14,7 @@ const TOOLS = [
   { id: 'batter', label: 'Batter Milestone (30+ / 50+)' },
 ];
 
-/** One model's official 2026 holdout numbers next to the constant-rate forecast. */
+/** One final model's 2026 retrospective test next to the class-prior (constant-rate) forecast. */
 const EvaluationCard: React.FC<{ m: PredictionModelInfo }> = ({ m }) => {
   const h = m.holdout_2026;
   const c = m.holdout_2026_constant;
@@ -37,19 +37,19 @@ const EvaluationCard: React.FC<{ m: PredictionModelInfo }> = ({ m }) => {
         <h3 className="text-sm font-bold text-[#F6F6F3]">{m.title}</h3>
         <p className="text-[11px] text-[#8E8E88]">
           {m.available
-            ? <>The model used by this tool was trained on {m.training_span} ({fmtCount(m.rows.final_refit_2008_2026)} {m.kind === 'wicket' ? 'next-over examples' : 'innings'}).</>
+            ? <>{m.algorithm}, refitted on {m.training_span} ({fmtCount(m.rows.final_refit_2008_2026)} {m.kind === 'wicket' ? 'next-over examples' : 'innings'}), is the model this tool uses.</>
             : <span className="text-red-300">This prediction tool is currently unavailable.</span>}
         </p>
       </div>
       <table className="w-full text-xs">
         <caption className="text-left text-[11px] text-[#B9B9B3] pb-1">
-          2026 holdout ({fmtCount(m.rows.test_2026_rows)} {m.kind === 'wicket' ? 'next overs' : 'innings'} in {m.rows.test_2026_matches} matches), holdout model trained through 2025
+          2026 retrospective test ({fmtCount(m.rows.test_2026_rows)} {m.kind === 'wicket' ? 'next overs' : 'innings'} in {m.rows.test_2026_matches} matches), same algorithm trained through 2025
         </caption>
         <thead>
           <tr className="text-[#8E8E88] text-[10px] uppercase">
             <th scope="col" className="text-left font-bold py-1">Metric</th>
             <th scope="col" className="text-right font-bold py-1">Model</th>
-            <th scope="col" className="text-right font-bold py-1">Constant rate</th>
+            <th scope="col" className="text-right font-bold py-1">Class prior</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/5">
@@ -63,7 +63,7 @@ const EvaluationCard: React.FC<{ m: PredictionModelInfo }> = ({ m }) => {
         </tbody>
       </table>
       <p className="text-[10px] text-[#8E8E88]">
-        Models were selected using 2025 results ({m.selection_metric}). Lower Brier scores and log loss are better. A higher ROC AUC is better, with 0.5 indicating no ranking skill.
+        Chosen from seven algorithms by the {m.selection_metric}. Lower Brier scores and log loss are better. A higher ROC AUC is better, with 0.5 indicating no ranking skill.
       </p>
     </div>
   );
@@ -138,7 +138,7 @@ export const PredictionArenaPage: React.FC = () => {
         {models && (
           <>
             <p className="text-xs sm:text-sm text-[#B9B9B3]">
-              The 2026 evaluation used models trained through 2025. The prediction tools use models retrained through 2026. Those newer models have yet to be tested on unseen matches.
+              Both tools use Histogram gradient boosting, the algorithm a benchmark of seven algorithms selected. The 2026 test used the same algorithm and settings trained through 2025; 2026 had already been examined during development, so it is a retrospective test. The tools use models refitted through 2026, which have no independent test season yet.
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {models.models.map((m) => <EvaluationCard key={m.kind} m={m} />)}
