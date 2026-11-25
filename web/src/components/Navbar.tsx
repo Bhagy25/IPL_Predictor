@@ -7,6 +7,7 @@ import {
   BarChart2, 
   Zap, 
   ListChecks, 
+  BookOpen,
   Menu, 
   X 
 } from 'lucide-react';
@@ -19,12 +20,13 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: 'IPL Overview', shortName: 'IPL Overview', path: '/', icon: Home },
+  { name: 'IPL Overview', shortName: 'Overview', path: '/', icon: Home },
   { name: 'Team Analysis', shortName: 'Teams', path: '/teams', icon: Users },
   { name: 'Player Explorer', shortName: 'Players', path: '/players', icon: User },
-  { name: 'Statistics & EDA', shortName: 'Statistics & EDA', path: '/eda', icon: BarChart2 },
-  { name: 'Prediction Arena', shortName: 'Prediction Arena', path: '/predict', icon: Zap },
-  { name: 'Prediction Tracker', shortName: 'Prediction Tracker', path: '/tracker', icon: ListChecks },
+  { name: 'Statistics & EDA', shortName: 'EDA', path: '/eda', icon: BarChart2 },
+  { name: 'Prediction Arena', shortName: 'Arena', path: '/predict', icon: Zap },
+  { name: 'Prediction Tracker', shortName: 'Tracker', path: '/tracker', icon: ListChecks },
+  { name: 'Methodology', shortName: 'Methodology', path: '/methodology', icon: BookOpen },
 ];
 
 export const Navbar: React.FC = () => {
@@ -55,7 +57,7 @@ export const Navbar: React.FC = () => {
         </NavLink>
 
         {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center gap-1.5">
+        <nav aria-label="Main" className="hidden min-[1400px]:flex items-center gap-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -63,7 +65,7 @@ export const Navbar: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) => `
-                  flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200
+                  flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200
                   ${isActive 
                     ? 'bg-[#151619] border border-[#D9B15F] text-[#D9B15F] shadow-gold-pill' 
                     : 'text-[#B9B9B3] hover:text-[#F6F6F3] hover:bg-white/[0.04]'
@@ -77,8 +79,8 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Tablet Navigation (Short names) */}
-        <nav className="hidden md:flex xl:hidden items-center gap-1">
+        {/* Laptop navigation (short names) */}
+        <nav aria-label="Main" className="hidden lg:flex min-[1400px]:hidden items-center gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -86,7 +88,7 @@ export const Navbar: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) => `
-                  flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200
+                  flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200
                   ${isActive 
                     ? 'bg-[#151619] border border-[#D9B15F] text-[#D9B15F] shadow-gold-pill' 
                     : 'text-[#B9B9B3] hover:text-[#F6F6F3] hover:bg-white/[0.04]'
@@ -101,7 +103,7 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden">
+        <div className="flex lg:hidden">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -116,7 +118,7 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/[0.08] bg-[#070708]/95 px-4 pt-3 pb-5 space-y-1.5 animate-fadeIn">
+        <nav aria-label="Main" className="lg:hidden border-t border-white/[0.08] bg-[#070708]/95 px-4 pt-3 pb-5 space-y-1.5 animate-fadeIn">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -137,7 +139,7 @@ export const Navbar: React.FC = () => {
               </NavLink>
             );
           })}
-        </div>
+        </nav>
       )}
     </header>
   );

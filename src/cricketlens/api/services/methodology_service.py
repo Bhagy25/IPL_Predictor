@@ -62,14 +62,14 @@ ALGORITHMS = {
         "short": "Baseline",
         "how": "Gives every row the class shares seen in training. It uses no inputs and is the reference every "
                "other model must beat.",
-        "formula": "p̂ₖ = nₖ / n",
+        "formula": "p_k = n_k / n  (the share of class k in training)",
         "assumptions": ["The share of each outcome stays the same from the training seasons to the next season."],
     },
     "Logistic regression": {
         "short": "Logistic",
         "how": "Adds up weighted inputs and turns the sum into a probability with the logistic (S-shaped) curve; "
                "a softmax version handles the three batter classes. An L2 penalty keeps the weights small.",
-        "formula": "P(y=1|x) = 1 / (1 + e^−(β₀ + βᵀx))",
+        "formula": "P(y = 1 | x) = 1 / (1 + exp(−(β_0 + β·x)))",
         "assumptions": ["The log-odds change in a straight line with each numeric input.",
                         "Inputs are not strongly collinear.",
                         "Observations are independent.",
@@ -79,7 +79,7 @@ ALGORITHMS = {
         "short": "Tree",
         "how": "Splits the rows by one input at a time (for example, wickets ≥ 5) to make groups that are as "
                "pure as possible, and predicts each group's outcome shares.",
-        "formula": "minimise Gini impurity G = 1 − Σₖ pₖ² at each split",
+        "formula": "each split minimises Gini impurity G = 1 − Σ p_k²",
         "assumptions": ["No distributional assumption.",
                         "The pattern can be captured by a few axis-aligned thresholds.",
                         "A single tree is high-variance: small changes in the data change the tree."],
@@ -88,14 +88,14 @@ ALGORITHMS = {
         "short": "Forest",
         "how": "Grows 160 trees, each on a bootstrap sample with a random subset of inputs at every split, and "
                "averages their probabilities.",
-        "formula": "p̂(x) = (1/B) Σ_b T_b(x)",
+        "formula": "p(x) = (1/B) · Σ T_b(x), averaged over B = 160 trees",
         "assumptions": ["Averaging many decorrelated trees lowers variance without adding bias."],
     },
     "Histogram gradient boosting": {
         "short": "Boosting",
         "how": "Starts from the base rate and adds small trees one after another, each correcting the errors left "
                "so far, with a learning rate and an L2 penalty. Numeric inputs are grouped into at most 255 bins.",
-        "formula": "F_M(x) = F₀ + Σₘ η·hₘ(x),  p = σ(F_M(x))",
+        "formula": "F(x) = F_0 + η · Σ h_m(x) over m = 1…M,  p = σ(F(x))",
         "assumptions": ["The signal is a sum of small interactions.",
                         "Binning the inputs loses little information.",
                         "The learning rate, iteration cap, leaf limit and penalty prevent overfitting."],
@@ -104,7 +104,7 @@ ALGORITHMS = {
         "short": "Naive Bayes",
         "how": "Combines the class shares with a bell-curve likelihood for each input, treating the inputs as "
                "independent within each class.",
-        "formula": "P(y=k|x) ∝ πₖ Πⱼ N(xⱼ; μⱼₖ, σ²ⱼₖ)",
+        "formula": "P(y = k | x) ∝ π_k · Π N(x_j; μ_jk, σ²_jk)",
         "assumptions": ["Inputs are independent of each other within each class.",
                         "Each input follows a normal distribution within each class."],
     },
@@ -112,7 +112,7 @@ ALGORITHMS = {
         "short": "Neural net",
         "how": "A small neural network: one or two hidden layers of ReLU units feed a probability output, fitted "
                "with the Adam optimiser and an L2 penalty.",
-        "formula": "h = max(0, W₁x + b₁),  p = softmax(W₂h + b₂)",
+        "formula": "h = max(0, W_1·x + b_1),  p = softmax(W_2·h + b_2)",
         "assumptions": ["Inputs are standardised.",
                         "The optimiser reaches a good, seed-insensitive solution within the epoch budget.",
                         "There is enough data for the number of weights."],

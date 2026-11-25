@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import React, { useEffect, useMemo, useState } from 'react';
 import { CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { CheckCircle2, ChevronLeft, ChevronRight, History, Loader2, XCircle } from 'lucide-react';
@@ -138,7 +139,7 @@ export const HoldoutReplay: React.FC = () => {
             <History className="w-5 h-5 text-[#D9B15F]" aria-hidden="true" /> 2026 Forecast Replay
           </h2>
           <p className="text-xs text-[#B9B9B3] mt-1">
-            Compare forecasts for 2026 matches with what happened. These forecasts came from the gradient boosting models trained through 2025 (a retrospective test: 2026 was examined during development). The tools in Prediction Arena use the same algorithm refitted through 2026.
+            Compare forecasts for 2026 matches with what happened. These forecasts came from the gradient boosting models trained through 2025 (a retrospective test: 2026 was examined during development). The tools in Prediction Arena use the same algorithm refitted through 2026. <Link to="/methodology" className="text-[#D9B15F] underline">How the model was chosen</Link>.
           </p>
         </div>
       </div>

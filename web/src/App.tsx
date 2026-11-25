@@ -12,6 +12,7 @@ const PlayerExplorerPage = lazy(() => import('./pages/PlayerExplorerPage').then(
 const StatisticsEDAPage = lazy(() => import('./pages/StatisticsEDAPage').then((m) => ({ default: m.StatisticsEDAPage })));
 const PredictionArenaPage = lazy(() => import('./pages/PredictionArenaPage').then((m) => ({ default: m.PredictionArenaPage })));
 const PredictionTrackerPage = lazy(() => import('./pages/PredictionTrackerPage').then((m) => ({ default: m.PredictionTrackerPage })));
+const MethodologyPage = lazy(() => import('./pages/MethodologyPage').then((m) => ({ default: m.MethodologyPage })));
 
 /** Shown while a route's chunk downloads: the same spinner and text the pages use for their own loading states. */
 const RouteLoading: React.FC = () => (
@@ -49,7 +50,7 @@ export const App: React.FC = () => {
     // Opt in to the React Router v7 behaviour named by its future-flag warnings
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="min-h-screen flex flex-col bg-[#070708] text-[#F6F6F3]">
-        {/* Sticky Header with 6 Nav Routes */}
+        {/* Sticky header with the seven routes */}
         <Navbar />
 
         {/* Dynamic Route Content */}
@@ -64,6 +65,7 @@ export const App: React.FC = () => {
               <Route path="/eda" element={<StatisticsEDAPage />} />
               <Route path="/predict" element={<PredictionArenaPage />} />
               <Route path="/tracker" element={<PredictionTrackerPage />} />
+              <Route path="/methodology" element={<MethodologyPage />} />
               {/* Fallback to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

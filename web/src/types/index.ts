@@ -1142,3 +1142,151 @@ export interface HoldoutReplayMatchResponse {
   wicket_summary: WicketEvaluationMetrics | null;
   batter_summary: BatterEvaluationMetrics | null;
 }
+
+// ------------------------------------------------------------------ prediction methodology (/api/methodology)
+
+export type Verdict = 'Holds' | 'Partially holds' | 'Violated';
+export type MethodologyTaskKind = 'wicket' | 'batter';
+
+export interface MethodologyMetricSummary {
+  brier_mean: number; brier_std: number;
+  log_loss_mean: number; log_loss_std: number;
+  accuracy_mean: number; accuracy_std: number;
+  balanced_accuracy_mean: number; balanced_accuracy_std: number;
+  macro_f1_mean: number; macro_f1_std: number;
+  roc_auc_mean: number; roc_auc_std: number;
+  average_precision_mean: number; average_precision_std: number;
+}
+
+export interface MethodologyAlgorithmResult extends MethodologyMetricSummary {
+  rank: number;
+  paired_gap_mean: number | null;
+  paired_gap_sd: number | null;
+  seasons_selected_better: number | null;
+}
+
+export interface MethodologyComparisonRow extends MethodologyAlgorithmResult {
+  model: string;
+  setting: number;
+  selected: boolean;
+}
+
+export interface MethodologyGridSetting {
+  setting: number;
+  params: Record<string, number | string | boolean | number[]>;
+  chosen: boolean;
+  tuning_brier_mean: number;
+  tuning_brier_sd: number | null;
+}
+
+export interface MethodologyAlgorithm {
+  name: string;
+  short: string;
+  how_it_works: string;
+  formula: string;
+  assumptions: string[];
+  verdicts: Record<MethodologyTaskKind, Verdict>;
+  evidence: string[];
+  grid: Record<MethodologyTaskKind, MethodologyGridSetting[]>;
+  results: Record<MethodologyTaskKind, MethodologyAlgorithmResult>;
+  selected: boolean;
+  decision: string;
+}
+
+export interface MethodologyCurvePoint {
+  model: string;
+  training_fraction: number;
+  train_matches: number;
+  train_rows: number;
+  validation_brier: number; validation_brier_sd: number;
+  validation_log_loss: number; validation_log_loss_sd: number;
+  validation_accuracy: number; validation_accuracy_sd: number;
+  validation_balanced_accuracy: number; validation_balanced_accuracy_sd: number;
+  train_brier: number; train_brier_sd: number;
+}
+
+export interface MethodologyCalibrationBin {
+  event: string;
+  bin: number;
+  lower: number;
+  upper: number;
+  rows: number;
+  observed_rate: number;
+  mean_probability: number;
+}
+
+export interface MethodologyHoldout {
+  metrics: Record<string, number>;
+  baseline_metrics: Record<string, number>;
+  confusion_matrix: number[][];
+  class_counts: Record<string, number>;
+  train_rows: number;
+  train_matches: number;
+  train_start: string;
+  train_end: string;
+  rows: number;
+  matches: number;
+  calibration: MethodologyCalibrationBin[];
+  caveat: string;
+}
+
+export interface MethodologyTask {
+  kind: MethodologyTaskKind;
+  title: string;
+  question: string;
+  target: string;
+  output: string;
+  unit: string;
+  inputs: string;
+  rows: number;
+  matches: number;
+  test_rows: number;
+  test_matches: number;
+  class_shares: Record<string, number>;
+  majority_class_accuracy: number;
+  class_counts: Record<string, number>;
+}
+
+export interface MethodologyConvergence {
+  leaders: string[];
+  leader_brier_spread_by_fraction: Record<string, number>;
+  best_alternative_by_fraction: Record<string, { model: string; gap_to_selected: number }>;
+  selected_plateau: {
+    validation_brier_by_fraction: Record<string, number>;
+    change_50_to_75: number;
+    change_75_to_100: number;
+    change_10_to_50: number;
+    per_season_change_75_to_100: Record<string, number>;
+  };
+  paired_gaps_vs_selected: Record<string, { mean: number; sd: number; selected_better_seasons: number; seasons: number }>;
+  accuracy_mean_by_model: Record<string, number>;
+  majority_class_accuracy_mean: number;
+  selected_mean_validation_brier: number;
+  runner_up: string;
+  runner_up_gap: number;
+}
+
+export interface MethodologyResponse {
+  decision: {
+    algorithm: string;
+    params: Record<string, number>;
+    fixed_settings: Record<string, number | boolean>;
+    rule: string;
+    tuning_years: number[];
+    validation_years: number[];
+    holdout_year: number;
+  };
+  workflow: { step: number; title: string; detail: string }[];
+  tasks: MethodologyTask[];
+  data_assumptions: { assumption: string; verdict: Verdict; evidence: string; consequence: string }[];
+  eligibility: { scope: string; rule: string; count: number }[];
+  algorithms: MethodologyAlgorithm[];
+  comparison: Record<MethodologyTaskKind, MethodologyComparisonRow[]>;
+  learning_curves: Record<MethodologyTaskKind, MethodologyCurvePoint[]>;
+  paired_gaps: Record<MethodologyTaskKind, { year: number; model: string; gap: number }[]>;
+  convergence: Record<MethodologyTaskKind, MethodologyConvergence>;
+  holdout: Record<MethodologyTaskKind, MethodologyHoldout>;
+  final_models: Record<MethodologyTaskKind, Record<string, { file: string; sha256: string; version: string; train_start: string; train_end: string; train_rows: number; train_matches: number }>>;
+  limitations: string[];
+  sources: string[];
+}

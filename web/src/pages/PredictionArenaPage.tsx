@@ -143,7 +143,7 @@ export const PredictionArenaPage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {models.models.map((m) => <EvaluationCard key={m.kind} m={m} />)}
             </div>
-            <Note>See the 2026 forecasts and match results in the <Link to="/tracker" className="text-[#D9B15F] underline">Prediction Tracker</Link>.</Note>
+            <Note>See the 2026 forecasts and match results in the <Link to="/tracker" className="text-[#D9B15F] underline">Prediction Tracker</Link>, and why gradient boosting was chosen over six other algorithms on the <Link to="/methodology" className="text-[#D9B15F] underline">Methodology</Link> page.</Note>
           </>
         )}
       </section>
