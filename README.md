@@ -64,14 +64,17 @@ Every page opens with a short "What this page shows" note and a "How to read it"
 | IPL Overview | Player Explorer (V Kohli) |
 |---|---|
 | ![IPL Overview](docs/screenshots/desktop-01-overview.png) | ![Player Explorer](docs/screenshots/desktop-03-player-explorer.png) |
-| **Prediction Arena (next-over wicket risk)** | **Prediction Tracker (2026 holdout replay)** |
+| **Prediction Arena (next-over wicket risk)** | **Prediction Tracker (2026 replay)** |
 | ![Prediction Arena](docs/screenshots/desktop-05-prediction-arena.png) | ![Prediction Tracker](docs/screenshots/desktop-06-prediction-tracker.png) |
 | **Team Analysis** | **Statistics & EDA** |
 | ![Team Analysis](docs/screenshots/desktop-02-team-analysis.png) | ![Statistics & EDA](docs/screenshots/desktop-04-statistics-eda.png) |
+| **Methodology (How the Predictions Work)** | |
+| ![Methodology](docs/screenshots/desktop-07-methodology.png) | |
 
 Mobile (390px): [IPL Overview](docs/screenshots/mobile-01-overview.png) ·
 [Player Explorer](docs/screenshots/mobile-03-player-explorer.png) ·
-[Prediction Arena](docs/screenshots/mobile-05-prediction-arena.png)
+[Prediction Arena](docs/screenshots/mobile-05-prediction-arena.png) ·
+[Methodology](docs/screenshots/mobile-07-methodology.png)
 
 ## Data source
 
@@ -331,10 +334,10 @@ Measured locally for this configuration (Vercel's own numbers will differ somewh
 
 | Measure | Result | Vercel limit |
 |---|---|---|
-| Function bundle, uncompressed (Linux wheels for Python 3.14 plus the included files) | 384.9 MB (330.3 MB packages, 54.6 MB data, models, figures and code) | 500 MB for Python |
-| Memory of the API process | 187 MB at start, 237 MB with all data loaded, 260 MB after 1,161 requests; peak 340 MB | 2 GB (Hobby) |
-| Cold start: process start to first response | median 7.4 s for `/api/overview/summary`, 8.7 s for a player profile (three runs each) | 60 s set (300 s maximum on Hobby) |
-| Largest response body (every endpoint and the main parameter variants) | 0.16 MB (`/api/predict/options`) | 4.5 MB |
+| Function bundle, uncompressed: the 151 bundled files plus the installed packages of `api/requirements.txt` and their dependencies (Windows wheels of the pinned versions; Linux wheels differ somewhat) | 362.9 MB (57.1 MB files, 305.8 MB packages) | 500 MB for Python |
+| Memory: a bare copy of only the bundled files (`python -I -S`) answering all 23 endpoint operations | peak working set 330 MB | 2 GB (Hobby) |
+| Cold start: process start to first response (measured before the final-model update) | median 7.4 s for `/api/overview/summary`, 8.7 s for a player profile (three runs each) | 60 s set (300 s maximum on Hobby) |
+| Largest response body (every endpoint) | 0.16 MB (`/api/predict/options`); `/api/methodology` is 0.09 MB | 4.5 MB |
 
 ## Reproducing the analysis stages
 
@@ -480,7 +483,7 @@ in `reports/stage_03/`. The seven-algorithm benchmark (`reports/model_benchmark/
   with `holdout_2026.json`. The final models' 2025 versions reproduce those forecasts exactly.
 - Guard tests stop numbers from being typed into the homepage or health endpoint, and the model files'
   SHA256 is checked before and after the test run.
-- Run the suite with `pytest` (395 tests at the time of writing). Website behaviour was checked in a
+- Run the suite with `pytest` (463 tests at the time of writing). Website behaviour was checked in a
   browser at 1440px and 390px widths, including the production build behind the same rewrites as on Vercel.
 
 ## Limitations and known issues

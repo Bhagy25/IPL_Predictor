@@ -110,8 +110,9 @@ Measured locally for this configuration (a serverless instance will differ somew
 
 | Measure | Result | Vercel limit |
 |---|---|---|
-| Function bundle, uncompressed: Linux wheels for CPython 3.14 (`pip install --target`) plus the bundled files | 384.9 MB: 330.3 MB packages (SciPy 132.8, pandas 69.0, NumPy 65.3, scikit-learn 42.7), 54.6 MB files | 500 MB (Python) |
-| API process memory | 187 MB once started, 237 MB with all data loaded, 260 MB after 1,161 requests; peak 340 MB | 2 GB (Hobby) |
+| Function bundle, uncompressed: the 151 bundled files plus the installed packages of `api/requirements.txt` and their dependencies (Windows wheels of the pinned versions) | 362.9 MB: 305.8 MB packages, 57.1 MB files | 500 MB (Python) |
+| API process memory: a bare copy of only the bundled files (`python -I -S`) answering all 23 operations | peak working set 330 MB | 2 GB (Hobby) |
+| Earlier measurement, before the final-model update (Linux wheels, `pip install --target`) | 384.9 MB bundle; API process peak 340 MB after 1,161 requests | |
 | Cold start, process start to first 200 | `/api/overview/summary` median 7.4 s; `/api/players/ba607b88/overview` median 8.7 s (three fresh processes each) | `maxDuration` 60 s |
 | Largest response body, over every operation, all 20 figures and parameter variants (1,161 requests) | 0.16 MB, `/api/predict/options` | 4.5 MB |
 
