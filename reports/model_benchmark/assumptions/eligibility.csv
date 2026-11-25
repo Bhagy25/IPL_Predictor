@@ -1,0 +1,17 @@
+scope,rule,count
+archive,matches in the archive,1243
+archive,super-over innings left out of the ordinary innings tables,34
+archive,D/L-marked matches,23
+archive,no-result matches,9
+wicket,completed-over checkpoints considered,45268
+wicket,excluded: in D/L-marked matches,619
+wicket,excluded: anomalous or gapped overs,14
+wicket,excluded: next over cut short with no wicket (censored),474
+wicket,kept: next over cut short by a wicket,237
+wicket,kept: complete six-ball next over,43924
+wicket,eligible rows,44161
+wicket,eligible rows from no-result matches (kept),123
+batter,batting innings in the source,18768
+batter,excluded: in D/L-marked matches,276
+batter,excluded: in no-result matches,63
+batter,eligible rows,18429

@@ -1,0 +1,1243 @@
+{
+  "generated_by": "python -m cricketlens.model_assumptions",
+  "seed": 42,
+  "thresholds": {
+    "smd_small": 0.2,
+    "smd_large": 0.8,
+    "psi_moderate": 0.1,
+    "psi_major": 0.25,
+    "vif_high": 10.0,
+    "events_per_parameter_min": 10.0,
+    "within_class_correlation_strong": 0.5,
+    "skewness_strong": 1.0,
+    "excess_kurtosis_strong": 3.0,
+    "alpha": 0.05
+  },
+  "eligibility": [
+    {
+      "scope": "archive",
+      "rule": "matches in the archive",
+      "count": 1243
+    },
+    {
+      "scope": "archive",
+      "rule": "super-over innings left out of the ordinary innings tables",
+      "count": 34
+    },
+    {
+      "scope": "archive",
+      "rule": "D/L-marked matches",
+      "count": 23
+    },
+    {
+      "scope": "archive",
+      "rule": "no-result matches",
+      "count": 9
+    },
+    {
+      "scope": "wicket",
+      "rule": "completed-over checkpoints considered",
+      "count": 45268
+    },
+    {
+      "scope": "wicket",
+      "rule": "excluded: in D/L-marked matches",
+      "count": 619
+    },
+    {
+      "scope": "wicket",
+      "rule": "excluded: anomalous or gapped overs",
+      "count": 14
+    },
+    {
+      "scope": "wicket",
+      "rule": "excluded: next over cut short with no wicket (censored)",
+      "count": 474
+    },
+    {
+      "scope": "wicket",
+      "rule": "kept: next over cut short by a wicket",
+      "count": 237
+    },
+    {
+      "scope": "wicket",
+      "rule": "kept: complete six-ball next over",
+      "count": 43924
+    },
+    {
+      "scope": "wicket",
+      "rule": "eligible rows",
+      "count": 44161
+    },
+    {
+      "scope": "wicket",
+      "rule": "eligible rows from no-result matches (kept)",
+      "count": 123
+    },
+    {
+      "scope": "batter",
+      "rule": "batting innings in the source",
+      "count": 18768
+    },
+    {
+      "scope": "batter",
+      "rule": "excluded: in D/L-marked matches",
+      "count": 276
+    },
+    {
+      "scope": "batter",
+      "rule": "excluded: in no-result matches",
+      "count": 63
+    },
+    {
+      "scope": "batter",
+      "rule": "eligible rows",
+      "count": 18429
+    }
+  ],
+  "tasks": {
+    "wicket": {
+      "chronology": {
+        "folds_checked": 9,
+        "min_gap_days": 150,
+        "shared_matches": 0,
+        "strictly_prior_feature_rows_verified": 44161
+      },
+      "dependence": {
+        "rows": 44161,
+        "matches": 1220,
+        "rows_per_match": {
+          "mean": 36.2,
+          "median": 37.0,
+          "min": 2,
+          "max": 38
+        },
+        "icc_wicket_by_match": {
+          "icc": -0.00524,
+          "f": 0.811,
+          "p_value": 0.9999995546526139,
+          "mean_rows_per_group": 36.2,
+          "design_effect": 0.816,
+          "effective_rows": 54147
+        },
+        "icc_wicket_by_innings": {
+          "icc": -0.00089,
+          "f": 0.984,
+          "p_value": 0.7056096687299884,
+          "mean_rows_per_group": 18.16,
+          "design_effect": 0.985,
+          "effective_rows": 44845
+        }
+      },
+      "base_rate_homogeneity": {
+        "wicket": {
+          "chi2": 17.86,
+          "dof": 18,
+          "p_value": 0.4650100224631273,
+          "pooled_rate": 0.2782,
+          "min_rate": 0.2596,
+          "min_season": 2020,
+          "max_rate": 0.2894,
+          "max_season": 2024,
+          "max_abs_deviation": 0.0185
+        }
+      },
+      "drift": {
+        "max_abs_smd": 0.842,
+        "max_abs_smd_feature": "run_rate",
+        "max_abs_smd_season": 2026,
+        "max_psi": 0.791,
+        "max_psi_feature": "run_rate",
+        "max_psi_season": 2026,
+        "seasons_with_large_smd": 1,
+        "seasons_with_major_psi": 3,
+        "feature_season_pairs": 42,
+        "pairs_with_small_or_larger_smd": 10
+      },
+      "class_balance": {
+        "class_shares": {
+          "0": 0.7218,
+          "1": 0.2782
+        },
+        "minority_share": 0.2782,
+        "majority_class_accuracy_by_validation_season": {
+          "2021": 0.7213,
+          "2022": 0.7197,
+          "2023": 0.7137,
+          "2024": 0.7106,
+          "2025": 0.7173
+        },
+        "majority_class_accuracy_mean": 0.7165
+      },
+      "defaults": {
+        "missing_model_inputs": 0,
+        "default_rule": "none: every checkpoint input is observed in the match itself"
+      },
+      "unseen_levels": {
+        "2018": 0,
+        "2019": 0,
+        "2020": 0,
+        "2021": 179,
+        "2022": 1145,
+        "2023": 318,
+        "2024": 187,
+        "2025": 0,
+        "2026": 0
+      },
+      "convergence": {
+        "leaders": [
+          "Histogram gradient boosting",
+          "Random forest",
+          "Multilayer perceptron"
+        ],
+        "leader_brier_spread_by_fraction": {
+          "0.1": 0.000657,
+          "0.25": 0.000401,
+          "0.5": 0.000651,
+          "0.75": 0.00052,
+          "1.0": 0.000471
+        },
+        "best_alternative_by_fraction": {
+          "0.1": {
+            "model": "Random forest",
+            "gap_to_selected": -0.000157
+          },
+          "0.25": {
+            "model": "Random forest",
+            "gap_to_selected": 4.8e-05
+          },
+          "0.5": {
+            "model": "Random forest",
+            "gap_to_selected": 0.000213
+          },
+          "0.75": {
+            "model": "Random forest",
+            "gap_to_selected": -7.3e-05
+          },
+          "1.0": {
+            "model": "Random forest",
+            "gap_to_selected": 0.000161
+          }
+        },
+        "selected_plateau": {
+          "validation_brier_by_fraction": {
+            "0.1": 0.197114,
+            "0.25": 0.196439,
+            "0.5": 0.195617,
+            "0.75": 0.195813,
+            "1.0": 0.195792
+          },
+          "change_50_to_75": 0.000196,
+          "change_75_to_100": -2.1e-05,
+          "change_10_to_50": -0.001498,
+          "per_season_change_75_to_100": {
+            "2021": -0.000103,
+            "2022": -0.0002,
+            "2023": -0.000168,
+            "2024": -3.5e-05,
+            "2025": 0.000403
+          }
+        },
+        "paired_gaps_vs_selected": {
+          "Class-prior baseline": {
+            "mean": 0.007391,
+            "sd": 0.001477,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Logistic regression": {
+            "mean": 0.000754,
+            "sd": 0.000506,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Decision tree": {
+            "mean": 0.000981,
+            "sd": 0.00032,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Random forest": {
+            "mean": 0.000161,
+            "sd": 0.000258,
+            "selected_better_seasons": 3,
+            "seasons": 5
+          },
+          "Gaussian naive Bayes": {
+            "mean": 0.030304,
+            "sd": 0.005229,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Multilayer perceptron": {
+            "mean": 0.000471,
+            "sd": 0.000193,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          }
+        },
+        "accuracy_mean_by_model": {
+          "Class-prior baseline": 0.7165,
+          "Logistic regression": 0.7179,
+          "Decision tree": 0.7225,
+          "Random forest": 0.7211,
+          "Histogram gradient boosting": 0.7224,
+          "Gaussian naive Bayes": 0.6731,
+          "Multilayer perceptron": 0.719
+        },
+        "majority_class_accuracy_mean": 0.7165,
+        "models_within_1pp_of_majority_accuracy": [
+          "Class-prior baseline",
+          "Logistic regression",
+          "Decision tree",
+          "Random forest",
+          "Histogram gradient boosting",
+          "Multilayer perceptron"
+        ],
+        "selected_mean_validation_brier": 0.195792,
+        "runner_up": "Random forest",
+        "runner_up_gap": 0.000161,
+        "holdout_2026": {
+          "brier": 0.19818852642456758,
+          "log_loss": 0.5845694204336138,
+          "accuracy": 0.7202634637737311,
+          "balanced_accuracy": 0.5271439857299687,
+          "roc_auc": 0.5994988780085273
+        }
+      },
+      "algorithms": {
+        "Class-prior baseline": {
+          "verdict": "Holds",
+          "evidence": {
+            "homogeneity": {
+              "wicket": {
+                "chi2": 17.86,
+                "dof": 18,
+                "p_value": 0.4650100224631273,
+                "pooled_rate": 0.2782,
+                "min_rate": 0.2596,
+                "min_season": 2020,
+                "max_rate": 0.2894,
+                "max_season": 2024,
+                "max_abs_deviation": 0.0185
+              }
+            }
+          }
+        },
+        "Logistic regression": {
+          "verdict": "Violated",
+          "evidence": {
+            "features_tested": 6,
+            "bonferroni_alpha": 0.008333,
+            "clearly_nonlinear_features": [
+              "completed_overs",
+              "runs",
+              "wickets",
+              "run_rate"
+            ],
+            "max_vif": 19.61,
+            "max_vif_feature": "completed_overs",
+            "features_with_vif_above_10": [
+              "completed_overs",
+              "runs"
+            ],
+            "events_per_parameter": {
+              "numeric_columns": 7,
+              "one_hot_columns": 71,
+              "parameters": 79,
+              "minority_class_events": 11542,
+              "events_per_parameter": 146.1,
+              "note": "binary logistic: one coefficient per column plus an intercept"
+            },
+            "regularisation": [
+              {
+                "params": "{\"C\": 1.0}",
+                "tuning_brier_mean": 0.1903461894510794,
+                "tuning_brier_sd": 0.004615189407261889
+              },
+              {
+                "params": "{\"C\": 0.05}",
+                "tuning_brier_mean": 0.19002988444665644,
+                "tuning_brier_sd": 0.004938912061360218
+              },
+              {
+                "params": "{\"C\": 4.0}",
+                "tuning_brier_mean": 0.1903654466034103,
+                "tuning_brier_sd": 0.004596584019028916
+              }
+            ],
+            "chosen_setting": {
+              "C": 0.05
+            },
+            "independence_icc_by_match": {
+              "icc": -0.00524,
+              "f": 0.811,
+              "p_value": 0.9999995546526139,
+              "mean_rows_per_group": 36.2,
+              "design_effect": 0.816,
+              "effective_rows": 54147
+            }
+          }
+        },
+        "Decision tree": {
+          "verdict": "Partially holds",
+          "evidence": {
+            "chosen_setting": {
+              "max_depth": 3,
+              "min_samples_leaf": 100
+            },
+            "tuning_brier_by_setting": [
+              {
+                "params": "{\"max_depth\": 3, \"min_samples_leaf\": 100}",
+                "tuning_brier_mean": 0.18841102759374695,
+                "tuning_brier_sd": 0.004583680011797722
+              },
+              {
+                "params": "{\"max_depth\": 5, \"min_samples_leaf\": 60}",
+                "tuning_brier_mean": 0.18928561519072204,
+                "tuning_brier_sd": 0.00392234402868953
+              },
+              {
+                "params": "{\"max_depth\": 8, \"min_samples_leaf\": 40}",
+                "tuning_brier_mean": 0.1901275024671183,
+                "tuning_brier_sd": 0.0029127584572890093
+              }
+            ],
+            "validation_brier_sd_across_seasons": 0.002949,
+            "train_validation_gap": 0.006082,
+            "seasons_forest_beats_tree": 5
+          }
+        },
+        "Random forest": {
+          "verdict": "Holds",
+          "evidence": {
+            "chosen_setting": {
+              "max_depth": 12,
+              "min_samples_leaf": 15
+            },
+            "trees": 160,
+            "mean_brier_tree_minus_forest": 0.00082,
+            "seasons_forest_beats_tree": 5,
+            "validation_brier_sd_forest": 0.002759,
+            "validation_brier_sd_tree": 0.002949,
+            "train_validation_gap_forest": 0.010474,
+            "train_validation_gap_tree": 0.006082
+          }
+        },
+        "Histogram gradient boosting": {
+          "verdict": "Holds",
+          "evidence": {
+            "chosen_setting": {
+              "max_leaf_nodes": 7,
+              "max_iter": 60,
+              "l2_regularization": 2.0
+            },
+            "learning_rate": 0.06,
+            "min_samples_leaf": 50,
+            "max_bins": 255,
+            "numeric_features_binned_losslessly": 6,
+            "numeric_features": 7,
+            "features_with_more_values_than_bins": [
+              "run_rate"
+            ],
+            "train_validation_gap": 0.006335,
+            "class_prior_train_validation_gap": 0.003413,
+            "excess_train_validation_gap": 0.002922,
+            "plateau": {
+              "validation_brier_by_fraction": {
+                "0.1": 0.197114,
+                "0.25": 0.196439,
+                "0.5": 0.195617,
+                "0.75": 0.195813,
+                "1.0": 0.195792
+              },
+              "change_50_to_75": 0.000196,
+              "change_75_to_100": -2.1e-05,
+              "change_10_to_50": -0.001498,
+              "per_season_change_75_to_100": {
+                "2021": -0.000103,
+                "2022": -0.0002,
+                "2023": -0.000168,
+                "2024": -3.5e-05,
+                "2025": 0.000403
+              }
+            },
+            "tuning_brier_by_setting": [
+              {
+                "params": "{\"max_leaf_nodes\": 7, \"max_iter\": 60, \"l2_regularization\": 2.0}",
+                "tuning_brier_mean": 0.1881648770004829,
+                "tuning_brier_sd": 0.004264729988406845
+              },
+              {
+                "params": "{\"max_leaf_nodes\": 15, \"max_iter\": 100, \"l2_regularization\": 4.0}",
+                "tuning_brier_mean": 0.18832978742475628,
+                "tuning_brier_sd": 0.004139517298603444
+              },
+              {
+                "params": "{\"max_leaf_nodes\": 31, \"max_iter\": 140, \"l2_regularization\": 8.0}",
+                "tuning_brier_mean": 0.1894754489513685,
+                "tuning_brier_sd": 0.0035883583401183318
+              }
+            ]
+          }
+        },
+        "Gaussian naive Bayes": {
+          "verdict": "Violated",
+          "evidence": {
+            "chosen_setting": {
+              "var_smoothing": 0.2
+            },
+            "within_class_pairs_abs_corr_at_least_0.5": 7,
+            "largest_within_class_correlations": [
+              {
+                "task": "wicket",
+                "class": 0,
+                "feature_a": "completed_overs",
+                "feature_b": "runs",
+                "correlation": 0.9259913954045953
+              },
+              {
+                "task": "wicket",
+                "class": 1,
+                "feature_a": "completed_overs",
+                "feature_b": "runs",
+                "correlation": 0.9187197419857537
+              },
+              {
+                "task": "wicket",
+                "class": 1,
+                "feature_a": "completed_overs",
+                "feature_b": "wickets",
+                "correlation": 0.7441421801108593
+              },
+              {
+                "task": "wicket",
+                "class": 0,
+                "feature_a": "completed_overs",
+                "feature_b": "wickets",
+                "correlation": 0.7222162009290671
+              },
+              {
+                "task": "wicket",
+                "class": 1,
+                "feature_a": "runs",
+                "feature_b": "wickets",
+                "correlation": 0.5781514307715986
+              }
+            ],
+            "class_feature_pairs_far_from_normal": 3,
+            "class_feature_pairs": 14,
+            "one_hot_binary_columns": 71,
+            "calibration_2025": {
+              "Gaussian naive Bayes": {
+                "event": "wicket",
+                "expected_calibration_error": 0.1306,
+                "mean_probability": 0.3153,
+                "observed_rate": 0.2827,
+                "share_of_probabilities_below_0.05_or_above_0.95": 0.002
+              },
+              "Histogram gradient boosting": {
+                "event": "wicket",
+                "expected_calibration_error": 0.0094,
+                "mean_probability": 0.2848,
+                "observed_rate": 0.2827,
+                "share_of_probabilities_below_0.05_or_above_0.95": 0.0
+              }
+            },
+            "mean_validation_brier": 0.226097
+          }
+        },
+        "Multilayer perceptron": {
+          "verdict": "Partially holds",
+          "evidence": {
+            "chosen_setting": {
+              "hidden_layer_sizes": [
+                24
+              ],
+              "alpha": 1.0,
+              "max_iter": 35
+            },
+            "inputs_standardised": true,
+            "fits_stopped_by_epoch_cap": {
+              "tuning": 9,
+              "validation": 5,
+              "learning": 25
+            },
+            "mlp_fits": {
+              "tuning": 9,
+              "validation": 5,
+              "learning": 25
+            },
+            "other_models_fit_warnings": 0,
+            "seed_brier_range_2025": 0.000408,
+            "seed_brier_sd_2025": 0.000164,
+            "seeds": [
+              42,
+              1,
+              2,
+              3,
+              4
+            ],
+            "gap_to_selected_mean_brier": 0.000471,
+            "weights_and_biases": 1921,
+            "training_rows_2008_2024": 39019
+          }
+        }
+      }
+    },
+    "batter": {
+      "chronology": {
+        "folds_checked": 9,
+        "min_gap_days": 150,
+        "shared_matches": 0,
+        "strictly_prior_feature_rows_verified": 18429
+      },
+      "dependence": {
+        "rows": 18429,
+        "matches": 1211,
+        "rows_per_match": {
+          "mean": 15.22,
+          "median": 15.0,
+          "min": 7,
+          "max": 22
+        },
+        "icc_30+_by_match": {
+          "icc": 0.00437,
+          "f": 1.067,
+          "p_value": 0.05892145309382829,
+          "mean_rows_per_group": 15.22,
+          "design_effect": 1.062,
+          "effective_rows": 17351
+        },
+        "icc_30+_by_innings": {
+          "icc": 0.02207,
+          "f": 1.172,
+          "p_value": 7.776386410295998e-08,
+          "mean_rows_per_group": 7.61,
+          "design_effect": 1.146,
+          "effective_rows": 16083
+        },
+        "icc_50+_by_match": {
+          "icc": 0.0131,
+          "f": 1.202,
+          "p_value": 3.3187263833965454e-06,
+          "mean_rows_per_group": 15.22,
+          "design_effect": 1.186,
+          "effective_rows": 15535
+        },
+        "icc_50+_by_innings": {
+          "icc": 0.03419,
+          "f": 1.269,
+          "p_value": 7.925049947158619e-16,
+          "mean_rows_per_group": 7.61,
+          "design_effect": 1.226,
+          "effective_rows": 15032
+        }
+      },
+      "base_rate_homogeneity": {
+        "30+": {
+          "chi2": 67.2,
+          "dof": 18,
+          "p_value": 1.334785305965424e-07,
+          "pooled_rate": 0.2552,
+          "min_rate": 0.2139,
+          "min_season": 2009,
+          "max_rate": 0.3124,
+          "max_season": 2025,
+          "max_abs_deviation": 0.0572
+        },
+        "50+": {
+          "chi2": 73.59,
+          "dof": 18,
+          "p_value": 1.1052506470663885e-08,
+          "pooled_rate": 0.1129,
+          "min_rate": 0.078,
+          "min_season": 2009,
+          "max_rate": 0.15,
+          "max_season": 2026,
+          "max_abs_deviation": 0.0372
+        }
+      },
+      "drift": {
+        "max_abs_smd": 0.588,
+        "max_abs_smd_feature": "opposition_prior_innings",
+        "max_abs_smd_season": 2021,
+        "max_psi": 0.598,
+        "max_psi_feature": "days_since_previous_innings",
+        "max_psi_season": 2022,
+        "seasons_with_large_smd": 0,
+        "seasons_with_major_psi": 6,
+        "feature_season_pairs": 102,
+        "pairs_with_small_or_larger_smd": 25
+      },
+      "class_balance": {
+        "class_shares": {
+          "0": 0.7448,
+          "1": 0.1424,
+          "2": 0.1129
+        },
+        "minority_share": 0.1129,
+        "majority_class_accuracy_by_validation_season": {
+          "2021": 0.7558,
+          "2022": 0.7435,
+          "2023": 0.7427,
+          "2024": 0.7139,
+          "2025": 0.6876
+        },
+        "majority_class_accuracy_mean": 0.7287
+      },
+      "defaults": {
+        "missing_model_inputs": 0,
+        "cold_start_rows_prior_innings_0": 736,
+        "rows_without_opposition_history": 4466,
+        "rows_without_venue_history": 6123,
+        "rows_with_days_since_default_3650": 738,
+        "cold_start_rows_2026": 34,
+        "default_rule": "no earlier innings: averages and rates are 0.0 and days since the previous innings is 3,650"
+      },
+      "unseen_levels": {
+        "2018": 0,
+        "2019": 0,
+        "2020": 0,
+        "2021": 74,
+        "2022": 475,
+        "2023": 137,
+        "2024": 92,
+        "2025": 0,
+        "2026": 0
+      },
+      "convergence": {
+        "leaders": [
+          "Histogram gradient boosting",
+          "Random forest",
+          "Multilayer perceptron"
+        ],
+        "leader_brier_spread_by_fraction": {
+          "0.1": 0.004805,
+          "0.25": 0.001444,
+          "0.5": 0.000414,
+          "0.75": 0.000336,
+          "1.0": 0.000162
+        },
+        "best_alternative_by_fraction": {
+          "0.1": {
+            "model": "Random forest",
+            "gap_to_selected": -0.004805
+          },
+          "0.25": {
+            "model": "Random forest",
+            "gap_to_selected": -0.001444
+          },
+          "0.5": {
+            "model": "Multilayer perceptron",
+            "gap_to_selected": -0.000414
+          },
+          "0.75": {
+            "model": "Multilayer perceptron",
+            "gap_to_selected": -0.000336
+          },
+          "1.0": {
+            "model": "Random forest",
+            "gap_to_selected": 4e-05
+          }
+        },
+        "selected_plateau": {
+          "validation_brier_by_fraction": {
+            "0.1": 0.144347,
+            "0.25": 0.140821,
+            "0.5": 0.139552,
+            "0.75": 0.139682,
+            "1.0": 0.139367
+          },
+          "change_50_to_75": 0.00013,
+          "change_75_to_100": -0.000315,
+          "change_10_to_50": -0.004795,
+          "per_season_change_75_to_100": {
+            "2021": -2.5e-05,
+            "2022": -1.2e-05,
+            "2023": -0.000413,
+            "2024": -0.000963,
+            "2025": -0.000164
+          }
+        },
+        "paired_gaps_vs_selected": {
+          "Class-prior baseline": {
+            "mean": 0.012666,
+            "sd": 0.002449,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Logistic regression": {
+            "mean": 0.001551,
+            "sd": 0.000936,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Decision tree": {
+            "mean": 0.001167,
+            "sd": 0.000546,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Random forest": {
+            "mean": 4e-05,
+            "sd": 0.000567,
+            "selected_better_seasons": 2,
+            "seasons": 5
+          },
+          "Gaussian naive Bayes": {
+            "mean": 0.129823,
+            "sd": 0.014474,
+            "selected_better_seasons": 5,
+            "seasons": 5
+          },
+          "Multilayer perceptron": {
+            "mean": 0.000162,
+            "sd": 0.000832,
+            "selected_better_seasons": 4,
+            "seasons": 5
+          }
+        },
+        "accuracy_mean_by_model": {
+          "Class-prior baseline": 0.7287,
+          "Logistic regression": 0.7267,
+          "Decision tree": 0.7287,
+          "Random forest": 0.7287,
+          "Histogram gradient boosting": 0.7289,
+          "Gaussian naive Bayes": 0.5524,
+          "Multilayer perceptron": 0.7287
+        },
+        "majority_class_accuracy_mean": 0.7287,
+        "models_within_1pp_of_majority_accuracy": [
+          "Class-prior baseline",
+          "Logistic regression",
+          "Decision tree",
+          "Random forest",
+          "Histogram gradient boosting",
+          "Multilayer perceptron"
+        ],
+        "selected_mean_validation_brier": 0.139367,
+        "runner_up": "Random forest",
+        "runner_up_gap": 4e-05,
+        "holdout_2026": {
+          "brier": 0.1514022377691272,
+          "log_loss": 0.7455477532872868,
+          "accuracy": 0.7044025157232704,
+          "balanced_accuracy": 0.34233698208678187,
+          "roc_auc": 0.7177207359286495
+        }
+      },
+      "algorithms": {
+        "Class-prior baseline": {
+          "verdict": "Violated",
+          "evidence": {
+            "homogeneity": {
+              "30+": {
+                "chi2": 67.2,
+                "dof": 18,
+                "p_value": 1.334785305965424e-07,
+                "pooled_rate": 0.2552,
+                "min_rate": 0.2139,
+                "min_season": 2009,
+                "max_rate": 0.3124,
+                "max_season": 2025,
+                "max_abs_deviation": 0.0572
+              },
+              "50+": {
+                "chi2": 73.59,
+                "dof": 18,
+                "p_value": 1.1052506470663885e-08,
+                "pooled_rate": 0.1129,
+                "min_rate": 0.078,
+                "min_season": 2009,
+                "max_rate": 0.15,
+                "max_season": 2026,
+                "max_abs_deviation": 0.0372
+              }
+            }
+          }
+        },
+        "Logistic regression": {
+          "verdict": "Violated",
+          "evidence": {
+            "features_tested": 17,
+            "bonferroni_alpha": 0.002941,
+            "clearly_nonlinear_features": [
+              "prior_innings",
+              "career_avg_runs",
+              "career_30_rate",
+              "career_50_rate",
+              "recent5_avg_runs",
+              "recent10_avg_runs",
+              "recent10_30_rate",
+              "opposition_prior_innings",
+              "opposition_avg_runs",
+              "opposition_30_rate",
+              "venue_prior_innings",
+              "venue_avg_runs",
+              "venue_30_rate",
+              "days_since_previous_innings"
+            ],
+            "max_vif": 50.46,
+            "max_vif_feature": "recent10_avg_runs",
+            "features_with_vif_above_10": [
+              "career_avg_runs",
+              "career_30_rate",
+              "recent5_avg_runs",
+              "recent5_30_rate",
+              "recent10_avg_runs",
+              "recent10_30_rate",
+              "recent10_50_rate"
+            ],
+            "events_per_parameter": {
+              "numeric_columns": 17,
+              "one_hot_columns": 68,
+              "parameters": 258,
+              "minority_class_events": 1913,
+              "events_per_parameter": 7.41,
+              "note": "multinomial logistic: one coefficient set per class"
+            },
+            "regularisation": [
+              {
+                "params": "{\"C\": 0.25}",
+                "tuning_brier_mean": 0.14202977845092127,
+                "tuning_brier_sd": 0.00485456217505912
+              },
+              {
+                "params": "{\"C\": 0.05}",
+                "tuning_brier_mean": 0.14179273933846837,
+                "tuning_brier_sd": 0.004569144605170397
+              },
+              {
+                "params": "{\"C\": 4.0}",
+                "tuning_brier_mean": 0.14220146510026965,
+                "tuning_brier_sd": 0.005004980620818933
+              }
+            ],
+            "chosen_setting": {
+              "C": 0.05
+            },
+            "independence_icc_by_match": {
+              "icc": 0.00437,
+              "f": 1.067,
+              "p_value": 0.05892145309382829,
+              "mean_rows_per_group": 15.22,
+              "design_effect": 1.062,
+              "effective_rows": 17351
+            }
+          }
+        },
+        "Decision tree": {
+          "verdict": "Partially holds",
+          "evidence": {
+            "chosen_setting": {
+              "max_depth": 3,
+              "min_samples_leaf": 100
+            },
+            "tuning_brier_by_setting": [
+              {
+                "params": "{\"max_depth\": 3, \"min_samples_leaf\": 100}",
+                "tuning_brier_mean": 0.14172353417019193,
+                "tuning_brier_sd": 0.004512265179522712
+              },
+              {
+                "params": "{\"max_depth\": 5, \"min_samples_leaf\": 60}",
+                "tuning_brier_mean": 0.14299477934458152,
+                "tuning_brier_sd": 0.0054537364112223746
+              },
+              {
+                "params": "{\"max_depth\": 8, \"min_samples_leaf\": 40}",
+                "tuning_brier_mean": 0.14612183013638583,
+                "tuning_brier_sd": 0.006785281531608811
+              }
+            ],
+            "validation_brier_sd_across_seasons": 0.012009,
+            "train_validation_gap": 0.010675,
+            "seasons_forest_beats_tree": 5
+          }
+        },
+        "Random forest": {
+          "verdict": "Holds",
+          "evidence": {
+            "chosen_setting": {
+              "max_depth": 8,
+              "min_samples_leaf": 30
+            },
+            "trees": 160,
+            "mean_brier_tree_minus_forest": 0.001127,
+            "seasons_forest_beats_tree": 5,
+            "validation_brier_sd_forest": 0.011913,
+            "validation_brier_sd_tree": 0.012009,
+            "train_validation_gap_forest": 0.013874,
+            "train_validation_gap_tree": 0.010675
+          }
+        },
+        "Histogram gradient boosting": {
+          "verdict": "Holds",
+          "evidence": {
+            "chosen_setting": {
+              "max_leaf_nodes": 7,
+              "max_iter": 60,
+              "l2_regularization": 2.0
+            },
+            "learning_rate": 0.06,
+            "min_samples_leaf": 50,
+            "max_bins": 255,
+            "numeric_features_binned_losslessly": 7,
+            "numeric_features": 17,
+            "features_with_more_values_than_bins": [
+              "prior_innings",
+              "career_avg_runs",
+              "career_30_rate",
+              "career_50_rate",
+              "recent5_avg_runs",
+              "recent10_avg_runs",
+              "opposition_avg_runs",
+              "venue_avg_runs",
+              "venue_30_rate",
+              "days_since_previous_innings"
+            ],
+            "train_validation_gap": 0.013725,
+            "class_prior_train_validation_gap": 0.011795,
+            "excess_train_validation_gap": 0.001931,
+            "plateau": {
+              "validation_brier_by_fraction": {
+                "0.1": 0.144347,
+                "0.25": 0.140821,
+                "0.5": 0.139552,
+                "0.75": 0.139682,
+                "1.0": 0.139367
+              },
+              "change_50_to_75": 0.00013,
+              "change_75_to_100": -0.000315,
+              "change_10_to_50": -0.004795,
+              "per_season_change_75_to_100": {
+                "2021": -2.5e-05,
+                "2022": -1.2e-05,
+                "2023": -0.000413,
+                "2024": -0.000963,
+                "2025": -0.000164
+              }
+            },
+            "tuning_brier_by_setting": [
+              {
+                "params": "{\"max_leaf_nodes\": 7, \"max_iter\": 60, \"l2_regularization\": 2.0}",
+                "tuning_brier_mean": 0.1408698865015993,
+                "tuning_brier_sd": 0.004473699661795046
+              },
+              {
+                "params": "{\"max_leaf_nodes\": 15, \"max_iter\": 100, \"l2_regularization\": 4.0}",
+                "tuning_brier_mean": 0.14301610783148425,
+                "tuning_brier_sd": 0.004938196397694186
+              },
+              {
+                "params": "{\"max_leaf_nodes\": 31, \"max_iter\": 140, \"l2_regularization\": 8.0}",
+                "tuning_brier_mean": 0.14581125556731012,
+                "tuning_brier_sd": 0.003920719986432671
+              }
+            ]
+          }
+        },
+        "Gaussian naive Bayes": {
+          "verdict": "Violated",
+          "evidence": {
+            "chosen_setting": {
+              "var_smoothing": 0.2
+            },
+            "within_class_pairs_abs_corr_at_least_0.5": 121,
+            "largest_within_class_correlations": [
+              {
+                "task": "batter",
+                "class": 0,
+                "feature_a": "career_avg_runs",
+                "feature_b": "career_30_rate",
+                "correlation": 0.9156461612121982
+              },
+              {
+                "task": "batter",
+                "class": 0,
+                "feature_a": "career_avg_runs",
+                "feature_b": "recent10_avg_runs",
+                "correlation": 0.912621443063784
+              },
+              {
+                "task": "batter",
+                "class": 0,
+                "feature_a": "recent5_avg_runs",
+                "feature_b": "recent10_avg_runs",
+                "correlation": 0.9064932217147865
+              },
+              {
+                "task": "batter",
+                "class": 0,
+                "feature_a": "recent10_avg_runs",
+                "feature_b": "recent10_30_rate",
+                "correlation": 0.8987031645765109
+              },
+              {
+                "task": "batter",
+                "class": 1,
+                "feature_a": "career_avg_runs",
+                "feature_b": "career_30_rate",
+                "correlation": 0.8957062658993392
+              }
+            ],
+            "class_feature_pairs_far_from_normal": 25,
+            "class_feature_pairs": 51,
+            "one_hot_binary_columns": 68,
+            "calibration_2025": {
+              "Gaussian naive Bayes": {
+                "event": "30",
+                "expected_calibration_error": 0.2952,
+                "mean_probability": 0.4845,
+                "observed_rate": 0.3124,
+                "share_of_probabilities_below_0.05_or_above_0.95": 0.5401
+              },
+              "Histogram gradient boosting": {
+                "event": "30",
+                "expected_calibration_error": 0.0447,
+                "mean_probability": 0.2677,
+                "observed_rate": 0.3124,
+                "share_of_probabilities_below_0.05_or_above_0.95": 0.0774
+              }
+            },
+            "mean_validation_brier": 0.26919
+          }
+        },
+        "Multilayer perceptron": {
+          "verdict": "Partially holds",
+          "evidence": {
+            "chosen_setting": {
+              "hidden_layer_sizes": [
+                32,
+                12
+              ],
+              "alpha": 2.0,
+              "max_iter": 45
+            },
+            "inputs_standardised": true,
+            "fits_stopped_by_epoch_cap": {
+              "tuning": 9,
+              "validation": 5,
+              "learning": 25
+            },
+            "mlp_fits": {
+              "tuning": 9,
+              "validation": 5,
+              "learning": 25
+            },
+            "other_models_fit_warnings": 0,
+            "seed_brier_range_2025": 0.001251,
+            "seed_brier_sd_2025": 0.000535,
+            "seeds": [
+              42,
+              1,
+              2,
+              3,
+              4
+            ],
+            "gap_to_selected_mean_brier": 0.000162,
+            "weights_and_biases": 3187,
+            "training_rows_2008_2024": 16231
+          }
+        }
+      }
+    }
+  },
+  "verdicts": {
+    "data": [
+      {
+        "assumption": "Chronological order, no leakage",
+        "verdict": "Holds",
+        "evidence": "9 folds per task: every training date precedes every evaluation date (smallest gap 150 days), 0 shared matches; 18,429 batter rows rebuilt from strictly earlier dates",
+        "consequence": "Validation and test scores are not inflated by future information."
+      },
+      {
+        "assumption": "Independent rows",
+        "verdict": "Partially holds",
+        "evidence": "36.2 wicket rows and 15.22 batter rows per match. Wicket: wicket by match ICC -0.00524 (p=1); wicket by innings ICC -0.00089 (p=0.71). Batter: 30+ by match ICC 0.00437 (p=0.059); 30+ by innings ICC 0.02207 (p=7.8e-08); 50+ by match ICC 0.0131 (p=3.3e-06); 50+ by innings ICC 0.03419 (p=7.9e-16)",
+        "consequence": "Batter outcomes cluster slightly within an innings and a match, and wicket rows from one innings share its running score, so whole matches and seasons stay together in every split and uncertainty is reported across seasons, not rows."
+      },
+      {
+        "assumption": "Stationary seasons",
+        "verdict": "Violated",
+        "evidence": "Largest season-vs-history shift: run_rate SMD 0.842 in 2026 (wicket), opposition_prior_innings SMD 0.588 in 2021 (batter); wicket rate 26.0%\u201328.9% by season",
+        "consequence": "Older seasons describe a different scoring environment; expanding-window training and season-by-season evaluation measure the effect instead of assuming it away."
+      },
+      {
+        "assumption": "Classes adequately represented",
+        "verdict": "Partially holds",
+        "evidence": "Wicket class shares {'0': 0.7218, '1': 0.2782}; batter {'0': 0.7448, '1': 0.1424, '2': 0.1129}; predicting the majority class scores 71.7% (wicket) and 72.9% (batter) accuracy",
+        "consequence": "Accuracy is dominated by the majority class, so probability scores (Brier, log loss) rank the models."
+      },
+      {
+        "assumption": "Complete inputs; sensible defaults",
+        "verdict": "Partially holds",
+        "evidence": "0 missing model inputs; 736 batter rows with no earlier innings use defaults (34 in 2026)",
+        "consequence": "A debutant's 0.0 history rates are a code for 'no history', not an observed zero; prior_innings = 0 lets trees separate the two."
+      },
+      {
+        "assumption": "Category levels seen in training",
+        "verdict": "Partially holds",
+        "evidence": "Rows with a level unseen in training: 2021: 253, 2022: 1620, 2023: 455, 2024: 279",
+        "consequence": "Unseen levels (the two 2022 franchises, new venues) are encoded as all-zero, so those rows fall back on the other inputs."
+      },
+      {
+        "assumption": "Measurement scales respected",
+        "verdict": "Holds",
+        "evidence": "Counts and rates are ratio-scale numbers; teams and venues are nominal (one-hot); phase is ordinal, one-hot encoded",
+        "consequence": "No arithmetic is done on nominal codes."
+      },
+      {
+        "assumption": "Eligibility rules applied",
+        "verdict": "Holds",
+        "evidence": "Wicket: 44,161 rows after removing D/L matches and censored overs; batter: 18,429 innings after removing D/L and no-result matches; super-over innings never enter",
+        "consequence": "The forecasts describe ordinary, uninterrupted innings, not D/L-shortened ones."
+      }
+    ],
+    "algorithms": [
+      {
+        "model": "Class-prior baseline",
+        "verdict": "Violated",
+        "wicket_verdict": "Holds",
+        "batter_verdict": "Violated"
+      },
+      {
+        "model": "Logistic regression",
+        "verdict": "Violated",
+        "wicket_verdict": "Violated",
+        "batter_verdict": "Violated"
+      },
+      {
+        "model": "Decision tree",
+        "verdict": "Partially holds",
+        "wicket_verdict": "Partially holds",
+        "batter_verdict": "Partially holds"
+      },
+      {
+        "model": "Random forest",
+        "verdict": "Holds",
+        "wicket_verdict": "Holds",
+        "batter_verdict": "Holds"
+      },
+      {
+        "model": "Histogram gradient boosting",
+        "verdict": "Holds",
+        "wicket_verdict": "Holds",
+        "batter_verdict": "Holds"
+      },
+      {
+        "model": "Gaussian naive Bayes",
+        "verdict": "Violated",
+        "wicket_verdict": "Violated",
+        "batter_verdict": "Violated"
+      },
+      {
+        "model": "Multilayer perceptron",
+        "verdict": "Partially holds",
+        "wicket_verdict": "Partially holds",
+        "batter_verdict": "Partially holds"
+      }
+    ]
+  }
+}

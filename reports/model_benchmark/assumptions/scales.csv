@@ -1,0 +1,34 @@
+task,column,role,scale,meaning
+wicket,innings,feature,nominal,1 or 2 (batting first or chasing); used as a 0/1-style number
+wicket,completed_overs,feature,ratio,"count of completed overs, 1–19"
+wicket,runs,feature,ratio,team runs so far
+wicket,wickets,feature,ratio,"team wickets so far, 0–9"
+wicket,run_rate,feature,ratio,runs per completed over
+wicket,last_over_runs,feature,ratio,runs in the most recent over
+wicket,last_over_wickets,feature,ratio,wickets in the most recent over
+wicket,batting_team,feature,nominal,"franchise, one-hot encoded"
+wicket,bowling_team,feature,nominal,"franchise, one-hot encoded"
+wicket,phase,feature,ordinal,"powerplay < middle < death; one-hot encoded, so the order is not imposed"
+wicket,venue_canonical,feature,nominal,"venue, one-hot encoded"
+wicket,wicket_next_over,target,nominal (binary target),at least one wicket in the next over
+batter,prior_innings,feature,ratio,count of earlier eligible innings
+batter,career_avg_runs,feature,ratio,mean runs in earlier innings
+batter,career_30_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,career_50_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,recent5_avg_runs,feature,ratio,mean runs in earlier innings
+batter,recent5_30_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,recent5_50_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,recent10_avg_runs,feature,ratio,mean runs in earlier innings
+batter,recent10_30_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,recent10_50_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,opposition_prior_innings,feature,ratio,count of earlier innings in this context
+batter,opposition_avg_runs,feature,ratio,mean runs in earlier innings
+batter,opposition_30_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,venue_prior_innings,feature,ratio,count of earlier innings in this context
+batter,venue_avg_runs,feature,ratio,mean runs in earlier innings
+batter,venue_30_rate,feature,ratio,share of earlier innings reaching the milestone (0–1)
+batter,days_since_previous_innings,feature,ratio,"days since the previous innings, capped at 3,650"
+batter,batting_team,feature,nominal,"franchise, one-hot encoded"
+batter,bowling_team,feature,nominal,"franchise, one-hot encoded"
+batter,venue_canonical,feature,nominal,"venue, one-hot encoded"
+batter,milestone_class,target,ordinal (target),"<30, 30–49, 50+ runs"

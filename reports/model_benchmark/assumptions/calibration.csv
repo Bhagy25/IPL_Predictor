@@ -1,0 +1,5 @@
+task,model,event,expected_calibration_error,mean_probability,observed_rate,share_of_probabilities_below_0.05_or_above_0.95
+wicket,Gaussian naive Bayes,wicket,0.1306,0.3153,0.2827,0.002
+wicket,Histogram gradient boosting,wicket,0.0094,0.2848,0.2827,0
+batter,Gaussian naive Bayes,30,0.2952,0.4845,0.3124,0.5401
+batter,Histogram gradient boosting,30,0.0447,0.2677,0.3124,0.0774
