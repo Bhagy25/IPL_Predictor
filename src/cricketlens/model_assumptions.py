@@ -816,6 +816,9 @@ def verdict_tables(summary: Dict[str, Any]) -> Dict[str, List[Dict[str, str]]]:
     clustered = {task: any(v["p_value"] < ALPHA for v in d.values()) for task, d in iccs.items()}
     independence = ["Holds", "Partially holds", "Violated"][sum(clustered.values())]
 
+    def shares(t):
+        return " / ".join(f"{v:.2%}" for v in t["class_balance"]["class_shares"].values())
+
     def icc_text(task):
         return "; ".join(f"{k.replace('icc_', '').replace('_by_', ' by ')} ICC {v['icc']} (p={v['p_value']:.2g})"
                          for k, v in iccs[task].items())
@@ -851,7 +854,7 @@ def verdict_tables(summary: Dict[str, Any]) -> Dict[str, List[Dict[str, str]]]:
                       f"{w['base_rate_homogeneity']['wicket']['min_rate']:.1%}–{w['base_rate_homogeneity']['wicket']['max_rate']:.1%} by season"),
          "consequence": "Older seasons describe a different scoring environment; expanding-window training and season-by-season evaluation measure the effect instead of assuming it away."},
         {"assumption": "Classes adequately represented", "verdict": "Partially holds",
-         "evidence": (f"Wicket class shares {w['class_balance']['class_shares']}; batter {b['class_balance']['class_shares']}; "
+         "evidence": (f"Wicket class shares {shares(w)} (no wicket / wicket); batter {shares(b)} (under 30 / 30–49 / 50+); "
                       f"predicting the majority class scores {w['class_balance']['majority_class_accuracy_mean']:.1%} "
                       f"(wicket) and {b['class_balance']['majority_class_accuracy_mean']:.1%} (batter) accuracy"),
          "consequence": "Accuracy is dominated by the majority class, so probability scores (Brier, log loss) rank the models."},
@@ -861,7 +864,7 @@ def verdict_tables(summary: Dict[str, Any]) -> Dict[str, List[Dict[str, str]]]:
                       f"defaults ({b['defaults']['cold_start_rows_2026']} in 2026)"),
          "consequence": "A debutant's 0.0 history rates are a code for 'no history', not an observed zero; prior_innings = 0 lets trees separate the two."},
         {"assumption": "Category levels seen in training", "verdict": "Partially holds" if any(unseen_rows.values()) else "Holds",
-         "evidence": "Rows with a level unseen in training: " + ", ".join(f"{k}: {v}" for k, v in unseen_rows.items() if v),
+         "evidence": "Rows with a level unseen in training: " + ", ".join(f"{k}: {v:,}" for k, v in unseen_rows.items() if v),
          "consequence": "Unseen levels (the two 2022 franchises, new venues) are encoded as all-zero, so those rows fall back on the other inputs."},
         {"assumption": "Measurement scales respected", "verdict": "Holds",
          "evidence": "Counts and rates are ratio-scale numbers; teams and venues are nominal (one-hot); phase is ordinal, one-hot encoded",

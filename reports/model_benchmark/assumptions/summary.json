@@ -1170,7 +1170,7 @@
       {
         "assumption": "Classes adequately represented",
         "verdict": "Partially holds",
-        "evidence": "Wicket class shares {'0': 0.7218, '1': 0.2782}; batter {'0': 0.7448, '1': 0.1424, '2': 0.1129}; predicting the majority class scores 71.7% (wicket) and 72.9% (batter) accuracy",
+        "evidence": "Wicket class shares 72.18% / 27.82% (no wicket / wicket); batter 74.48% / 14.24% / 11.29% (under 30 / 30\u201349 / 50+); predicting the majority class scores 71.7% (wicket) and 72.9% (batter) accuracy",
         "consequence": "Accuracy is dominated by the majority class, so probability scores (Brier, log loss) rank the models."
       },
       {
@@ -1182,7 +1182,7 @@
       {
         "assumption": "Category levels seen in training",
         "verdict": "Partially holds",
-        "evidence": "Rows with a level unseen in training: 2021: 253, 2022: 1620, 2023: 455, 2024: 279",
+        "evidence": "Rows with a level unseen in training: 2021: 253, 2022: 1,620, 2023: 455, 2024: 279",
         "consequence": "Unseen levels (the two 2022 franchises, new venues) are encoded as all-zero, so those rows fall back on the other inputs."
       },
       {
