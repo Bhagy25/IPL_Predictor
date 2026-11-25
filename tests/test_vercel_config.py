@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FUNCTION = json.loads((ROOT / "vercel.json").read_text(encoding="utf-8"))["functions"]["api/index.py"]
 SCHEMA_MAX_LENGTH = 256
 
-# Every data, model and report file the API opens (Part 12's bare-bundle run)
+# Every data, model and report file the API opens (checked by a bare-bundle run of every endpoint)
 RUNTIME_FILES = [
     "data/derived/batting_appearances.csv",
     "data/derived/dismissals.csv",
@@ -24,9 +24,10 @@ RUNTIME_FILES = [
     "data/processed/deliveries.csv",
     "data/processed/innings.csv",
     "data/processed/matches.csv",
+    "data/processed/stage03_batter_full_history_2008_2026.csv",
     "data/processed/stage03_wicket_full_history_2008_2026.csv",
-    "models/batter_deployment_through_2026.joblib",
-    "models/wicket_deployment_through_2026.joblib",
+    "models/final/batter_hgb_through_2026.joblib",
+    "models/final/wicket_hgb_through_2026.joblib",
     *[f"reports/figures/stage_02/{name}.png" for name in (
         "01_season_scoring_trend", "02_first_innings_histogram", "03_score_boxplots_by_era",
         "04_scoring_rate_by_phase", "05_current_team_win_rates", "06_venue_first_innings_means",
@@ -45,9 +46,9 @@ RUNTIME_FILES = [
     "reports/stage_02/session_01/season_first_innings_trends.csv",
     "reports/stage_02/session_01/venues_min20_first_innings_2018_2025.csv",
     "reports/stage_02/session_02/toss_decision_match_result_crosstab_2018_2025.csv",
-    "reports/stage_03/session_03/batter/batter_holdout_forecasts_2026.csv",
-    "reports/stage_03/session_03/stage03_session03_final_results.json",
-    "reports/stage_03/session_03/wicket/wicket_holdout_forecasts_2026.csv",
+    *[f"reports/model_benchmark/{name}" for name in (
+        "selection.json", "holdout_2026.json", "final_models.json", "wicket_comparison.csv", "batter_comparison.csv",
+        "wicket_holdout_forecasts.csv", "batter_holdout_forecasts.csv")],
 ]
 
 
@@ -70,7 +71,7 @@ def test_globs_fit_the_schema_limit():
 
 
 def test_every_runtime_file_is_included():
-    assert len(RUNTIME_FILES) == 46
+    assert len(RUNTIME_FILES) == 51
     missing = [f for f in RUNTIME_FILES if not _matches(f, FUNCTION["includeFiles"])]
     assert missing == []
 
@@ -78,6 +79,9 @@ def test_every_runtime_file_is_included():
 def test_unneeded_folders_stay_out():
     for path in ("data/raw/ipl_json/1082591.json", "notebooks/stage_02.ipynb", "docs/ROADMAP.md",
                  "tests/test_api.py", "web/src/App.tsx", "reports/IT462_report.pdf",
-                 "data/processed/next_over_samples.csv", "models/batter_holdout_train_through_2025.joblib"):
+                 "data/processed/next_over_samples.csv", "models/batter_holdout_train_through_2025.joblib",
+                 "models/wicket_deployment_through_2026.joblib", "models/final/wicket_hgb_through_2025.joblib",
+                 "models/final/batter_hgb_through_2025.joblib", "reports/model_benchmark/wicket_brier_learning.png",
+                 "reports/stage_03/session_03/stage03_session03_final_results.json"):
         assert _matches(path, FUNCTION["excludeFiles"]), path
         assert not _matches(path, FUNCTION["includeFiles"]), path
