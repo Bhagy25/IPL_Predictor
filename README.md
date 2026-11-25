@@ -145,7 +145,7 @@ models/                The archived Stage 3 models (development history)
 web/                   React + TypeScript + Vite + Tailwind website
 tests/                 pytest suite
 reports/               Stage reports (PDF), figures and evaluation outputs
-notebooks/             Stage 2 EDA notebooks
+notebooks/             The submission notebook (data preparation, EDA and prediction models) and the Stage 2 EDA notebooks
 docs/                  Stage documentation, data dictionary, website guide, screenshots
 pyproject.toml         Python package and dependencies
 LICENSE_NOTES.md       Data credit and image-rights notes
@@ -218,7 +218,24 @@ Open `http://localhost:5173`. The dev server forwards `/api` requests to the bac
 
 Type-check the website with `npx tsc --noEmit` in `web/`.
 
-### 5. Optional: rebuild the derived tables
+### 5. The submission notebook
+
+[`notebooks/CricketLens_IPL_EDA_and_Prediction_Models.ipynb`](notebooks/CricketLens_IPL_EDA_and_Prediction_Models.ipynb)
+contains the whole analysis in one self-contained notebook: it rebuilds the tables from the raw Cricsheet
+JSON, validates them, carries out the EDA, and runs the seven-algorithm benchmark, the 2026 test and the
+final refit. It does not import the project package. It is saved with its outputs; to run it again (about
+7 minutes), install the notebook tools into the same environment and execute it from the `notebooks/` folder:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install nbconvert ipykernel
+cd notebooks
+..\.venv\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=6000 CricketLens_IPL_EDA_and_Prediction_Models.ipynb
+```
+
+With the repository's tables present, its optional cells assert that every rebuilt table, the benchmark
+results and the 2026 forecasts match the saved project files.
+
+### 6. Optional: rebuild the derived tables
 
 `data/derived/` is committed. To rebuild it from the raw JSON (the output is byte-identical; the SHA256 of
 each file is listed in `data/derived/README.md`):
