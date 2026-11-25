@@ -9,6 +9,7 @@ import {
   BatterEntry, BinaryForecast, MAX_RUNS, TrackerEntry, WicketEntry, brier, clearAll, exportFile, hitRateBins,
   importEntries, parseTrackerFile, removeEntry, resolvedForecasts, setOutcome, useTracker,
 } from '../components/predict/trackerStore';
+import { PageGuide } from '../components/PageGuide';
 
 const MIN_MEANINGFUL = 20;
 const LABELS: BinaryForecast['label'][] = ['Wicket next over', 'Batter 30+', 'Batter 50+'];
@@ -270,6 +271,15 @@ export const PredictionTrackerPage: React.FC = () => {
           <span>{entries.length} saved · {pending} pending · {entries.length - pending} resolved</span>
         </div>
       </div>
+
+      <PageGuide
+        shows="the predictions you saved in the Prediction Arena (kept only in this browser), scored once you record what happened, and a replay of every 2026 forecast the model made, match by match, against the actual results."
+        read={[
+          'Brier score is the squared gap between a probability and what happened: 0 is perfect and lower is better.',
+          'Export your saved predictions as a JSON file to keep them; importing the file restores them.',
+          'In the replay, calibration compares forecasts with outcomes: well-calibrated forecasts lie on the dashed diagonal.',
+        ]}
+      />
 
       <section aria-labelledby="saved-title" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-4 sm:p-5 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3">

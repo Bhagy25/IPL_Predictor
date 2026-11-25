@@ -52,6 +52,8 @@ import {
 import { PickedPlayer, PlayerComparison } from '../components/eda/PlayerComparison';
 import { FOCUS_RING } from '../components/player/playerFormat';
 import { fmtCount } from '../utils/format';
+import { PageGuide } from '../components/PageGuide';
+import { EDATakeaways } from '../components/eda/Takeaways';
 
 type Tab = 'full_history' | 'focused_studies';
 
@@ -186,6 +188,16 @@ export const StatisticsEDAPage: React.FC = () => {
         </div>
       </div>
 
+      <PageGuide
+        shows="the full archive analysed live for any season range, team or venue: scoring trends, batting and bowling distributions, phases, team and venue comparisons, toss, innings order, dismissals, boundaries, anomalies and correlations, with key takeaways at the top. A second view holds the focused Stage 2 studies."
+        read={[
+          'Set the season range, team and venue filters; every chart and the key takeaways recompute.',
+          'Each chart states its selection, the seasons it actually covers, its sample size and its definitions.',
+          'These patterns are observational: they describe what happened, not what caused it.',
+          'Correlations give Pearson (linear) and Spearman (rank) coefficients together with the number of innings used.',
+        ]}
+      />
+
       {/* 2. Mode navigation: live full history vs the static Stage 2 archive */}
       <section aria-label="Statistics views" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-3 sm:p-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -304,6 +316,7 @@ export const StatisticsEDAPage: React.FC = () => {
 
           {analysis && filters && areas && (
             <div className={`space-y-6 transition-opacity ${loading ? 'opacity-60' : ''}`} aria-busy={loading}>
+              <EDATakeaways areas={areas} filters={filters} />
               <ChartFrame area={areas.matches_runs} filters={filters} number={1} icon={<Trophy className={ICON} aria-hidden="true" />}>
                 {areas.matches_runs.data && <MatchesRunsView data={areas.matches_runs.data} />}
               </ChartFrame>

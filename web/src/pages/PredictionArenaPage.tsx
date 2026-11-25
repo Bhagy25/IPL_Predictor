@@ -8,6 +8,7 @@ import { fmtCount } from '../utils/format';
 import { Disclaimer, ErrorRetry, Note, dec4 } from '../components/predict/shared';
 import { WicketTool } from '../components/predict/WicketTool';
 import { BatterTool } from '../components/predict/BatterTool';
+import { PageGuide } from '../components/PageGuide';
 
 const TOOLS = [
   { id: 'wicket', label: 'Next-Over Wicket Risk' },
@@ -102,6 +103,16 @@ export const PredictionArenaPage: React.FC = () => {
           </p>
         </div>
       </div>
+
+      <PageGuide
+        shows="two forecasting tools. Enter a match situation to get the chance of a wicket in the next over, or choose a batter and a future match to get the chance of scoring 30+ and 50+ runs."
+        read={[
+          'Each result is a probability, not a guarantee: 30% means about 3 times in 10 similar situations.',
+          'Every result is shown next to the 2026 base rate and the model’s 2026 score, for context.',
+          'In the wicket tool, a warning appears when your inputs are outside anything seen at that stage of an innings.',
+          <>Both tools use gradient boosting, chosen from seven algorithms; the <Link to="/methodology" className="text-[#D9B15F] underline">Methodology</Link> page explains why.</>,
+        ]}
+      />
 
       <Disclaimer />
 

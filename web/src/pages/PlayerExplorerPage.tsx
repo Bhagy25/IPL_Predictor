@@ -16,6 +16,7 @@ import { fetchPlayers, fetchPlayerOverview } from '../api/players';
 import { BattingSection, BowlingSection, CareerSummary, DefinitionsDisclosure } from '../components/player/ProfileSections';
 import { FOCUS_RING, Stat, fixed2, plural } from '../components/player/playerFormat';
 import { MatchLog } from '../components/player/MatchLog';
+import { PageGuide } from '../components/PageGuide';
 
 // Counts come from the API's directory_counts, never from fixed numbers
 const ROLE_FILTERS: { id: string; label: string; countKey?: keyof DirectoryCounts }[] = [
@@ -223,6 +224,20 @@ export const PlayerExplorerPage: React.FC = () => {
             <span>{directoryCounts ? plural(directoryCounts.all, 'player') : 'Player directory'}</span>
           </div>
         </div>
+
+        <PageGuide
+          shows="every player in the archive, keyed by Cricsheet registry ID: search any spelling of a name, filter by role and experience, then open a career or single-season profile with batting, bowling, splits and a match log."
+          read={[
+            'Players are identified by ID, so two players with the same name stay separate.',
+            'Choose Career or a single season in a profile; the splits by team, opposition and venue follow that choice.',
+          ]}
+          terms={[
+            ['Batting average', 'runs ÷ dismissals; shown as unavailable, not 0, when never dismissed'],
+            ['Strike rate', 'runs per 100 balls faced (wides excluded)'],
+            ['Economy', 'runs conceded per six legal balls'],
+            ['Bowler-credited wicket', 'bowled, caught, lbw, stumped or hit wicket; run outs are not credited'],
+          ]}
+        />
 
         {error && (
           <div className="bg-[#1C1517] border border-red-500/30 rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-3">

@@ -39,6 +39,7 @@ import { fetchTeams, fetchTeamOverview, fetchTeamVenues, fetchHeadToHead } from 
 import { Column, DataTable, Tabs } from '../components/player/ProfileSections';
 import { FOCUS_RING, Stat, plural } from '../components/player/playerFormat';
 import { fmtCount, fmtPct, fmtRate, fmtShare } from '../utils/format';
+import { PageGuide } from '../components/PageGuide';
 
 const VENUE_MINIMUMS = [1, 3, 5, 10];
 const DEFAULT_VENUE_MINIMUM = 3;
@@ -233,6 +234,15 @@ export const TeamAnalysisPage: React.FC = () => {
             <span>{teams.length ? `${plural(teams.length, 'franchise')} · ${archiveSpan} archive` : '…'}</span>
           </div>
         </div>
+
+        <PageGuide
+          shows="one franchise at a time, for all seasons or one season: results, batting first vs chasing, toss decisions, scoring and wickets by phase, season trends, records against every opponent and at every venue, and a head-to-head between any two franchises."
+          read={[
+            'Choose a franchise (and optionally a season) at the top; every section below updates.',
+            'Compare a team with the league row shown for the same seasons, not with another team’s different seasons.',
+            'Small samples, such as one season or one venue, swing a lot from match to match: check the match counts next to each figure.',
+          ]}
+        />
 
         {/* Status Alert Banner */}
         {(teamsError || error) && (

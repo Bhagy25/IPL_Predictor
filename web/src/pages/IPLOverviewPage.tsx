@@ -6,6 +6,7 @@ import { TeamRecordsTable } from '../components/TeamRecordsTable';
 import { Calendar, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { OverviewSummaryResponse, OverviewChartsResponse } from '../types';
 import { fetchOverviewSummary, fetchOverviewCharts } from '../api/overview';
+import { PageGuide } from '../components/PageGuide';
 
 export const IPLOverviewPage: React.FC = () => {
   const [summary, setSummary] = useState<OverviewSummaryResponse | null>(null);
@@ -94,6 +95,16 @@ export const IPLOverviewPage: React.FC = () => {
             </div>
           ) : null}
         </div>
+
+        <PageGuide
+          shows="the whole archive at a glance: headline totals, how scoring and results changed season by season, the spread of first-innings scores, and every franchise's record and titles."
+          read={[
+            'Hover over or tap a chart to see exact values; each card says what it counts.',
+            'Win % = wins ÷ (matches − no results). A tie decided by a Super Over counts as a win for the Super Over winner.',
+            'The first-innings histogram uses completed first innings only, so abandoned innings do not drag the distribution down.',
+          ]}
+          terms={[['No result', 'an abandoned match; left out of win percentages'], ['Champion', 'the winner of each season’s final']]}
+        />
 
         {/* 3. 8 KPI Metric Cards */}
         <section aria-label="IPL archive statistics">
