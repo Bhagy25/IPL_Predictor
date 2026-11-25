@@ -20,7 +20,6 @@ def audit(data_dir: Path, out_dir: Path) -> dict:
     balls = frames['deliveries']
     batters = frames['batter_innings']
     windows = frames['next_over_samples']
-    overs = frames['overs']
     issues = frames['screening_issues']
 
     # Missingness counts *blank/NA* fields; some empty cities are structural.
@@ -106,7 +105,6 @@ def make_figures(data_dir: Path, out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     matches = pd.read_csv(data_dir / 'matches.csv')
     innings = pd.read_csv(data_dir / 'innings.csv')
-    balls = pd.read_csv(data_dir / 'deliveries.csv')
     wicket = pd.read_csv(data_dir / 'next_over_samples.csv')
 
     def finish(path):

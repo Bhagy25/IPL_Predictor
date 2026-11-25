@@ -8,7 +8,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.metrics import brier_score_loss
 
 
 def run(forecast_csv:Path, comparisons_csv:Path, training_csv:Path,
