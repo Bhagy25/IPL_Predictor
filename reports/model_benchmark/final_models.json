@@ -1,0 +1,215 @@
+{
+  "description": "Final models refitted from the frozen benchmark selection (Histogram gradient boosting).",
+  "selection_file": "reports/model_benchmark/selection.json",
+  "holdout_file": "reports/model_benchmark/holdout_2026.json",
+  "seed": 42,
+  "holdout_year": 2026,
+  "versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.8.0",
+    "joblib": "1.6.0",
+    "matplotlib": "3.11.2"
+  },
+  "tasks": {
+    "wicket": {
+      "algorithm": "Histogram gradient boosting",
+      "estimator": "HistGradientBoostingClassifier",
+      "params": {
+        "max_leaf_nodes": 7,
+        "max_iter": 60,
+        "l2_regularization": 2.0
+      },
+      "features": [
+        "innings",
+        "completed_overs",
+        "runs",
+        "wickets",
+        "run_rate",
+        "last_over_runs",
+        "last_over_wickets",
+        "batting_team",
+        "bowling_team",
+        "phase",
+        "venue_canonical"
+      ],
+      "target": "wicket_next_over",
+      "classes": [
+        0,
+        1
+      ],
+      "artifacts": {
+        "holdout": {
+          "file": "models/final/wicket_hgb_through_2025.joblib",
+          "sha256": "c16088b7e2078344484df8913e3c68f9c6108f1f9f4a7806b81e100bb85bfa84",
+          "version": "holdout_train_2008_2025",
+          "train_start": "2008-04-18",
+          "train_end": "2025-06-03",
+          "train_rows": 41580,
+          "train_matches": 1147
+        },
+        "final": {
+          "file": "models/final/wicket_hgb_through_2026.joblib",
+          "sha256": "61c25f0f71cdaed0b2de37c6425be304fdcfffa3032748362a5ab9d733ce9709",
+          "version": "deployment_refit_2008_2026",
+          "train_start": "2008-04-18",
+          "train_end": "2026-05-31",
+          "train_rows": 44161,
+          "train_matches": 1220
+        }
+      },
+      "holdout_reproduction": {
+        "rows": 2581,
+        "max_abs_forecast_difference": 0.0,
+        "max_abs_metric_difference": 0.0,
+        "predicted_class_equal": true,
+        "confusion_matrix_equal": true,
+        "params_equal": true,
+        "training_rows_equal": true,
+        "tolerance": 1e-12
+      },
+      "determinism": {
+        "holdout_refit_identical": true,
+        "final_refit_identical": true,
+        "rows_compared": 44161
+      },
+      "class_rates": {
+        "through_2025": {
+          "0": 0.7224146224146224,
+          "1": 0.2775853775853776
+        },
+        "through_2026": {
+          "0": 0.7218360091483436,
+          "1": 0.27816399085165644
+        }
+      },
+      "baseline_2026": {
+        "model": "Class-prior baseline",
+        "train_rows": 41580,
+        "metrics": {
+          "brier": 0.2049355867013281,
+          "log_loss": 0.6001274623597687,
+          "accuracy": 0.7125145292522278,
+          "balanced_accuracy": 0.5,
+          "macro_f1": 0.4160633484162896,
+          "roc_auc": 0.5,
+          "average_precision": 0.2874854707477722,
+          "brier_wicket": 0.2049355867013281,
+          "roc_auc_wicket": 0.5,
+          "average_precision_wicket": 0.2874854707477722,
+          "observed_rate_wicket": 0.2874854707477722,
+          "mean_probability_wicket": 0.27758537758537755
+        }
+      }
+    },
+    "batter": {
+      "algorithm": "Histogram gradient boosting",
+      "estimator": "HistGradientBoostingClassifier",
+      "params": {
+        "max_leaf_nodes": 7,
+        "max_iter": 60,
+        "l2_regularization": 2.0
+      },
+      "features": [
+        "prior_innings",
+        "career_avg_runs",
+        "career_30_rate",
+        "career_50_rate",
+        "recent5_avg_runs",
+        "recent5_30_rate",
+        "recent5_50_rate",
+        "recent10_avg_runs",
+        "recent10_30_rate",
+        "recent10_50_rate",
+        "opposition_prior_innings",
+        "opposition_avg_runs",
+        "opposition_30_rate",
+        "venue_prior_innings",
+        "venue_avg_runs",
+        "venue_30_rate",
+        "days_since_previous_innings",
+        "batting_team",
+        "bowling_team",
+        "venue_canonical"
+      ],
+      "target": "milestone_class",
+      "classes": [
+        0,
+        1,
+        2
+      ],
+      "artifacts": {
+        "holdout": {
+          "file": "models/final/batter_hgb_through_2025.joblib",
+          "sha256": "abc8e76380be19e5f2cf2f335740abcc9c0b3a256c55bc37161538318745b9a7",
+          "version": "holdout_train_2008_2025",
+          "train_start": "2008-04-18",
+          "train_end": "2025-06-03",
+          "train_rows": 17316,
+          "train_matches": 1139
+        },
+        "final": {
+          "file": "models/final/batter_hgb_through_2026.joblib",
+          "sha256": "7f2c246cd8e52945eb0a31b2e2688fb8ef406eef001f00d9094c8ff44d82ae4b",
+          "version": "deployment_refit_2008_2026",
+          "train_start": "2008-04-18",
+          "train_end": "2026-05-31",
+          "train_rows": 18429,
+          "train_matches": 1211
+        }
+      },
+      "holdout_reproduction": {
+        "rows": 1113,
+        "max_abs_forecast_difference": 0.0,
+        "max_abs_metric_difference": 0.0,
+        "predicted_class_equal": true,
+        "confusion_matrix_equal": true,
+        "params_equal": true,
+        "training_rows_equal": true,
+        "tolerance": 1e-12
+      },
+      "determinism": {
+        "holdout_refit_identical": true,
+        "final_refit_identical": true,
+        "rows_compared": 18429
+      },
+      "class_rates": {
+        "through_2025": {
+          "0": 0.7472857472857473,
+          "1": 0.14223839223839224,
+          "2": 0.11047586047586047
+        },
+        "through_2026": {
+          "0": 0.744750122090184,
+          "1": 0.14238428563676814,
+          "2": 0.11286559227304792
+        }
+      },
+      "baseline_2026": {
+        "model": "Class-prior baseline",
+        "train_rows": 17316,
+        "metrics": {
+          "brier": 0.1693556897309725,
+          "log_loss": 0.8181140199571821,
+          "accuracy": 0.7053009883198562,
+          "balanced_accuracy": 0.3333333333333333,
+          "macro_f1": 0.275728837372673,
+          "roc_auc": 0.5,
+          "average_precision": 0.2223719676549865,
+          "brier_30": 0.20961422418031425,
+          "roc_auc_30": 0.5,
+          "average_precision_30": 0.29469901168014373,
+          "observed_rate_30": 0.29469901168014373,
+          "mean_probability_30": 0.25271425271425274,
+          "brier_50": 0.12909715528163077,
+          "roc_auc_50": 0.5,
+          "average_precision_50": 0.1500449236298293,
+          "observed_rate_50": 0.1500449236298293,
+          "mean_probability_50": 0.11047586047586047
+        }
+      }
+    }
+  }
+}
