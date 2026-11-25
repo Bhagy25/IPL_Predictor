@@ -19,7 +19,7 @@ Use **only 120-legal-ball first innings**, center each score on that season's fu
 
 ## Research question 4 — Is toss decision associated with winning?
 
-For completed, winner-recorded matches in 2018–2025, the toss-winning side also won **60/127 (47.24%)** of matches when choosing to bat, vs **209/393 (53.18%)** when choosing to field. Fisher's exact two-sided p ≈ **0.262**. No causal inference: choices and outcomes depend on conditions and team strength; this is exploratory, unadjusted and not enough to demonstrate an advantage from choosing to field.
+*Corrected in Session 03:* the counts first reported here (60/127 and 209/393, p ≈ 0.262) left out matches decided by a Super Over. For completed, winner-recorded matches in 2018–2025, with Super Over winners credited, the toss-winning side won **62/130 (47.69%)** of matches when choosing to bat, vs **210/398 (52.76%)** when choosing to field. Fisher's exact two-sided p ≈ **0.363** (`reports/stage_02/session_03/toss_results_with_super_overs_2018_2025.csv`). This applies to the 2018–2025 window only: over the full 2008–2026 archive the same comparison gives 188/414 (45.41%) against 446/820 (54.39%), Fisher p ≈ 0.003. No causal inference: choices and outcomes depend on conditions and team strength; this is exploratory, unadjusted and not enough to demonstrate an advantage from choosing to field.
 
 ## Research question 5 — What do missing fields tell us?
 

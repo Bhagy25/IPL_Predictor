@@ -19,10 +19,10 @@ Analyze men's Indian Premier League data, season-by-season and across players/ve
 | `overs.csv` | 47,756 | Recorded regular innings overs, including partial overs |
 | `deliveries.csv` | 295,557 | Recorded ball events including wides and no-balls |
 | `batter_innings.csv` | 18,768 | One player batting appearance per innings |
-| `next_over_samples.csv` | 44,714 | Eligible checkpoint-known next-over outcomes |
-| `screening_issues.csv` | 562 | Issue *records*, including censored windows and anomalies |
+| `next_over_samples.csv` | 44,706 | Eligible checkpoint-known next-over outcomes |
+| `screening_issues.csv` | 574 | Issue *records*, including censored windows and anomalies |
 
-Date coverage is 2008-04-18 to 2026-05-31. The JSON is entirely labeled `male` and `Indian Premier League`. Runs are ratio/discrete; team/venue are nominal; over number is an ordered match-progress variable. Match/date and season are necessary to enforce chronological ML training.
+Row counts are recomputed from the committed `data/processed/` tables. Date coverage is 2008-04-18 to 2026-05-31. The JSON is entirely labeled `male` and `Indian Premier League`. Runs are ratio/discrete; team/venue are nominal; over number is an ordered match-progress variable. Match/date and season are necessary to enforce chronological ML training.
 
 ### 2.2 Cricket-specific cleaning decisions
 
@@ -30,7 +30,7 @@ Date coverage is 2008-04-18 to 2026-05-31. The JSON is entirely labeled `male` a
 2. A wide or no-ball is an *illegal* delivery; a no-ball can still count as a ball faced by the batter, while a wide does not. Batting runs differ from total innings runs because of extras.
 3. Wickets count batting-team losses, excluding `retired hurt`; `retired out` counts as a wicket. Ordinary innings exclude Super Overs.
 4. Eligible next-over samples require a full 6-legal-ball **current** over. Label the next over only if it has exactly six legal balls, or if it finishes early with a confirmed all-out causing a known positive. Other shortened future overs are censored and omitted. Anomalous future overs with >6 legal balls are excluded.
-5. The archive has 550 censored next-over windows, 4 over records with >6 legal balls, 4 with zero legal balls, and 4 rejected future-over windows; these issue categories overlap. Further investigation into anomalies and D/L matches is needed before a final dataset is frozen.
+5. The archive has 548 censored next-over windows, 14 checkpoints that follow an invalid over (`checkpoint_after_invalid_over`), 4 over records with >6 legal balls, 4 with zero legal balls, and 4 rejected future-over windows, 574 issue records in all (`data/processed/screening_issues.csv`); these issue categories overlap. Further investigation into anomalies and D/L matches is needed before a final dataset is frozen.
 6. Aggregated per-innings team runs, wickets and legal-ball counts reconcile perfectly to delivery-level sums for all 2,480 ordinary innings.
 
 ### 2.3 Missingness and limitations
@@ -44,7 +44,7 @@ Date coverage is 2008-04-18 to 2026-05-31. The JSON is entirely labeled `male` a
 - **401,423** total team runs and **14,655** batting-team wickets appear in ordinary delivery records; **284,465** legal deliveries.
 - Recorded first-innings totals have **mean 168.57 runs** and **median 168 runs** across archive history. This is descriptive, not adjusted for changing eras, reduced overs, venues or D/L.
 - Among **18,768 observed batting appearances**, **25.53%** scored 30+ and **11.27%** scored 50+. These are historical frequencies, not calibrated pre-match forecasts.
-- Of **44,714** eligible next-over windows, roughly **27.70%** include at least one team wicket. The conditional definition excludes censored future overs, and is not necessarily representative of all match states.
+- Of **44,706** eligible next-over windows (`data/processed/next_over_samples.csv`), **27.71%** include at least one team wicket. The conditional definition excludes censored future overs, and is not necessarily representative of all match states.
 - Early EDA figures: `figures/matches_by_season.png`, `figures/average_first_innings_runs.png`, `figures/first_innings_distribution.png`, `figures/wicket_next_over_by_checkpoint.png`. Supporting CSVs and audit JSON are in `reports/stage_01/`.
 
 **Interpretation pending:** Add exact distribution summary (IQR, MAD, SD, outliers), team/venue differences, uncertainty and season-trend controls before making substantive cricket claims.
@@ -107,7 +107,7 @@ This is the **first EDA session, not Stage 2 completion**. Subsequent sessions w
 
 ## Stage 2 / Session 02 — Stratified and bivariate EDA (2026-10-18)
 
-See `docs/STAGE_02_SESSION_02_FINDINGS.md` for exact reproducible tables, definitions, limitations and chart index. Primary results are: 2018–2025 all first innings mean 175.80 (n=533); 120-legal-ball innings mean 178.88 (n=501) vs shortened innings 127.50 (n=32). Paired Powerplay/death-over rate difference within 937 qualifying innings: +2.26 runs per 6 legal deliveries, approximate 95% match-clustered bootstrap interval [2.02, 2.51]. Season-centered full-length venue comparisons: Eden Gardens +10.34 (n=37), Chepauk -13.71 (n=38); none should be interpreted as causal. Toss winners prevailed in 60/127 choosing bat vs 209/393 choosing field; Fisher p≈0.262 and no evidence of causal advantage. Of 1,169 pre-2026 matches, 51 missing cities occur at Dubai/Sharjah venues. Measurement scales, sampling and missingness mechanisms are discussed explicitly in the Session 02 findings. 2026 remains held out. Figure interpretations and sample-selection caveats are essential parts of the report.
+See `docs/STAGE_02_SESSION_02_FINDINGS.md` for exact reproducible tables, definitions, limitations and chart index. Primary results are: 2018–2025 all first innings mean 175.80 (n=533); 120-legal-ball innings mean 178.88 (n=501) vs shortened innings 127.50 (n=32). Paired Powerplay/death-over rate difference within 937 qualifying innings: +2.26 runs per 6 legal deliveries, approximate 95% match-clustered bootstrap interval [2.02, 2.51]. Season-centered full-length venue comparisons: Eden Gardens +10.34 (n=37), Chepauk -13.71 (n=38); none should be interpreted as causal. Toss winners prevailed in 62/130 choosing bat vs 210/398 choosing field in 2018–2025 (Fisher p≈0.363; corrected Session 03 counts that credit Super Over winners, `reports/stage_02/session_03/toss_results_with_super_overs_2018_2025.csv`), so this window shows no clear association. Over the full 2008–2026 archive the same comparison gives 188/414 against 446/820 (Fisher p≈0.003): the result depends on the window, and neither is evidence of a causal advantage. Of 1,169 pre-2026 matches, 51 missing cities occur at Dubai/Sharjah venues. Measurement scales, sampling and missingness mechanisms are discussed explicitly in the Session 02 findings. 2026 remains held out. Figure interpretations and sample-selection caveats are essential parts of the report.
 
 
 ## Stage 2 / Session 03 — Corrected match outcomes and final synthesis
