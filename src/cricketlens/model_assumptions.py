@@ -259,8 +259,19 @@ def unseen_levels(task, data) -> pd.DataFrame:
 
 # ------------------------------------------------------------------ algorithm assumptions
 
+def _log_likelihood(design: np.ndarray, y: np.ndarray) -> float:
+    """Maximised log-likelihood of an (effectively unpenalised) logistic regression on these columns."""
+    p = LogisticRegression(C=1e10, max_iter=5000).fit(design, y).predict_proba(design)[:, 1]
+    p = np.clip(p, 1e-12, 1 - 1e-12)
+    return float(np.sum(y * np.log(p) + (1 - y) * np.log(1 - p)))
+
+
 def logit_linearity(task, train) -> pd.DataFrame:
-    """Per numeric feature: empirical logits in bins against a fitted straight line, and a likelihood-ratio test."""
+    """Per numeric feature: empirical logits in bins against a fitted straight line, and a likelihood-ratio test.
+
+    The test is nested: a straight line in the feature against the same line plus one indicator per bin, so
+    the extra freedom measures departure from linearity; its degrees of freedom come from the design ranks.
+    """
     label, event = next(iter(binary_events(task, train).items()))
     y = event.astype(int)
     rows = []
@@ -279,17 +290,19 @@ def logit_linearity(task, train) -> pd.DataFrame:
         grouped = frame.groupby("bin").agg(n=("y", "size"), events=("y", "sum"), x=("x", "mean"))
         z = (x - x.mean()) / x.std()
         model = LogisticRegression(C=1e10, max_iter=1000).fit(z.reshape(-1, 1), y)
-        p = model.predict_proba(z.reshape(-1, 1))[:, 1]
-        ll_linear = float(np.sum(y * np.log(p) + (1 - y) * np.log(1 - p)))
-        rate = (grouped.events / grouped.n).clip(1e-9, 1 - 1e-9)
-        ll_binned = float(np.sum(grouped.events * np.log(rate) + (grouped.n - grouped.events) * np.log(1 - rate)))
+        linear = z.reshape(-1, 1)
+        dummies = pd.get_dummies(frame.bin, drop_first=True, dtype=float).to_numpy()
+        extended = np.column_stack([z, dummies])
+        ll_linear, ll_binned = _log_likelihood(linear, y), _log_likelihood(extended, y)
+        ones = np.ones((len(z), 1))
+        dof = (np.linalg.matrix_rank(np.column_stack([ones, extended]))
+               - np.linalg.matrix_rank(np.column_stack([ones, linear])))
         empirical = np.log((grouped.events + .5) / (grouped.n - grouped.events + .5))
         fitted = model.intercept_[0] + model.coef_[0, 0] * (grouped.x - x.mean()) / x.std()
         weights = grouped.n / grouped.n.sum()
         resid = empirical - fitted
         r2 = 1 - np.sum(weights * resid ** 2) / np.sum(weights * (empirical - np.sum(weights * empirical)) ** 2)
         lr = max(2 * (ll_binned - ll_linear), 0.0)
-        dof = len(grouped) - 2
         rows.append({"task": task.name, "event": label, "feature": feature, "bins": len(grouped),
                      "lr_statistic": lr, "dof": dof, "p_value": float(stats.chi2.sf(lr, dof)) if dof > 0 else 1.0,
                      "max_abs_deviation": float(np.max(np.abs(resid))), "weighted_r2": float(r2),
