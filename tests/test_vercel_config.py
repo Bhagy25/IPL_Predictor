@@ -48,7 +48,10 @@ RUNTIME_FILES = [
     "reports/stage_02/session_02/toss_decision_match_result_crosstab_2018_2025.csv",
     *[f"reports/model_benchmark/{name}" for name in (
         "selection.json", "holdout_2026.json", "final_models.json", "wicket_comparison.csv", "batter_comparison.csv",
-        "wicket_holdout_forecasts.csv", "batter_holdout_forecasts.csv")],
+        "wicket_holdout_forecasts.csv", "batter_holdout_forecasts.csv", "data_audit.json",
+        "wicket_learning.csv", "batter_learning.csv", "wicket_paired_brier_gaps.csv", "batter_paired_brier_gaps.csv",
+        "wicket_holdout_calibration.csv", "batter_holdout_calibration.csv", "assumptions/summary.json",
+        "assumptions/tuning.csv")],
 ]
 
 
@@ -71,7 +74,7 @@ def test_globs_fit_the_schema_limit():
 
 
 def test_every_runtime_file_is_included():
-    assert len(RUNTIME_FILES) == 51
+    assert len(RUNTIME_FILES) == 60
     missing = [f for f in RUNTIME_FILES if not _matches(f, FUNCTION["includeFiles"])]
     assert missing == []
 

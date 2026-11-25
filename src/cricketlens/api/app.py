@@ -13,6 +13,7 @@ from cricketlens.api.routes_teams import router as teams_router
 from cricketlens.api.routes_players import router as players_router
 from cricketlens.api.routes_eda import router as eda_router
 from cricketlens.api.routes_predict import router as predict_router
+from cricketlens.api.routes_methodology import router as methodology_router
 from cricketlens.api.services.canonical_data import canonical_engine
 from cricketlens.api.services import prediction_service
 from cricketlens.api.settings import cors_allow_origins
@@ -79,3 +80,4 @@ app.include_router(teams_router)
 app.include_router(players_router)
 app.include_router(eda_router)
 app.include_router(predict_router)
+app.include_router(methodology_router)

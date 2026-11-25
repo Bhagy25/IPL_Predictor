@@ -937,3 +937,165 @@ class HoldoutReplayMatchResponse(BaseModel):
     wickets: List[ReplayWicketRow]
     wicket_summary: Optional[WicketEvaluationMetrics] = None
     batter_summary: Optional[BatterEvaluationMetrics] = None
+
+
+# ------------------------------------------------------------------ prediction methodology
+
+class MethodologyDecision(BaseModel):
+    algorithm: str
+    params: Dict[str, Any] = Field(..., description="Frozen settings from selection.json")
+    fixed_settings: Dict[str, Any] = Field(..., description="Settings the benchmark fixes for every boosting candidate")
+    rule: str
+    tuning_years: List[int]
+    validation_years: List[int]
+    holdout_year: int
+
+
+class MethodologyWorkflowStep(BaseModel):
+    step: int
+    title: str
+    detail: str
+
+
+class MethodologyTask(BaseModel):
+    kind: str
+    title: str
+    question: str
+    target: str
+    output: str
+    unit: str
+    inputs: str
+    rows: int = Field(..., description="Eligible 2008–2026 rows the final model was trained on")
+    matches: int
+    test_rows: int
+    test_matches: int
+    class_shares: Dict[str, float]
+    majority_class_accuracy: float = Field(..., description="Mean 2021–2025 accuracy of always predicting the majority class")
+    class_counts: Dict[str, int]
+
+
+class MethodologyVerdictRow(BaseModel):
+    assumption: str
+    verdict: str = Field(..., description="Holds, Partially holds or Violated")
+    evidence: str
+    consequence: str
+
+
+class MethodologyEligibilityRow(BaseModel):
+    scope: str
+    rule: str
+    count: int
+
+
+class MethodologyGridSetting(BaseModel):
+    setting: int
+    params: Dict[str, Any]
+    chosen: bool
+    tuning_brier_mean: float = Field(..., description="Mean Brier over the 2018–2020 tuning seasons")
+    tuning_brier_sd: Optional[float] = None
+
+
+class MethodologyAlgorithmResult(BaseModel):
+    rank: int
+    brier_mean: float
+    brier_std: float
+    log_loss_mean: float
+    log_loss_std: float
+    accuracy_mean: float
+    accuracy_std: float
+    balanced_accuracy_mean: float
+    balanced_accuracy_std: float
+    macro_f1_mean: float
+    macro_f1_std: float
+    roc_auc_mean: float
+    roc_auc_std: float
+    average_precision_mean: float
+    average_precision_std: float
+    paired_gap_mean: Optional[float] = Field(None, description="Mean of (this Brier − boosting's) per season")
+    paired_gap_sd: Optional[float] = None
+    seasons_selected_better: Optional[int] = None
+
+
+class MethodologyAlgorithm(BaseModel):
+    name: str
+    short: str
+    how_it_works: str
+    formula: str
+    assumptions: List[str]
+    verdicts: Dict[str, str] = Field(..., description="Assumption verdict per task")
+    evidence: List[str]
+    grid: Dict[str, List[MethodologyGridSetting]]
+    results: Dict[str, MethodologyAlgorithmResult]
+    selected: bool
+    decision: str
+
+
+class MethodologyComparisonRow(MethodologyAlgorithmResult):
+    model: str
+    setting: int
+    selected: bool
+
+
+class MethodologyCurvePoint(BaseModel):
+    model: str
+    training_fraction: float
+    train_matches: float = Field(..., description="Mean training matches across the five folds")
+    train_rows: float
+    validation_brier: float
+    validation_brier_sd: float
+    validation_log_loss: float
+    validation_log_loss_sd: float
+    validation_accuracy: float
+    validation_accuracy_sd: float
+    validation_balanced_accuracy: float
+    validation_balanced_accuracy_sd: float
+    train_brier: float
+    train_brier_sd: float
+
+
+class MethodologyPairedGap(BaseModel):
+    year: int
+    model: str
+    gap: float = Field(..., description="This algorithm's Brier minus boosting's in that season")
+
+
+class MethodologyCalibrationBin(BaseModel):
+    event: str
+    bin: int
+    lower: float
+    upper: float
+    rows: int
+    observed_rate: float
+    mean_probability: float
+
+
+class MethodologyHoldout(BaseModel):
+    metrics: Dict[str, float]
+    baseline_metrics: Dict[str, float]
+    confusion_matrix: List[List[int]]
+    class_counts: Dict[str, int]
+    train_rows: int
+    train_matches: int
+    train_start: str
+    train_end: str
+    rows: int
+    matches: int
+    calibration: List[MethodologyCalibrationBin]
+    caveat: str
+
+
+class MethodologyResponse(BaseModel):
+    decision: MethodologyDecision
+    workflow: List[MethodologyWorkflowStep]
+    tasks: List[MethodologyTask]
+    data_assumptions: List[MethodologyVerdictRow]
+    eligibility: List[MethodologyEligibilityRow]
+    algorithms: List[MethodologyAlgorithm]
+    comparison: Dict[str, List[MethodologyComparisonRow]]
+    learning_curves: Dict[str, List[MethodologyCurvePoint]]
+    paired_gaps: Dict[str, List[MethodologyPairedGap]]
+    convergence: Dict[str, Dict[str, Any]]
+    holdout: Dict[str, MethodologyHoldout]
+    final_models: Dict[str, Dict[str, Any]]
+    limitations: List[str]
+    sources: List[str]
