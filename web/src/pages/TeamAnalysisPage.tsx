@@ -348,8 +348,8 @@ export const TeamAnalysisPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#D9B15F]/15">
             <div className="flex items-center gap-4 min-w-0">
               <div
-                className="w-14 h-14 flex-shrink-0 rounded-2xl flex items-center justify-center font-black text-lg text-white shadow-lg border border-white/20"
-                style={{ backgroundColor: currentTeam.primary_color }}
+                className="w-14 h-14 flex-shrink-0 rounded-2xl flex items-center justify-center font-black text-lg shadow-lg border border-white/20"
+                style={{ backgroundColor: currentTeam.primary_color, color: readableOn(currentTeam.primary_color) }}
               >
                 {currentTeam.short_name}
               </div>
@@ -813,6 +813,13 @@ export const TeamAnalysisPage: React.FC = () => {
 
     </div>
   );
+};
+
+/** Black or white text, whichever contrasts more with a #rrggbb background (WCAG relative luminance). */
+const readableOn = (hex: string): string => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return (lum + 0.05) / 0.05 >= 1.05 / (lum + 0.05) ? '#0D0E10' : '#FFFFFF';
 };
 
 const DEFINITION_LABELS: Record<string, string> = {

@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Right Side */}
-        <div className="text-xs text-[#B9B9B3]/60 font-medium tracking-wide">
+        <div className="text-xs text-[#9A9A94] font-medium tracking-wide">
           Cricsheet ball-by-ball data
         </div>
       </div>

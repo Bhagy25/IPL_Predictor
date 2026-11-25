@@ -141,10 +141,10 @@ export const PredictionArenaPage: React.FC = () => {
         </section>
       )}
 
-      <section aria-label="How the models were evaluated" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#D9B15F]">
+      <section aria-labelledby="evaluation-title" className="bg-[#151619] border border-[#D9B15F]/20 rounded-2xl p-4 sm:p-5 space-y-4">
+        <h2 id="evaluation-title" className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#D9B15F]">
           <Zap className="w-4 h-4" aria-hidden="true" /> How the models were evaluated
-        </div>
+        </h2>
         {modelsError && <ErrorRetry message={modelsError} onRetry={() => setReload((n) => n + 1)} />}
         {models && (
           <>

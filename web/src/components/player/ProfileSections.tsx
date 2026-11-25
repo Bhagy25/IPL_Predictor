@@ -176,8 +176,8 @@ const Panel: React.FC<{ icon: React.ReactNode; title: string; tone?: 'gold' | 'g
   </div>
 );
 
-const SubHeading: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#B9B9B3]">{children}</h4>
+const SubHeading: React.FC<{ children: React.ReactNode; level?: 'h3' | 'h4' }> = ({ children, level: Tag = 'h4' }) => (
+  <Tag className="text-[11px] font-bold uppercase tracking-wider text-[#B9B9B3]">{children}</Tag>
 );
 
 const EmptyRecord: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -197,7 +197,7 @@ export const CareerSummary: React.FC<{ profile: PlayerProfileResponse; roleBadge
       <StatCard label="Role">{roleBadge}</StatCard>
     </div>
     <div className="space-y-2">
-      <SubHeading>Team history</SubHeading>
+      <SubHeading level="h3">Team history</SubHeading>
       <ul className="flex flex-wrap gap-2">
         {profile.team_history.map((t: PlayerTeamSpell) => (
           <li key={t.team} className="px-3 py-1.5 rounded-lg bg-[#101114] border border-[#D9B15F]/15 text-xs">
