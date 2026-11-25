@@ -5,7 +5,6 @@ import joblib
 import pytest
 from cricketlens.batter_training_data import build
 from cricketlens.fit_batter_models import positive_probability_three_class
-from cricketlens.stage03_full_history import _triple
 
 
 def test_holdout_2026_explicit_unlock_and_no_2025_feature_leakage():
