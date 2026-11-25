@@ -2,7 +2,8 @@
 
 The CricketLens website is a React 18 + TypeScript single-page app built with Vite and Tailwind CSS
 (`web/`). It reads everything from the FastAPI backend in `src/cricketlens/api/`, which computes statistics
-from `data/processed` and `data/derived` and calls the Stage 3 inference functions with the saved models.
+from `data/processed` and `data/derived` and calls the Stage 3 inference functions with the final gradient
+boosting models (`models/final/`), selected by the seven-algorithm benchmark in `reports/model_benchmark/`.
 This document describes the frontend, lists every API endpoint, and records the definitions and guards the
 two layers share.
 
@@ -49,14 +50,15 @@ a Python Vercel Function under `/api`.
   entrypoint before the root `pyproject.toml`, so matplotlib, uvicorn and the test tools are not installed.
   `api/.python-version` selects Python 3.14.
 - The function's `excludeFiles` removes everything outside `api/` and `src/`, and `includeFiles` adds back
-  the 46 files the API opens: `data/processed/{matches,deliveries,innings,batter_innings,
-  stage03_wicket_full_history_2008_2026}.csv`, the six `data/derived` tables, the two deployment models, the
-  Stage 1 audit files, seven Stage 2 tables, the Stage 3 results JSON and holdout forecasts, and the 20
-  Stage 2 figures. Vercel's schema limits each glob to 256 characters, so the report files are matched by
-  folder (`reports/stage_01/*`, `reports/stage_02/session_0[12]/*`, `reports/stage_03/session_03/**`), which
-  also bundles 23 small unused report files (72 KB). `tests/test_vercel_config.py` checks the length limit
-  and that every runtime file is matched. Nothing in `data/raw` is read at runtime. `maxDuration` is 60
-  seconds.
+  the 60 files the API opens: `data/processed/{matches,deliveries,innings,batter_innings}.csv` and the two
+  `stage03_*_full_history_2008_2026.csv` modelling tables, the six `data/derived` tables, the two final models
+  refitted through 2026 (`models/final/*_2026.joblib`), the Stage 1 audit files, seven Stage 2 tables, the
+  benchmark and assumption results the prediction and methodology endpoints read
+  (`reports/model_benchmark/**/*.{csv,json}`), and the 20 Stage 2 figures. Vercel's schema limits each glob
+  to 256 characters (this one is 244), so the report files are matched by folder, which also bundles some
+  small unused report tables. `tests/test_vercel_config.py` checks the length limit, that every runtime file
+  is matched, and that the archived Stage 3 models and the 2025 holdout artifacts stay out. Nothing in
+  `data/raw` is read at runtime. `maxDuration` is 60 seconds.
 
 Environment variables: none required. `CORS_ALLOW_ORIGINS` and `VITE_API_BASE_URL` matter only when the
 frontend and the API are deployed on different origins; `CRICKETLENS_ROOT` only to read the data from
@@ -73,8 +75,8 @@ A Vercel deployment is reachable by anyone with its URL; the hero artwork's imag
 3. Root Directory: the repository root (`./`). Leave the Framework Preset, build and output settings as
    they are (`vercel.json` sets them) and add no environment variables. **Deploy**.
 4. New projects deploy `main` to production, and `main` does not contain this configuration. Set
-   **Settings → Environments → Production → Branch Tracking** to `feature/cricketlens-final` and **Save**.
-5. **Deployments → Create Deployment** → branch `feature/cricketlens-final` → **Create Deployment**. Later
+   **Settings → Environments → Production → Branch Tracking** to `feature/final-submission` and **Save**.
+5. **Deployments → Create Deployment** → branch `feature/final-submission` → **Create Deployment**. Later
    pushes to that branch deploy to production automatically; other branches get preview deployments.
 
 ### (b) Vercel CLI from a local clone
@@ -82,7 +84,7 @@ A Vercel deployment is reachable by anyone with its URL; the hero artwork's imag
 From a fresh clone, so that `.venv/`, `node_modules/` and other local files are not uploaded:
 
 ```bash
-git clone --branch feature/cricketlens-final https://github.com/Bhagy25/IPL_Predictor.git
+git clone --branch feature/final-submission https://github.com/Bhagy25/IPL_Predictor.git
 cd IPL_Predictor
 npm i -g vercel        # or prefix each command with npx
 vercel login
@@ -122,7 +124,7 @@ and import, at 1440px and 390px, with no console errors or warnings.
 
 ### Routes
 
-`web/src/App.tsx` defines six routes inside one `BrowserRouter` (opted in to the React Router v7
+`web/src/App.tsx` defines seven routes inside one `BrowserRouter` (opted in to the React Router v7
 `startTransition` and relative-splat behaviour). Each page is lazy-loaded into its own chunk behind a
 `Suspense` fallback, so a visit downloads only the shell and the pages it opens.
 
@@ -133,7 +135,12 @@ and import, at 1440px and 390px, with no console errors or warnings.
 | `/players` | `PlayerExplorerPage` | Player directory and career or season profiles with a match log |
 | `/eda` | `StatisticsEDAPage` | Filterable full-history analysis, player comparison, and the Focused Studies archive |
 | `/predict` | `PredictionArenaPage` | Next-over wicket risk and batter milestone tools; model evaluation |
-| `/tracker` | `PredictionTrackerPage` | Saved predictions with outcomes and scores; 2026 holdout replay |
+| `/tracker` | `PredictionTrackerPage` | Saved predictions with outcomes and scores; 2026 replay |
+| `/methodology` | `MethodologyPage` | How the predictions work: workflow, assumptions with verdicts, the seven algorithms, sortable comparison, learning curves, paired gaps, the 2026 test, limitations |
+
+Every page opens with a `PageGuide` ("What this page shows" and an expandable "How to read it"); the
+Statistics & EDA page adds `EDATakeaways`, sentences formatted from the analysis response for the current
+filters. The navbar shows full names from 1400 px, short labels from 1024 px and a menu below that.
 
 `/overview` redirects to `/`, and any unknown path redirects to `/`.
 
@@ -195,7 +202,7 @@ eligibility, champions and franchise renames. The homepage covers all 15 current
 2008–2026 archive. Each franchise's totals include only the matches it played, and title years come from the
 season champions. The archive span and franchise count come from the match data. Team Analysis uses a
 shared-season comparison that starts when all current franchises had joined (2022–2026).
-The 2026 holdout applies only to model evaluation; every descriptive statistic includes 2026.
+The 2026 test applies only to model evaluation; every descriptive statistic includes 2026.
 
 ## API endpoint reference
 
@@ -220,11 +227,12 @@ an optional query parameter.
 | Statistics & EDA | GET | `/api/eda/catalog` | Get catalog of 20 Stage 2 exploratory figures | — |
 | Statistics & EDA | GET | `/api/eda/summary` | Get raw statistical tables backing Stage 2 figures | — |
 | Statistics & EDA | GET | `/api/eda/figures/{figure_name}` | Serve high-resolution Stage 2 PNG figure | — |
-| Predictions | GET | `/api/predict/options` | Inputs the deployment models accept | — |
+| Predictions | GET | `/api/predict/options` | Inputs the final models accept | — |
 | Predictions | POST | `/api/predict/wicket` | Chance of at least one wicket in the next over | JSON body |
 | Predictions | POST | `/api/predict/batter` | Chance of a batter scoring 30+ and 50+ | JSON body |
-| Predictions | GET | `/api/predict/models` | Model metadata and the official Stage 3 evaluation | — |
-| Predictions | GET | `/api/predict/holdout-replay` | 2026 holdout replay: matches and season summary | — |
-| Predictions | GET | `/api/predict/holdout-replay/{match_id}` | 2026 holdout replay for one match | — |
+| Predictions | GET | `/api/predict/models` | Final model metadata, benchmark comparison and the 2026 retrospective test | — |
+| Predictions | GET | `/api/predict/holdout-replay` | 2026 replay: matches and season summary | — |
+| Predictions | GET | `/api/predict/holdout-replay/{match_id}` | 2026 replay for one match | — |
+| Methodology | GET | `/api/methodology` | Prediction-model methodology and evidence | — |
 
-22 operations.
+23 operations.

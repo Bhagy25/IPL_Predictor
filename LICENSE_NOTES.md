@@ -4,8 +4,9 @@
 
 - All match data comes from [Cricsheet](https://cricsheet.org/), which publishes ball-by-ball data for the
   Indian Premier League.
-- This repository includes the Cricsheet IPL JSON files (`data/raw/ipl_json/`) and tables derived from them
-  (`data/processed/`, `data/derived/`, `reports/`), so that the analysis can be reproduced.
+- This repository includes the Cricsheet IPL JSON files (`data/raw/ipl_json/`) and work derived from them
+  (the tables in `data/processed/` and `data/derived/`, the results in `reports/`, the models in `models/`
+  and the notebooks in `notebooks/`), so that the analysis can be reproduced.
 - Cricsheet makes its data available under the Open Data Commons Attribution License (ODC-By 1.0), which
   allows reuse with attribution. Check [cricsheet.org](https://cricsheet.org/) for the current terms before
   redistributing the data or anything derived from it.

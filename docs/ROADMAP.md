@@ -6,10 +6,10 @@
 |---|---|---|---|
 | **1: Dataset screening & cleaning** | Load Cricsheet IPL archive; create correct reproducible tables; audit exceptions | **COMPLETE FOR EDA** | Clean matches/innings/overs/deliveries/batting files; data dictionary; complete missingness + anomalies + venue/identity checks; reconciliation; signed-off Stage 1 report |
 | **2: Systematic EDA** | Analyze IPL, team, venue, player patterns | **INTERNALLY COMPLETE (Sessions 01–03; professor review pending)** | Notebooks, descriptive stats, missingness, 20 EDA figures, regression/correlation, corrected outcome analysis and consolidated 7-page PDF |
-| **3: Two ML models** | Develop and evaluate both probabilistic predictors | **Holdout evaluated on 2026; final models refitted through 2026** | Past-only features, train through 2024, validation on 2025, once-only held-out test on 2026; Brier/log loss/calibration; trained models and documentation |
-| **4: Dashboard website** | Six interactive tabs; no login | **COMPLETE** (see `docs/STAGE_04_WEBSITE.md`) | Responsive UI, filtering, real-data charts, player/team searches, forms |
+| **3: Two ML models** | Develop and evaluate both probabilistic predictors | **COMPLETE: seven-algorithm benchmark; histogram gradient boosting selected and refitted through 2026** | Past-only features; tuning 2018–2020, ranking 2021–2025, retrospective 2026 test; Brier/log loss/calibration; assumption evidence; `docs/MODEL_METHODOLOGY.md` |
+| **4: Dashboard website** | Seven interactive routes; no login | **COMPLETE** (see `docs/STAGE_04_WEBSITE.md`) | Responsive UI, filtering, real-data charts, player/team searches, forms, methodology page |
 | **5: Integrate & test** | Connect FastAPI, predictions, local tracker, replay | **COMPLETE** (see `docs/STAGE_04_WEBSITE.md`) | Real model inference, original prediction saved, outcomes recorded, evaluation & historical replay; test cases |
-| **6: Final report & presentation** | Integrate evidence from all stages | Ongoing notes, not complete | Reproducible academic PDF, graphs, data quality decisions, results, limitations, screenshots, walkthrough |
+| **6: Final report & presentation** | Integrate evidence from all stages | **Final submission prepared** (`reports/REPORT_DRAFT.md`, submission notebook) | Reproducible report, EDA and prediction-model notebook, graphs, data quality decisions, results, limitations, screenshots |
 
 **Important:** The Stage 2 chapters and figures are now internally consolidated, with professor review still pending. Early wicket-model training remains a preliminary Stage 3 experiment and has not been tested on 2026.
 
@@ -33,3 +33,16 @@ inference functions, and the Prediction Tracker stores predictions in the browse
 The pytest suite verifies the API against independent calculations. Architecture, endpoints and prediction
 guards are documented in `docs/STAGE_04_WEBSITE.md`. Stage 6 (final academic report and presentation)
 remains in progress.
+
+
+## Final submission update — November 2026
+
+The prediction models were finalised: a chronological benchmark of seven algorithms (class-prior baseline,
+logistic regression, decision tree, random forest, histogram gradient boosting, Gaussian naive Bayes and a
+multilayer perceptron) selected histogram gradient boosting for both forecasts, under a rule fixed in
+advance (lowest mean 2021–2025 validation Brier score). The final models in `models/final/` reproduce the
+benchmark's 2026 forecasts exactly and serve the website; the Stage 3 models are kept as development
+history. The full methodology, with evidence for every data and algorithm assumption, is in
+`docs/MODEL_METHODOLOGY.md` and on the website's Methodology page. The single submission notebook
+`notebooks/CricketLens_IPL_EDA_and_Prediction_Models.ipynb` reproduces the data preparation, EDA and
+prediction models from the raw Cricsheet files.

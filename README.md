@@ -2,9 +2,10 @@
 
 CricketLens is an IT462 Exploratory Data Analysis course project. It cleans and audits every men's Indian
 Premier League match from 2008 to 2026 from Cricsheet ball-by-ball data, explores it systematically, trains
-two probability models, and serves all of it through a FastAPI backend and a six-tab React website:
-season and team analysis, a player explorer, a filterable statistics lab, next-over wicket and batter
-milestone predictions, and a tracker that scores predictions and replays the models' 2026 holdout season.
+two probability models chosen by a seven-algorithm chronological benchmark, and serves all of it through a
+FastAPI backend and a seven-route React website: season and team analysis, a player explorer, a filterable
+statistics lab, next-over wicket and batter milestone predictions, a tracker that scores predictions and
+replays the 2026 season, and a methodology page that shows how the prediction models were chosen.
 
 ## Contents
 
@@ -49,7 +50,14 @@ milestone predictions, and a tracker that scores predictions and replays the mod
 
 **Prediction Tracker**
 - Save predictions in the browser, record what happened, and see Brier scores and hit rates; export and import as JSON.
-- 2026 Holdout Replay: every forecast the holdout models made for 2026, match by match, with calibration charts.
+- 2026 Replay: every forecast the selected model (trained through 2025) made for 2026, match by match, with calibration charts.
+
+**Methodology (How the Predictions Work)**
+- The workflow from data to website, the prediction questions, and the data assumptions with verdicts and evidence.
+- The seven algorithms compared: how each works, what it assumes, whether that holds here, its tuned setting, its results and why it was or was not selected.
+- A sortable comparison table, interactive learning curves, per-season paired gaps, and the final model's 2026 test with calibration and confusion matrices.
+
+Every page opens with a short "What this page shows" note and a "How to read it" guide; the Statistics & EDA page adds key takeaways computed for the current filters.
 
 ## Screenshots
 
@@ -97,7 +105,7 @@ flowchart LR
     A --> C["Derived tables<br/>cricketlens.derived_events"]
     B --> D["data/processed<br/>matches, innings, deliveries, ..."]
     C --> E["data/derived<br/>dismissals, squads, people, ..."]
-    D --> F["Stage 2 EDA and<br/>Stage 3 models (models/)"]
+    D --> F["Stage 2 EDA, model benchmark<br/>and final models (models/final)"]
     D --> G["FastAPI backend<br/>src/cricketlens/api"]
     E --> G
     F --> G
@@ -106,8 +114,8 @@ flowchart LR
 
 The backend loads the tables once into a single analytics engine and computes every statistic from them;
 apart from the captions of the static Stage 2 research figures, no number on the website is typed into the
-code. The prediction endpoints call the Stage 3
-inference functions with the saved models.
+code. The prediction endpoints call the Stage 3 inference functions with the final gradient boosting
+models, and the methodology endpoint serves the benchmark and assumption results from `reports/model_benchmark/`.
 
 | Endpoint group | What it serves |
 |---|---|
@@ -116,7 +124,8 @@ inference functions with the saved models.
 | `/api/teams/*` | Franchise list, team overview, venues, head-to-head |
 | `/api/players/*` | Player directory, profiles, match logs |
 | `/api/eda/*` | Filterable analysis, filter options, player comparison, Stage 2 figures and tables |
-| `/api/predict/*` | Prediction options, wicket and batter predictions, model evaluation, 2026 holdout replay |
+| `/api/predict/*` | Prediction options, wicket and batter predictions, model evaluation, 2026 replay |
+| `/api/methodology` | Benchmark comparison, learning curves, paired gaps, assumption verdicts and the 2026 test |
 
 The full endpoint reference is in [`docs/STAGE_04_WEBSITE.md`](docs/STAGE_04_WEBSITE.md); interactive docs
 are at `http://127.0.0.1:8000/docs` while the backend runs.
@@ -234,9 +243,10 @@ is configured in the repository:
 | `api/requirements.txt` | Only the packages the API imports at runtime, pinned (scikit-learn 1.8.0 for the saved models) |
 | `api/.python-version` | Python 3.14 |
 
-The function contains only the files the API reads: the 11 tables in `data/processed` and `data/derived`
-that it uses, the two deployment models, the Stage 1–3 report tables it serves and the 20 Stage 2 figures.
-`data/raw`, notebooks, docs, tests and the website sources are excluded.
+The function contains only the files the API reads: the 12 tables in `data/processed` and `data/derived`
+that it uses, the two final models refitted through 2026 (`models/final/*_2026.joblib`), the Stage 1–2 report
+tables it serves, the benchmark and assumption results in `reports/model_benchmark/` and the 20 Stage 2
+figures. `data/raw`, notebooks, docs, tests, the archived Stage 3 models and the website sources are excluded.
 
 > **Before a public deployment:** a Vercel deployment is reachable by anyone with its URL. The homepage
 > hero artwork's image rights were not verified (see `LICENSE_NOTES.md`), so keep the deployment
@@ -263,8 +273,8 @@ None are required. Optional:
    Select **Deploy**.
 4. A new project's production branch is `main`, which does not contain this configuration, so the first
    deployment builds the wrong branch. Open **Settings → Environments → Production → Branch Tracking**, set
-   the branch to `feature/cricketlens-final` and select **Save**.
-5. Open **Deployments → Create Deployment**, enter the branch `feature/cricketlens-final` and select
+   the branch to `feature/final-submission` and select **Save**.
+5. Open **Deployments → Create Deployment**, enter the branch `feature/final-submission` and select
    **Create Deployment**. From then on every push to that branch creates a production deployment, and
    pushes to other branches create preview deployments.
 
@@ -274,7 +284,7 @@ Deploy from a fresh clone, so that nothing outside the repository (such as `.ven
 uploaded:
 
 ```bash
-git clone --branch feature/cricketlens-final https://github.com/Bhagy25/IPL_Predictor.git
+git clone --branch feature/final-submission https://github.com/Bhagy25/IPL_Predictor.git
 cd IPL_Predictor
 npm i -g vercel        # or run each command as `npx vercel`
 vercel login
@@ -292,8 +302,8 @@ settings: `vercel.json` provides them.
    `derived_tables.available: true`, and `prediction_models.wicket.available` and
    `prediction_models.batter.available` both `true`. A JSON 404 or the website's HTML here means the
    `/api` rewrite or the function is not working; `"degraded"` names the missing data or model.
-2. Open the site and refresh on a deep link such as `/players` or `/tracker`: the page must load, not a
-   404.
+2. Open the site and refresh on a deep link such as `/players`, `/tracker` or `/methodology`: the page must
+   load, not a 404.
 3. Make a wicket and a batter prediction in the Prediction Arena.
 4. The first request after a deployment or an idle period starts the function and loads the data; expect
    several seconds before it answers. Later requests are fast.
